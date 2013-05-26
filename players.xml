@@ -1,32 +1,32 @@
-п»ї<?xml version="1.0" encoding="UTF-8" standalone="no" ?><players>
-  <player name="РЎС‚РёРІ РђС€РµРЅР±Р°С…" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Р”Р¶РѕРЅРЅРё Р’СѓР»СЊС„" spe="80" acc="100" dex="90" end="50" pow="30" rng="30" acu="50" skl="20" cun="40" rsk="90"/>
-  <player name="Р‘РµСЂС‚ Р‘Р°СЃРєРё" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="РќРёРє РўРѕС„С„РµСЂ" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Р”РёРє Р РµРЅРґРµР»Р»" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Р¤Р»РµСЂ Р РѕРєРєРё" spe="100" acc="80" dex="80" end="40" pow="40" rng="30" acu="60" skl="50" cun="20" rsk="50"/>
-  <player name="Р“Р»РµРЅ Р—СѓС‚С‚РµСЂ" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Р”СЌРЅ РЁРµРґРѕСѓ" spe="40" acc="20" dex="50" end="100" pow="80" rng="80" acu="60" skl="50" cun="20" rsk="40"/>
-  <player name="Р­СЂР»Рё Р§РёРєРѕ" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Р’РёР»Р»Рё РџР°СЂРєРµСЂ" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="РђСЂС‡Рё РЎРѕРєСЃ" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="РЎРёРЅРґРё РњСЌСЂРёРє" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="РњР°Р№РєР»Рё РҐРѕР»Р»" spe="40" acc="30" dex="40" end="40" pow="50" rng="60" acu="80" skl="100" cun="70" rsk="30"/>
-  <player name="Р­РЅС‚РѕРЅРё Р‘Р°РєСЃ" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="РЎР°Р»Р»Рё РҐР°РЅС‚РµСЂ" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Р¤РёР» РљСѓРєРєРё" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Р”Р¶РµРє Р РёС‡С‡Рё" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="РџР°РѕР»Р° Р¤РѕР·Р·Рё" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Р§РµРЅ Р¤Р»РµС‚С‡РµСЂ" spe="60" acc="50" dex="70" end="60" pow="40" rng="30" acu="100" skl="70" cun="50" rsk="70"/>
-  <player name="РўР°РЅСЏ Р”Р¶РѕРєРѕ" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Р‘РѕР± Р”СЂРѕСѓ" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Р”Р¶РµС„ Р РёРЅРіРѕ" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="РљР»РѕРґ Р“РѕС€" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="РњСЌСЂРё РљСѓР»Р»РёРґР¶" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Р›РµРѕ Р›РµРЅРі" spe="30" acc="40" dex="20" end="50" pow="100" rng="70" acu="60" skl="70" cun="20" rsk="50"/>
-  <player name="РњСЌР№ РљР»Р°РїСЃ" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="РџР°С‚ РљРµРЅС‚" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="РњРёРєРєРё РЁСѓС„" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Р”РёРЅРѕ РќРµРЅСЃРё" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Р”Р¶Рѕ Р“СѓРіРіРё" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+<?xml version="1.0" encoding="windows-1251" standalone="no" ?><players>
+  <player name="Стив Ашенбах" nation="Альмагест" country="Двугородье" spe="10" acc="10" dex="10" end="10" pow="10" rng="10" acu="10" skl="10" cun="10" rsk="50"/>
+  <player name="Джонни Вульф" nation="Альмагест" country="Северный Альянс" spe="80" acc="100" dex="90" end="50" pow="30" rng="30" acu="50" skl="20" cun="40" rsk="90"/>
+  <player name="Берт Баски" nation="Альмагест" country="Северный Альянс" spe="40" acc="40" dex="40" end="40" pow="40" rng="40" acu="40" skl="40" cun="40" rsk="40"/>
+  <player name="Ник Тоффер" nation="Альмагест" country="Северный Альянс" spe="30" acc="30" dex="30" end="30" pow="30" rng="30" acu="30" skl="30" cun="30" rsk="50"/>
+  <player name="Дик Ренделл" nation="Альмагест" country="Двугородье" spe="40" acc="40" dex="40" end="40" pow="40" rng="40" acu="40" skl="40" cun="40" rsk="50"/>
+  <player name="Флер Рокки" nation="Альмагест" country="Северный Альянс" spe="100" acc="80" dex="80" end="40" pow="40" rng="30" acu="60" skl="50" cun="20" rsk="50"/>
+  <player name="Глен Зуттер" nation="Беллерофон" country="Двугородье" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Дэн Шедоу" nation="Беллерофон" country="Двугородье" spe="40" acc="20" dex="50" end="100" pow="80" rng="80" acu="60" skl="50" cun="20" rsk="40"/>
+  <player name="Эрли Чико" nation="Беллерофон" country="Альдорум" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Вилли Паркер" nation="Беллерофон" country="Северный Альянс" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Арчи Сокс" nation="Беллерофон" country="Двугородье" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Синди Мэрик" nation="Беллерофон" country="Двугородье" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Майкли Холл" nation="Галилео" country="Северный Альянс" spe="40" acc="30" dex="40" end="40" pow="50" rng="60" acu="80" skl="100" cun="70" rsk="30"/>
+  <player name="Энтони Бакс" nation="Галилео" country="Альдорум" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Салли Хантер" nation="Галилео" country="Северный Альянс" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Фил Кукки" nation="Галилео" country="Альдорум" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Джек Риччи" nation="Галилео" country="Северный Альянс" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Паола Фоззи" nation="Галилео" country="Северный Альянс" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Чен Флетчер" nation="Оберон-22" country="Альдорум" spe="60" acc="50" dex="70" end="60" pow="40" rng="30" acu="100" skl="70" cun="50" rsk="70"/>
+  <player name="Таня Джоко" nation="Оберон-22" country="Альдорум" spe="70" acc="60" dex="90" end="30" pow="40" rng="40" acu="60" skl="60" cun="100" rsk="50"/>
+  <player name="Боб Дроу" nation="Оберон-22" country="Альдорум" spe="10" acc="20" dex="20" end="80" pow="60" rng="60" acu="40" skl="70" cun="40" rsk="50"/>
+  <player name="Джеф Ринго" nation="Оберон-22" country="Альдорум" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Клод Гош" nation="Оберон-22" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Мэри Куллидж" nation="Оберон-22" country="Альдорум" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Лео Ленг" nation="Камелеопард" country="Коньюкция" spe="30" acc="40" dex="20" end="50" pow="100" rng="70" acu="60" skl="70" cun="20" rsk="50"/>
+  <player name="Мэй Клапс" nation="Камелеопард" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Пат Кент" nation="Камелеопард" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Микки Шуф" nation="Камелеопард" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Дино Ненси" nation="Камелеопард" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Джо Гугги" nation="Камелеопард" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
 </players>

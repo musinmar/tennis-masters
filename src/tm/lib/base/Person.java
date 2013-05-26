@@ -285,6 +285,9 @@ public class Person
         name = fullName.substring(0, spaceIndex);
         surname = fullName.substring(spaceIndex + 1);
         
+        nation = Nation.fromString(playerElement.getAttribute("nation"));
+        country = Country.fromString(playerElement.getAttribute("country"));
+        
         speed = Integer.parseInt(playerElement.getAttribute("spe"));
         acceleration = Integer.parseInt(playerElement.getAttribute("acc"));
         hitPower = Integer.parseInt(playerElement.getAttribute("pow"));

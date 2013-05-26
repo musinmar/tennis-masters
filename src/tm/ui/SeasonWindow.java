@@ -71,12 +71,12 @@ public class SeasonWindow
             public void widgetSelected(SelectionEvent e)
             {
                 Match match = season.getNextMatch();
-                /*MatchWindow match_window = new MatchWindow(shell, match);
-                 match_window.shell.setMaximized(true);
-                 Score score = match_window.open();*/
-                SimpleMatchManager matchManager = new SimpleMatchManager(match);
+                MatchWindow match_window = new MatchWindow(shell, match);
+                match_window.shell.setMaximized(true);
+                Score score = match_window.open();
+                /*SimpleMatchManager matchManager = new SimpleMatchManager(match);
                 matchManager.start();
-                Score score = matchManager.getScore();
+                Score score = matchManager.getScore();*/
                 if (score != null)
                 {
                     season.processMatch(match, score);

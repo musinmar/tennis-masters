@@ -27,20 +27,19 @@ public class SimpleMatchManager
 
     public void start()
     {
-        match_engine.initial_positions(active_player);
-        match_engine.game_result = 0;
+        match_engine.reset(active_player);
 
         boolean matchEnded = false;
         while (!matchEnded)
         {
             match_engine.next();
             match_time += (int) (MatchEngine.TIME_STEP * 1000);
-            if (match_engine.game_result != 0)
+            if (match_engine.getGameResult() != 0)
             {
                 game_has_ended();
                 if (check_set_end())
                 {
-                    match_engine.end_of_set_actions();
+                    match_engine.performEndOfSetActions();
                     if (!check_match_end())
                     {
                         if (set != match.getSets() - 1)
@@ -54,8 +53,7 @@ public class SimpleMatchManager
                             active_score.additionalTime = new SetScore();
                             active_player = 1;
                         }
-                        match_engine.initial_positions(active_player);
-                        match_engine.game_result = 0;
+                        match_engine.reset(active_player);
                     }
                     else
                     {
@@ -68,8 +66,7 @@ public class SimpleMatchManager
                     {
                         switch_active_player();
                     }
-                    match_engine.initial_positions(active_player);
-                    match_engine.game_result = 0;
+                    match_engine.reset(active_player);
                 }
             }
         }
@@ -84,7 +81,7 @@ public class SimpleMatchManager
     {
         if (!additional)
         {
-            if (match_engine.game_result == 1)
+            if (match_engine.getGameResult() == 1)
             {
                 active_score.sets[set].v1 += 1;
             }
@@ -95,7 +92,7 @@ public class SimpleMatchManager
         }
         else
         {
-            if (match_engine.game_result == 1)
+            if (match_engine.getGameResult() == 1)
             {
                 active_score.additionalTime.v1 += 1;
             }
@@ -105,7 +102,7 @@ public class SimpleMatchManager
             }
         }
 
-        match_engine.end_of_game_actions();
+        match_engine.performEndOfGameActions();
     }
 
     private boolean check_set_end()

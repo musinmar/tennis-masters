@@ -42,7 +42,7 @@ public class MatchManager {
 				ui.player1_widget.update();
 				ui.player2_widget.update();
 				ui.match_info_widget.set_time(match_time);
-				if (match_engine.game_result != 0) {
+				if (match_engine.getGameResult() != 0) {
 					game_has_ended();
 				}
 				else 
@@ -97,9 +97,8 @@ public class MatchManager {
 	}
 	
 	public void start() {
-		match_engine.initial_positions(active_player);
+		match_engine.reset(active_player);
 		active_timer = game_timer;
-		match_engine.game_result = 0;
 		TenisMasters.display.timerExec(TIMER_INTERVAL, active_timer);
 	}
 	
@@ -109,7 +108,7 @@ public class MatchManager {
 	
 	public void game_has_ended() {
 		if (!additional) {
-			if (match_engine.game_result == 1) {
+			if (match_engine.getGameResult() == 1) {
 				active_score.sets[set].v1 += 1;
 			}
 			else {
@@ -117,7 +116,7 @@ public class MatchManager {
 			}
 		}	
 		else {
-			if (match_engine.game_result == 1) {
+			if (match_engine.getGameResult() == 1) {
 				active_score.additionalTime.v1 += 1;
 			}
 			else {
@@ -233,7 +232,7 @@ public class MatchManager {
 	}
 	
 	public void game_end_actions() {
-		match_engine.end_of_game_actions();
+		match_engine.performEndOfGameActions();
 		if (check_set_end()) {
 			show_set_end_caption();
 		}
@@ -246,7 +245,7 @@ public class MatchManager {
 	}
 	
 	public void set_end_actions() {
-		match_engine.end_of_set_actions();
+		match_engine.performEndOfSetActions();
 		if (!check_match_end()) {
 			if (set != match.getSets() - 1) {
 				switch_active_player();
@@ -272,7 +271,7 @@ public class MatchManager {
 	
 	public void show_game_result_caption() {
 		Person won;
-		if (match_engine.game_result == 1) {
+		if (match_engine.getGameResult() == 1) {
 			won = match.getFirstPlayer();
 		}
 		else {

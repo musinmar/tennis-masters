@@ -35,7 +35,7 @@ public class MatchWindow {
 		layout.verticalSpacing = 3;
 		shell.setLayout(layout);	
 		
-		player1_widget = new PlayerWidget(shell, manager.match_engine.pitch.player_1);
+		player1_widget = new PlayerWidget(shell, manager.match_engine.getPitch().player_1);
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.CENTER;
 		player1_widget.setLayoutData(data);
@@ -65,7 +65,7 @@ public class MatchWindow {
 
 		create_controls();	
 
-		pitch_widget = new PitchWidget(shell, manager.match_engine.pitch);
+		pitch_widget = new PitchWidget(shell, manager.match_engine.getPitch());
 		data = new GridData ();
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.FILL;
@@ -73,7 +73,7 @@ public class MatchWindow {
 		data.grabExcessVerticalSpace = true;
 		pitch_widget.setLayoutData(data);
 
-		player2_widget = new PlayerWidget(shell, manager.match_engine.pitch.player_2);
+		player2_widget = new PlayerWidget(shell, manager.match_engine.getPitch().player_2);
 		data = new GridData();
 		data.horizontalAlignment = GridData.CENTER;
 		player2_widget.setLayoutData(data);

@@ -11,11 +11,11 @@ public class GroupSubStage extends SimpleCompetition
     static private class GroupResult implements Comparable<GroupResult>
     {
         private Person player;
-        private int matchesPlayed;        
+        private int matchesPlayed;
         private int points;
         private int gamesWon;
         private int gamesLost;
-        
+
         public GroupResult()
         {
             player = null;
@@ -24,12 +24,12 @@ public class GroupSubStage extends SimpleCompetition
             gamesWon = 0;
             gamesLost = 0;
         }
-        
+
         void setPlayer(Person player)
         {
             this.player = player;
         }
-        
+
         @Override
         public int compareTo(GroupResult other)
         {
@@ -37,32 +37,41 @@ public class GroupSubStage extends SimpleCompetition
             {
                 return -1;
             }
-            else if (other.points < this.points)
+            else
             {
-                return 1;
+                if (other.points < this.points)
+                {
+                    return 1;
+                }
             }
-            
+
             if (other.gamesWon - other.gamesLost > this.gamesWon - this.gamesLost)
             {
                 return -1;
             }
-            else if (other.gamesWon - other.gamesLost < this.gamesWon - this.gamesLost)
+            else
             {
-                return 1;
+                if (other.gamesWon - other.gamesLost < this.gamesWon - this.gamesLost)
+                {
+                    return 1;
+                }
             }
-            
+
             if (other.gamesWon > this.gamesWon)
             {
                 return -1;
             }
-            else if (other.gamesWon < this.gamesWon)
+            else
             {
-                return 1;
+                if (other.gamesWon < this.gamesWon)
+                {
+                    return 1;
+                }
             }
-            
+
             return 0;
         }
-        
+
         public void update(Match match)
         {
             assert match.getResult() != null;
@@ -71,40 +80,46 @@ public class GroupSubStage extends SimpleCompetition
             {
                 score = match.getResult();
             }
-            else if (match.getSecondPlayer() == player)
-            {
-                score = match.getResult().reverse();
-            }
             else
             {
-                return;
+                if (match.getSecondPlayer() == player)
+                {
+                    score = match.getResult().reverse();
+                }
+                else
+                {
+                    return;
+                }
             }
-            
+
             matchesPlayed += 1;
             if (score.isFirstPlayerWinner())
             {
                 points += 2;
             }
-            else if (score.isDraw())
+            else
             {
-                points += 1;
+                if (score.isDraw())
+                {
+                    points += 1;
+                }
             }
-            
+
             SetScore totalScore = score.getGameScore();
             gamesWon += totalScore.v1;
             gamesLost += totalScore.v2;
         }
-        
+
         @Override
         public String toString()
         {
             return String.format("%1$-20s %2$-3d %3$d-%4$-2d %5$3d", player.getFullName(),
-                matchesPlayed, gamesWon, gamesLost, points);
+                    matchesPlayed, gamesWon, gamesLost, points);
         }
     }
-    
+
     private GroupResult[] results;
-    
+
     public GroupSubStage(Competition parentCompetition, Person[] players)
     {
         super(parentCompetition);
@@ -124,7 +139,7 @@ public class GroupSubStage extends SimpleCompetition
         match = new Match(this, players[2], players[3], 4, false);
         matches.add(match);
         setMatches(matches);
-        
+
         results = new GroupResult[players.length];
         for (int i = 0; i < results.length; ++i)
         {
@@ -132,12 +147,12 @@ public class GroupSubStage extends SimpleCompetition
             results[i].setPlayer(players[i]);
         }
     }
-    
+
     @Override
     public void print(PrintStream stream)
     {
         super.print(stream);
-        
+
         stream.println();
         for (int i = 0; i < results.length; ++i)
         {
@@ -169,7 +184,7 @@ public class GroupSubStage extends SimpleCompetition
         matches.get(4).setDate(date + 2);
         matches.get(5).setDate(date + 2);
     }
-    
+
     @Override
     public void onMatchEnded(Match match)
     {

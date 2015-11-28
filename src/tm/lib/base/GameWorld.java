@@ -17,7 +17,7 @@ public class GameWorld
     {
         players = new ArrayList<Person>();
         init();
-        
+
         seasons = new ArrayList<Season>();
         seasons.add(new Season(this, 0));
     }
@@ -26,7 +26,7 @@ public class GameWorld
     {
         return seasons;
     }
-    
+
     public Season getCurrentSeason()
     {
         return seasons.get(seasons.size() - 1);
@@ -53,7 +53,7 @@ public class GameWorld
                 person.init(playerElement);
                 players.add(person);
             }
-            
+
         }
         catch (Exception exception)
         {

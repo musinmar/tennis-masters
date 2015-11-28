@@ -10,7 +10,7 @@ public class GroupStage extends MultiStageCompetition
 
         int groupCount = players.length / 4;
         Competition[] groups = new Competition[groupCount];
-        
+
         for (int i = 0; i < groupCount; ++i)
         {
             Person[] groupPlayers = new Person[4];

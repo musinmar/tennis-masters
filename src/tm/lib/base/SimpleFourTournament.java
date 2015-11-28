@@ -28,7 +28,7 @@ public class SimpleFourTournament extends MultiStageCompetition
         getStages()[0].setStartingDate(date);
         getStages()[1].setStartingDate(date + 4);
     }
-    
+
     @Override
     public void onCompetitionEnded(Competition competition)
     {

@@ -14,10 +14,10 @@ public class Season
     {
         this.world = world;
         this.year = year;
-        
+
         initSeasonCompetition();
     }
-    
+
     public Competition getSeasonCompetition()
     {
         return seasonCompetition;
@@ -33,12 +33,12 @@ public class Season
         m.setResult(s);
         print(System.out);
     }
-    
+
     public void print(PrintStream stream)
     {
         seasonCompetition.print(stream);
     }
-    
+
     private void initSeasonCompetition()
     {
         Person[] players = new Person[world.getPlayers().size()];

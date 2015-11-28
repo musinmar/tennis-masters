@@ -47,7 +47,7 @@ public class PlayoffSubStage extends SimpleCompetition
             matches.get(i).setSecondPlayer(participants[playerIndex++]);
         }
     }
-    
+
     @Override
     public Person[] getPositions()
     {

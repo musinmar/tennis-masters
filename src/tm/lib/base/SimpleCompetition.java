@@ -7,19 +7,19 @@ abstract public class SimpleCompetition extends Competition
 {
     private List<Match> matches;
     private int nextMatchIndex;
-    
+
     SimpleCompetition(Season season)
     {
         super(season);
         nextMatchIndex = 0;
     }
-    
+
     SimpleCompetition(Competition parentCompetition)
     {
         super(parentCompetition);
         nextMatchIndex = 0;
-    }        
-    
+    }
+
     @Override
     public void print(PrintStream stream)
     {
@@ -29,7 +29,7 @@ abstract public class SimpleCompetition extends Competition
             stream.println(match.toString());
         }
     }
-    
+
     @Override
     public Match getNextMatch()
     {
@@ -42,13 +42,13 @@ abstract public class SimpleCompetition extends Competition
             return null;
         }
     }
-    
+
     @Override
     public List<Match> getAllMatches()
     {
         return matches;
     }
-    
+
     @Override
     public void onMatchEnded(Match match)
     {

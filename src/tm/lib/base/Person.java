@@ -6,10 +6,10 @@ public class Person
 {
     private String name;
     private String surname;
-    
+
     private Nation nation;
     private Country country;
-    
+
     private double speed;
     private double acceleration;
     private double hitPower;
@@ -95,7 +95,7 @@ public class Person
     }
 
     static int randomIndex = 1;
-    
+
     public static Person getRandomPerson()
     {
         Person a = new Person();
@@ -284,10 +284,10 @@ public class Person
         int spaceIndex = fullName.indexOf(' ');
         name = fullName.substring(0, spaceIndex);
         surname = fullName.substring(spaceIndex + 1);
-        
+
         nation = Nation.fromString(playerElement.getAttribute("nation"));
         country = Country.fromString(playerElement.getAttribute("country"));
-        
+
         speed = Integer.parseInt(playerElement.getAttribute("spe"));
         acceleration = Integer.parseInt(playerElement.getAttribute("acc"));
         hitPower = Integer.parseInt(playerElement.getAttribute("pow"));

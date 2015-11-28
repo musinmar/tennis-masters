@@ -16,14 +16,15 @@ abstract public class Competition implements IMatchEndListener
         stream.println(getName());
         stream.println();
     }
-    
+
     abstract public Match getNextMatch();
+
     abstract public List<Match> getAllMatches();
-    
+
     abstract public Person[] getPositions();
-    
+
     abstract public void setStartingDate(int date);
-    
+
     protected void endCompetition()
     {
         for (ICompetitionEndListener listener : listeners)
@@ -31,7 +32,7 @@ abstract public class Competition implements IMatchEndListener
             listener.onCompetitionEnded(this);
         }
     }
-    
+
     @Override
     public void onMatchEnded(Match match)
     {
@@ -40,7 +41,7 @@ abstract public class Competition implements IMatchEndListener
             endCompetition();
         }
     }
-    
+
     public void setVenue(Stadium venue)
     {
         List<Match> matches = getAllMatches();
@@ -48,8 +49,8 @@ abstract public class Competition implements IMatchEndListener
         {
             match.setVenue(venue);
         }
-    }    
-    
+    }
+
     Competition(Season season)
     {
         this.name = "Unnamed competition";
@@ -57,20 +58,20 @@ abstract public class Competition implements IMatchEndListener
         parentCompetition = null;
         participants = null;
     }
-    
+
     Competition(Competition parentCompetition)
     {
         this.parentCompetition = parentCompetition;
         this.name = "Unnamed competition";
         this.season = parentCompetition.season;
         participants = null;
-        
+
         listeners = new LinkedList<ICompetitionEndListener>();
         if (parentCompetition instanceof ICompetitionEndListener)
         {
-            listeners.add((ICompetitionEndListener)parentCompetition);
+            listeners.add((ICompetitionEndListener) parentCompetition);
         }
-    }        
+    }
 
     public Season getSeason()
     {
@@ -86,12 +87,12 @@ abstract public class Competition implements IMatchEndListener
     {
         this.name = name;
     }
-    
+
     public Competition getParentCompetition()
     {
         return parentCompetition;
     }
-    
+
     public Person[] getParticipants()
     {
         return participants;
@@ -101,7 +102,7 @@ abstract public class Competition implements IMatchEndListener
     {
         this.participants = participants;
     }
-    
+
     public void addCompetitionEndListener(ICompetitionEndListener listener)
     {
         listeners.add(listener);

@@ -10,17 +10,17 @@ import java.util.ListIterator;
 abstract public class MultiStageCompetition extends Competition implements ICompetitionEndListener
 {
     private Competition[] stages;
-    
+
     MultiStageCompetition(Season season)
     {
         super(season);
     }
-    
+
     MultiStageCompetition(Competition parentCompetition)
     {
         super(parentCompetition);
     }
-    
+
     @Override
     public void print(PrintStream stream)
     {
@@ -54,11 +54,11 @@ abstract public class MultiStageCompetition extends Competition implements IComp
     public List<Match> getAllMatches()
     {
         /*SortedSet<Match> sortedMatches = new TreeSet<Match>();
-        for (Competition stage : getStages())
-        {
-            sortedMatches.addAll(stage.getAllMatches());
-        }
-        return new ArrayList<Match>(sortedMatches);*/
+         for (Competition stage : getStages())
+         {
+         sortedMatches.addAll(stage.getAllMatches());
+         }
+         return new ArrayList<Match>(sortedMatches);*/
         List<Match> sortedMatches = new LinkedList<Match>();
         for (Competition stage : getStages())
         {
@@ -71,7 +71,7 @@ abstract public class MultiStageCompetition extends Competition implements IComp
                 {
                     break;
                 }
-                
+
                 Match nextStageMatch = stageIt.next();
                 if (it.next().getDate() > nextStageMatch.getDate())
                 {
@@ -88,8 +88,7 @@ abstract public class MultiStageCompetition extends Competition implements IComp
                 sortedMatches.add(stageIt.next());
             }
         }
-        
-        
+
         return new ArrayList<Match>(sortedMatches);
     }
 
@@ -102,7 +101,7 @@ abstract public class MultiStageCompetition extends Competition implements IComp
     {
         this.stages = stages;
     }
-    
+
     @Override
     public void onCompetitionEnded(Competition competition)
     {

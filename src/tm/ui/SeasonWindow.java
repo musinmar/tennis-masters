@@ -28,7 +28,7 @@ public class SeasonWindow
     private Season season;
     private Text output;
     private Font outputFont;
-    
+
     private Combo tournamentCombo;
     private Combo stageCombo;
     private Combo subStageCombo;
@@ -46,7 +46,7 @@ public class SeasonWindow
         GridData data = new GridData();
         data.grabExcessHorizontalSpace = true;
         comboBoxComposite.setLayoutData(data);
-        
+
         output = new Text(shell, SWT.MULTI | SWT.LEFT | SWT.V_SCROLL);
         data = new GridData();
         data.widthHint = 300;
@@ -75,8 +75,8 @@ public class SeasonWindow
                 match_window.shell.setMaximized(true);
                 Score score = match_window.open();
                 /*SimpleMatchManager matchManager = new SimpleMatchManager(match);
-                matchManager.start();
-                Score score = matchManager.getScore();*/
+                 matchManager.start();
+                 Score score = matchManager.getScore();*/
                 if (score != null)
                 {
                     season.processMatch(match, score);
@@ -84,7 +84,7 @@ public class SeasonWindow
                 }
             }
         });
-        
+
         shell.pack();
         updateText();
     }
@@ -99,9 +99,9 @@ public class SeasonWindow
 
         Combo combo0 = new Combo(composite, SWT.READ_ONLY);
         combo0.setItems(new String[]
-            {
-                "Item 1", "Item 2", "Item 2"
-            });
+        {
+            "Item 1", "Item 2", "Item 2"
+        });
         combo0.setText("combo0");
         GridData data = new GridData();
         data.widthHint = 150;
@@ -123,7 +123,7 @@ public class SeasonWindow
                 updateText();
             }
         });
-        
+
         tournamentCombo = new Combo(composite, SWT.READ_ONLY);
         data = new GridData();
         data.widthHint = 150;
@@ -154,7 +154,7 @@ public class SeasonWindow
                 updateText();
             }
         });
-        
+
         fillTournamentCombo();
         fillStageCombo();
         fillSubStageCombo();
@@ -176,7 +176,7 @@ public class SeasonWindow
         tournamentCombo.setItems(comboItems);
         tournamentCombo.select(0);
     }
-    
+
     private void fillStageCombo()
     {
         if (tournamentCombo.getSelectionIndex() <= 0)
@@ -192,7 +192,7 @@ public class SeasonWindow
         Competition[] tournaments = seasonCompetition.getStages();
         Competition tournament = tournaments[tournamentCombo.getSelectionIndex() - 1];
         Competition[] stages = ((MultiStageCompetition) tournament).getStages();
-        
+
         String[] comboItems = new String[stages.length + 1];
         comboItems[0] = "Все";
         int index = 1;
@@ -203,7 +203,7 @@ public class SeasonWindow
         stageCombo.setItems(comboItems);
         stageCombo.select(0);
     }
-    
+
     private void fillSubStageCombo()
     {
         if (stageCombo.getSelectionIndex() <= 0)
@@ -221,7 +221,7 @@ public class SeasonWindow
         Competition[] stages = ((MultiStageCompetition) tournament).getStages();
         Competition stage = stages[stageCombo.getSelectionIndex() - 1];
         Competition[] subStages = ((MultiStageCompetition) stage).getStages();
-        
+
         String[] comboItems = new String[subStages.length + 1];
         comboItems[0] = "Все";
         int index = 1;
@@ -232,11 +232,11 @@ public class SeasonWindow
         subStageCombo.setItems(comboItems);
         subStageCombo.select(0);
     }
-    
+
     private void updateText()
     {
         Competition competitionToPrint;
-        
+
         if (tournamentCombo.getSelectionIndex() <= 0)
         {
             competitionToPrint = season.getSeasonCompetition();
@@ -264,13 +264,13 @@ public class SeasonWindow
                 }
             }
         }
-        
+
         OutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
         competitionToPrint.print(printStream);
         output.setText(outputStream.toString());
     }
-    
+
     public void open()
     {
         shell.open();

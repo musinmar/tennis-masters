@@ -225,7 +225,7 @@ public class MatchEngine
     private boolean isPlayerZoneTargeted(Player p)
     {
         if (getPitch().ball.fake_target.x < 0 || getPitch().ball.fake_target.x > Pitch.WIDTH
-            || getPitch().ball.fake_target.y > Pitch.HHEIGHT || getPitch().ball.fake_target.y < -Pitch.HHEIGHT)
+                || getPitch().ball.fake_target.y > Pitch.HHEIGHT || getPitch().ball.fake_target.y < -Pitch.HHEIGHT)
         {
             return false;
         }
@@ -270,7 +270,7 @@ public class MatchEngine
      else 
      return new DPoint(Pitch.WIDTH / 2, - Pitch.HHEIGHT / 2);
      }*/
-    private boolean isTargetSmartEnough(Player p, DPoint target)
+    private boolean isTargetSmartEnough(Player p, Point2d target)
     {
         Player opposite = getOppositePlayer(p);
         double dist = target.minus(opposite.position).norm();
@@ -285,7 +285,7 @@ public class MatchEngine
         }
     }
 
-    private boolean isTargetHighEnough(Player p, DPoint target)
+    private boolean isTargetHighEnough(Player p, Point2d target)
     {
         double net_zone_length = Math.abs(p.position.y) / Pitch.HHEIGHT * getNetZone();
         double mod = getPlayerModifier(p);
@@ -304,10 +304,10 @@ public class MatchEngine
         }
     }
 
-    private void hasBallHittedNet(Player p, DPoint target)
+    private void hasBallHittedNet(Player p, Point2d target)
     {
         double mod = getPlayerModifier(p);
-        DPoint d = target.minus(p.position);
+        Point2d d = target.minus(p.position);
         double k = Math.abs(p.position.y / (target.y - p.position.y));
         d = d.multiply(k);
         pitch.ball.target = p.position.plus(d);
@@ -316,9 +316,9 @@ public class MatchEngine
         net_hitted = true;
     }
 
-    private void getShotDistanceModification(Player p, DPoint target)
+    private void getShotDistanceModification(Player p, Point2d target)
     {
-        DPoint d = target.minus(p.position);
+        Point2d d = target.minus(p.position);
         double dist = d.norm();
 
         double optimal_shot_distance = getActualShotRange(p);
@@ -335,7 +335,7 @@ public class MatchEngine
     {
         double mod = getPlayerModifier(p);
 
-        DPoint target = new DPoint();
+        Point2d target = new Point2d();
         boolean found = false;
 
         double net_zone_length = Math.abs(p.position.y) / Pitch.HHEIGHT * getNetZone();
@@ -378,7 +378,7 @@ public class MatchEngine
         double target_x = b.target.x + Math.cos(phi) * r;
         double target_y = b.target.y + Math.sin(phi) * r;
 
-        b.fake_target = new DPoint(target_x, target_y);
+        b.fake_target = new Point2d(target_x, target_y);
     }
 
     private void hitBall(Player p)
@@ -410,7 +410,7 @@ public class MatchEngine
         }
     }
 
-    private DPoint getPlayerOptimalPosition(Player p)
+    private Point2d getPlayerOptimalPosition(Player p)
     {
         Player opp = getOppositePlayer(p);
         double net_zone_length = Math.abs(opp.position.y) / Pitch.HHEIGHT * getNetZone();
@@ -421,25 +421,25 @@ public class MatchEngine
         double mod = getPlayerModifier(p);
         double optimal_x = Pitch.WIDTH / 2;
         double optimal_y = mod * ((Pitch.HHEIGHT - net_zone_length) / 2 + net_zone_length);
-        return new DPoint(optimal_x, optimal_y);
+        return new Point2d(optimal_x, optimal_y);
     }
 
-    private void movePlayerToTarget(Player p, DPoint target)
+    private void movePlayerToTarget(Player p, Point2d target)
     {
         double speed = getActualPlayerSpeed(p);
         double acc = getActualPlayerAcceleration(p);
         double step = speed * TIME_STEP;
         double ac_step = acc * TIME_STEP;
 
-        DPoint v = p.direction.multiply(p.speed * TIME_STEP);
-        DPoint d = target.minus(p.position);
+        Point2d v = p.direction.multiply(p.speed * TIME_STEP);
+        Point2d d = target.minus(p.position);
         double dd = d.norm();
 
         if (dd > step)
         {//PLAYER_SPEED) {
             d = d.div(dd).multiply(step);
         }
-        DPoint dv = d.minus(v);
+        Point2d dv = d.minus(v);
         double dv_len = dv.norm();
 
         if (dv_len > ac_step)
@@ -454,18 +454,18 @@ public class MatchEngine
             p.direction = v.div(p.speed * TIME_STEP);
         }
 
-        DPoint move = p.direction.multiply(p.speed * TIME_STEP);
+        Point2d move = p.direction.multiply(p.speed * TIME_STEP);
         p.position = p.position.plus(move);
         decrasePlayerEnergy(p, move.norm() / getVenueSpeedModifier() * ENERGY_LOSS_PER_DISTANCE);
     }
 
     private void movePlayer(Player p)
     {
-        DPoint target;
+        Point2d target;
         //if (player_zone_targeted(p)) 
         if (getZoneHitThreat(p))
         {
-            target = new DPoint(getPitch().ball.fake_target);
+            target = new Point2d(getPitch().ball.fake_target);
             double mod = getPlayerModifier(p);
             if (target.y * mod < 0)
             {
@@ -494,7 +494,7 @@ public class MatchEngine
 
     private void performLyingAction(Player p)
     {
-        DPoint target = p.position;
+        Point2d target = p.position;
         movePlayerToTarget(p, target);
         p.lying_time += TIME_STEP;
         double lying_time = getActualLyingTime(p);
@@ -537,7 +537,7 @@ public class MatchEngine
 
     private void moveBall(Ball b)
     {
-        DPoint d = b.fake_target.minus(b.position);
+        Point2d d = b.fake_target.minus(b.position);
         double dd = d.norm();
         double dist_to_target = b.target.minus(b.position).norm();
         double step = TIME_STEP * b.speed;
@@ -555,7 +555,7 @@ public class MatchEngine
         }
         else
         {
-            DPoint fake_target_d = b.target.minus(b.fake_target).div(steps);
+            Point2d fake_target_d = b.target.minus(b.fake_target).div(steps);
             b.fake_target = b.fake_target.plus(fake_target_d);
         }
     }
@@ -575,7 +575,7 @@ public class MatchEngine
     private int getBallZone(Ball b)
     {
         if (b.position.x >= 0 && b.position.x <= Pitch.WIDTH
-            && b.position.y >= -Pitch.HHEIGHT && b.position.y <= Pitch.HHEIGHT)
+                && b.position.y >= -Pitch.HHEIGHT && b.position.y <= Pitch.HHEIGHT)
         {
             if (b.position.y >= 0)
             {

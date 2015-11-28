@@ -59,7 +59,7 @@ public class Match
     {
         return player_1;
     }
-    
+
     public void setFirstPlayer(Person person)
     {
         player_1 = person;
@@ -69,7 +69,7 @@ public class Match
     {
         return player_2;
     }
-    
+
     public void setSecondPlayer(Person person)
     {
         player_2 = person;
@@ -99,7 +99,7 @@ public class Match
     {
         return result;
     }
-    
+
     @Override
     public String toString()
     {

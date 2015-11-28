@@ -5,10 +5,10 @@ public class Score
     public static final int BASE_SET_LENGTH = 9;
     public static final int ADDITIONAL_SET_LENGTH = 6;
     public static final int MAX_SET_VALUE = 20;
-    
+
     public SetScore[] sets;
     public SetScore additionalTime;
-    
+
     public Score(int sets_count)
     {
         sets = new SetScore[sets_count];
@@ -40,13 +40,13 @@ public class Score
     {
         return sets.length;
     }
-    
-        public boolean isFirstPlayerWinner()
+
+    public boolean isFirstPlayerWinner()
     {
         SetScore scoreBySets = get_set_score();
         return scoreBySets.v1 > scoreBySets.v2;
     }
-    
+
     public boolean isDraw()
     {
         SetScore scoreBySets = get_set_score();
@@ -111,9 +111,12 @@ public class Score
             {
                 ret.v1++;
             }
-            else if (sets[i].v1 < sets[i].v2)
+            else
             {
-                ret.v2++;
+                if (sets[i].v1 < sets[i].v2)
+                {
+                    ret.v2++;
+                }
             }
         }
         if (additionalTime != null)
@@ -122,14 +125,17 @@ public class Score
             {
                 ret.v1++;
             }
-            else if (additionalTime.v1 < additionalTime.v2)
+            else
             {
-                ret.v2++;
+                if (additionalTime.v1 < additionalTime.v2)
+                {
+                    ret.v2++;
+                }
             }
         }
         return ret;
     }
-    
+
     public SetScore getGameScore()
     {
         SetScore ret = new SetScore();

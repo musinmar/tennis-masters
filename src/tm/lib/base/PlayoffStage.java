@@ -11,9 +11,12 @@ public class PlayoffStage extends MultiStageCompetition
         {
             roundCount = 2;
         }
-        else if (playerCount == 8)
+        else
         {
-            roundCount = 3;
+            if (playerCount == 8)
+            {
+                roundCount = 3;
+            }
         }
 
         Competition[] stages = new Competition[roundCount];
@@ -23,14 +26,14 @@ public class PlayoffStage extends MultiStageCompetition
             stages[i] = new PlayoffSubStage(this, roundPlayerCount);
             roundPlayerCount /= 2;
         }
-        
+
         stages[roundCount - 1].setName("Финал");
         stages[roundCount - 2].setName("1/2 Финала");
         if (roundCount - 3 > 0)
         {
             stages[roundCount - 3].setName("1/4 Финала");
         }
-        
+
         setStages(stages);
     }
 
@@ -54,15 +57,14 @@ public class PlayoffStage extends MultiStageCompetition
             getStages()[i].setStartingDate(date + i * 2);
         }
     }
-    
+
     @Override
     protected void setParticipants(Person[] participants)
     {
         super.setParticipants(participants);
         getStages()[0].setParticipants(participants);
     }
-    
-    
+
     @Override
     public void onCompetitionEnded(Competition competition)
     {
@@ -73,7 +75,7 @@ public class PlayoffStage extends MultiStageCompetition
                 int winnerCount = competition.getParticipants().length / 2;
                 Person[] nextStageParticipants = new Person[winnerCount];
                 System.arraycopy(getStages()[i].getPositions(), 0, nextStageParticipants, 0, winnerCount);
-                getStages()[i + 1].setParticipants(nextStageParticipants);                
+                getStages()[i + 1].setParticipants(nextStageParticipants);
             }
         }
         super.onCompetitionEnded(competition);

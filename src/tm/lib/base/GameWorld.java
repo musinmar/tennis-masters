@@ -19,7 +19,7 @@ public class GameWorld
         init();
         
         seasons = new ArrayList<Season>();
-        seasons.add(new Season(this));
+        seasons.add(new Season(this, 0));
     }
 
     public List<Season> getSeasons()

@@ -5,9 +5,9 @@
  */
 package tm.lib.engine;
 
-import tm.lib.base.Match;
-import tm.lib.base.Score;
-import tm.lib.base.SetScore;
+import tm.lib.domain.Match;
+import tm.lib.domain.Score;
+import tm.lib.domain.SetScore;
 
 /**
  *

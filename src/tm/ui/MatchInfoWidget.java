@@ -1,5 +1,6 @@
 package tm.ui;
 
+import tm.lib.domain.Match;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.DisposeEvent;
@@ -7,7 +8,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.*;
-import tm.lib.base.*;
 
 public class MatchInfoWidget extends Composite
 {

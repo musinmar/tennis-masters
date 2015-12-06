@@ -1,6 +1,7 @@
 package tm.lib.engine;
 
-import tm.lib.base.*;
+import tm.lib.domain.Match;
+import tm.lib.domain.Stadium;
 
 public class Pitch
 {

@@ -5,9 +5,9 @@
  */
 package tm.ui;
 
-import tm.lib.base.Match;
-import tm.lib.base.Person;
-import tm.lib.base.SetScore;
+import tm.lib.domain.Match;
+import tm.lib.domain.Person;
+import tm.lib.domain.SetScore;
 import tm.lib.engine.MatchEngine;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.Pitch;
@@ -40,7 +40,7 @@ public class UiMatchManager
         this.match = match;
         matchSimulator = new MatchSimulator(match);
         ui = match_window;
-
+        
         game_timer = new Runnable()
         {
             @Override

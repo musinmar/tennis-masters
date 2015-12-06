@@ -1,4 +1,4 @@
-package tm.lib.base;
+package tm.lib.domain;
 
 import java.util.LinkedList;
 import java.util.List;

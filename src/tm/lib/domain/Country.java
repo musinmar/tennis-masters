@@ -1,4 +1,4 @@
-package tm.lib.base;
+package tm.lib.domain;
 
 public enum Country
 {

@@ -1,5 +1,6 @@
 package tm.ui;
 
+import tm.lib.domain.GameWorld;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.RowData;
@@ -7,7 +8,6 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import tm.lib.base.*;
 
 public class MainWindow
 {

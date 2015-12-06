@@ -1,10 +1,11 @@
 package tm.ui;
 
+import tm.lib.domain.Score;
+import tm.lib.domain.Match;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
-import tm.lib.base.*;
 
 public class MatchWindow
 {

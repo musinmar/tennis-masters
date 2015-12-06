@@ -15,11 +15,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import tm.lib.base.Competition;
-import tm.lib.base.Match;
-import tm.lib.base.MultiStageCompetition;
-import tm.lib.base.Score;
-import tm.lib.base.Season;
+import tm.lib.domain.Competition;
+import tm.lib.domain.Match;
+import tm.lib.domain.MultiStageCompetition;
+import tm.lib.domain.Score;
+import tm.lib.domain.Season;
 import tm.lib.engine.MatchSimulator;
 
 public class SeasonWindow

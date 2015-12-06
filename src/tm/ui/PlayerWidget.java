@@ -6,7 +6,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.graphics.*;
-import tm.lib.base.*;
 import tm.lib.engine.*;
 
 public class PlayerWidget extends Composite

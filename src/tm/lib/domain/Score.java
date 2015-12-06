@@ -1,4 +1,4 @@
-package tm.lib.base;
+package tm.lib.domain;
 
 public class Score
 {
@@ -97,7 +97,7 @@ public class Score
         }
         if (additional && additionalTime != null)
         {
-            buf += " / ?. " + additionalTime;
+            buf += " / a. " + additionalTime;
         }
         return buf;
     }

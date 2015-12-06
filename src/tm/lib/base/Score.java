@@ -151,4 +151,30 @@ public class Score
         }
         return ret;
     }
+    
+    public void addPoint(int player, int set, boolean isAdditionalTime) {
+        assert player == 1 || player == 2;
+        if (!isAdditionalTime)
+        {
+            if (player == 1)
+            {
+                sets[set].v1 += 1;
+            }
+            else
+            {
+                sets[set].v2 += 1;
+            }
+        }
+        else
+        {
+            if (player == 1)
+            {
+                additionalTime.v1 += 1;
+            }
+            else
+            {
+                additionalTime.v2 += 1;
+            }
+        }
+    }
 }

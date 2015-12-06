@@ -1,8 +1,13 @@
 package tm.lib.base;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
 public class SeasonCompetition extends MultiStageCompetition
 {
-    private static final int TOURNAMENT_COUNT = 8;
+    private static final int TOURNAMENT_COUNT = 1;
 
     public SeasonCompetition(Season season, Person[] players)
     {
@@ -11,9 +16,14 @@ public class SeasonCompetition extends MultiStageCompetition
 
         Competition[] tournaments = new Competition[TOURNAMENT_COUNT];
 
-        for (int i = 0; i < 8; ++i)
+        for (int i = 0; i < TOURNAMENT_COUNT; ++i)
         {
-            Competition tournament = new StandardTournament(this, players);
+            List<Person> allPlayers = Arrays.asList(players);
+            Random r = new Random(System.currentTimeMillis());
+            Collections.shuffle(allPlayers, r);
+            Person[] tournamentPlayers = new Person[8];
+            tournamentPlayers = allPlayers.subList(0, 8).toArray(tournamentPlayers);
+            Competition tournament = new StandardTournament(this, tournamentPlayers);
             tournament.setVenue(Stadium.test_stadium());
             tournament.setStartingDate(8 * i);
             tournaments[i] = tournament;

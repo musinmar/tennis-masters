@@ -20,7 +20,7 @@ import tm.lib.base.Match;
 import tm.lib.base.MultiStageCompetition;
 import tm.lib.base.Score;
 import tm.lib.base.Season;
-import tm.lib.engine.SimpleMatchManager;
+import tm.lib.engine.MatchSimulator;
 
 public class SeasonWindow
 {
@@ -74,9 +74,32 @@ public class SeasonWindow
                 MatchWindow match_window = new MatchWindow(shell, match);
                 match_window.shell.setMaximized(true);
                 Score score = match_window.open();
-                /*SimpleMatchManager matchManager = new SimpleMatchManager(match);
-                 matchManager.start();
-                 Score score = matchManager.getScore();*/
+                if (score != null)
+                {
+                    season.processMatch(match, score);
+                    updateText();
+                }
+            }
+        });
+        
+        Button nextFastButton = new Button(shell, SWT.PUSH);
+        nextFastButton.setText("Следующий матч (быстро)");
+        data = new GridData();
+        data.verticalAlignment = GridData.END;
+        nextFastButton.setLayoutData(data);
+        nextFastButton.addSelectionListener(new SelectionAdapter()
+        {
+            @Override
+            public void widgetSelected(SelectionEvent e)
+            {
+                Match match = season.getNextMatch();
+                MatchSimulator matchSimulator = new MatchSimulator(match);
+                MatchSimulator.State state;
+                do
+                {
+                    state = matchSimulator.proceed();
+                } while (state != MatchSimulator.State.MATCH_ENDED);
+                Score score = matchSimulator.getScore();
                 if (score != null)
                 {
                     season.processMatch(match, score);

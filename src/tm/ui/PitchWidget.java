@@ -21,7 +21,7 @@ public class PitchWidget extends Canvas
     Point pitch_pos;
     public static final int HMARGIN = 5;
     public static final int VMARGIN = 10;
-    final Color PITCH_COLOR = TenisMasters.display.getSystemColor(SWT.COLOR_YELLOW);
+    final Color PITCH_COLOR = new Color(TenisMasters.display, 254, 251, 126);
     final Color LABEL_COLOR = TenisMasters.display.getSystemColor(SWT.COLOR_WHITE);
     Font font;
 	//Image buffer;

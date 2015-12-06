@@ -125,18 +125,18 @@ public class GroupSubStage extends SimpleCompetition
         super(parentCompetition);
         setParticipants(players);
 
-        List<Match> matches = new ArrayList<Match>(6);
-        Match match = new Match(this, players[0], players[2], 4, false);
+        List<Match> matches = new ArrayList<>(6);
+        Match match = new Match(this, players[0], players[2], 2, false);
         matches.add(match);
-        match = new Match(this, players[1], players[3], 4, false);
+        match = new Match(this, players[1], players[3], 2, false);
         matches.add(match);
-        match = new Match(this, players[0], players[3], 4, false);
+        match = new Match(this, players[0], players[3], 2, false);
         matches.add(match);
-        match = new Match(this, players[1], players[2], 4, false);
+        match = new Match(this, players[1], players[2], 2, false);
         matches.add(match);
-        match = new Match(this, players[0], players[1], 4, false);
+        match = new Match(this, players[0], players[1], 2, false);
         matches.add(match);
-        match = new Match(this, players[2], players[3], 4, false);
+        match = new Match(this, players[2], players[3], 2, false);
         matches.add(match);
         setMatches(matches);
 

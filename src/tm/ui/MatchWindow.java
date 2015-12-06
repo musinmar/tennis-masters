@@ -4,7 +4,6 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
-import tm.lib.engine.*;
 import tm.lib.base.*;
 
 public class MatchWindow
@@ -13,7 +12,7 @@ public class MatchWindow
     public Button start_button;
     Composite controls;
     Composite left_panel;
-    MatchManager manager;
+    UiMatchManager manager;
     public PlayerWidget player1_widget;
     public PlayerWidget player2_widget;
     public MatchInfoWidget match_info_widget;
@@ -23,7 +22,7 @@ public class MatchWindow
 
     MatchWindow(Shell parent, Match match)
     {
-        manager = new MatchManager(this, match);
+        manager = new UiMatchManager(this, match);
         started = false;
         final_score = null;
 
@@ -37,7 +36,7 @@ public class MatchWindow
         layout.verticalSpacing = 3;
         shell.setLayout(layout);
 
-        player1_widget = new PlayerWidget(shell, manager.match_engine.getPitch().player_1);
+        player1_widget = new PlayerWidget(shell, manager.getPitch().player_1);
         GridData data = new GridData();
         data.horizontalAlignment = GridData.CENTER;
         player1_widget.setLayoutData(data);
@@ -67,7 +66,7 @@ public class MatchWindow
 
         create_controls();
 
-        pitch_widget = new PitchWidget(shell, manager.match_engine.getPitch());
+        pitch_widget = new PitchWidget(shell, manager.getPitch());
         data = new GridData();
         data.horizontalAlignment = GridData.FILL;
         data.verticalAlignment = GridData.FILL;
@@ -75,7 +74,7 @@ public class MatchWindow
         data.grabExcessVerticalSpace = true;
         pitch_widget.setLayoutData(data);
 
-        player2_widget = new PlayerWidget(shell, manager.match_engine.getPitch().player_2);
+        player2_widget = new PlayerWidget(shell, manager.getPitch().player_2);
         data = new GridData();
         data.horizontalAlignment = GridData.CENTER;
         player2_widget.setLayoutData(data);

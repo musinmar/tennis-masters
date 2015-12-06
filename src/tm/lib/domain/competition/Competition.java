@@ -1,7 +1,10 @@
-package tm.lib.domain;
+package tm.lib.domain.competition;
 
+import tm.lib.domain.core.Stadium;
+import tm.lib.domain.core.Person;
 import java.io.PrintStream;
 import java.util.*;
+import tm.lib.domain.world.Season;
 
 abstract public class Competition implements IMatchEndListener
 {

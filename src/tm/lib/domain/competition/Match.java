@@ -1,5 +1,8 @@
-package tm.lib.domain;
+package tm.lib.domain.competition;
 
+import tm.lib.domain.core.Stadium;
+import tm.lib.domain.core.Score;
+import tm.lib.domain.core.Person;
 import java.util.LinkedList;
 import java.util.List;
 

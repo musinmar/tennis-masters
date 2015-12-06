@@ -1,11 +1,13 @@
-package tm.lib.domain;
+package tm.lib.domain.competition;
 
-public class SimpleFourTournament extends MultiStageCompetition
+import tm.lib.domain.core.Person;
+
+public class StandardTournament extends MultiStageCompetition
 {
-    public SimpleFourTournament(Season season, Person[] players)
+    public StandardTournament(Competition parentCompetition, Person[] players)
     {
-        super(season);
-        setName("Тестовый турнир");
+        super(parentCompetition);
+        setName("Стандартный турнир");
         setParticipants(players);
 
         Competition[] stages = new Competition[2];
@@ -34,7 +36,12 @@ public class SimpleFourTournament extends MultiStageCompetition
     {
         if (competition == getStages()[0])
         {
-            getStages()[1].setParticipants(competition.getPositions());
+            Person[] positions = competition.getPositions();
+            Person[] playoffParticipants = new Person[]
+            {
+                positions[0], positions[5], positions[4], positions[1]
+            };
+            getStages()[1].setParticipants(playoffParticipants);
         }
     }
 }

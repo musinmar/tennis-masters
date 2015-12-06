@@ -1,4 +1,4 @@
-package tm.lib.domain;
+package tm.lib.domain.competition;
 
 public interface ICompetitionEndListener
 {

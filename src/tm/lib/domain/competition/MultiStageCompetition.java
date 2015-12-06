@@ -1,4 +1,4 @@
-package tm.lib.domain;
+package tm.lib.domain.competition;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import tm.lib.domain.world.Season;
 
 abstract public class MultiStageCompetition extends Competition implements ICompetitionEndListener
 {

@@ -1,5 +1,6 @@
-package tm.lib.domain;
+package tm.lib.domain.world;
 
+import tm.lib.domain.core.Person;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;

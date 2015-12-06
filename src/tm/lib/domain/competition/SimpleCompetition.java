@@ -1,7 +1,8 @@
-package tm.lib.domain;
+package tm.lib.domain.competition;
 
 import java.io.PrintStream;
 import java.util.List;
+import tm.lib.domain.world.Season;
 
 abstract public class SimpleCompetition extends Competition
 {

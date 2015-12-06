@@ -1,6 +1,6 @@
 package tm.ui;
 
-import tm.lib.domain.GameWorld;
+import tm.lib.domain.world.GameWorld;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.RowData;

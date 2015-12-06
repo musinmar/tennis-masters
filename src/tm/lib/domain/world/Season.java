@@ -1,5 +1,10 @@
-package tm.lib.domain;
+package tm.lib.domain.world;
 
+import tm.lib.domain.competition.Match;
+import tm.lib.domain.competition.Competition;
+import tm.lib.domain.competition.SeasonCompetition;
+import tm.lib.domain.core.Score;
+import tm.lib.domain.core.Person;
 import java.io.PrintStream;
 import java.util.List;
 

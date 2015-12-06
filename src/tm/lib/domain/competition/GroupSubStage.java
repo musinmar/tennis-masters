@@ -1,5 +1,8 @@
-package tm.lib.domain;
+package tm.lib.domain.competition;
 
+import tm.lib.domain.core.Score;
+import tm.lib.domain.core.Person;
+import tm.lib.domain.core.SetScore;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;

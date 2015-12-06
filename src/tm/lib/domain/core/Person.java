@@ -1,4 +1,4 @@
-package tm.lib.domain;
+package tm.lib.domain.core;
 
 import org.w3c.dom.Element;
 
@@ -278,7 +278,7 @@ public class Person
         return dexterity;
     }
 
-    void init(Element playerElement)
+    public void init(Element playerElement)
     {
         String fullName = playerElement.getAttribute("name");
         int spaceIndex = fullName.indexOf(' ');

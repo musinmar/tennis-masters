@@ -5,9 +5,9 @@
  */
 package tm.ui;
 
-import tm.lib.domain.Match;
-import tm.lib.domain.Person;
-import tm.lib.domain.SetScore;
+import tm.lib.domain.competition.Match;
+import tm.lib.domain.core.Person;
+import tm.lib.domain.core.SetScore;
 import tm.lib.engine.MatchEngine;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.Pitch;

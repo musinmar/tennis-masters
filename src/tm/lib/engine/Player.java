@@ -1,6 +1,6 @@
 package tm.lib.engine;
 
-import tm.lib.domain.Person;
+import tm.lib.domain.core.Person;
 
 public class Player
 {

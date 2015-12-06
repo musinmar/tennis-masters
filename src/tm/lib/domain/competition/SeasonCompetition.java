@@ -1,9 +1,12 @@
-package tm.lib.domain;
+package tm.lib.domain.competition;
 
+import tm.lib.domain.core.Stadium;
+import tm.lib.domain.core.Person;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import tm.lib.domain.world.Season;
 
 public class SeasonCompetition extends MultiStageCompetition
 {

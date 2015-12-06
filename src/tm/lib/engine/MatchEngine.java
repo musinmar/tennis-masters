@@ -1,7 +1,7 @@
 package tm.lib.engine;
 
 import java.util.Random;
-import tm.lib.domain.Match;
+import tm.lib.domain.competition.Match;
 
 public class MatchEngine
 {

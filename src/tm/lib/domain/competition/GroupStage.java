@@ -1,4 +1,6 @@
-package tm.lib.domain;
+package tm.lib.domain.competition;
+
+import tm.lib.domain.core.Person;
 
 public class GroupStage extends MultiStageCompetition
 {

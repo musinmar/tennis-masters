@@ -7,8 +7,7 @@ public class SetScore
 
     public SetScore()
     {
-        v1 = 0;
-        v2 = 0;
+        this(0, 0);
     }
 
     public SetScore(int value1, int value2)
@@ -19,10 +18,10 @@ public class SetScore
 
     public SetScore(SetScore other)
     {
-        v1 = other.v1;
-        v2 = other.v2;
+        this(other.v1, other.v2);
     }
 
+    @Override
     public String toString()
     {
         return v1 + ":" + v2;

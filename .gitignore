@@ -6,3 +6,5 @@ build
 .project
 build.xml
 manifest.mf
+/target/
+nbactions.xml

@@ -13,16 +13,15 @@ public class Point2d
         y = 0;
     }
 
-    public Point2d(double value_x, double value_y)
+    public Point2d(double x, double y)
     {
-        x = value_x;
-        y = value_y;
+        this.x = x;
+        this.y = y;
     }
 
     public Point2d(Point2d other)
     {
-        x = other.x;
-        y = other.y;
+        this(other.x, other.y);
     }
 
     public void set(Point2d other)

@@ -2,21 +2,22 @@ package tm.lib.engine;
 
 import tm.lib.domain.core.Person;
 
-public class Player
-{
-    public Person person;
+public class Player {
+
+    private final Person person;
+    private final Side side;
+
     public Point2d position;
     public Point2d direction;
     public double speed;
-    public int id;
     public boolean lying;
     public double lying_time;
-    public double energy;
+    private double energy;
 
-    public Player(Person person, int index)
-    {
+    public Player(Person person, Side side) {
         this.person = person;
-        id = index;
+        this.side = side;
+        
         position = new Point2d();
         direction = new Point2d();
         speed = 0;
@@ -25,21 +26,20 @@ public class Player
         energy = 100;
     }
 
-    public void loose_energy(double value)
-    {
-        energy -= value;
-        if (energy < 0)
-        {
-            energy = 0;
-        }
+    public Person getPerson() {
+        return person;
     }
 
-    public void regain_energy(double value)
-    {
-        energy += value;
-        if (energy > 100)
-        {
-            energy = 100;
-        }
+    public Side getSide() {
+        return side;
+    }
+
+    public double getEnergy() {
+        return energy;
+    }
+    
+    public void changeEnergy(double dif) {
+        double newEnergy = energy + dif;
+        energy = Math.max(Math.min(newEnergy, 100), 0);
     }
 }

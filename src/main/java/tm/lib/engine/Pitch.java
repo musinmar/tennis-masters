@@ -1,6 +1,6 @@
 package tm.lib.engine;
 
-import tm.lib.domain.competition.Match;
+import tm.lib.domain.core.Person;
 import tm.lib.domain.core.Stadium;
 
 public class Pitch
@@ -18,12 +18,12 @@ public class Pitch
     static public final double TARGET_SIZE = 2;
     static public final double FAKE_TARGET_SIZE = 8;
 
-    public Pitch(Match match)
+    public Pitch(Person firstPlayer, Person secondPlayer, Stadium venue)
     {
-        player_1 = new Player(match.getFirstPlayer(), 1);
-        player_2 = new Player(match.getSecondPlayer(), 2);
+        player_1 = new Player(firstPlayer, Side.HOME);
+        player_2 = new Player(secondPlayer, Side.AWAY);
         ball = new Ball();
-        venue = match.getVenue();
+        this.venue = venue;
 
         set_initial_pos(1);
     }

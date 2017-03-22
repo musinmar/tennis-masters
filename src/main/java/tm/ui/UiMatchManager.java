@@ -184,7 +184,7 @@ public class UiMatchManager
     private void match_end_actions()
     {
         ui.start_button.setEnabled(false);
-        ui.final_score = matchSimulator.getScore();
+        ui.final_score = matchSimulator.getCurrentScore();
     }
 
     private void show_game_result_caption()
@@ -198,25 +198,25 @@ public class UiMatchManager
         {
             won = match.getSecondPlayer();
         }
-        ui.match_info_widget.score_label.setText(matchSimulator.getScore().toString());
+        ui.match_info_widget.score_label.setText(matchSimulator.getCurrentScore().toString());
         ui.match_info_widget.score_label.pack();
         //ui.match_info_widget.score_label.pack();
         ui.shell.layout();
         ui.pitch_widget.set_upper_text("Игрок " + won.getFullName() + " выиграл гейм.");
-        ui.pitch_widget.set_bottom_text("Счёт в игре: " + matchSimulator.getScore().get_short_score(matchSimulator.getCurrentSet(), true));
+        ui.pitch_widget.set_bottom_text("Счёт в игре: " + matchSimulator.getCurrentScore());
     }
 
     private void show_set_result_caption()
     {
-        Person won = (matchSimulator.getLastSetResult() == Side.HOME) ? match.getFirstPlayer() : match.getSecondPlayer();
+        Person won = (matchSimulator.getLastGameResult()== Side.HOME) ? match.getFirstPlayer() : match.getSecondPlayer();
         ui.pitch_widget.set_upper_text("Сет разыгран, победитель -  " + won.getFullName());
-        ui.pitch_widget.set_bottom_text("Счёт в игре: " + matchSimulator.getScore().get_short_score(matchSimulator.getCurrentSet(), true));
+        ui.pitch_widget.set_bottom_text("Счёт в игре: " + matchSimulator.getCurrentScore());
     }
 
     private void show_match_result_caption()
     {
         Person won;
-        SetScore s = matchSimulator.getScore().get_set_score();
+        SetScore s = matchSimulator.getCurrentScore().get_set_score();
         if (s.v1 > s.v2)
         {
             won = match.getFirstPlayer();
@@ -231,7 +231,7 @@ public class UiMatchManager
             {
                 if (match.isPlayoff())
                 {
-                    if (matchSimulator.getScore().additionalTime.v1 > matchSimulator.getScore().additionalTime.v2)
+                    if (matchSimulator.getCurrentScore().additionalTime.v1 > matchSimulator.getCurrentScore().additionalTime.v2)
                     {
                         won = match.getFirstPlayer();
                     }
@@ -254,7 +254,7 @@ public class UiMatchManager
         {
             ui.pitch_widget.set_upper_text("Матч завершён, итоговый результат - ничья");
         }
-        ui.pitch_widget.set_bottom_text("Счёт в игре: " + matchSimulator.getScore().get_short_score(matchSimulator.getCurrentSet(), true));
+        ui.pitch_widget.set_bottom_text("Счёт в игре: " + matchSimulator.getCurrentScore());
     }
 
     private void hide_result_caption()

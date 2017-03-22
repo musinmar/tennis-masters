@@ -66,10 +66,10 @@ public class MatchInfoWidget extends Composite
         time_label.setText("00:00");
     }
 
-    public void set_time(int time)
+    public void set_time(long time)
     {
-        int secs = time / 1000;
-        int mins = secs / 60;
+        long secs = time / 1000;
+        long mins = secs / 60;
         secs = secs % 60;
 
         String ss = String.valueOf(secs);

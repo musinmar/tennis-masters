@@ -99,7 +99,7 @@ public class SeasonWindow
                 {
                     state = matchSimulator.proceed();
                 } while (state != MatchSimulator.State.MATCH_ENDED);
-                Score score = matchSimulator.getScore();
+                Score score = matchSimulator.getCurrentScore();
                 if (score != null)
                 {
                     season.processMatch(match, score);

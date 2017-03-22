@@ -22,9 +22,9 @@ public class MatchSimulator
     
     private int currentSet = 0;
     private boolean isAdditionalTime = false;
-    private int servingPlayer = 1;
-    private int lastGameResult = -1;
-    private int lastSetResult = -1;
+    private Side servingSide = Side.HOME;
+    private Side lastGameResult;
+    private Side lastSetResult;
 
     public MatchSimulator(Match match)
     {
@@ -43,15 +43,15 @@ public class MatchSimulator
         return currentScore;
     }
     
-    public int getLastGameResult()
+    public Side getLastGameResult()
     {
-        assert lastGameResult != -1;
+        assert lastGameResult != null;
         return lastGameResult;
     }
 
-    public int getLastSetResult()
+    public Side getLastSetResult()
     {
-        assert lastSetResult != -1;
+        assert lastSetResult != null;
         return lastSetResult;
     }
     
@@ -76,7 +76,7 @@ public class MatchSimulator
     {
         matchEngine.next();
         matchTime += (int) (MatchEngine.TIME_STEP * 1000);
-        if (matchEngine.getGameResult() == 0)   
+        if (matchEngine.getWinningSide() == null)   
         {
             return State.PLAYING;
         }
@@ -86,8 +86,8 @@ public class MatchSimulator
 
     private State performEndOfGameActions()
     {
-        lastGameResult = matchEngine.getGameResult();
-        currentScore.addPoint(matchEngine.getGameResult(), currentSet, isAdditionalTime);        
+        lastGameResult = matchEngine.getWinningSide();
+        currentScore.addPoint(matchEngine.getWinningSide().ordinal(), currentSet, isAdditionalTime);        
         matchEngine.performEndOfGameActions();
         if (!checkSetEnd())
         {
@@ -95,7 +95,7 @@ public class MatchSimulator
             {
                 switchServingPlayer();
             }
-            matchEngine.reset(servingPlayer);
+            matchEngine.reset(servingSide);
             return State.GAME_ENDED;
         }
         
@@ -104,7 +104,7 @@ public class MatchSimulator
     
     private void switchServingPlayer()
     {
-        servingPlayer = (servingPlayer == 1) ? 2 : 1;
+        servingSide = servingSide.getOpposite();
     }
     
     private boolean checkSetEnd()
@@ -163,22 +163,22 @@ public class MatchSimulator
         {
             if (currentScore.sets[currentSet].v1 > currentScore.sets[currentSet].v2)
             {
-                lastSetResult = 1;
+                lastSetResult = Side.HOME;
             }
             else
             {
-                lastSetResult = 2;
+                lastSetResult = Side.AWAY;
             }
         }
         else
         {
             if (currentScore.additionalTime.v1 > currentScore.additionalTime.v2)
             {
-                lastSetResult = 1;
+                lastSetResult = Side.HOME;
             }
             else
             {
-                lastSetResult = 2;
+                lastSetResult = Side.AWAY;
             }
         }
         
@@ -197,9 +197,9 @@ public class MatchSimulator
         {
             isAdditionalTime = true;
             currentScore.additionalTime = new SetScore();
-            servingPlayer = 1;
+            servingSide = Side.HOME;
         }
-        matchEngine.reset(servingPlayer);
+        matchEngine.reset(servingSide);
         return State.SET_ENDED;
     }
     

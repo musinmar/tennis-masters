@@ -25,10 +25,10 @@ public class Pitch
         ball = new Ball();
         this.venue = venue;
 
-        set_initial_pos(1);
+        setInitialPositions(Side.HOME);
     }
 
-    public void set_initial_pos(int start_player)
+    public void setInitialPositions(Side startingSide)
     {
         player_1.position.x = WIDTH / 2;
         player_1.position.y = HHEIGHT / 3 * 2;
@@ -41,22 +41,12 @@ public class Pitch
         player_2.speed = 0;
         player_2.lying = false;
 
-        double p_coef = 1;
-        if (start_player == 1)
-        {
-            ball.position.set(player_1.position);
-            p_coef = 1;
-        }
-        else
-        {
-            ball.position.set(player_2.position);
-            p_coef = -1;
-        }
-
-        ball.position.y -= p_coef * 10;
+        ball.position.set(startingSide == Side.HOME ? player_1.position : player_2.position);
+        double modifier = startingSide.getModifier();
+        ball.position.y -= modifier * 10;
         ball.target.set(ball.position);
         ball.fake_target.set(ball.position);
-        ball.target.y -= p_coef * 50;
-        ball.fake_target.y -= p_coef * 70;
+        ball.target.y -= modifier * 50;
+        ball.fake_target.y -= modifier * 70;
     }
 }

@@ -6,9 +6,10 @@ import tm.lib.domain.competition.Match;
 public class MatchEngine
 {
     private Pitch pitch;
-    private int gameResult;
+    private Side winningSide;
     private Player lastHittedPlayer;
     private boolean net_hitted;
+    
     private static Random random = new Random(System.currentTimeMillis());
     public static final double TIME_STEP = 0.02;
     private static final double PLAYER_HAND_LENGTH = 15;
@@ -57,14 +58,14 @@ public class MatchEngine
     public MatchEngine(Match match)
     {
         pitch = new Pitch(match.getFirstPlayer(), match.getSecondPlayer(), match.getVenue());
-        pitch.set_initial_pos(1);
+        pitch.setInitialPositions(Side.HOME);
         lastHittedPlayer = null;
     }
 
-    public void reset(int player)
+    public void reset(Side startingSide)
     {
-        getPitch().set_initial_pos(player);
-        gameResult = 0;
+        getPitch().setInitialPositions(startingSide);
+        winningSide = null;
     }
 
     public void next()
@@ -79,21 +80,14 @@ public class MatchEngine
         return pitch;
     }
 
-    public int getGameResult()
+    public Side getWinningSide()
     {
-        return gameResult;
+        return winningSide;
     }
 
-    private Player getPlayer(int index)
+    private Player getPlayer(Side side)
     {
-        if (index == 1)
-        {
-            return getPitch().player_1;
-        }
-        else
-        {
-            return getPitch().player_2;
-        }
+        return side == Side.HOME ? getPitch().player_1 : getPitch().player_2;
     }
 
     private Player getOppositePlayer(Player p)
@@ -552,41 +546,41 @@ public class MatchEngine
         }
     }
 
-    private void endGame(int zone_hitted)
+    private void endGame(Side sideHitted)
     {
-        if (zone_hitted == 0)
+        if (sideHitted == null)
         {
-            gameResult = 2 - lastHittedPlayer.getSide().ordinal();
+            winningSide = lastHittedPlayer.getSide().getOpposite();
         }
         else
         {
-            gameResult = 3 - zone_hitted;
+            winningSide = sideHitted.getOpposite();
         }
     }
 
-    private int getBallZone(Ball b)
+    private Side getBallSide(Ball b)
     {
         if (b.position.x >= 0 && b.position.x <= Pitch.WIDTH
                 && b.position.y >= -Pitch.HHEIGHT && b.position.y <= Pitch.HHEIGHT)
         {
             if (b.position.y >= 0)
             {
-                return 1;
+                return Side.HOME;
             }
             else
             {
-                return 2;
+                return Side.AWAY;
             }
         }
         else
         {
-            return 0;
+            return null;
         }
     }
 
-    private boolean trySave(int zone_hitted)
+    private boolean trySave(Side sideHitted)
     {
-        Player p = getPlayer(zone_hitted);
+        Player p = getPlayer(sideHitted);
         double save_max_distance = PLAYER_HAND_LENGTH + getActualSaveAddDistance(p);
         if (p.position.minus(getPitch().ball.position).norm() <= save_max_distance && !p.lying)
         {
@@ -606,10 +600,10 @@ public class MatchEngine
     {
         if (hasBallHittedGround(b))
         {
-            int zone = getBallZone(b);
-            if (zone == 0 || !trySave(zone))
+            Side side = getBallSide(b);
+            if (side == null || !trySave(side))
             {
-                endGame(zone);
+                endGame(side);
             }
         }
         else

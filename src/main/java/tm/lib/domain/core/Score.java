@@ -153,10 +153,10 @@ public class Score
     }
     
     public void addPoint(int player, int set, boolean isAdditionalTime) {
-        assert player == 1 || player == 2;
+        assert player == 0 || player == 1;
         if (!isAdditionalTime)
         {
-            if (player == 1)
+            if (player == 0)
             {
                 sets[set].v1 += 1;
             }
@@ -167,7 +167,7 @@ public class Score
         }
         else
         {
-            if (player == 1)
+            if (player == 0)
             {
                 additionalTime.v1 += 1;
             }

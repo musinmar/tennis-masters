@@ -11,6 +11,7 @@ import tm.lib.domain.core.SetScore;
 import tm.lib.engine.MatchEngine;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.Pitch;
+import tm.lib.engine.Side;
 
 /**
  *
@@ -189,7 +190,7 @@ public class UiMatchManager
     private void show_game_result_caption()
     {
         Person won;
-        if (matchSimulator.getLastGameResult() == 1)
+        if (matchSimulator.getLastGameResult() == Side.HOME)
         {
             won = match.getFirstPlayer();
         }
@@ -207,7 +208,7 @@ public class UiMatchManager
 
     private void show_set_result_caption()
     {
-        Person won = (matchSimulator.getLastSetResult() == 1) ? match.getFirstPlayer() : match.getSecondPlayer();
+        Person won = (matchSimulator.getLastSetResult() == Side.HOME) ? match.getFirstPlayer() : match.getSecondPlayer();
         ui.pitch_widget.set_upper_text("Сет разыгран, победитель -  " + won.getFullName());
         ui.pitch_widget.set_bottom_text("Счёт в игре: " + matchSimulator.getScore().get_short_score(matchSimulator.getCurrentSet(), true));
     }

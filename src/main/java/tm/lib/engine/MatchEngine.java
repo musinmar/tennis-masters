@@ -246,7 +246,7 @@ public class MatchEngine {
         net_hitted = true;
     }
 
-    private void getShotDistanceModification(Player p, Point2d target) {
+    private Point2d applyShotDistanceModification(Player p, Point2d target) {
         Point2d d = target.subtractedBy(p.getPosition());
         double dist = d.norm();
 
@@ -255,8 +255,10 @@ public class MatchEngine {
             double excess = dist - optimal_shot_distance;
             double r = Math.pow(random.nextDouble(), 2);
             d = d.multipliedBy((optimal_shot_distance + excess * r) / (optimal_shot_distance + excess));
-            target.set(d.summedWith(p.getPosition()));
+            target = d.summedWith(p.getPosition());
         }
+        
+        return target;
     }
 
     private void getNewBallTarget(Player p, Ball b) {
@@ -268,8 +270,9 @@ public class MatchEngine {
         double net_zone_length = Math.abs(p.getPosition().y) / Pitch.HALF_HEIGHT * getNetZone();
         double risk_margin = getActualRiskMargin(p);
         while (!found) {
-            target.x = random.nextDouble() * (Pitch.WIDTH - 2 * risk_margin) + risk_margin;
-            target.y = -mod * (random.nextDouble() * (Pitch.HALF_HEIGHT - net_zone_length - 2 * risk_margin) + net_zone_length + risk_margin);
+            double x = random.nextDouble() * (Pitch.WIDTH - 2 * risk_margin) + risk_margin;
+            double y = -mod * (random.nextDouble() * (Pitch.HALF_HEIGHT - net_zone_length - 2 * risk_margin) + net_zone_length + risk_margin);
+            target = new Point2d(x, y);
             //target.y = -mod * random.nextDouble() * Pitch.HHEIGHT;
 
             if (isTargetSmartEnough(p, target)) {
@@ -277,13 +280,14 @@ public class MatchEngine {
             }
         }
 
-        getShotDistanceModification(p, target);
+        target = applyShotDistanceModification(p, target);
 
         double target_range = getActualTargetRange(p);
         double phi = random.nextDouble() * 2 * Math.PI;
         double r = random.nextDouble() * target_range;
-        target.x = target.x + Math.cos(phi) * r;
-        target.y = target.y + Math.sin(phi) * r;
+        double x = target.x + Math.cos(phi) * r;
+        double y = target.y + Math.sin(phi) * r;
+        target = new Point2d(x, y);
 
         if (!isTargetHighEnough(p, target)) {
             hasBallHittedNet(p, target);
@@ -370,17 +374,20 @@ public class MatchEngine {
         Point2d target;
         //if (player_zone_targeted(p)) 
         if (getZoneHitThreat(p)) {
-            target = new Point2d(getPitch().getBall().getFakeTarget());
+            target = getPitch().getBall().getFakeTarget();
             double mod = getPlayerModifier(p);
-            if (target.y * mod < 0) {
-                target.y = 0;
+            double x = target.x;
+            double y = target.y;
+            if (y * mod < 0) {
+                y = 0;
             }
-            if (target.x < 0) {
-                target.x = 0;
+            if (x < 0) {
+                x = 0;
             }
-            if (target.x > Pitch.WIDTH) {
-                target.x = Pitch.WIDTH;
+            if (x > Pitch.WIDTH) {
+                x = Pitch.WIDTH;
             }
+            target = new Point2d(x, y);
             /*if (target.y > mod * Pitch.HHEIGHT) {
              target.y 
              }*/

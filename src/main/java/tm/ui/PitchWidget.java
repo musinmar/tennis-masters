@@ -140,8 +140,7 @@ public class PitchWidget extends Canvas
         else
         {
             coef = s.x / Pitch.WIDTH;
-            psize.x = Pitch.WIDTH;
-            psize.y = Pitch.HEIGHT;
+            psize = new Point2d(Pitch.WIDTH, Pitch.HEIGHT);
             psize = psize.multipliedBy(coef);
             pitch_size = psize.toPoint();
             pitch_pos = new Point(HMARGIN, (s.y - pitch_size.y) / 2 + VMARGIN);

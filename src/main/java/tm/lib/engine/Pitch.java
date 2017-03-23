@@ -1,5 +1,6 @@
 package tm.lib.engine;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import tm.lib.domain.core.Person;
 import tm.lib.domain.core.Stadium;
 
@@ -42,16 +43,16 @@ public class Pitch {
     }
     
     public void setInitialPositions(Side startingSide) {
-        Point2d startingPosition = new Point2d(WIDTH / 2, HALF_HEIGHT / 3 * 2);
-        Point2d startingDirection = new Point2d(0, -1);
+        Vector2D startingPosition = new Vector2D(WIDTH / 2, HALF_HEIGHT / 3 * 2);
+        Vector2D startingDirection = new Vector2D(0, -1);
         
         homePlayer.resetState(startingPosition, startingDirection);
         awayPlayer.resetState(VectorUtils.mirror(startingPosition), VectorUtils.mirror(startingDirection));
 
-        Point2d startingPlayerPosition = getPlayer(startingSide).getPosition();
-        Point2d startingPlayerDirection = getPlayer(startingSide).getDirection();
-        ball.setPosition(startingPlayerPosition.add(startingPlayerDirection.scalarMultiply(10)));
-        ball.setRealTarget(startingPlayerPosition.add(startingPlayerDirection.scalarMultiply(50)));
-        ball.setFakeTarget(startingPlayerPosition.add(startingPlayerDirection.scalarMultiply(70)));
+        Vector2D startingPlayerPosition = getPlayer(startingSide).getPosition();
+        Vector2D startingPlayerDirection = getPlayer(startingSide).getDirection();
+        ball.setPosition(startingPlayerPosition.add(10, startingPlayerDirection));
+        ball.setRealTarget(startingPlayerPosition.add(50, startingPlayerDirection));
+        ball.setFakeTarget(startingPlayerPosition.add(70, startingPlayerDirection));
     }
 }

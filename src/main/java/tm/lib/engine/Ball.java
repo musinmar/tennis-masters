@@ -1,41 +1,43 @@
 package tm.lib.engine;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
 public class Ball
 {
-    private Point2d position;
-    private Point2d realTarget;
-    private Point2d fakeTarget;
+    private Vector2D position;
+    private Vector2D realTarget;
+    private Vector2D fakeTarget;
     private double speed;
 
     public Ball()
     {
-        position = new Point2d(0, 0);
-        realTarget = new Point2d(0, 0);
-        fakeTarget = new Point2d(0, 0);
+        position = Vector2D.ZERO;
+        realTarget = Vector2D.ZERO;
+        fakeTarget = Vector2D.ZERO;
         speed = 0;
     }
 
-    public Point2d getPosition() {
+    public Vector2D getPosition() {
         return position;
     }
 
-    public void setPosition(Point2d position) {
+    public void setPosition(Vector2D position) {
         this.position = position;
     }
 
-    public Point2d getRealTarget() {
+    public Vector2D getRealTarget() {
         return realTarget;
     }
 
-    public void setRealTarget(Point2d realTarget) {
+    public void setRealTarget(Vector2D realTarget) {
         this.realTarget = realTarget;
     }
 
-    public Point2d getFakeTarget() {
+    public Vector2D getFakeTarget() {
         return fakeTarget;
     }
 
-    public void setFakeTarget(Point2d fakeTarget) {
+    public void setFakeTarget(Vector2D fakeTarget) {
         this.fakeTarget = fakeTarget;
     }
 

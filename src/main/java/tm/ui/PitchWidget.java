@@ -1,5 +1,6 @@
 package tm.ui;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
@@ -128,7 +129,7 @@ public class PitchWidget extends Canvas
         s.x -= 2 * HMARGIN;
         s.y -= 2 * VMARGIN;
 
-        Point2d psize = new Point2d(Pitch.WIDTH, Pitch.HEIGHT);
+        Vector2D psize = new Vector2D(Pitch.WIDTH, Pitch.HEIGHT);
         double coef = s.y / Pitch.HEIGHT;
         psize = psize.scalarMultiply(coef);
 
@@ -140,14 +141,14 @@ public class PitchWidget extends Canvas
         else
         {
             coef = s.x / Pitch.WIDTH;
-            psize = new Point2d(Pitch.WIDTH, Pitch.HEIGHT);
+            psize = new Vector2D(Pitch.WIDTH, Pitch.HEIGHT);
             psize = psize.scalarMultiply(coef);
             pitch_size = VectorUtils.toPoint(psize);
             pitch_pos = new Point(HMARGIN, (s.y - pitch_size.y) / 2 + VMARGIN);
         }
     }
 
-    private Point widget_pos(Point2d pos)
+    private Point widget_pos(Vector2D pos)
     {
         double coef = pitch_size_coef();
         int x = (int) (pos.getX() * coef + pitch_pos.x);

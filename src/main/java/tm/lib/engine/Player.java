@@ -1,5 +1,6 @@
 package tm.lib.engine;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import tm.lib.domain.core.Person;
 
 public class Player {
@@ -7,8 +8,8 @@ public class Player {
     private final Person person;
     private final Side side;
 
-    private Point2d position;
-    private Point2d direction;
+    private Vector2D position;
+    private Vector2D direction;
     private double speed;
     private boolean lying;
     private double lyingTime;
@@ -18,8 +19,8 @@ public class Player {
         this.person = person;
         this.side = side;
 
-        position = new Point2d(0, 0);
-        direction = new Point2d(0, 0);
+        position = Vector2D.ZERO;
+        direction = Vector2D.ZERO;
         speed = 0;
         lying = false;
         lyingTime = 0;
@@ -34,19 +35,19 @@ public class Player {
         return side;
     }
 
-    public Point2d getPosition() {
+    public Vector2D getPosition() {
         return position;
     }
 
-    public void setPosition(Point2d position) {
+    public void setPosition(Vector2D position) {
         this.position = position;
     }
 
-    public Point2d getDirection() {
+    public Vector2D getDirection() {
         return direction;
     }
 
-    public void setDirection(Point2d direction) {
+    public void setDirection(Vector2D direction) {
         this.direction = direction;
     }
 
@@ -92,7 +93,7 @@ public class Player {
         setLyingTime(0);
     }
 
-    public void resetState(Point2d position, Point2d direction) {
+    public void resetState(Vector2D position, Vector2D direction) {
         setPosition(position);
         setDirection(direction);
         setSpeed(0);

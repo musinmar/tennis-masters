@@ -30,24 +30,28 @@ public class Point2d
         y = other.y;
     }
 
-    public Point2d multiply(double v)
+    public Point2d multipliedBy(double v)
     {
         return new Point2d(x * v, y * v);
     }
 
-    public Point2d div(double v)
+    public Point2d dividedBy(double v)
     {
         return new Point2d(x / v, y / v);
     }
 
-    public Point2d plus(Point2d other)
+    public Point2d summedWith(Point2d other)
     {
         return new Point2d(x + other.x, y + other.y);
     }
 
-    public Point2d minus(Point2d other)
+    public Point2d subtractedBy(Point2d other)
     {
         return new Point2d(x - other.x, y - other.y);
+    }
+    
+    public Point2d mirrored() {
+        return new Point2d(x, -y);
     }
 
     public Point to_point()

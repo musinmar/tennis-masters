@@ -21,10 +21,8 @@ public class Pitch {
     public Pitch(Person homePlayer, Person awayPlayer, Stadium venue) {
         this.homePlayer = new Player(homePlayer, Side.HOME);
         this.awayPlayer = new Player(awayPlayer, Side.AWAY);
-        ball = new Ball();
+        this.ball = new Ball();
         this.venue = venue;
-
-        setInitialPositions(Side.HOME);
     }
 
     public Player getPlayer(Side side) {
@@ -44,23 +42,16 @@ public class Pitch {
     }
     
     public void setInitialPositions(Side startingSide) {
-        homePlayer.position.x = WIDTH / 2;
-        homePlayer.position.y = HALF_HEIGHT / 3 * 2;
-        homePlayer.direction = new Point2d(0, -1);
-        homePlayer.speed = 0;
-        homePlayer.lying = false;
-        awayPlayer.position.x = WIDTH / 2;
-        awayPlayer.position.y = -HALF_HEIGHT / 3 * 2;
-        awayPlayer.direction = new Point2d(0, 1);
-        awayPlayer.speed = 0;
-        awayPlayer.lying = false;
+        Point2d startingPosition = new Point2d(WIDTH / 2, HALF_HEIGHT / 3 * 2);
+        Point2d startingDirection = new Point2d(0, -1);
+        
+        homePlayer.resetState(startingPosition, startingDirection);
+        awayPlayer.resetState(startingPosition.mirrored(), startingDirection.mirrored());
 
-        ball.position.set(startingSide == Side.HOME ? homePlayer.position : awayPlayer.position);
-        double modifier = startingSide.getModifier();
-        ball.position.y -= modifier * 10;
-        ball.target.set(ball.position);
-        ball.fake_target.set(ball.position);
-        ball.target.y -= modifier * 50;
-        ball.fake_target.y -= modifier * 70;
+        Point2d startingPlayerPosition = getPlayer(startingSide).getPosition();
+        Point2d startingPlayerDirection = getPlayer(startingSide).getDirection();
+        ball.position = startingPlayerPosition.summedWith(startingPlayerDirection.multipliedBy(10));
+        ball.target = startingPlayerPosition.summedWith(startingPlayerDirection.multipliedBy(50));
+        ball.fake_target = startingPlayerPosition.summedWith(startingPlayerDirection.multipliedBy(70));
     }
 }

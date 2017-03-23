@@ -130,7 +130,7 @@ public class PitchWidget extends Canvas
 
         Point2d psize = new Point2d(Pitch.WIDTH, Pitch.HEIGHT);
         double coef = s.y / Pitch.HEIGHT;
-        psize = psize.multiply(coef);
+        psize = psize.multipliedBy(coef);
 
         if ((int) psize.x <= s.x)
         {
@@ -142,7 +142,7 @@ public class PitchWidget extends Canvas
             coef = s.x / Pitch.WIDTH;
             psize.x = Pitch.WIDTH;
             psize.y = Pitch.HEIGHT;
-            psize = psize.multiply(coef);
+            psize = psize.multipliedBy(coef);
             pitch_size = psize.to_point();
             pitch_pos = new Point(HMARGIN, (s.y - pitch_size.y) / 2 + VMARGIN);
         }
@@ -226,8 +226,8 @@ public class PitchWidget extends Canvas
         {
             radius = 1;
         }
-        Point pos = widget_pos(p.position);
-        if (!p.lying)
+        Point pos = widget_pos(p.getPosition());
+        if (!p.isLying())
         {
             gc.setForeground(TenisMasters.display.getSystemColor(SWT.COLOR_DARK_BLUE));
             gc.setBackground(TenisMasters.display.getSystemColor(SWT.COLOR_BLUE));

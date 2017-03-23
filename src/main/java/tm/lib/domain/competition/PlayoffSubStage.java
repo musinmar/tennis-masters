@@ -60,7 +60,7 @@ public class PlayoffSubStage extends SimpleCompetition
             Match m = getAllMatches().get(i);
             if (m.getResult() != null)
             {
-                SetScore s = m.getResult().get_set_score();
+                SetScore s = m.getResult().getScoreBySets();
                 if (s.v1 > s.v2)
                 {
                     positions[i] = m.getFirstPlayer();

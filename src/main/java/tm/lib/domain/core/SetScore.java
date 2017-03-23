@@ -2,12 +2,8 @@ package tm.lib.domain.core;
 
 public class SetScore {
 
-    public int v1;
-    public int v2;
-
-    public SetScore() {
-        this(0, 0);
-    }
+    public final int v1;
+    public final int v2;
 
     public SetScore(int value1, int value2) {
         v1 = value1;
@@ -24,8 +20,16 @@ public class SetScore {
     
     public SetScore normalized() {
         int d1 = (v1 > v2) ? 1 : 0;
-        int d2 = (v1 > v2) ? 0 : 1;
+        int d2 = (v2 > v1) ? 1 : 0;
         return new SetScore(d1, d2);
+    }
+    
+    public SetScore summedWith(SetScore other) {
+        return new SetScore(v1 + other.v1, v2 + other.v2);
+    }
+    
+    public SetScore reversed() {
+        return new SetScore(v2, v1);
     }
 
     @Override

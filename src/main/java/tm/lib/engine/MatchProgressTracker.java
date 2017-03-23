@@ -25,10 +25,7 @@ public class MatchProgressTracker {
     }
 
     public Score buildScore() {
-        Score score = new Score(setCount);
-        score.sets = setScores.toArray(new SetScore[0]);
-        score.additionalTime = additionalTimeScore;
-        return score;
+        return new Score(setScores, additionalTimeScore);
     }
 
     public void startNewSet() {
@@ -102,12 +99,10 @@ public class MatchProgressTracker {
     public SetScore getScoreBySets() {
         SetScore scoreBySets = SetScore.of(0, 0);
         for (SetScore setScore : setScores) {
-            SetScore normalizedSetScore = setScore.normalized();
-            scoreBySets = SetScore.of(scoreBySets.v1 + normalizedSetScore.v1, scoreBySets.v2 + normalizedSetScore.v2);
+            scoreBySets = scoreBySets.summedWith(setScore.normalized());
         }
         if (isPlayoff && additionalTimeScore != null) {
-            SetScore normalizedSetScore = additionalTimeScore.normalized();
-            scoreBySets = SetScore.of(scoreBySets.v1 + normalizedSetScore.v1, scoreBySets.v2 + normalizedSetScore.v2);
+            scoreBySets = scoreBySets.summedWith(additionalTimeScore.normalized());
         }
         return scoreBySets;
     }

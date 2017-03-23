@@ -216,7 +216,7 @@ public class UiMatchManager
     private void show_match_result_caption()
     {
         Person won;
-        SetScore s = matchSimulator.getCurrentScore().get_set_score();
+        SetScore s = matchSimulator.getCurrentScore().getScoreBySets();
         if (s.v1 > s.v2)
         {
             won = match.getFirstPlayer();
@@ -231,7 +231,7 @@ public class UiMatchManager
             {
                 if (match.isPlayoff())
                 {
-                    if (matchSimulator.getCurrentScore().additionalTime.v1 > matchSimulator.getCurrentScore().additionalTime.v2)
+                    if (matchSimulator.getCurrentScore().getAdditionalTime().v1 > matchSimulator.getCurrentScore().getAdditionalTime().v2)
                     {
                         won = match.getFirstPlayer();
                     }

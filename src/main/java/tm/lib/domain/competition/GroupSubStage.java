@@ -87,7 +87,7 @@ public class GroupSubStage extends SimpleCompetition
             {
                 if (match.getSecondPlayer() == player)
                 {
-                    score = match.getResult().reverse();
+                    score = match.getResult().reversed();
                 }
                 else
                 {
@@ -108,7 +108,7 @@ public class GroupSubStage extends SimpleCompetition
                 }
             }
 
-            SetScore totalScore = score.getGameScore();
+            SetScore totalScore = score.getScoreByGames();
             gamesWon += totalScore.v1;
             gamesLost += totalScore.v2;
         }

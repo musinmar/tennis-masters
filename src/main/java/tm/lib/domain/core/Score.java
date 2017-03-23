@@ -1,180 +1,119 @@
 package tm.lib.domain.core;
 
-public class Score
-{
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+public class Score {
+
     public static final int BASE_SET_LENGTH = 9;
     public static final int ADDITIONAL_SET_LENGTH = 6;
-    public static final int MAX_SET_VALUE = 20;
 
-    public SetScore[] sets;
-    public SetScore additionalTime;
+    private final List<SetScore> sets;
+    private final SetScore additionalTime;
 
-    public Score(int sets_count)
-    {
-        sets = new SetScore[sets_count];
-        for (int i = 0; i < sets_count; i++)
-        {
-            sets[i] = new SetScore();
-        }
-        additionalTime = null;
+    public Score(List<SetScore> sets, SetScore additionalTime) {
+        this.sets = Collections.unmodifiableList(new ArrayList<>(sets));
+        this.additionalTime = additionalTime;
     }
 
-    public Score(Score other)
-    {
-        sets = new SetScore[other.sets_count()];
-        for (int i = 0; i < other.sets.length; i++)
-        {
-            sets[i] = new SetScore(other.sets[i]);
-        }
-        if (other.additionalTime != null)
-        {
-            additionalTime = new SetScore(other.additionalTime);
-        }
-        else
-        {
-            additionalTime = null;
-        }
+    public Score(Score other) {
+        this(other.sets, other.additionalTime);
     }
 
-    public int sets_count()
-    {
-        return sets.length;
+    public List<SetScore> getSets() {
+        return sets;
     }
 
-    public boolean isFirstPlayerWinner()
-    {
-        SetScore scoreBySets = get_set_score();
+    public SetScore getAdditionalTime() {
+        return additionalTime;
+    }
+
+    public int getSetCount() {
+        return sets.size();
+    }
+
+    public boolean isFirstPlayerWinner() {
+        SetScore scoreBySets = getScoreBySets();
         return scoreBySets.v1 > scoreBySets.v2;
     }
 
-    public boolean isDraw()
-    {
-        SetScore scoreBySets = get_set_score();
+    public boolean isDraw() {
+        SetScore scoreBySets = getScoreBySets();
         return scoreBySets.v1 == scoreBySets.v2;
     }
 
-    public Score reverse()
-    {
-        Score reversedScore = new Score(this);
-        for (int i = 0; i < reversedScore.sets.length; ++i)
-        {
-            int temp = reversedScore.sets[i].v1;
-            reversedScore.sets[i].v1 = reversedScore.sets[i].v2;
-            reversedScore.sets[i].v2 = temp;
-        }
-        if (reversedScore.additionalTime != null)
-        {
-            int temp = additionalTime.v1;
-            additionalTime.v1 = additionalTime.v2;
-            additionalTime.v2 = temp;
-        }
-        return reversedScore;
+    public Score reversed() {
+        List<SetScore> reversedSetScores = sets.stream().map(SetScore::reversed).collect(Collectors.toList());
+        SetScore reversedAdditionalTime = (additionalTime != null) ? additionalTime.reversed() : null;
+        return new Score(reversedSetScores, reversedAdditionalTime);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         String buf = "";
-        buf += sets[0];
-        for (int i = 1; i < sets.length; i++)
-        {
-            buf += " / " + sets[i];
+        buf += sets.get(0);
+        for (int i = 1; i < sets.size(); i++) {
+            buf += " / " + sets.get(i);
         }
-        if (additionalTime != null)
-        {
+        if (additionalTime != null) {
             buf += " / д.в. " + additionalTime;
         }
         return buf;
     }
 
-    public String get_short_score(int set, boolean additional)
-    {
-        String buf = "";
-        buf += sets[0];
-        for (int i = 1; i <= set; i++)
-        {
-            buf += " / " + sets[i];
+    public SetScore getScoreBySets() {
+        SetScore scoreBySets = SetScore.of(0, 0);
+        for (SetScore setScore : sets) {
+            scoreBySets = scoreBySets.summedWith(setScore.normalized());
         }
-        if (additional && additionalTime != null)
-        {
-            buf += " / a. " + additionalTime;
+        if (additionalTime != null) {
+            scoreBySets = scoreBySets.summedWith(additionalTime.normalized());
         }
-        return buf;
+        return scoreBySets;
     }
 
-    public SetScore get_set_score()
-    {
-        SetScore ret = new SetScore();
-        for (int i = 0; i < sets.length; i++)
-        {
-            if (sets[i].v1 > sets[i].v2)
-            {
-                ret.v1++;
-            }
-            else
-            {
-                if (sets[i].v1 < sets[i].v2)
-                {
-                    ret.v2++;
-                }
-            }
+    public SetScore getScoreByGames() {
+        SetScore scoreByGames = SetScore.of(0, 0);
+        for (SetScore setScore : sets) {
+            scoreByGames = scoreByGames.summedWith(setScore);
         }
-        if (additionalTime != null)
-        {
-            if (additionalTime.v1 > additionalTime.v2)
-            {
-                ret.v1++;
-            }
-            else
-            {
-                if (additionalTime.v1 < additionalTime.v2)
-                {
-                    ret.v2++;
-                }
-            }
+        if (additionalTime != null) {
+            scoreByGames = scoreByGames.summedWith(additionalTime);
         }
-        return ret;
+        return scoreByGames;
     }
 
-    public SetScore getGameScore()
-    {
-        SetScore ret = new SetScore();
-        for (int i = 0; i < sets.length; i++)
-        {
-            ret.v1 += sets[i].v1;
-            ret.v2 += sets[i].v2;
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.sets);
+        hash = 97 * hash + Objects.hashCode(this.additionalTime);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
         }
-        if (additionalTime != null)
-        {
-            ret.v1 += additionalTime.v1;
-            ret.v2 += additionalTime.v2;
+        if (obj == null) {
+            return false;
         }
-        return ret;
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Score other = (Score) obj;
+        if (!Objects.equals(this.sets, other.sets)) {
+            return false;
+        }
+        if (!Objects.equals(this.additionalTime, other.additionalTime)) {
+            return false;
+        }
+        return true;
     }
     
-    public void addPoint(int player, int set, boolean isAdditionalTime) {
-        assert player == 0 || player == 1;
-        if (!isAdditionalTime)
-        {
-            if (player == 0)
-            {
-                sets[set].v1 += 1;
-            }
-            else
-            {
-                sets[set].v2 += 1;
-            }
-        }
-        else
-        {
-            if (player == 0)
-            {
-                additionalTime.v1 += 1;
-            }
-            else
-            {
-                additionalTime.v2 += 1;
-            }
-        }
-    }
+    
 }

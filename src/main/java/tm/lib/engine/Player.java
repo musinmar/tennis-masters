@@ -18,8 +18,8 @@ public class Player {
         this.person = person;
         this.side = side;
 
-        position = new Point2d();
-        direction = new Point2d();
+        position = new Point2d(0, 0);
+        direction = new Point2d(0, 0);
         speed = 0;
         lying = false;
         lyingTime = 0;

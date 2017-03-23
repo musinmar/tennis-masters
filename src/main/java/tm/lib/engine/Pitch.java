@@ -46,12 +46,12 @@ public class Pitch {
         Point2d startingDirection = new Point2d(0, -1);
         
         homePlayer.resetState(startingPosition, startingDirection);
-        awayPlayer.resetState(startingPosition.mirrored(), startingDirection.mirrored());
+        awayPlayer.resetState(VectorUtils.mirror(startingPosition), VectorUtils.mirror(startingDirection));
 
         Point2d startingPlayerPosition = getPlayer(startingSide).getPosition();
         Point2d startingPlayerDirection = getPlayer(startingSide).getDirection();
-        ball.setPosition(startingPlayerPosition.summedWith(startingPlayerDirection.multipliedBy(10)));
-        ball.setRealTarget(startingPlayerPosition.summedWith(startingPlayerDirection.multipliedBy(50)));
-        ball.setFakeTarget(startingPlayerPosition.summedWith(startingPlayerDirection.multipliedBy(70)));
+        ball.setPosition(startingPlayerPosition.add(startingPlayerDirection.scalarMultiply(10)));
+        ball.setRealTarget(startingPlayerPosition.add(startingPlayerDirection.scalarMultiply(50)));
+        ball.setFakeTarget(startingPlayerPosition.add(startingPlayerDirection.scalarMultiply(70)));
     }
 }

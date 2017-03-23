@@ -130,19 +130,19 @@ public class PitchWidget extends Canvas
 
         Point2d psize = new Point2d(Pitch.WIDTH, Pitch.HEIGHT);
         double coef = s.y / Pitch.HEIGHT;
-        psize = psize.multipliedBy(coef);
+        psize = psize.scalarMultiply(coef);
 
-        if ((int) psize.x <= s.x)
+        if ((int) psize.getX() <= s.x)
         {
-            pitch_size = psize.toPoint();
+            pitch_size = VectorUtils.toPoint(psize);
             pitch_pos = new Point((s.x - pitch_size.x) / 2 + HMARGIN, VMARGIN);
         }
         else
         {
             coef = s.x / Pitch.WIDTH;
             psize = new Point2d(Pitch.WIDTH, Pitch.HEIGHT);
-            psize = psize.multipliedBy(coef);
-            pitch_size = psize.toPoint();
+            psize = psize.scalarMultiply(coef);
+            pitch_size = VectorUtils.toPoint(psize);
             pitch_pos = new Point(HMARGIN, (s.y - pitch_size.y) / 2 + VMARGIN);
         }
     }
@@ -150,8 +150,8 @@ public class PitchWidget extends Canvas
     private Point widget_pos(Point2d pos)
     {
         double coef = pitch_size_coef();
-        int x = (int) (pos.x * coef + pitch_pos.x);
-        int y = (int) ((Pitch.HALF_HEIGHT - pos.y) * coef) + pitch_pos.y;
+        int x = (int) (pos.getX() * coef + pitch_pos.x);
+        int y = (int) ((Pitch.HALF_HEIGHT - pos.getY()) * coef) + pitch_pos.y;
         return new Point(x, y);
     }
 

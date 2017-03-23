@@ -54,21 +54,22 @@ public class MatchSimulator {
         matchTime += (long) (MatchEngine.TIME_STEP * 1000);
         if (matchEngine.getWinningSide() == null) {
             return State.PLAYING;
+        } else {
+            return performEndOfGameActions();
         }
-
-        return performEndOfGameActions();
     }
 
     private State performEndOfGameActions() {
         lastGameResult = matchEngine.getWinningSide();
         matchProgressTracker.addPoint(lastGameResult);
         matchEngine.performEndOfGameActions();
+        
         if (!matchProgressTracker.isSetFinished()) {
             matchEngine.reset(matchProgressTracker.getServingSide());
             return State.GAME_ENDED;
+        } else {
+            return performEndOfSetActions();
         }
-
-        return performEndOfSetActions();
     }
 
     private State performEndOfSetActions() {

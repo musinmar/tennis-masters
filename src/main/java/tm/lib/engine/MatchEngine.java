@@ -45,10 +45,10 @@ public class MatchEngine
     private static final double MIN_VENUE_SPEED_MODIFIER = 0.75;
     private static final double MAX_VENUE_ACC_MODIFIER = 1.40;
     private static final double MIN_VENUE_ACC_MODIFIER = 0.60;
-    private static final double MAX_NET_ZONE_LENGTH = Pitch.HHEIGHT * 3 / 10;
-    private static final double MIN_NET_ZONE_LENGTH = Pitch.HHEIGHT * 3 / 20;
+    private static final double MAX_NET_ZONE_LENGTH = Pitch.HALF_HEIGHT * 3 / 10;
+    private static final double MIN_NET_ZONE_LENGTH = Pitch.HALF_HEIGHT * 3 / 20;
     //private static final double NET_ZONE_MAX_LENGTH = Pitch.HHEIGHT / 5;
-    private static final double NET_PONG = Pitch.HHEIGHT / 35;
+    private static final double NET_PONG = Pitch.HALF_HEIGHT / 35;
     private static final double ENERGY_LOSS_PER_DISTANCE = 0.9 / Pitch.WIDTH;
     private static final double ENERGY_LOSS_PER_HIT = 0.3;
     private static final double ENERGY_LOSS_PER_SAVE = 0.3;
@@ -70,9 +70,9 @@ public class MatchEngine
 
     public void next()
     {
-        performPlayerAction(getPitch().player_1);
-        performPlayerAction(getPitch().player_2);
-        performBallAction(getPitch().ball);
+        performPlayerAction(getPitch().getPlayer(Side.HOME));
+        performPlayerAction(getPitch().getPlayer(Side.AWAY));
+        performBallAction(getPitch().getBall());
     }
 
     public Pitch getPitch()
@@ -83,23 +83,6 @@ public class MatchEngine
     public Side getWinningSide()
     {
         return winningSide;
-    }
-
-    private Player getPlayer(Side side)
-    {
-        return side == Side.HOME ? getPitch().player_1 : getPitch().player_2;
-    }
-
-    private Player getOppositePlayer(Player p)
-    {
-        if (p == getPitch().player_1)
-        {
-            return getPitch().player_2;
-        }
-        else
-        {
-            return getPitch().player_1;
-        }
     }
 
     private double applyValueMargins(double base, double min_value, double max_value)
@@ -121,7 +104,7 @@ public class MatchEngine
 
     private double getVenueSpeedModifier()
     {
-        return applyValueMargins(getPitch().venue.roughness, MIN_VENUE_SPEED_MODIFIER, MAX_VENUE_SPEED_MODIFIER);
+        return applyValueMargins(getPitch().getVenue().roughness, MIN_VENUE_SPEED_MODIFIER, MAX_VENUE_SPEED_MODIFIER);
     }
 
     private double getActualPlayerSpeed(Player p)
@@ -136,7 +119,7 @@ public class MatchEngine
 
     private double getVenueAccelerationModifier()
     {
-        return applyValueMargins(100 - getPitch().venue.slippery, MIN_VENUE_ACC_MODIFIER, MAX_VENUE_ACC_MODIFIER);
+        return applyValueMargins(100 - getPitch().getVenue().slippery, MIN_VENUE_ACC_MODIFIER, MAX_VENUE_ACC_MODIFIER);
     }
 
     private double getActualPlayerAcceleration(Player p)
@@ -213,17 +196,18 @@ public class MatchEngine
 
     private double getNetZone()
     {
-        return applyValueMargins(getPitch().venue.net_height, MIN_NET_ZONE_LENGTH, MAX_NET_ZONE_LENGTH);
+        return applyValueMargins(getPitch().getVenue().net_height, MIN_NET_ZONE_LENGTH, MAX_NET_ZONE_LENGTH);
     }
 
     private boolean isPlayerZoneTargeted(Player p)
     {
-        if (getPitch().ball.fake_target.x < 0 || getPitch().ball.fake_target.x > Pitch.WIDTH
-                || getPitch().ball.fake_target.y > Pitch.HHEIGHT || getPitch().ball.fake_target.y < -Pitch.HHEIGHT)
+        Ball ball = getPitch().getBall();
+        if (ball.fake_target.x < 0 || ball.fake_target.x > Pitch.WIDTH
+                || ball.fake_target.y > Pitch.HALF_HEIGHT || ball.fake_target.y < -Pitch.HALF_HEIGHT)
         {
             return false;
         }
-        boolean fp_target = (getPitch().ball.fake_target.y >= 0);
+        boolean fp_target = (ball.fake_target.y >= 0);
         if ((p.getSide() == Side.HOME && fp_target) || (p.getSide() == Side.AWAY && !fp_target))
         {
             return true;
@@ -236,7 +220,8 @@ public class MatchEngine
 
     private boolean canHitBall(Player p)
     {
-        if (p.position.dist(getPitch().ball.position) <= PLAYER_HAND_LENGTH)
+        Ball ball = getPitch().getBall();
+        if (p.position.dist(ball.position) <= PLAYER_HAND_LENGTH)
         {
             return true;
         }
@@ -258,7 +243,7 @@ public class MatchEngine
      }*/
     private boolean isTargetSmartEnough(Player p, Point2d target)
     {
-        Player opposite = getOppositePlayer(p);
+        Player opposite = getPitch().getOppositePlayer(p);
         double dist = target.minus(opposite.position).norm();
         double player_no_hit_range = getActualSkillRange(p);
         if (dist >= player_no_hit_range)
@@ -273,7 +258,7 @@ public class MatchEngine
 
     private boolean isTargetHighEnough(Player p, Point2d target)
     {
-        double net_zone_length = Math.abs(p.position.y) / Pitch.HHEIGHT * getNetZone();
+        double net_zone_length = Math.abs(p.position.y) / Pitch.HALF_HEIGHT * getNetZone();
         double mod = getPlayerModifier(p);
         if (target.y * mod > 0)
         {
@@ -296,9 +281,10 @@ public class MatchEngine
         Point2d d = target.minus(p.position);
         double k = Math.abs(p.position.y / (target.y - p.position.y));
         d = d.multiply(k);
-        pitch.ball.target = p.position.plus(d);
-        pitch.ball.target.y = getPitch().ball.target.y + mod * NET_PONG;
-        pitch.ball.fake_target = target;
+        Ball ball = getPitch().getBall();
+        ball.target = p.position.plus(d);
+        ball.target.y = ball.target.y + mod * NET_PONG;
+        ball.fake_target = target;
         net_hitted = true;
     }
 
@@ -324,12 +310,12 @@ public class MatchEngine
         Point2d target = new Point2d();
         boolean found = false;
 
-        double net_zone_length = Math.abs(p.position.y) / Pitch.HHEIGHT * getNetZone();
+        double net_zone_length = Math.abs(p.position.y) / Pitch.HALF_HEIGHT * getNetZone();
         double risk_margin = getActualRiskMargin(p);
         while (!found)
         {
             target.x = random.nextDouble() * (Pitch.WIDTH - 2 * risk_margin) + risk_margin;
-            target.y = -mod * (random.nextDouble() * (Pitch.HHEIGHT - net_zone_length - 2 * risk_margin) + net_zone_length + risk_margin);
+            target.y = -mod * (random.nextDouble() * (Pitch.HALF_HEIGHT - net_zone_length - 2 * risk_margin) + net_zone_length + risk_margin);
             //target.y = -mod * random.nextDouble() * Pitch.HHEIGHT;
 
             if (isTargetSmartEnough(p, target))
@@ -369,15 +355,16 @@ public class MatchEngine
 
     private void hitBall(Player p)
     {
-        getNewBallTarget(p, getPitch().ball);
-        pitch.ball.speed = getActualBallSpeed(p);
+        Ball ball = getPitch().getBall();
+        getNewBallTarget(p, ball);
+        ball.speed = getActualBallSpeed(p);
         if (net_hitted)
         {
             net_hitted = false;
         }
         else
         {
-            getNewFakeBallTarget(p, getPitch().ball);
+            getNewFakeBallTarget(p, ball);
         }
         lastHittedPlayer = p;
         decrasePlayerEnergy(p, ENERGY_LOSS_PER_HIT);
@@ -386,7 +373,7 @@ public class MatchEngine
     private boolean getZoneHitThreat(Player p)
     {
         double mod = getPlayerModifier(p);
-        if (mod * getPitch().ball.fake_target.y > -Pitch.HHEIGHT / 6)
+        if (mod * getPitch().getBall().fake_target.y > -Pitch.HALF_HEIGHT / 6)
         {
             return true;
         }
@@ -398,15 +385,15 @@ public class MatchEngine
 
     private Point2d getPlayerOptimalPosition(Player p)
     {
-        Player opp = getOppositePlayer(p);
-        double net_zone_length = Math.abs(opp.position.y) / Pitch.HHEIGHT * getNetZone();
+        Player opp = getPitch().getOppositePlayer(p);
+        double net_zone_length = Math.abs(opp.position.y) / Pitch.HALF_HEIGHT * getNetZone();
         if (net_zone_length < 0)
         {
             net_zone_length = 0;
         }
         double mod = getPlayerModifier(p);
         double optimal_x = Pitch.WIDTH / 2;
-        double optimal_y = mod * ((Pitch.HHEIGHT - net_zone_length) / 2 + net_zone_length);
+        double optimal_y = mod * ((Pitch.HALF_HEIGHT - net_zone_length) / 2 + net_zone_length);
         return new Point2d(optimal_x, optimal_y);
     }
 
@@ -451,7 +438,7 @@ public class MatchEngine
         //if (player_zone_targeted(p)) 
         if (getZoneHitThreat(p))
         {
-            target = new Point2d(getPitch().ball.fake_target);
+            target = new Point2d(getPitch().getBall().fake_target);
             double mod = getPlayerModifier(p);
             if (target.y * mod < 0)
             {
@@ -561,7 +548,7 @@ public class MatchEngine
     private Side getBallSide(Ball b)
     {
         if (b.position.x >= 0 && b.position.x <= Pitch.WIDTH
-                && b.position.y >= -Pitch.HHEIGHT && b.position.y <= Pitch.HHEIGHT)
+                && b.position.y >= -Pitch.HALF_HEIGHT && b.position.y <= Pitch.HALF_HEIGHT)
         {
             if (b.position.y >= 0)
             {
@@ -580,9 +567,9 @@ public class MatchEngine
 
     private boolean trySave(Side sideHitted)
     {
-        Player p = getPlayer(sideHitted);
+        Player p = getPitch().getPlayer(sideHitted);
         double save_max_distance = PLAYER_HAND_LENGTH + getActualSaveAddDistance(p);
-        if (p.position.minus(getPitch().ball.position).norm() <= save_max_distance && !p.lying)
+        if (p.position.minus(getPitch().getBall().position).norm() <= save_max_distance && !p.lying)
         {
             p.lying = true;
             p.lying_time = 0;
@@ -614,13 +601,13 @@ public class MatchEngine
 
     public void performEndOfGameActions()
     {
-        getPitch().player_1.changeEnergy(ENERGY_REGAIN_PER_GAME);
-        getPitch().player_2.changeEnergy(ENERGY_REGAIN_PER_GAME);
+        getPitch().getPlayer(Side.HOME).changeEnergy(ENERGY_REGAIN_PER_GAME);
+        getPitch().getPlayer(Side.AWAY).changeEnergy(ENERGY_REGAIN_PER_GAME);
     }
 
     public void performEndOfSetActions()
     {
-        getPitch().player_1.changeEnergy(ENERGY_REGAIN_PER_SET);
-        getPitch().player_2.changeEnergy(ENERGY_REGAIN_PER_SET);
+        getPitch().getPlayer(Side.HOME).changeEnergy(ENERGY_REGAIN_PER_SET);
+        getPitch().getPlayer(Side.AWAY).changeEnergy(ENERGY_REGAIN_PER_SET);
     }
 }

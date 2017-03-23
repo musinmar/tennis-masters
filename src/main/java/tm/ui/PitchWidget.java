@@ -152,7 +152,7 @@ public class PitchWidget extends Canvas
     {
         double coef = pitch_size_coef();
         int x = (int) (pos.x * coef + pitch_pos.x);
-        int y = (int) ((Pitch.HHEIGHT - pos.y) * coef) + pitch_pos.y;
+        int y = (int) ((Pitch.HALF_HEIGHT - pos.y) * coef) + pitch_pos.y;
         return new Point(x, y);
     }
 
@@ -203,8 +203,8 @@ public class PitchWidget extends Canvas
     {
         update_pitch_pos();
         draw_pitch_borders(gc);
-        draw_player(gc, pitch.player_1);
-        draw_player(gc, pitch.player_2);
+        draw_player(gc, pitch.getPlayer(Side.HOME));
+        draw_player(gc, pitch.getPlayer(Side.AWAY));
         draw_ball(gc);
     }
 
@@ -244,7 +244,7 @@ public class PitchWidget extends Canvas
 
     public void draw_ball(GC gc)
     {
-        Ball ball = pitch.ball;
+        Ball ball = pitch.getBall();
         Point pos = widget_pos(ball.position);
         double coef = pitch_size_coef();
         int radius = (int) (coef * Pitch.BALL_SIZE / 2);

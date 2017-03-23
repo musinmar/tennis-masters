@@ -6,6 +6,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
+import tm.lib.engine.Side;
 
 public class MatchWindow
 {
@@ -37,7 +38,7 @@ public class MatchWindow
         layout.verticalSpacing = 3;
         shell.setLayout(layout);
 
-        player1_widget = new PlayerWidget(shell, manager.getPitch().player_1);
+        player1_widget = new PlayerWidget(shell, manager.getPitch().getPlayer(Side.HOME));
         GridData data = new GridData();
         data.horizontalAlignment = GridData.CENTER;
         player1_widget.setLayoutData(data);
@@ -75,7 +76,7 @@ public class MatchWindow
         data.grabExcessVerticalSpace = true;
         pitch_widget.setLayoutData(data);
 
-        player2_widget = new PlayerWidget(shell, manager.getPitch().player_2);
+        player2_widget = new PlayerWidget(shell, manager.getPitch().getPlayer(Side.AWAY));
         data = new GridData();
         data.horizontalAlignment = GridData.CENTER;
         player2_widget.setLayoutData(data);

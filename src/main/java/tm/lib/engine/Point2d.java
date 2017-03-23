@@ -54,7 +54,7 @@ public class Point2d
         return new Point2d(x, -y);
     }
 
-    public Point to_point()
+    public Point toPoint()
     {
         return new Point((int) x, (int) y);
     }

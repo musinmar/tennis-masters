@@ -178,12 +178,12 @@ public class MatchEngine {
     }
 
     private boolean isPlayerZoneTargeted(Player p) {
-        Ball ball = getPitch().getBall();
-        if (ball.fake_target.x < 0 || ball.fake_target.x > Pitch.WIDTH
-                || ball.fake_target.y > Pitch.HALF_HEIGHT || ball.fake_target.y < -Pitch.HALF_HEIGHT) {
+        Point2d fakeTarget = getPitch().getBall().getFakeTarget();
+        if (fakeTarget.x < 0 || fakeTarget.x > Pitch.WIDTH
+                || fakeTarget.y > Pitch.HALF_HEIGHT || fakeTarget.y < -Pitch.HALF_HEIGHT) {
             return false;
         }
-        boolean fp_target = (ball.fake_target.y >= 0);
+        boolean fp_target = (fakeTarget.y >= 0);
         if ((p.getSide() == Side.HOME && fp_target) || (p.getSide() == Side.AWAY && !fp_target)) {
             return true;
         } else {
@@ -193,7 +193,7 @@ public class MatchEngine {
 
     private boolean canHitBall(Player p) {
         Ball ball = getPitch().getBall();
-        if (p.getPosition().dist(ball.position) <= PLAYER_HAND_LENGTH) {
+        if (p.getPosition().dist(ball.getPosition()) <= PLAYER_HAND_LENGTH) {
             return true;
         } else {
             return false;
@@ -241,9 +241,8 @@ public class MatchEngine {
         double k = Math.abs(p.getPosition().y / (target.y - p.getPosition().y));
         d = d.multipliedBy(k);
         Ball ball = getPitch().getBall();
-        ball.target = p.getPosition().summedWith(d);
-        ball.target.y = ball.target.y + mod * NET_PONG;
-        ball.fake_target = target;
+        ball.setRealTarget(p.getPosition().summedWith(d).summedWith(new Point2d(0, mod * NET_PONG)));
+        ball.setFakeTarget(target);
         net_hitted = true;
     }
 
@@ -289,7 +288,7 @@ public class MatchEngine {
         if (!isTargetHighEnough(p, target)) {
             hasBallHittedNet(p, target);
         } else {
-            b.target = target;
+            b.setRealTarget(target);
         }
     }
 
@@ -297,16 +296,15 @@ public class MatchEngine {
         double fake_target_range = getActualFakeTargetRange(p);
         double phi = random.nextDouble() * 2 * Math.PI;
         double r = random.nextDouble() * fake_target_range;
-        double target_x = b.target.x + Math.cos(phi) * r;
-        double target_y = b.target.y + Math.sin(phi) * r;
-
-        b.fake_target = new Point2d(target_x, target_y);
+        double target_x = b.getRealTarget().x + Math.cos(phi) * r;
+        double target_y = b.getRealTarget().y + Math.sin(phi) * r;
+        b.setFakeTarget(new Point2d(target_x, target_y));
     }
 
     private void hitBall(Player p) {
         Ball ball = getPitch().getBall();
         getNewBallTarget(p, ball);
-        ball.speed = getActualBallSpeed(p);
+        ball.setSpeed(getActualBallSpeed(p));
         if (net_hitted) {
             net_hitted = false;
         } else {
@@ -318,7 +316,7 @@ public class MatchEngine {
 
     private boolean getZoneHitThreat(Player p) {
         double mod = getPlayerModifier(p);
-        if (mod * getPitch().getBall().fake_target.y > -Pitch.HALF_HEIGHT / 6) {
+        if (mod * getPitch().getBall().getFakeTarget().y > -Pitch.HALF_HEIGHT / 6) {
             return true;
         } else {
             return false;
@@ -372,7 +370,7 @@ public class MatchEngine {
         Point2d target;
         //if (player_zone_targeted(p)) 
         if (getZoneHitThreat(p)) {
-            target = new Point2d(getPitch().getBall().fake_target);
+            target = new Point2d(getPitch().getBall().getFakeTarget());
             double mod = getPlayerModifier(p);
             if (target.y * mod < 0) {
                 target.y = 0;
@@ -413,7 +411,7 @@ public class MatchEngine {
     }
 
     private boolean hasBallHittedGround(Ball b) {
-        if (b.target.subtractedBy(b.position).norm() < 0.001) {
+        if (b.getRealTarget().subtractedBy(b.getPosition()).norm() < 0.001) {
             return true;
         } else {
             return false;
@@ -421,22 +419,22 @@ public class MatchEngine {
     }
 
     private void moveBall(Ball b) {
-        Point2d d = b.fake_target.subtractedBy(b.position);
+        Point2d d = b.getFakeTarget().subtractedBy(b.getPosition());
         double dd = d.norm();
-        double dist_to_target = b.target.subtractedBy(b.position).norm();
-        double step = TIME_STEP * b.speed;
+        double dist_to_target = b.getRealTarget().subtractedBy(b.getPosition()).norm();
+        double step = TIME_STEP * b.getSpeed();
         double m_step = step * dd / dist_to_target;
         if (dd > m_step) {
             d = d.dividedBy(dd).multipliedBy(m_step);
         }
-        b.position = b.position.summedWith(d);
+        b.setPosition(b.getPosition().summedWith(d));
 
         int steps = (int) (dist_to_target / step);
         if (steps == 0) {
-            b.fake_target = b.target;
+            b.setFakeTarget(b.getRealTarget());
         } else {
-            Point2d fake_target_d = b.target.subtractedBy(b.fake_target).dividedBy(steps);
-            b.fake_target = b.fake_target.summedWith(fake_target_d);
+            Point2d fake_target_d = b.getRealTarget().subtractedBy(b.getFakeTarget()).dividedBy(steps);
+            b.setFakeTarget(b.getFakeTarget().summedWith(fake_target_d));
         }
     }
 
@@ -449,9 +447,10 @@ public class MatchEngine {
     }
 
     private Side getBallSide(Ball b) {
-        if (b.position.x >= 0 && b.position.x <= Pitch.WIDTH
-                && b.position.y >= -Pitch.HALF_HEIGHT && b.position.y <= Pitch.HALF_HEIGHT) {
-            if (b.position.y >= 0) {
+        Point2d position = b.getPosition();
+        if (position.x >= 0 && position.x <= Pitch.WIDTH
+                && position.y >= -Pitch.HALF_HEIGHT && position.y <= Pitch.HALF_HEIGHT) {
+            if (position.y >= 0) {
                 return Side.HOME;
             } else {
                 return Side.AWAY;
@@ -464,7 +463,7 @@ public class MatchEngine {
     private boolean trySave(Side sideHitted) {
         Player p = getPitch().getPlayer(sideHitted);
         double save_max_distance = PLAYER_HAND_LENGTH + getActualSaveAddDistance(p);
-        if (p.getPosition().subtractedBy(getPitch().getBall().position).norm() <= save_max_distance && !p.isLying()) {
+        if (p.getPosition().subtractedBy(getPitch().getBall().getPosition()).norm() <= save_max_distance && !p.isLying()) {
             p.lieDown();
             hitBall(p);
             decrasePlayerEnergy(p, ENERGY_LOSS_PER_SAVE);

@@ -50,8 +50,8 @@ public class Pitch {
 
         Point2d startingPlayerPosition = getPlayer(startingSide).getPosition();
         Point2d startingPlayerDirection = getPlayer(startingSide).getDirection();
-        ball.position = startingPlayerPosition.summedWith(startingPlayerDirection.multipliedBy(10));
-        ball.target = startingPlayerPosition.summedWith(startingPlayerDirection.multipliedBy(50));
-        ball.fake_target = startingPlayerPosition.summedWith(startingPlayerDirection.multipliedBy(70));
+        ball.setPosition(startingPlayerPosition.summedWith(startingPlayerDirection.multipliedBy(10)));
+        ball.setRealTarget(startingPlayerPosition.summedWith(startingPlayerDirection.multipliedBy(50)));
+        ball.setFakeTarget(startingPlayerPosition.summedWith(startingPlayerDirection.multipliedBy(70)));
     }
 }

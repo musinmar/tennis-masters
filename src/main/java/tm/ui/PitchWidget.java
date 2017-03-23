@@ -134,7 +134,7 @@ public class PitchWidget extends Canvas
 
         if ((int) psize.x <= s.x)
         {
-            pitch_size = psize.to_point();
+            pitch_size = psize.toPoint();
             pitch_pos = new Point((s.x - pitch_size.x) / 2 + HMARGIN, VMARGIN);
         }
         else
@@ -143,7 +143,7 @@ public class PitchWidget extends Canvas
             psize.x = Pitch.WIDTH;
             psize.y = Pitch.HEIGHT;
             psize = psize.multipliedBy(coef);
-            pitch_size = psize.to_point();
+            pitch_size = psize.toPoint();
             pitch_pos = new Point(HMARGIN, (s.y - pitch_size.y) / 2 + VMARGIN);
         }
     }
@@ -245,7 +245,7 @@ public class PitchWidget extends Canvas
     public void draw_ball(GC gc)
     {
         Ball ball = pitch.getBall();
-        Point pos = widget_pos(ball.position);
+        Point pos = widget_pos(ball.getPosition());
         double coef = pitch_size_coef();
         int radius = (int) (coef * Pitch.BALL_SIZE / 2);
         if (radius < 1)
@@ -256,7 +256,7 @@ public class PitchWidget extends Canvas
         gc.setForeground(TenisMasters.display.getSystemColor(SWT.COLOR_BLACK));
         gc.fillOval(pos.x - radius, pos.y - radius, radius * 2, radius * 2);
 
-        pos = widget_pos(ball.target);
+        pos = widget_pos(ball.getRealTarget());
         int size = (int) (coef * Pitch.TARGET_SIZE / 2);
         if (size < 1)
         {
@@ -264,7 +264,7 @@ public class PitchWidget extends Canvas
         }
         gc.drawOval(pos.x - size, pos.y - size, size * 2, size * 2);
 
-        pos = widget_pos(ball.fake_target);
+        pos = widget_pos(ball.getFakeTarget());
         size = (int) (coef * Pitch.FAKE_TARGET_SIZE / 2);
         if (size < 1)
         {

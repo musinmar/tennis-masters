@@ -6,28 +6,31 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Score {
+/**
+ * Representation of a match result (score).
+ */
+public class MatchScore {
 
     public static final int BASE_SET_LENGTH = 9;
     public static final int ADDITIONAL_SET_LENGTH = 6;
 
-    private final List<SetScore> sets;
-    private final SetScore additionalTime;
+    private final List<BasicScore> sets;
+    private final BasicScore additionalTime;
 
-    public Score(List<SetScore> sets, SetScore additionalTime) {
+    public MatchScore(List<BasicScore> sets, BasicScore additionalTime) {
         this.sets = Collections.unmodifiableList(new ArrayList<>(sets));
         this.additionalTime = additionalTime;
     }
 
-    public Score(Score other) {
+    public MatchScore(MatchScore other) {
         this(other.sets, other.additionalTime);
     }
 
-    public List<SetScore> getSets() {
+    public List<BasicScore> getSets() {
         return sets;
     }
 
-    public SetScore getAdditionalTime() {
+    public BasicScore getAdditionalTime() {
         return additionalTime;
     }
 
@@ -36,19 +39,19 @@ public class Score {
     }
 
     public boolean isFirstPlayerWinner() {
-        SetScore scoreBySets = getScoreBySets();
+        BasicScore scoreBySets = getScoreBySets();
         return scoreBySets.v1 > scoreBySets.v2;
     }
 
     public boolean isDraw() {
-        SetScore scoreBySets = getScoreBySets();
+        BasicScore scoreBySets = getScoreBySets();
         return scoreBySets.v1 == scoreBySets.v2;
     }
 
-    public Score reversed() {
-        List<SetScore> reversedSetScores = sets.stream().map(SetScore::reversed).collect(Collectors.toList());
-        SetScore reversedAdditionalTime = (additionalTime != null) ? additionalTime.reversed() : null;
-        return new Score(reversedSetScores, reversedAdditionalTime);
+    public MatchScore reversed() {
+        List<BasicScore> reversedSetScores = sets.stream().map(BasicScore::reversed).collect(Collectors.toList());
+        BasicScore reversedAdditionalTime = (additionalTime != null) ? additionalTime.reversed() : null;
+        return new MatchScore(reversedSetScores, reversedAdditionalTime);
     }
 
     @Override
@@ -64,22 +67,19 @@ public class Score {
         return buf;
     }
 
-    public SetScore getScoreBySets() {
-        SetScore scoreBySets = SetScore.of(0, 0);
-        for (SetScore setScore : sets) {
-            scoreBySets = scoreBySets.summedWith(setScore.normalized());
-        }
+    public BasicScore getScoreBySets() {
+        BasicScore scoreBySets = sets.stream()
+                .map(BasicScore::normalized)
+                .reduce(BasicScore.of(0, 0), BasicScore::summedWith);
         if (additionalTime != null) {
             scoreBySets = scoreBySets.summedWith(additionalTime.normalized());
         }
         return scoreBySets;
     }
 
-    public SetScore getScoreByGames() {
-        SetScore scoreByGames = SetScore.of(0, 0);
-        for (SetScore setScore : sets) {
-            scoreByGames = scoreByGames.summedWith(setScore);
-        }
+    public BasicScore getScoreByGames() {
+        BasicScore scoreByGames = sets.stream()
+                .reduce(BasicScore.of(0, 0), BasicScore::summedWith);
         if (additionalTime != null) {
             scoreByGames = scoreByGames.summedWith(additionalTime);
         }
@@ -105,7 +105,7 @@ public class Score {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Score other = (Score) obj;
+        final MatchScore other = (MatchScore) obj;
         if (!Objects.equals(this.sets, other.sets)) {
             return false;
         }

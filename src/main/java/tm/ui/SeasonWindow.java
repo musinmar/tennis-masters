@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Text;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.Match;
 import tm.lib.domain.competition.MultiStageCompetition;
-import tm.lib.domain.core.Score;
+import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.Season;
 import tm.lib.engine.MatchSimulator;
 
@@ -73,7 +73,7 @@ public class SeasonWindow
                 Match match = season.getNextMatch();
                 MatchWindow match_window = new MatchWindow(shell, match);
                 match_window.shell.setMaximized(true);
-                Score score = match_window.open();
+                MatchScore score = match_window.open();
                 if (score != null)
                 {
                     season.processMatch(match, score);
@@ -99,7 +99,7 @@ public class SeasonWindow
                 {
                     state = matchSimulator.proceed();
                 } while (state != MatchSimulator.State.MATCH_ENDED);
-                Score score = matchSimulator.getCurrentScore();
+                MatchScore score = matchSimulator.getCurrentScore();
                 if (score != null)
                 {
                     season.processMatch(match, score);

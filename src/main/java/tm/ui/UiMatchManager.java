@@ -7,7 +7,7 @@ package tm.ui;
 
 import tm.lib.domain.competition.Match;
 import tm.lib.domain.core.Person;
-import tm.lib.domain.core.SetScore;
+import tm.lib.domain.core.BasicScore;
 import tm.lib.engine.MatchEngine;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.Pitch;
@@ -216,7 +216,7 @@ public class UiMatchManager
     private void show_match_result_caption()
     {
         Person won;
-        SetScore s = matchSimulator.getCurrentScore().getScoreBySets();
+        BasicScore s = matchSimulator.getCurrentScore().getScoreBySets();
         if (s.v1 > s.v2)
         {
             won = match.getFirstPlayer();

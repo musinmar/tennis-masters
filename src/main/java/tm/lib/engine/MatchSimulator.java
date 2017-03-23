@@ -6,7 +6,7 @@
 package tm.lib.engine;
 
 import tm.lib.domain.competition.Match;
-import tm.lib.domain.core.Score;
+import tm.lib.domain.core.MatchScore;
 
 public class MatchSimulator {
 
@@ -32,7 +32,7 @@ public class MatchSimulator {
         return matchTime;
     }
 
-    public Score getCurrentScore() {
+    public MatchScore getCurrentScore() {
         return matchProgressTracker.buildScore();
     }
 

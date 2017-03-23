@@ -3,7 +3,7 @@ package tm.lib.domain.world;
 import tm.lib.domain.competition.Match;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.SeasonCompetition;
-import tm.lib.domain.core.Score;
+import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Person;
 import java.io.PrintStream;
 import java.util.List;
@@ -33,7 +33,7 @@ public class Season
         return seasonCompetition.getNextMatch();
     }
 
-    public void processMatch(Match m, Score s)
+    public void processMatch(Match m, MatchScore s)
     {
         m.setResult(s);
         print(System.out);

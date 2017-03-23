@@ -1,35 +1,38 @@
 package tm.lib.domain.core;
 
-public class SetScore {
+/**
+ * A basic representation of score: points of one side and points for other side.
+ */
+public class BasicScore {
 
     public final int v1;
     public final int v2;
 
-    public SetScore(int value1, int value2) {
+    public BasicScore(int value1, int value2) {
         v1 = value1;
         v2 = value2;
     }
 
-    public SetScore(SetScore other) {
+    public BasicScore(BasicScore other) {
         this(other.v1, other.v2);
     }
 
-    public static SetScore of(int v1, int v2) {
-        return new SetScore(v1, v2);
+    public static BasicScore of(int v1, int v2) {
+        return new BasicScore(v1, v2);
     }
     
-    public SetScore normalized() {
+    public BasicScore normalized() {
         int d1 = (v1 > v2) ? 1 : 0;
         int d2 = (v2 > v1) ? 1 : 0;
-        return new SetScore(d1, d2);
+        return new BasicScore(d1, d2);
     }
     
-    public SetScore summedWith(SetScore other) {
-        return new SetScore(v1 + other.v1, v2 + other.v2);
+    public BasicScore summedWith(BasicScore other) {
+        return new BasicScore(v1 + other.v1, v2 + other.v2);
     }
     
-    public SetScore reversed() {
-        return new SetScore(v2, v1);
+    public BasicScore reversed() {
+        return new BasicScore(v2, v1);
     }
 
     @Override
@@ -56,7 +59,7 @@ public class SetScore {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final SetScore other = (SetScore) obj;
+        final BasicScore other = (BasicScore) obj;
         if (this.v1 != other.v1) {
             return false;
         }

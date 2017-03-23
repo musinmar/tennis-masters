@@ -1,7 +1,7 @@
 package tm.lib.domain.competition;
 
 import tm.lib.domain.core.Stadium;
-import tm.lib.domain.core.Score;
+import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Person;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +15,7 @@ public class Match
     private int sets;
     private boolean playoff;
     private Stadium venue;
-    private Score result;
+    private MatchScore result;
     private List<IMatchEndListener> listeners;
 
     public Match(Competition parent, Person p1, Person p2)
@@ -98,7 +98,7 @@ public class Match
         this.venue = venue;
     }
 
-    public Score getResult()
+    public MatchScore getResult()
     {
         return result;
     }
@@ -117,7 +117,7 @@ public class Match
         listeners.add(listener);
     }
 
-    public void setResult(Score result)
+    public void setResult(MatchScore result)
     {
         this.result = result;
         for (IMatchEndListener listener : listeners)

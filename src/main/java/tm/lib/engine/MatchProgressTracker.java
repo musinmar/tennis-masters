@@ -2,16 +2,16 @@ package tm.lib.engine;
 
 import java.util.ArrayList;
 import java.util.List;
-import tm.lib.domain.core.Score;
-import tm.lib.domain.core.SetScore;
+import tm.lib.domain.core.MatchScore;
+import tm.lib.domain.core.BasicScore;
 
 public class MatchProgressTracker {
 
     private final int setCount;
     private boolean isPlayoff;
 
-    private final List<SetScore> setScores = new ArrayList<>();
-    private SetScore additionalTimeScore;
+    private final List<BasicScore> setScores = new ArrayList<>();
+    private BasicScore additionalTimeScore;
 
     private int currentSet = -1;
     private boolean isAdditionalTime = false;
@@ -24,8 +24,8 @@ public class MatchProgressTracker {
         this.isPlayoff = isPlayoff;
     }
 
-    public Score buildScore() {
-        return new Score(setScores, additionalTimeScore);
+    public MatchScore buildScore() {
+        return new MatchScore(setScores, additionalTimeScore);
     }
 
     public void startNewSet() {
@@ -39,10 +39,10 @@ public class MatchProgressTracker {
 
         if (currentSet < setCount - 1) {
             ++currentSet;
-            setScores.add(SetScore.of(0, 0));
+            setScores.add(BasicScore.of(0, 0));
         } else {
             isAdditionalTime = true;
-            additionalTimeScore = SetScore.of(0, 0);
+            additionalTimeScore = BasicScore.of(0, 0);
         }
     }
 
@@ -50,17 +50,17 @@ public class MatchProgressTracker {
         if (!isAdditionalTime) {
             return currentSet % 2 == 0 ? Side.HOME : Side.AWAY;
         } else {
-            SetScore currentSetScore = getCurrentSetScore();
+            BasicScore currentSetScore = getCurrentSetScore();
             int gameIndex = currentSetScore.v1 + currentSetScore.v2;
             return gameIndex % 2 == 0 ? Side.HOME : Side.AWAY;
         }
     }
 
-    public SetScore getCurrentSetScore() {
+    public BasicScore getCurrentSetScore() {
         return !isAdditionalTime ? setScores.get(currentSet) : additionalTimeScore;
     }
 
-    private void setCurrentSetScore(SetScore setScore) {
+    private void setCurrentSetScore(BasicScore setScore) {
         if (!isAdditionalTime) {
             setScores.set(currentSet, setScore);
         } else {
@@ -77,28 +77,28 @@ public class MatchProgressTracker {
             throw new IllegalStateException("Cannot add a point: set is already finished");
         }
 
-        SetScore currentSetScore = getCurrentSetScore();
+        BasicScore currentSetScore = getCurrentSetScore();
         int d1 = winningSide == Side.HOME ? 1 : 0;
         int d2 = winningSide == Side.HOME ? 0 : 1;
-        SetScore newSetScore = new SetScore(currentSetScore.v1 + d1, currentSetScore.v2 + d2);
+        BasicScore newSetScore = new BasicScore(currentSetScore.v1 + d1, currentSetScore.v2 + d2);
         setCurrentSetScore(newSetScore);
     }
 
     public boolean isSetFinished() {
-        SetScore currentSetScore = getCurrentSetScore();
+        BasicScore currentSetScore = getCurrentSetScore();
         if (!isPlayoff || !isAdditionalTime) {
-            final int MAX_POINTS_IN_SET = Score.BASE_SET_LENGTH / 2 + 1;
+            final int MAX_POINTS_IN_SET = MatchScore.BASE_SET_LENGTH / 2 + 1;
             return currentSetScore.v1 == MAX_POINTS_IN_SET || currentSetScore.v2 == MAX_POINTS_IN_SET;
         } else {
-            final int MAX_POINTS_IN_ADDITIONAL_TIME_SET = Score.ADDITIONAL_SET_LENGTH / 2;
+            final int MAX_POINTS_IN_ADDITIONAL_TIME_SET = MatchScore.ADDITIONAL_SET_LENGTH / 2;
             return (currentSetScore.v1 > MAX_POINTS_IN_ADDITIONAL_TIME_SET || currentSetScore.v2 > MAX_POINTS_IN_ADDITIONAL_TIME_SET)
                     && Math.abs(currentSetScore.v1 - currentSetScore.v2) >= 2;
         }
     }
 
-    public SetScore getScoreBySets() {
-        SetScore scoreBySets = SetScore.of(0, 0);
-        for (SetScore setScore : setScores) {
+    public BasicScore getScoreBySets() {
+        BasicScore scoreBySets = BasicScore.of(0, 0);
+        for (BasicScore setScore : setScores) {
             scoreBySets = scoreBySets.summedWith(setScore.normalized());
         }
         if (isPlayoff && additionalTimeScore != null) {
@@ -112,7 +112,7 @@ public class MatchProgressTracker {
     }
 
     public boolean isMatchFinished() {
-        SetScore scoreBySets = getScoreBySets();
+        BasicScore scoreBySets = getScoreBySets();
         if (!isPlayoff) {
             final int EQUAL_SET_SCORE = setCount / 2;
             return scoreBySets.v1 > EQUAL_SET_SCORE || scoreBySets.v2 > EQUAL_SET_SCORE

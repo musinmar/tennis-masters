@@ -1,6 +1,6 @@
 package tm.ui;
 
-import tm.lib.domain.core.Score;
+import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.competition.Match;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
@@ -19,7 +19,7 @@ public class MatchWindow
     public MatchInfoWidget match_info_widget;
     public PitchWidget pitch_widget;
     boolean started;
-    public Score final_score;
+    public MatchScore final_score;
 
     MatchWindow(Shell parent, Match match)
     {
@@ -141,7 +141,7 @@ public class MatchWindow
         controls.pack();
     }
 
-    public Score open()
+    public MatchScore open()
     {
         shell.open();
         Display display = TenisMasters.display;

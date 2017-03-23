@@ -1,8 +1,8 @@
 package tm.lib.domain.competition;
 
-import tm.lib.domain.core.Score;
+import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Person;
-import tm.lib.domain.core.SetScore;
+import tm.lib.domain.core.BasicScore;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,7 +78,7 @@ public class GroupSubStage extends SimpleCompetition
         public void update(Match match)
         {
             assert match.getResult() != null;
-            Score score;
+            MatchScore score;
             if (match.getFirstPlayer() == player)
             {
                 score = match.getResult();
@@ -108,7 +108,7 @@ public class GroupSubStage extends SimpleCompetition
                 }
             }
 
-            SetScore totalScore = score.getScoreByGames();
+            BasicScore totalScore = score.getScoreByGames();
             gamesWon += totalScore.v1;
             gamesLost += totalScore.v2;
         }

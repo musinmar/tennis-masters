@@ -1,7 +1,7 @@
 package tm.lib.domain.competition;
 
 import tm.lib.domain.core.Person;
-import tm.lib.domain.core.SetScore;
+import tm.lib.domain.core.BasicScore;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +60,7 @@ public class PlayoffSubStage extends SimpleCompetition
             Match m = getAllMatches().get(i);
             if (m.getResult() != null)
             {
-                SetScore s = m.getResult().getScoreBySets();
+                BasicScore s = m.getResult().getScoreBySets();
                 if (s.v1 > s.v2)
                 {
                     positions[i] = m.getFirstPlayer();

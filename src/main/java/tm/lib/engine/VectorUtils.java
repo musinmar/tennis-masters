@@ -4,6 +4,8 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.eclipse.swt.graphics.Point;
 
 public class VectorUtils {
+    public static final double DEFAULT_TOLERANCE = 1.0e-10;
+    
     public static Vector2D mirror(Vector2D vector) {
         return new Vector2D(vector.getX(), vector.getY() * (-1));
     }

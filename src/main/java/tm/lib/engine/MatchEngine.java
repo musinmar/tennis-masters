@@ -1,7 +1,9 @@
 package tm.lib.engine;
 
 import java.util.Random;
+import org.apache.commons.math3.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.geometry.partitioning.Region;
 import tm.lib.domain.competition.Match;
 
 public class MatchEngine {
@@ -176,20 +178,6 @@ public class MatchEngine {
 
     private double getNetZone() {
         return applyValueMargins(getPitch().getVenue().net_height, MIN_NET_ZONE_LENGTH, MAX_NET_ZONE_LENGTH);
-    }
-
-    private boolean isPlayerZoneTargeted(Player p) {
-        Vector2D fakeTarget = getPitch().getBall().getFakeTarget();
-        if (fakeTarget.getX() < 0 || fakeTarget.getX() > Pitch.WIDTH
-                || fakeTarget.getY() > Pitch.HALF_HEIGHT || fakeTarget.getY() < -Pitch.HALF_HEIGHT) {
-            return false;
-        }
-        boolean fp_target = (fakeTarget.getY() >= 0);
-        if ((p.getSide() == Side.HOME && fp_target) || (p.getSide() == Side.AWAY && !fp_target)) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     private boolean canHitBall(Player p) {
@@ -408,14 +396,18 @@ public class MatchEngine {
         }
     }
 
-    private void performPlayerAction(Player p) {
-        if (p.isLying()) {
-            performLyingAction(p);
-        } else if (isPlayerZoneTargeted(p) && canHitBall(p)) {
-            hitBall(p);
+    private void performPlayerAction(Player player) {
+        if (player.isLying()) {
+            performLyingAction(player);
+        } else if (isPlayerZoneTargeted(player, getPitch().getBall()) && canHitBall(player)) {
+            hitBall(player);
         } else {
-            movePlayer(p);
+            movePlayer(player);
         }
+    }
+    
+    static boolean isPlayerZoneTargeted(Player player, Ball ball) {
+        return Pitch.isInsideZone(player.getSide(), ball.getFakeTarget());
     }
 
     private boolean hasBallHittedGround(Ball b) {

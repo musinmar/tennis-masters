@@ -1,6 +1,8 @@
 package tm.lib.engine;
 
+import org.apache.commons.math3.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.geometry.partitioning.Region;
 import tm.lib.domain.core.Person;
 import tm.lib.domain.core.Stadium;
 
@@ -11,9 +13,14 @@ public class Pitch {
     private final Ball ball;
     private final Stadium venue;
 
+    // Pitch is a rectangle with coordinates in range (0, WIDTH), (-HEIGHT / 2, HEIGHT / 2)
     static public final double WIDTH = 500;
     static public final double HEIGHT = 700;
     static public final double HALF_HEIGHT = HEIGHT / 2;
+    
+    static public final PolygonsSet HOME_ZONE = new PolygonsSet(0, WIDTH, 0, HALF_HEIGHT, VectorUtils.DEFAULT_TOLERANCE);
+    static public final PolygonsSet AWAY_ZONE = new PolygonsSet(0, WIDTH, -HALF_HEIGHT, 0, VectorUtils.DEFAULT_TOLERANCE);
+    
     static public final double PLAYER_SIZE = 15;
     static public final double BALL_SIZE = 6;
     static public final double TARGET_SIZE = 2;
@@ -54,5 +61,11 @@ public class Pitch {
         ball.setPosition(startingPlayerPosition.add(10, startingPlayerDirection));
         ball.setRealTarget(startingPlayerPosition.add(50, startingPlayerDirection));
         ball.setFakeTarget(startingPlayerPosition.add(70, startingPlayerDirection));
+    }
+    
+    static boolean isInsideZone(Side side, Vector2D position) {
+        PolygonsSet zone = side == Side.HOME ? Pitch.HOME_ZONE : Pitch.AWAY_ZONE;
+        Region.Location location = zone.checkPoint(position);
+        return location == Region.Location.BOUNDARY || location == Region.Location.INSIDE;
     }
 }

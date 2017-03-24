@@ -6,14 +6,14 @@ public class Ball
 {
     private Vector2D position;
     private Vector2D realTarget;
-    private Vector2D fakeTarget;
+    private Vector2D visibleTarget;
     private double speed;
 
     public Ball()
     {
         position = Vector2D.ZERO;
         realTarget = Vector2D.ZERO;
-        fakeTarget = Vector2D.ZERO;
+        visibleTarget = Vector2D.ZERO;
         speed = 0;
     }
 
@@ -33,12 +33,12 @@ public class Ball
         this.realTarget = realTarget;
     }
 
-    public Vector2D getFakeTarget() {
-        return fakeTarget;
+    public Vector2D getVisibleTarget() {
+        return visibleTarget;
     }
 
-    public void setFakeTarget(Vector2D fakeTarget) {
-        this.fakeTarget = fakeTarget;
+    public void setVisibleTarget(Vector2D visibleTarget) {
+        this.visibleTarget = visibleTarget;
     }
 
     public double getSpeed() {

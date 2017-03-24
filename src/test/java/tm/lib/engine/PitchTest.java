@@ -82,5 +82,4 @@ public class PitchTest {
         assertFalse(Pitch.isInsideZone(Side.HOME, position));
         assertTrue(Pitch.isInsideZone(Side.AWAY, position));
     }
-
 }

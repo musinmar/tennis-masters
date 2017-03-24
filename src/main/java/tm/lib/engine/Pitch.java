@@ -18,13 +18,8 @@ public class Pitch {
     static public final double HEIGHT = 700;
     static public final double HALF_HEIGHT = HEIGHT / 2;
     
-    static public final PolygonsSet HOME_ZONE = new PolygonsSet(0, WIDTH, 0, HALF_HEIGHT, VectorUtils.DEFAULT_TOLERANCE);
-    static public final PolygonsSet AWAY_ZONE = new PolygonsSet(0, WIDTH, -HALF_HEIGHT, 0, VectorUtils.DEFAULT_TOLERANCE);
-    
-    static public final double PLAYER_SIZE = 15;
-    static public final double BALL_SIZE = 6;
-    static public final double TARGET_SIZE = 2;
-    static public final double FAKE_TARGET_SIZE = 8;
+    static private final PolygonsSet HOME_ZONE = new PolygonsSet(0, WIDTH, 0, HALF_HEIGHT, VectorUtils.DEFAULT_TOLERANCE);
+    static private final PolygonsSet AWAY_ZONE = new PolygonsSet(0, WIDTH, -HALF_HEIGHT, 0, VectorUtils.DEFAULT_TOLERANCE);
 
     public Pitch(Person homePlayer, Person awayPlayer, Stadium venue) {
         this.homePlayer = new Player(homePlayer, Side.HOME);
@@ -60,7 +55,7 @@ public class Pitch {
         Vector2D startingPlayerDirection = getPlayer(startingSide).getDirection();
         ball.setPosition(startingPlayerPosition.add(10, startingPlayerDirection));
         ball.setRealTarget(startingPlayerPosition.add(50, startingPlayerDirection));
-        ball.setFakeTarget(startingPlayerPosition.add(70, startingPlayerDirection));
+        ball.setVisibleTarget(startingPlayerPosition.add(70, startingPlayerDirection));
     }
     
     static boolean isInsideZone(Side side, Vector2D position) {

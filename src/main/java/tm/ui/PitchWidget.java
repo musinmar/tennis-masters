@@ -15,6 +15,11 @@ import tm.lib.engine.*;
 
 public class PitchWidget extends Canvas
 {
+    private static final double PLAYER_SIZE = 15;
+    private static final double BALL_SIZE = 6;
+    private static final double TARGET_SIZE = 2;
+    private static final double VISIBLE_TARGET_SIZE = 8;
+    
     public Label top_label;
     public Label bottom_label;
     Pitch pitch;
@@ -221,7 +226,7 @@ public class PitchWidget extends Canvas
     public void draw_player(GC gc, Player p)
     {
         double coef = pitch_size_coef();
-        int radius = (int) (coef * Pitch.PLAYER_SIZE / 2);
+        int radius = (int) (coef * PLAYER_SIZE / 2);
         if (radius < 1)
         {
             radius = 1;
@@ -247,7 +252,7 @@ public class PitchWidget extends Canvas
         Ball ball = pitch.getBall();
         Point pos = widget_pos(ball.getPosition());
         double coef = pitch_size_coef();
-        int radius = (int) (coef * Pitch.BALL_SIZE / 2);
+        int radius = (int) (coef * BALL_SIZE / 2);
         if (radius < 1)
         {
             radius = 1;
@@ -257,15 +262,15 @@ public class PitchWidget extends Canvas
         gc.fillOval(pos.x - radius, pos.y - radius, radius * 2, radius * 2);
 
         pos = widget_pos(ball.getRealTarget());
-        int size = (int) (coef * Pitch.TARGET_SIZE / 2);
+        int size = (int) (coef * TARGET_SIZE / 2);
         if (size < 1)
         {
             size = 1;
         }
         gc.drawOval(pos.x - size, pos.y - size, size * 2, size * 2);
 
-        pos = widget_pos(ball.getFakeTarget());
-        size = (int) (coef * Pitch.FAKE_TARGET_SIZE / 2);
+        pos = widget_pos(ball.getVisibleTarget());
+        size = (int) (coef * VISIBLE_TARGET_SIZE / 2);
         if (size < 1)
         {
             size = 1;

@@ -31,8 +31,8 @@ public class MatchEngine {
     private static final double TARGET_MAX_RANGE = Pitch.WIDTH / 8;
     private static final double TARGET_MIN_RANGE = Pitch.WIDTH / 16;
     private static final double TARGET_RANGE_ENERGY_MODIFIER = 0.6;
-    private static final double FAKE_TARGET_MAX_RANGE = Pitch.WIDTH / 3;
-    private static final double FAKE_TARGET_ENERGY_MODIFIER = 0.5;
+    private static final double VISIBLE_TARGET_MAX_RANGE = Pitch.WIDTH / 3;
+    private static final double VISIBLE_TARGET_ENERGY_MODIFIER = 0.5;
     private static final double SKILL_MAX_RANGE = Pitch.WIDTH * 5 / 20;
     private static final double SKILL_RANGE_ENERGY_MODIFIER = 0.8;
     private static final double MAX_RISK_MARGIN = Pitch.WIDTH / 10;
@@ -141,10 +141,10 @@ public class MatchEngine {
         return target_range;
     }
 
-    private double getActualFakeTargetRange(Player p) {
-        double fake_target_range = applyValueMargins(p.getPerson().getCunning(), 0, FAKE_TARGET_MAX_RANGE);
-        fake_target_range = applyEnergyModifier(p, fake_target_range, FAKE_TARGET_ENERGY_MODIFIER);
-        return fake_target_range;
+    private double getActualVisibleTargetRange(Player p) {
+        double visibleTargetRange = applyValueMargins(p.getPerson().getCunning(), 0, VISIBLE_TARGET_MAX_RANGE);
+        visibleTargetRange = applyEnergyModifier(p, visibleTargetRange, VISIBLE_TARGET_ENERGY_MODIFIER);
+        return visibleTargetRange;
     }
 
     private double getActualSkillRange(Player p) {
@@ -231,7 +231,7 @@ public class MatchEngine {
         d = d.scalarMultiply(k);
         Ball ball = getPitch().getBall();
         ball.setRealTarget(p.getPosition().add(d).add(new Vector2D(0, mod * NET_PONG)));
-        ball.setFakeTarget(target);
+        ball.setVisibleTarget(target);
         net_hitted = true;
     }
 
@@ -285,13 +285,13 @@ public class MatchEngine {
         }
     }
 
-    private void getNewFakeBallTarget(Player p, Ball b) {
-        double fake_target_range = getActualFakeTargetRange(p);
+    private void getNewVisibleBallTarget(Player p, Ball b) {
+        double visibleTargetRange = getActualVisibleTargetRange(p);
         double phi = random.nextDouble() * 2 * Math.PI;
-        double r = random.nextDouble() * fake_target_range;
+        double r = random.nextDouble() * visibleTargetRange;
         double target_x = b.getRealTarget().getX() + Math.cos(phi) * r;
         double target_y = b.getRealTarget().getY() + Math.sin(phi) * r;
-        b.setFakeTarget(new Vector2D(target_x, target_y));
+        b.setVisibleTarget(new Vector2D(target_x, target_y));
     }
 
     private void hitBall(Player p) {
@@ -301,7 +301,7 @@ public class MatchEngine {
         if (net_hitted) {
             net_hitted = false;
         } else {
-            getNewFakeBallTarget(p, ball);
+            getNewVisibleBallTarget(p, ball);
         }
         lastHittedPlayer = p;
         decrasePlayerEnergy(p, ENERGY_LOSS_PER_HIT);
@@ -309,7 +309,7 @@ public class MatchEngine {
 
     private boolean getZoneHitThreat(Player p) {
         double mod = getPlayerModifier(p);
-        if (mod * getPitch().getBall().getFakeTarget().getY() > -Pitch.HALF_HEIGHT / 6) {
+        if (mod * getPitch().getBall().getVisibleTarget().getY() > -Pitch.HALF_HEIGHT / 6) {
             return true;
         } else {
             return false;
@@ -363,7 +363,7 @@ public class MatchEngine {
         Vector2D target;
         //if (player_zone_targeted(p)) 
         if (getZoneHitThreat(p)) {
-            target = getPitch().getBall().getFakeTarget();
+            target = getPitch().getBall().getVisibleTarget();
             double mod = getPlayerModifier(p);
             double x = target.getX();
             double y = target.getY();
@@ -407,7 +407,7 @@ public class MatchEngine {
     }
     
     static boolean isPlayerZoneTargeted(Player player, Ball ball) {
-        return Pitch.isInsideZone(player.getSide(), ball.getFakeTarget());
+        return Pitch.isInsideZone(player.getSide(), ball.getVisibleTarget());
     }
 
     private boolean hasBallHittedGround(Ball b) {
@@ -419,7 +419,7 @@ public class MatchEngine {
     }
 
     private void moveBall(Ball b) {
-        Vector2D d = b.getFakeTarget().subtract(b.getPosition());
+        Vector2D d = b.getVisibleTarget().subtract(b.getPosition());
         double dd = d.getNorm();
         double dist_to_target = b.getRealTarget().subtract(b.getPosition()).getNorm();
         double step = TIME_STEP * b.getSpeed();
@@ -431,10 +431,10 @@ public class MatchEngine {
 
         int steps = (int) (dist_to_target / step);
         if (steps == 0) {
-            b.setFakeTarget(b.getRealTarget());
+            b.setVisibleTarget(b.getRealTarget());
         } else {
-            Vector2D fake_target_d = b.getRealTarget().subtract(b.getFakeTarget()).scalarMultiply(1 / (double) steps);
-            b.setFakeTarget(b.getFakeTarget().add(fake_target_d));
+            Vector2D visibleTargetD = b.getRealTarget().subtract(b.getVisibleTarget()).scalarMultiply(1 / (double) steps);
+            b.setVisibleTarget(b.getVisibleTarget().add(visibleTargetD));
         }
     }
 

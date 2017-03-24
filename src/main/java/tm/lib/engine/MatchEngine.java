@@ -4,6 +4,7 @@ import java.util.Random;
 import org.apache.commons.math3.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.geometry.partitioning.Region;
+import org.apache.commons.math3.util.Precision;
 import tm.lib.domain.competition.Match;
 
 public class MatchEngine {
@@ -15,7 +16,6 @@ public class MatchEngine {
 
     private static Random random = new Random(System.currentTimeMillis());
     public static final double TIME_STEP = 0.02;
-    private static final double PLAYER_HAND_LENGTH = 15;
     private static final double PLAYER_MAX_SPEED = Pitch.WIDTH / 2;
     private static final double PLAYER_MIN_SPEED = Pitch.WIDTH / 3.5;
     private static final double SPEED_ENERGY_MODIFIER = 0.5;
@@ -38,8 +38,8 @@ public class MatchEngine {
     private static final double MAX_RISK_MARGIN = Pitch.WIDTH / 10;
     private static final double ENERGY_DECREASE_MAX_MODIFIER = 1.2;
     private static final double ENERGY_DECREASE_MIN_MODIFIER = 0.8;
-    private static final double SAVE_MAX_ADD_DISTANCE = PLAYER_HAND_LENGTH * 2;
-    private static final double SAVE_MIN_ADD_DISTANCE = PLAYER_HAND_LENGTH * 1;
+    private static final double SAVE_MAX_ADD_DISTANCE = MatchEngineConstants.PLAYER_HAND_LENGTH * 2;
+    private static final double SAVE_MIN_ADD_DISTANCE = MatchEngineConstants.PLAYER_HAND_LENGTH * 1;
     private static final double SAVE_ADD_DISTANCE_ENERGY_MODIFIER = 0.5;
     private static final double MAX_LYING_TIME = 1.2;
     private static final double MIN_LYING_TIME = 0.6;
@@ -178,15 +178,6 @@ public class MatchEngine {
 
     private double getNetZone() {
         return applyValueMargins(getPitch().getVenue().net_height, MIN_NET_ZONE_LENGTH, MAX_NET_ZONE_LENGTH);
-    }
-
-    private boolean canHitBall(Player p) {
-        Ball ball = getPitch().getBall();
-        if (p.getPosition().distance(ball.getPosition()) <= PLAYER_HAND_LENGTH) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     private double getPlayerModifier(Player p) {
@@ -397,9 +388,10 @@ public class MatchEngine {
     }
 
     private void performPlayerAction(Player player) {
+        Ball ball = getPitch().getBall();
         if (player.isLying()) {
             performLyingAction(player);
-        } else if (isPlayerZoneTargeted(player, getPitch().getBall()) && canHitBall(player)) {
+        } else if (isPlayerZoneTargeted(player, ball) && canPlayerHitBall(player, ball)) {
             hitBall(player);
         } else {
             movePlayer(player);
@@ -410,6 +402,11 @@ public class MatchEngine {
         return Pitch.isInsideZone(player.getSide(), ball.getVisibleTarget());
     }
 
+    static boolean canPlayerHitBall(Player player, Ball ball) {
+        final double distanceToBall = player.getPosition().distance(ball.getPosition());
+        return Precision.compareTo(distanceToBall, MatchEngineConstants.PLAYER_HAND_LENGTH, VectorUtils.DEFAULT_TOLERANCE) <= 0;
+    }
+    
     private boolean hasBallHittedGround(Ball b) {
         if (b.getRealTarget().subtract(b.getPosition()).getNorm() < 0.001) {
             return true;
@@ -462,7 +459,7 @@ public class MatchEngine {
 
     private boolean trySave(Side sideHitted) {
         Player p = getPitch().getPlayer(sideHitted);
-        double save_max_distance = PLAYER_HAND_LENGTH + getActualSaveAddDistance(p);
+        double save_max_distance = MatchEngineConstants.PLAYER_HAND_LENGTH + getActualSaveAddDistance(p);
         if (p.getPosition().subtract(getPitch().getBall().getPosition()).getNorm() <= save_max_distance && !p.isLying()) {
             p.lieDown();
             hitBall(p);

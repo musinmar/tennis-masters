@@ -1,55 +1,21 @@
 package tm.lib.engine;
 
 import java.util.Random;
-import org.apache.commons.math3.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.math3.geometry.partitioning.Region;
 import org.apache.commons.math3.util.Precision;
 import tm.lib.domain.competition.Match;
 
 public class MatchEngine {
 
-    private Pitch pitch;
+    private final Pitch pitch;
+    private final StatsCalculator statsCalculator;
     private Side winningSide;
     private Player lastHittedPlayer;
     private boolean net_hitted;
 
-    private static Random random = new Random(System.currentTimeMillis());
+    private Random random = new Random(System.currentTimeMillis());
     public static final double TIME_STEP = 0.02;
-    private static final double PLAYER_MAX_SPEED = Pitch.WIDTH / 2;
-    private static final double PLAYER_MIN_SPEED = Pitch.WIDTH / 3.5;
-    private static final double SPEED_ENERGY_MODIFIER = 0.5;
-    private static final double PLAYER_MAX_ACCELERATION = PLAYER_MAX_SPEED / 3;
-    private static final double PLAYER_MIN_ACCELERATION = PLAYER_MIN_SPEED / 8;
-    private static final double ACCELERATION_ENERGY_MODIFIER = 0.5;
-    private static final double BALL_MAX_SPEED = Pitch.WIDTH / 1;
-    private static final double BALL_MIN_SPEED = Pitch.WIDTH / 1.8;
-    private static final double BALL_SPEED_ENERGY_MODIFIER = 0.7;
-    private static final double SHOT_MAX_RANGE = Pitch.HEIGHT * 8 / 6;
-    private static final double SHOT_MIN_RANGE = Pitch.HEIGHT * 4 / 8;
-    private static final double SHOT_RANGE_ENERGY_MODIFIER = 0.7;
-    private static final double TARGET_MAX_RANGE = Pitch.WIDTH / 8;
-    private static final double TARGET_MIN_RANGE = Pitch.WIDTH / 16;
-    private static final double TARGET_RANGE_ENERGY_MODIFIER = 0.6;
-    private static final double VISIBLE_TARGET_MAX_RANGE = Pitch.WIDTH / 3;
-    private static final double VISIBLE_TARGET_ENERGY_MODIFIER = 0.5;
-    private static final double SKILL_MAX_RANGE = Pitch.WIDTH * 5 / 20;
-    private static final double SKILL_RANGE_ENERGY_MODIFIER = 0.8;
-    private static final double MAX_RISK_MARGIN = Pitch.WIDTH / 10;
-    private static final double ENERGY_DECREASE_MAX_MODIFIER = 1.2;
-    private static final double ENERGY_DECREASE_MIN_MODIFIER = 0.8;
-    private static final double SAVE_MAX_ADD_DISTANCE = MatchEngineConstants.PLAYER_HAND_LENGTH * 2;
-    private static final double SAVE_MIN_ADD_DISTANCE = MatchEngineConstants.PLAYER_HAND_LENGTH * 1;
-    private static final double SAVE_ADD_DISTANCE_ENERGY_MODIFIER = 0.5;
-    private static final double MAX_LYING_TIME = 1.2;
-    private static final double MIN_LYING_TIME = 0.6;
-    private static final double LYING_TIME_ENERGY_MODIFIER = 1;
-    private static final double MAX_VENUE_SPEED_MODIFIER = 1.25;
-    private static final double MIN_VENUE_SPEED_MODIFIER = 0.75;
-    private static final double MAX_VENUE_ACC_MODIFIER = 1.40;
-    private static final double MIN_VENUE_ACC_MODIFIER = 0.60;
-    private static final double MAX_NET_ZONE_LENGTH = Pitch.HALF_HEIGHT * 3 / 10;
-    private static final double MIN_NET_ZONE_LENGTH = Pitch.HALF_HEIGHT * 3 / 20;
+
     //private static final double NET_ZONE_MAX_LENGTH = Pitch.HHEIGHT / 5;
     private static final double NET_PONG = Pitch.HALF_HEIGHT / 35;
     private static final double ENERGY_LOSS_PER_DISTANCE = 0.9 / Pitch.WIDTH;
@@ -61,6 +27,7 @@ public class MatchEngine {
     public MatchEngine(Match match) {
         pitch = new Pitch(match.getFirstPlayer(), match.getSecondPlayer(), match.getVenue());
         pitch.setInitialPositions(Side.HOME);
+        statsCalculator = new StatsCalculator(match.getVenue());
         lastHittedPlayer = null;
     }
 
@@ -83,101 +50,8 @@ public class MatchEngine {
         return winningSide;
     }
 
-    private double applyValueMargins(double base, double min_value, double max_value) {
-        return base / 100 * (max_value - min_value) + min_value;
-    }
-
-    private double applyEnergyModifier(Player p, double value, double modifier) {
-        value *= (1 - modifier) * p.getEnergy() / 100 + modifier;
-        return value;
-    }
-
-    private double applyInvertedEnergyModifier(Player p, double value, double modifier) {
-        value *= 1 + modifier - (value / 100) * modifier;
-        return value;
-    }
-
-    private double getVenueSpeedModifier() {
-        return applyValueMargins(getPitch().getVenue().roughness, MIN_VENUE_SPEED_MODIFIER, MAX_VENUE_SPEED_MODIFIER);
-    }
-
-    private double getActualPlayerSpeed(Player p) {
-        //double speed = p.person.speed / 100 * (PLAYER_MAX_SPEED - PLAYER_MIN_SPEED) + PLAYER_MIN_SPEED;
-        //speed *= (1 - SPEED_ENERGY_MODIFIER) * p.energy / 100 + SPEED_ENERGY_MODIFIER;
-        double speed = applyValueMargins(p.getPerson().getSpeed(), PLAYER_MIN_SPEED, PLAYER_MAX_SPEED);
-        speed = applyEnergyModifier(p, speed, SPEED_ENERGY_MODIFIER);
-        speed = speed * getVenueSpeedModifier();
-        return speed;
-    }
-
-    private double getVenueAccelerationModifier() {
-        return applyValueMargins(100 - getPitch().getVenue().slippery, MIN_VENUE_ACC_MODIFIER, MAX_VENUE_ACC_MODIFIER);
-    }
-
-    private double getActualPlayerAcceleration(Player p) {
-        double acc = applyValueMargins(p.getPerson().getAcceleration(), PLAYER_MIN_ACCELERATION, PLAYER_MAX_ACCELERATION);
-        acc = applyEnergyModifier(p, acc, ACCELERATION_ENERGY_MODIFIER);
-        acc = acc * getVenueAccelerationModifier();
-        return acc;
-    }
-
-    private double getActualBallSpeed(Player p) {
-        //double ball_speed = p.person.hit_power / 100 * (BALL_MAX_SPEED - BALL_MIN_SPEED) + BALL_MIN_SPEED;
-        //ball_speed *= (1 - BALL_SPEED_ENERGY_MODIFIER) * p.energy / 100 + BALL_SPEED_ENERGY_MODIFIER;
-        double ball_speed = applyValueMargins(p.getPerson().getHitPower(), BALL_MIN_SPEED, BALL_MAX_SPEED);
-        ball_speed = applyEnergyModifier(p, ball_speed, BALL_SPEED_ENERGY_MODIFIER);
-        return ball_speed;
-    }
-
-    private double getActualShotRange(Player p) {
-        double shot_range = applyValueMargins(p.getPerson().getShotRange(), SHOT_MIN_RANGE, SHOT_MAX_RANGE);
-        shot_range = applyEnergyModifier(p, shot_range, SHOT_RANGE_ENERGY_MODIFIER);
-        return shot_range;
-    }
-
-    private double getActualTargetRange(Player p) {
-        double target_range = applyValueMargins(100 - p.getPerson().getAccuracy(), TARGET_MIN_RANGE, TARGET_MAX_RANGE);
-        target_range = applyInvertedEnergyModifier(p, target_range, TARGET_RANGE_ENERGY_MODIFIER);
-        return target_range;
-    }
-
-    private double getActualVisibleTargetRange(Player p) {
-        double visibleTargetRange = applyValueMargins(p.getPerson().getCunning(), 0, VISIBLE_TARGET_MAX_RANGE);
-        visibleTargetRange = applyEnergyModifier(p, visibleTargetRange, VISIBLE_TARGET_ENERGY_MODIFIER);
-        return visibleTargetRange;
-    }
-
-    private double getActualSkillRange(Player p) {
-        double skill_range = applyValueMargins(p.getPerson().getSkill(), 0, SKILL_MAX_RANGE);
-        skill_range = applyEnergyModifier(p, skill_range, SKILL_RANGE_ENERGY_MODIFIER);
-        return skill_range;
-    }
-
-    private double getActualRiskMargin(Player p) {
-        double risk_margin = applyValueMargins(100 - p.getPerson().getRisk(), 0, MAX_RISK_MARGIN);
-        return risk_margin;
-    }
-
-    private double getActualSaveAddDistance(Player p) {
-        double save_add_distance = applyValueMargins(p.getPerson().getDexterity(), SAVE_MIN_ADD_DISTANCE, SAVE_MAX_ADD_DISTANCE);
-        save_add_distance = applyEnergyModifier(p, save_add_distance, SAVE_ADD_DISTANCE_ENERGY_MODIFIER);
-        return save_add_distance;
-    }
-
-    private double getActualMaxLyingTime(Player p) {
-        double lying_time = applyValueMargins(100 - p.getPerson().getDexterity(), MIN_LYING_TIME, MAX_LYING_TIME);
-        lying_time = applyInvertedEnergyModifier(p, lying_time, LYING_TIME_ENERGY_MODIFIER);
-        return lying_time;
-    }
-
-    private void decrasePlayerEnergy(Player p, double value) {
-        double energy_decrease_modifier = applyValueMargins(100 - p.getPerson().getEndurance(), ENERGY_DECREASE_MIN_MODIFIER, ENERGY_DECREASE_MAX_MODIFIER);
-        value = value * energy_decrease_modifier;
-        p.changeEnergy(-value);
-    }
-
-    private double getNetZone() {
-        return applyValueMargins(getPitch().getVenue().net_height, MIN_NET_ZONE_LENGTH, MAX_NET_ZONE_LENGTH);
+    private StatsCalculator getStatsCalculator() {
+        return statsCalculator;
     }
 
     private double getPlayerModifier(Player p) {
@@ -193,7 +67,7 @@ public class MatchEngine {
     private boolean isTargetSmartEnough(Player p, Vector2D target) {
         Player opposite = getPitch().getOppositePlayer(p);
         double dist = target.subtract(opposite.getPosition()).getNorm();
-        double player_no_hit_range = getActualSkillRange(p);
+        double player_no_hit_range = getStatsCalculator().getActualSkillRange(p);
         if (dist >= player_no_hit_range) {
             return true;
         } else {
@@ -202,7 +76,7 @@ public class MatchEngine {
     }
 
     private boolean isTargetHighEnough(Player p, Vector2D target) {
-        double net_zone_length = Math.abs(p.getPosition().getY()) / Pitch.HALF_HEIGHT * getNetZone();
+        double net_zone_length = Math.abs(p.getPosition().getY()) / Pitch.HALF_HEIGHT * getStatsCalculator().getNetZone();
         double mod = getPlayerModifier(p);
         if (target.getY() * mod > 0) {
             return true;
@@ -230,14 +104,14 @@ public class MatchEngine {
         Vector2D d = target.subtract(p.getPosition());
         double dist = d.getNorm();
 
-        double optimal_shot_distance = getActualShotRange(p);
+        double optimal_shot_distance = getStatsCalculator().getActualShotRange(p);
         if (dist > optimal_shot_distance) {
             double excess = dist - optimal_shot_distance;
             double r = Math.pow(random.nextDouble(), 2);
             d = d.scalarMultiply((optimal_shot_distance + excess * r) / (optimal_shot_distance + excess));
             target = d.add(p.getPosition());
         }
-        
+
         return target;
     }
 
@@ -247,8 +121,8 @@ public class MatchEngine {
         Vector2D target = Vector2D.ZERO;
         boolean found = false;
 
-        double net_zone_length = Math.abs(p.getPosition().getY()) / Pitch.HALF_HEIGHT * getNetZone();
-        double risk_margin = getActualRiskMargin(p);
+        double net_zone_length = Math.abs(p.getPosition().getY()) / Pitch.HALF_HEIGHT * getStatsCalculator().getNetZone();
+        double risk_margin = getStatsCalculator().getActualRiskMargin(p);
         while (!found) {
             double x = random.nextDouble() * (Pitch.WIDTH - 2 * risk_margin) + risk_margin;
             double y = -mod * (random.nextDouble() * (Pitch.HALF_HEIGHT - net_zone_length - 2 * risk_margin) + net_zone_length + risk_margin);
@@ -262,7 +136,7 @@ public class MatchEngine {
 
         target = applyShotDistanceModification(p, target);
 
-        double target_range = getActualTargetRange(p);
+        double target_range = getStatsCalculator().getActualTargetRange(p);
         double phi = random.nextDouble() * 2 * Math.PI;
         double r = random.nextDouble() * target_range;
         double x = target.getX() + Math.cos(phi) * r;
@@ -277,7 +151,7 @@ public class MatchEngine {
     }
 
     private void getNewVisibleBallTarget(Player p, Ball b) {
-        double visibleTargetRange = getActualVisibleTargetRange(p);
+        double visibleTargetRange = getStatsCalculator().getActualVisibleTargetRange(p);
         double phi = random.nextDouble() * 2 * Math.PI;
         double r = random.nextDouble() * visibleTargetRange;
         double target_x = b.getRealTarget().getX() + Math.cos(phi) * r;
@@ -288,14 +162,14 @@ public class MatchEngine {
     private void hitBall(Player p) {
         Ball ball = getPitch().getBall();
         getNewBallTarget(p, ball);
-        ball.setSpeed(getActualBallSpeed(p));
+        ball.setSpeed(getStatsCalculator().getActualBallSpeed(p));
         if (net_hitted) {
             net_hitted = false;
         } else {
             getNewVisibleBallTarget(p, ball);
         }
         lastHittedPlayer = p;
-        decrasePlayerEnergy(p, ENERGY_LOSS_PER_HIT);
+        getStatsCalculator().decreasePlayerEnergy(p, ENERGY_LOSS_PER_HIT);
     }
 
     private boolean getZoneHitThreat(Player p) {
@@ -309,7 +183,7 @@ public class MatchEngine {
 
     private Vector2D getPlayerOptimalPosition(Player p) {
         Player opp = getPitch().getOppositePlayer(p);
-        double net_zone_length = Math.abs(opp.getPosition().getY()) / Pitch.HALF_HEIGHT * getNetZone();
+        double net_zone_length = Math.abs(opp.getPosition().getY()) / Pitch.HALF_HEIGHT * getStatsCalculator().getNetZone();
         if (net_zone_length < 0) {
             net_zone_length = 0;
         }
@@ -320,8 +194,8 @@ public class MatchEngine {
     }
 
     private void movePlayerToTarget(Player p, Vector2D target) {
-        double speed = getActualPlayerSpeed(p);
-        double acc = getActualPlayerAcceleration(p);
+        double speed = getStatsCalculator().getActualPlayerSpeed(p);
+        double acc = getStatsCalculator().getActualPlayerAcceleration(p);
         double step = speed * TIME_STEP;
         double ac_step = acc * TIME_STEP;
 
@@ -347,7 +221,7 @@ public class MatchEngine {
 
         Vector2D move = p.getDirection().scalarMultiply(p.getSpeed() * TIME_STEP);
         p.setPosition(p.getPosition().add(move));
-        decrasePlayerEnergy(p, move.getNorm() / getVenueSpeedModifier() * ENERGY_LOSS_PER_DISTANCE);
+        getStatsCalculator().decreasePlayerEnergy(p, move.getNorm() / getStatsCalculator().getVenueSpeedModifier() * ENERGY_LOSS_PER_DISTANCE);
     }
 
     private void movePlayer(Player p) {
@@ -380,9 +254,8 @@ public class MatchEngine {
     }
 
     private void performLyingAction(Player p) {
-        movePlayerToTarget(p, p.getPosition());
         p.addLyingTime(TIME_STEP);
-        if (p.getLyingTime() >= getActualMaxLyingTime(p)) {
+        if (p.getLyingTime() >= getStatsCalculator().getActualMaxLyingTime(p)) {
             p.setLying(false);
         }
     }
@@ -397,7 +270,7 @@ public class MatchEngine {
             movePlayer(player);
         }
     }
-    
+
     static boolean isPlayerZoneTargeted(Player player, Ball ball) {
         return Pitch.isInsideZone(player.getSide(), ball.getVisibleTarget());
     }
@@ -406,7 +279,7 @@ public class MatchEngine {
         final double distanceToBall = player.getPosition().distance(ball.getPosition());
         return Precision.compareTo(distanceToBall, MatchEngineConstants.PLAYER_HAND_LENGTH, VectorUtils.DEFAULT_TOLERANCE) <= 0;
     }
-    
+
     private boolean hasBallHittedGround(Ball b) {
         if (b.getRealTarget().subtract(b.getPosition()).getNorm() < 0.001) {
             return true;
@@ -459,11 +332,11 @@ public class MatchEngine {
 
     private boolean trySave(Side sideHitted) {
         Player p = getPitch().getPlayer(sideHitted);
-        double save_max_distance = MatchEngineConstants.PLAYER_HAND_LENGTH + getActualSaveAddDistance(p);
+        double save_max_distance = MatchEngineConstants.PLAYER_HAND_LENGTH + getStatsCalculator().getActualSaveAddDistance(p);
         if (p.getPosition().subtract(getPitch().getBall().getPosition()).getNorm() <= save_max_distance && !p.isLying()) {
             p.lieDown();
             hitBall(p);
-            decrasePlayerEnergy(p, ENERGY_LOSS_PER_SAVE);
+            getStatsCalculator().decreasePlayerEnergy(p, ENERGY_LOSS_PER_SAVE);
             return true;
         } else {
             return false;

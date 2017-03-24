@@ -91,6 +91,7 @@ public class Player {
     public void lieDown() {
         setLying(true);
         setLyingTime(0);
+        setSpeed(0);
     }
 
     public void resetState(Vector2D position, Vector2D direction) {

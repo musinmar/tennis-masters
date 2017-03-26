@@ -32,9 +32,22 @@ public class MatchEngineConstants {
     public static final double SAVE_MAX_ADD_DISTANCE = PLAYER_HAND_LENGTH * 2;
     public static final double SAVE_MIN_ADD_DISTANCE = PLAYER_HAND_LENGTH * 1;
     public static final double SAVE_ADD_DISTANCE_ENERGY_MODIFIER = 0.5;
-    public static final double MAX_LYING_TIME = 1.2;
+    
+    /**
+     * Total time the player will spend lying after save if he has top dexterity score.
+     */
     public static final double MIN_LYING_TIME = 0.6;
+    
+    /**
+     * Total time the player will spend lying after save if he has worst dexterity score.
+     */
+    public static final double MAX_LYING_TIME = 1.2;
+    
+    /**
+     * Additional factor applied to the lying time based on the player's energy.
+     */
     public static final double LYING_TIME_ENERGY_MODIFIER = 1;
+    
     public static final double MAX_VENUE_SPEED_MODIFIER = 1.25;
     public static final double MIN_VENUE_SPEED_MODIFIER = 0.75;
     public static final double MAX_VENUE_ACC_MODIFIER = 1.40;

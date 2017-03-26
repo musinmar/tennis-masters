@@ -253,10 +253,10 @@ public class MatchEngine {
         movePlayerToTarget(p, target);
     }
 
-    private void performLyingAction(Player p) {
-        p.addLyingTime(TIME_STEP);
-        if (p.getLyingTime() >= getStatsCalculator().getActualMaxLyingTime(p)) {
-            p.setLying(false);
+    private void performLyingAction(Player player) {
+        player.addLyingTime(TIME_STEP);
+        if (player.getLyingTime() >= StatsCalculator.getTotalLyingTime(player)) {
+            player.setLying(false);
         }
     }
 

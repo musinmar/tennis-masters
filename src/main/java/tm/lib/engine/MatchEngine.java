@@ -1,6 +1,7 @@
 package tm.lib.engine;
 
 import java.util.Random;
+import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.util.Precision;
 import tm.lib.domain.competition.Match;
@@ -172,25 +173,30 @@ public class MatchEngine {
         getStatsCalculator().decreasePlayerEnergy(p, ENERGY_LOSS_PER_HIT);
     }
 
-    private boolean getZoneHitThreat(Player p) {
-        double mod = getPlayerModifier(p);
-        if (mod * getPitch().getBall().getVisibleTarget().getY() > -Pitch.HALF_HEIGHT / 6) {
-            return true;
-        } else {
-            return false;
-        }
+    private boolean mayBallHitPlayerZone(Player player, Ball ball) {
+        double distanceToPlayerZone = getPitch().calculateDistanceToZone(player.getSide(), ball.getVisibleTarget());
+        return distanceToPlayerZone < Pitch.HALF_HEIGHT / 6;
+    }
+    
+    double calculateNetBlockedZoneLength(Player player) {
+        double length = Math.abs(player.getPosition().getY()) / Pitch.HALF_HEIGHT * getStatsCalculator().getNetZone();
+        return Math.max(length, 0);
     }
 
-    private Vector2D getPlayerOptimalPosition(Player p) {
-        Player opp = getPitch().getOppositePlayer(p);
-        double net_zone_length = Math.abs(opp.getPosition().getY()) / Pitch.HALF_HEIGHT * getStatsCalculator().getNetZone();
-        if (net_zone_length < 0) {
-            net_zone_length = 0;
-        }
-        double mod = getPlayerModifier(p);
-        double optimal_x = Pitch.WIDTH / 2;
-        double optimal_y = mod * ((Pitch.HALF_HEIGHT - net_zone_length) / 2 + net_zone_length);
-        return new Vector2D(optimal_x, optimal_y);
+    Vector2D calculateOptimalBallInterceptPosition(Player player, Ball ball) {
+        Line line = new Line(ball.getPosition(), ball.getVisibleTarget(), VectorUtils.DEFAULT_TOLERANCE);
+        Vector2D projection = (Vector2D) line.project(player.getPosition());
+        Vector2D target = ball.getPosition().distance(projection) < ball.getPosition().distance(ball.getVisibleTarget()) ?
+                projection : ball.getVisibleTarget();
+        target = getPitch().getClosestPointInZone(player.getSide(), target);
+        return target;
+    }
+    
+    Vector2D calculatePlayerOptimalPosition(Player player) {
+        double blockedLengthForOppositePlayer = calculateNetBlockedZoneLength(getPitch().getOppositePlayer(player));
+        double optimalX = Pitch.WIDTH / 2;
+        double optimalY = player.getSide().getModifier() * ((Pitch.HALF_HEIGHT + blockedLengthForOppositePlayer) / 2);
+        return new Vector2D(optimalX, optimalY);
     }
 
     private void movePlayerToTarget(Player p, Vector2D target) {
@@ -224,38 +230,21 @@ public class MatchEngine {
         getStatsCalculator().decreasePlayerEnergy(p, move.getNorm() / getStatsCalculator().getVenueSpeedModifier() * ENERGY_LOSS_PER_DISTANCE);
     }
 
-    private void movePlayer(Player p) {
+    private void decideAndMovePlayer(Player player) {
+        Ball ball = getPitch().getBall();
         Vector2D target;
-        //if (player_zone_targeted(p)) 
-        if (getZoneHitThreat(p)) {
-            target = getPitch().getBall().getVisibleTarget();
-            double mod = getPlayerModifier(p);
-            double x = target.getX();
-            double y = target.getY();
-            if (y * mod < 0) {
-                y = 0;
-            }
-            if (x < 0) {
-                x = 0;
-            }
-            if (x > Pitch.WIDTH) {
-                x = Pitch.WIDTH;
-            }
-            target = new Vector2D(x, y);
-            /*if (target.y > mod * Pitch.HHEIGHT) {
-             target.y 
-             }*/
-        } else //target = player_standard_position(p);
-        {
-            target = getPlayerOptimalPosition(p);
+        if (mayBallHitPlayerZone(player, ball)) {
+            //target = getPitch().getClosestPointInZone(player.getSide(), ball.getVisibleTarget());
+            target = calculateOptimalBallInterceptPosition(player, ball);
+        } else {
+            target = calculatePlayerOptimalPosition(player);
         }
-
-        movePlayerToTarget(p, target);
+        movePlayerToTarget(player, target);
     }
 
     private void performLyingAction(Player player) {
         player.addLyingTime(TIME_STEP);
-        if (player.getLyingTime() >= StatsCalculator.getTotalLyingTime(player)) {
+        if (player.getLyingTime() >= getStatsCalculator().getTotalLyingTime(player)) {
             player.setLying(false);
         }
     }
@@ -267,12 +256,12 @@ public class MatchEngine {
         } else if (isPlayerZoneTargeted(player, ball) && canPlayerHitBall(player, ball)) {
             hitBall(player);
         } else {
-            movePlayer(player);
+            decideAndMovePlayer(player);
         }
     }
 
-    static boolean isPlayerZoneTargeted(Player player, Ball ball) {
-        return Pitch.isInsideZone(player.getSide(), ball.getVisibleTarget());
+    boolean isPlayerZoneTargeted(Player player, Ball ball) {
+        return getPitch().isInsideZone(player.getSide(), ball.getVisibleTarget());
     }
 
     static boolean canPlayerHitBall(Player player, Ball ball) {

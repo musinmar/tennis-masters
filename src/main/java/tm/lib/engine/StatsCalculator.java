@@ -103,7 +103,7 @@ public class StatsCalculator {
         return save_add_distance;
     }
 
-    public static double getTotalLyingTime(Player p) {
+    public double getTotalLyingTime(Player p) {
         double lyingTime = map(100 - p.getPerson().getDexterity(), MIN_LYING_TIME, MAX_LYING_TIME);
         return lyingTime * getInvertedScaleModifier(p.getEnergy(), LYING_TIME_ENERGY_MODIFIER);
     }

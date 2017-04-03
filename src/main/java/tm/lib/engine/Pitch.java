@@ -58,9 +58,22 @@ public class Pitch {
         ball.setVisibleTarget(startingPlayerPosition.add(70, startingPlayerDirection));
     }
     
-    static boolean isInsideZone(Side side, Vector2D position) {
+    boolean isInsideZone(Side side, Vector2D position) {
         PolygonsSet zone = side == Side.HOME ? Pitch.HOME_ZONE : Pitch.AWAY_ZONE;
         Region.Location location = zone.checkPoint(position);
         return location == Region.Location.BOUNDARY || location == Region.Location.INSIDE;
+    }
+    
+    double calculateDistanceToZone(Side side, Vector2D position) {
+        PolygonsSet zone = side == Side.HOME ? Pitch.HOME_ZONE : Pitch.AWAY_ZONE;
+        return zone.projectToBoundary(position).getOffset();
+    }
+    
+    Vector2D getClosestPointInZone(Side side, Vector2D target) {
+        if (isInsideZone(side, target)) {
+            return target;
+        }
+        PolygonsSet zone = side == Side.HOME ? Pitch.HOME_ZONE : Pitch.AWAY_ZONE;
+        return (Vector2D) zone.projectToBoundary(target).getProjected();
     }
 }

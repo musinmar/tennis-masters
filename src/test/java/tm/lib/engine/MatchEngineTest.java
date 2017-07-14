@@ -79,9 +79,9 @@ public class MatchEngineTest {
         ball.setPosition(new Vector2D(50, 100));
         ball.setVisibleTarget(new Vector2D(100, 150));
         when(player.getPosition()).thenReturn(new Vector2D(100, 100));
-        assertTrue(VectorUtils.equalWithTolerance(new Vector2D(75, 125), matchEngine.calculateOptimalBallInterceptPosition(player, ball)));
+        assertTrue(VectorUtils.equalsWithTolerance(new Vector2D(75, 125), matchEngine.calculateOptimalBallInterceptPosition(player, ball)));
         
         when(player.getPosition()).thenReturn(new Vector2D(300, 200));
-        assertTrue(VectorUtils.equalWithTolerance(new Vector2D(100, 150), matchEngine.calculateOptimalBallInterceptPosition(player, ball)));
+        assertTrue(VectorUtils.equalsWithTolerance(new Vector2D(100, 150), matchEngine.calculateOptimalBallInterceptPosition(player, ball)));
     }
 }

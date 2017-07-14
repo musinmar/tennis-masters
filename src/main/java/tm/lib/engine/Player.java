@@ -8,23 +8,16 @@ public class Player {
     private final Person person;
     private final Side side;
 
-    private Vector2D position;
-    private Vector2D direction;
-    private double speed;
-    private boolean lying;
-    private double lyingTime;
-    private double energy;
+    private Vector2D position = Vector2D.ZERO;
+    private Vector2D direction = Vector2D.ZERO;
+    private double speed = 0;
+    private boolean lying = false;
+    private double lyingTime = 0;
+    private double energy = 100;
 
     public Player(Person person, Side side) {
         this.person = person;
         this.side = side;
-
-        position = Vector2D.ZERO;
-        direction = Vector2D.ZERO;
-        speed = 0;
-        lying = false;
-        lyingTime = 0;
-        energy = 100;
     }
 
     public Person getPerson() {

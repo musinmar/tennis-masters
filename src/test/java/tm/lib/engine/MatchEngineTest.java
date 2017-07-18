@@ -49,20 +49,20 @@ public class MatchEngineTest {
         
         when(currentPlayer.getSide()).thenReturn(Side.HOME);
         
-        when(matchEngine.calculateNetBlockedZoneLength(any())).thenReturn(0.0);
+        when(pitch.calculateNetBlockedZoneLength(any())).thenReturn(0.0);
         assertEquals(new Vector2D(Pitch.WIDTH / 2, Pitch.HALF_HEIGHT / 2), matchEngine.calculatePlayerOptimalPosition(currentPlayer));
         
-        when(matchEngine.calculateNetBlockedZoneLength(any())).thenReturn(100.0);
+        when(pitch.calculateNetBlockedZoneLength(any())).thenReturn(100.0);
         assertEquals(new Vector2D(Pitch.WIDTH / 2, (Pitch.HALF_HEIGHT + 100) / 2), matchEngine.calculatePlayerOptimalPosition(currentPlayer));
         
         // Optimal position for away player
         
         when(currentPlayer.getSide()).thenReturn(Side.AWAY);
         
-        when(matchEngine.calculateNetBlockedZoneLength(any())).thenReturn(0.0);
+        when(pitch.calculateNetBlockedZoneLength(any())).thenReturn(0.0);
         assertEquals(new Vector2D(Pitch.WIDTH / 2, -Pitch.HALF_HEIGHT / 2), matchEngine.calculatePlayerOptimalPosition(currentPlayer));
         
-        when(matchEngine.calculateNetBlockedZoneLength(any())).thenReturn(100.0);
+        when(pitch.calculateNetBlockedZoneLength(any())).thenReturn(100.0);
         assertEquals(new Vector2D(Pitch.WIDTH / 2, -(Pitch.HALF_HEIGHT + 100) / 2), matchEngine.calculatePlayerOptimalPosition(currentPlayer));
     }
     

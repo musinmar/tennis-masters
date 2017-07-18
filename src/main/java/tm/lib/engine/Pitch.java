@@ -79,8 +79,12 @@ public class Pitch {
         return (Vector2D) zone.projectToBoundary(target).getProjected();
     }
     
-    public double calculateNetBlockedZoneLength(Vector2D fromPosition) {
+    private double calculateNetBlockedZoneLength(Vector2D fromPosition) {
         double length = Math.abs(fromPosition.getY()) / Pitch.HALF_HEIGHT * statsCalculator.getNetZone();
         return Math.max(length, 0);
+    }
+    
+    public double calculateNetBlockedZoneLength(Player player) {
+        return calculateNetBlockedZoneLength(player.getPosition());
     }
 }

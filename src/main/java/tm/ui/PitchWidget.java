@@ -225,9 +225,9 @@ public class PitchWidget extends Canvas {
         gc.setBackground(DARK_PITCH_COLOR);
 
         if (DRAW_BLOCKED_ZONES) {
-            double homePlayerBlockedZoneLength = pitch.calculateNetBlockedZoneLength(pitch.getPlayer(Side.HOME).getPosition());
+            double homePlayerBlockedZoneLength = pitch.calculateNetBlockedZoneLength(pitch.getPlayer(Side.HOME));
             gc.fillRectangle(mapRect(0, 0, Pitch.WIDTH, -homePlayerBlockedZoneLength));
-            double awayPlayerBlockedZoneLength = pitch.calculateNetBlockedZoneLength(pitch.getPlayer(Side.AWAY).getPosition());
+            double awayPlayerBlockedZoneLength = pitch.calculateNetBlockedZoneLength(pitch.getPlayer(Side.AWAY));
             gc.fillRectangle(mapRect(0, awayPlayerBlockedZoneLength, Pitch.WIDTH, 0));
         }
 

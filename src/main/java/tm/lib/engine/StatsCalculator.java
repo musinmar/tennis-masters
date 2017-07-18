@@ -108,9 +108,8 @@ public class StatsCalculator {
         return lyingTime * getInvertedScaleModifier(p.getEnergy(), LYING_TIME_ENERGY_MODIFIER);
     }
 
-    public void decreasePlayerEnergy(Player p, double value) {
-        double energy_decrease_modifier = map(100 - p.getPerson().getEndurance(), ENERGY_DECREASE_MIN_MODIFIER, ENERGY_DECREASE_MAX_MODIFIER);
-        value = value * energy_decrease_modifier;
-        p.changeEnergy(-value);
+    public double getEnergyDecreaseModifier(Player p) {
+        double energyDecreaseModifier = map(100 - p.getPerson().getEndurance(), ENERGY_DECREASE_MIN_MODIFIER, ENERGY_DECREASE_MAX_MODIFIER);
+        return energyDecreaseModifier;
     }
 }

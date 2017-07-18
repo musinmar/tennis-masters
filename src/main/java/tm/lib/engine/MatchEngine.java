@@ -22,7 +22,6 @@ public class MatchEngine {
     private final StatsCalculator statsCalculator;
     private Side winningSide;
     private Player lastHittedPlayer;
-    private boolean netWasHit;
 
     private final Random random = new Random(System.currentTimeMillis());
 
@@ -60,9 +59,10 @@ public class MatchEngine {
         return p.getSide().getModifier();
     }
     
-    double calculateNetBlockedZoneLength(Player player) {
-        double length = Math.abs(player.getPosition().getY()) / Pitch.HALF_HEIGHT * getStatsCalculator().getNetZone();
-        return Math.max(length, 0);
+    private void decreasePlayerEnergy(Player p, double value) {
+        double energyDecreaseModifier = getStatsCalculator().getEnergyDecreaseModifier(p);
+        value = value * energyDecreaseModifier;
+        p.changeEnergy(-value);
     }
     
     private boolean isTargetSmartEnough(Player p, Vector2D target) {
@@ -73,7 +73,7 @@ public class MatchEngine {
     }
 
     private boolean isTargetHighEnough(Player p, Vector2D target) {
-        double netZoneLength = calculateNetBlockedZoneLength(p);
+        double netZoneLength = getPitch().calculateNetBlockedZoneLength(p);
         double mod = getPlayerModifier(p);
         if (target.getY() * mod > 0) {
             return true;
@@ -81,15 +81,14 @@ public class MatchEngine {
         return Math.abs(target.getY()) > netZoneLength;
     }
 
-    private void ballHitsNet(Player p, Vector2D target) {
+    private void ballHitsNet(Player p, Ball b) {
+        Vector2D target = b.getRealTarget();
         double mod = getPlayerModifier(p);
         Vector2D d = target.subtract(p.getPosition());
         double k = Math.abs(p.getPosition().getY() / (target.getY() - p.getPosition().getY()));
         d = d.scalarMultiply(k);
-        Ball ball = getPitch().getBall();
-        ball.setRealTarget(p.getPosition().add(d).add(new Vector2D(0, mod * NET_PONG)));
-        ball.setVisibleTarget(target);
-        netWasHit = true;
+        b.setRealTarget(p.getPosition().add(d).add(new Vector2D(0, mod * NET_PONG)));
+        b.setVisibleTarget(target);
     }
 
     private Vector2D applyShotDistanceModification(Player p, Vector2D target) {
@@ -118,7 +117,7 @@ public class MatchEngine {
     }
     
     private Vector2D chooseBallTarget(Player p) {
-        double netZoneLength = calculateNetBlockedZoneLength(p);
+        double netZoneLength = getPitch().calculateNetBlockedZoneLength(p);
         double riskMargin = getStatsCalculator().getActualRiskMargin(p);
         while (true) {
             Vector2D target = VectorUtils.generateRandomVector(riskMargin, Pitch.WIDTH - riskMargin, 
@@ -132,17 +131,6 @@ public class MatchEngine {
             }
         }
     }
-
-    private void chooseAndApplyBallTarget(Player p, Ball b) {
-        Vector2D target = chooseBallTarget(p);
-        target = applyShotDistanceModification(p, target);
-        target = applyShotAccuracyModification(p, target);
-        if (!isTargetHighEnough(p, target)) {
-            ballHitsNet(p, target);
-        } else {
-            b.setRealTarget(target);
-        }
-    }
     
     private Vector2D calculateVisibleBallTarget(Player p, Vector2D target) {
         double visibleTargetRange = getStatsCalculator().getActualVisibleTargetRange(p);
@@ -150,17 +138,25 @@ public class MatchEngine {
         return target.add(deviation);
     }
 
-    private void hitBall(Player p) {
+    private void chooseAndApplyBallTarget(Player player, Ball ball) {
+        Vector2D target = chooseBallTarget(player);
+        target = applyShotDistanceModification(player, target);
+        target = applyShotAccuracyModification(player, target);
+        ball.setRealTarget(target);
+        ball.setVisibleTarget(calculateVisibleBallTarget(player, target));
+        ball.setSpeed(getStatsCalculator().getActualBallSpeed(player));
+    }
+
+    private void hitBall(Player player) {
         Ball ball = getPitch().getBall();
-        chooseAndApplyBallTarget(p, ball);
-        ball.setSpeed(getStatsCalculator().getActualBallSpeed(p));
-        if (netWasHit) {
-            netWasHit = false;
-        } else {
-            ball.setVisibleTarget(calculateVisibleBallTarget(p, ball.getRealTarget()));
+        
+        chooseAndApplyBallTarget(player, ball);
+        if (!isTargetHighEnough(player, ball.getRealTarget())) {
+            ballHitsNet(player, ball);
         }
-        lastHittedPlayer = p;
-        getStatsCalculator().decreasePlayerEnergy(p, ENERGY_LOSS_PER_HIT);
+        
+        lastHittedPlayer = player;
+        decreasePlayerEnergy(player, ENERGY_LOSS_PER_HIT);
     }
 
     private boolean mayBallHitPlayerZone(Player player, Ball ball) {
@@ -178,7 +174,7 @@ public class MatchEngine {
     }
     
     Vector2D calculatePlayerOptimalPosition(Player player) {
-        double blockedLengthForOppositePlayer = calculateNetBlockedZoneLength(getPitch().getOppositePlayer(player));
+        double blockedLengthForOppositePlayer = getPitch().calculateNetBlockedZoneLength(getPitch().getOppositePlayer(player));
         double optimalX = Pitch.WIDTH / 2;
         double optimalY = player.getSide().getModifier() * ((Pitch.HALF_HEIGHT + blockedLengthForOppositePlayer) / 2);
         return new Vector2D(optimalX, optimalY);
@@ -212,7 +208,7 @@ public class MatchEngine {
 
         Vector2D move = p.getDirection().scalarMultiply(p.getSpeed() * TIME_STEP);
         p.setPosition(p.getPosition().add(move));
-        getStatsCalculator().decreasePlayerEnergy(p, move.getNorm() / getStatsCalculator().getVenueSpeedModifier() * ENERGY_LOSS_PER_DISTANCE);
+        decreasePlayerEnergy(p, move.getNorm() / getStatsCalculator().getVenueSpeedModifier() * ENERGY_LOSS_PER_DISTANCE);
     }
 
     private void decideAndMovePlayer(Player player) {
@@ -307,7 +303,7 @@ public class MatchEngine {
         if (p.getPosition().subtract(getPitch().getBall().getPosition()).getNorm() <= save_max_distance && !p.isLying()) {
             p.lieDown();
             hitBall(p);
-            getStatsCalculator().decreasePlayerEnergy(p, ENERGY_LOSS_PER_SAVE);
+            decreasePlayerEnergy(p, ENERGY_LOSS_PER_SAVE);
             return true;
         } else {
             return false;

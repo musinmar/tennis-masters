@@ -11,7 +11,12 @@ public class MatchEngine {
     public static final double TIME_STEP = 0.02;
     
     //private static final double NET_ZONE_MAX_LENGTH = Pitch.HHEIGHT / 5;
-    private static final double NET_PONG = Pitch.HALF_HEIGHT / 35;
+    
+    /**
+     * Percentage of momentum a ball will keep after hitting net
+     */
+    private static final double NET_PONG_FACTOR = 0.5;
+    
     private static final double ENERGY_LOSS_PER_DISTANCE = 0.9 / Pitch.WIDTH;
     private static final double ENERGY_LOSS_PER_HIT = 0.3;
     private static final double ENERGY_LOSS_PER_SAVE = 0.3;
@@ -81,16 +86,6 @@ public class MatchEngine {
         return Math.abs(target.getY()) > netZoneLength;
     }
 
-    private void ballHitsNet(Player p, Ball b) {
-        Vector2D target = b.getRealTarget();
-        double mod = getPlayerModifier(p);
-        Vector2D d = target.subtract(p.getPosition());
-        double k = Math.abs(p.getPosition().getY() / (target.getY() - p.getPosition().getY()));
-        d = d.scalarMultiply(k);
-        b.setRealTarget(p.getPosition().add(d).add(new Vector2D(0, mod * NET_PONG)));
-        b.setVisibleTarget(target);
-    }
-
     private Vector2D applyShotDistanceModification(Player p, Vector2D target) {
         double distance = target.distance(p.getPosition());
         double optimalShotDistance = getStatsCalculator().getActualShotRange(p);
@@ -145,6 +140,7 @@ public class MatchEngine {
         ball.setRealTarget(target);
         ball.setVisibleTarget(calculateVisibleBallTarget(player, target));
         ball.setSpeed(getStatsCalculator().getActualBallSpeed(player));
+        ball.setFlyingAboveNet(true);
     }
 
     private void hitBall(Player player) {
@@ -152,7 +148,7 @@ public class MatchEngine {
         
         chooseAndApplyBallTarget(player, ball);
         if (!isTargetHighEnough(player, ball.getRealTarget())) {
-            ballHitsNet(player, ball);
+            ball.setFlyingAboveNet(false);
         }
         
         lastHittedPlayer = player;
@@ -255,23 +251,41 @@ public class MatchEngine {
         return VectorUtils.equalsWithTolerance(b.getRealTarget(), b.getPosition(), 0.001);
     }
 
-    private void moveBall(Ball b) {
-        Vector2D d = b.getVisibleTarget().subtract(b.getPosition());
-        double dd = d.getNorm();
-        double dist_to_target = b.getRealTarget().subtract(b.getPosition()).getNorm();
-        double step = TIME_STEP * b.getSpeed();
-        double m_step = step * dd / dist_to_target;
-        if (dd > m_step) {
-            d = d.scalarMultiply(1 / dd).scalarMultiply(m_step);
+    private void ballHitsNet(Ball ball) {
+        Vector2D d = ball.getRealTarget().subtract(ball.getPosition());
+        d = VectorUtils.mirror(d);
+        d = d.scalarMultiply(NET_PONG_FACTOR);
+        Vector2D newTarget = ball.getPosition().add(d);
+        ball.setRealTarget(newTarget);
+        ball.setVisibleTarget(newTarget);
+    }
+    
+    private void moveBall(Ball ball) {
+        Vector2D d = ball.getVisibleTarget().subtract(ball.getPosition());
+        double distToVisibleTarget = d.getNorm();
+        double distToRealTarget = ball.getRealTarget().distance(ball.getPosition());
+        double step = TIME_STEP * ball.getSpeed();
+        double modifiedStep = step * distToVisibleTarget / distToRealTarget;
+        if (distToVisibleTarget > modifiedStep) {
+            d = d.scalarMultiply(1 / distToVisibleTarget).scalarMultiply(modifiedStep);
         }
-        b.setPosition(b.getPosition().add(d));
+        Vector2D nextBallPosition = ball.getPosition().add(d);
+        
+        if (!ball.isFlyingAboveNet()) {
+            if (Math.signum(ball.getPosition().getY()) * Math.signum(nextBallPosition.getY()) <= 0) {
+                ballHitsNet(ball);
+                return;
+            }
+        }
+        
+        ball.setPosition(nextBallPosition);
 
-        int steps = (int) (dist_to_target / step);
+        int steps = (int) (distToRealTarget / step);
         if (steps == 0) {
-            b.setVisibleTarget(b.getRealTarget());
+            ball.setVisibleTarget(ball.getRealTarget());
         } else {
-            Vector2D visibleTargetD = b.getRealTarget().subtract(b.getVisibleTarget()).scalarMultiply(1 / (double) steps);
-            b.setVisibleTarget(b.getVisibleTarget().add(visibleTargetD));
+            Vector2D visibleTargetD = ball.getRealTarget().subtract(ball.getVisibleTarget()).scalarMultiply(1 / (double) steps);
+            ball.setVisibleTarget(ball.getVisibleTarget().add(visibleTargetD));
         }
     }
 

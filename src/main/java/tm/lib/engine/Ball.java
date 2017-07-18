@@ -8,6 +8,7 @@ public class Ball {
     private Vector2D realTarget = Vector2D.ZERO;
     private Vector2D visibleTarget = Vector2D.ZERO;
     private double speed = 0;
+    private boolean flyingAboveNet = true;
 
     public Vector2D getPosition() {
         return position;
@@ -39,5 +40,13 @@ public class Ball {
 
     public void setSpeed(double speed) {
         this.speed = speed;
+    }
+
+    public boolean isFlyingAboveNet() {
+        return flyingAboveNet;
+    }
+
+    public void setFlyingAboveNet(boolean flyingAboveNet) {
+        this.flyingAboveNet = flyingAboveNet;
     }
 }

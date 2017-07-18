@@ -58,6 +58,7 @@ public class Pitch {
         ball.setPosition(startingPlayerPosition.add(10, startingPlayerDirection));
         ball.setRealTarget(startingPlayerPosition.add(50, startingPlayerDirection));
         ball.setVisibleTarget(startingPlayerPosition.add(70, startingPlayerDirection));
+        ball.setFlyingAboveNet(true);
     }
     
     boolean isInsideZone(Side side, Vector2D position) {

@@ -264,7 +264,8 @@ public class PitchWidget extends Canvas {
             radius = 1;
         }
         gc.setBackground(TenisMasters.display.getSystemColor(SWT.COLOR_BLACK));
-        gc.setForeground(TenisMasters.display.getSystemColor(SWT.COLOR_BLACK));
+        int ballColorId = ball.isFlyingAboveNet() ? SWT.COLOR_BLACK : SWT.COLOR_RED;
+        gc.setForeground(TenisMasters.display.getSystemColor(ballColorId));
         gc.fillOval(pos.x - radius, pos.y - radius, radius * 2, radius * 2);
 
         pos = mapPos(ball.getRealTarget());

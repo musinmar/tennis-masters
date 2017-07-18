@@ -105,11 +105,15 @@ public class MatchEngine {
         return target;
     }
     
+    private Vector2D calculateRandomDeviation(double range) {
+        double phi = random.nextDouble() * 2 * Math.PI;
+        double r = random.nextDouble() * range;
+        return VectorUtils.rotate(new Vector2D(r, 0), phi);
+    }
+    
     private Vector2D applyShotAccuracyModification(Player p, Vector2D target) {
         double targetRange = getStatsCalculator().getActualTargetRange(p);
-        double phi = random.nextDouble() * 2 * Math.PI;
-        double r = random.nextDouble() * targetRange;
-        Vector2D deviation = VectorUtils.rotate(new Vector2D(r, 0), phi);
+        Vector2D deviation = calculateRandomDeviation(targetRange);
         return target.add(deviation);
     }
     
@@ -139,14 +143,11 @@ public class MatchEngine {
             b.setRealTarget(target);
         }
     }
-
-    private void getNewVisibleBallTarget(Player p, Ball b) {
+    
+    private Vector2D calculateVisibleBallTarget(Player p, Vector2D target) {
         double visibleTargetRange = getStatsCalculator().getActualVisibleTargetRange(p);
-        double phi = random.nextDouble() * 2 * Math.PI;
-        double r = random.nextDouble() * visibleTargetRange;
-        double target_x = b.getRealTarget().getX() + Math.cos(phi) * r;
-        double target_y = b.getRealTarget().getY() + Math.sin(phi) * r;
-        b.setVisibleTarget(new Vector2D(target_x, target_y));
+        Vector2D deviation = calculateRandomDeviation(visibleTargetRange);
+        return target.add(deviation);
     }
 
     private void hitBall(Player p) {
@@ -156,7 +157,7 @@ public class MatchEngine {
         if (netWasHit) {
             netWasHit = false;
         } else {
-            getNewVisibleBallTarget(p, ball);
+            ball.setVisibleTarget(calculateVisibleBallTarget(p, ball.getRealTarget()));
         }
         lastHittedPlayer = p;
         getStatsCalculator().decreasePlayerEnergy(p, ENERGY_LOSS_PER_HIT);

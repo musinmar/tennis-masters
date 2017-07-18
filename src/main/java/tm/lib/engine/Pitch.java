@@ -12,6 +12,7 @@ public class Pitch {
     private final Player awayPlayer;
     private final Ball ball;
     private final Stadium venue;
+    private final StatsCalculator statsCalculator;
 
     // Pitch is a rectangle with coordinates in range (0, WIDTH), (-HEIGHT / 2, HEIGHT / 2)
     static public final double WIDTH = 500;
@@ -26,6 +27,7 @@ public class Pitch {
         this.awayPlayer = new Player(awayPlayer, Side.AWAY);
         this.ball = new Ball();
         this.venue = venue;
+        statsCalculator = new StatsCalculator(venue);
     }
 
     public Player getPlayer(Side side) {
@@ -75,5 +77,10 @@ public class Pitch {
         }
         PolygonsSet zone = side == Side.HOME ? Pitch.HOME_ZONE : Pitch.AWAY_ZONE;
         return (Vector2D) zone.projectToBoundary(target).getProjected();
+    }
+    
+    public double calculateNetBlockedZoneLength(Vector2D fromPosition) {
+        double length = Math.abs(fromPosition.getY()) / Pitch.HALF_HEIGHT * statsCalculator.getNetZone();
+        return Math.max(length, 0);
     }
 }

@@ -20,6 +20,8 @@ public class PitchWidget extends Canvas
     private static final double TARGET_SIZE = 2;
     private static final double VISIBLE_TARGET_SIZE = 8;
     
+    private static final boolean DRAW_BLOCKED_ZONES = true;
+    
     public Label top_label;
     public Label bottom_label;
     Pitch pitch;
@@ -28,6 +30,7 @@ public class PitchWidget extends Canvas
     public static final int HMARGIN = 5;
     public static final int VMARGIN = 10;
     final Color PITCH_COLOR = new Color(TenisMasters.display, 254, 251, 126);
+    final Color DARK_PITCH_COLOR = new Color(TenisMasters.display, 203, 200, 75);
     final Color LABEL_COLOR = TenisMasters.display.getSystemColor(SWT.COLOR_WHITE);
     Font font;
 	//Image buffer;
@@ -153,12 +156,27 @@ public class PitchWidget extends Canvas
         }
     }
 
-    private Point widget_pos(Vector2D pos)
+    private Point widget_pos(double x, double y)
     {
         double coef = pitch_size_coef();
-        int x = (int) (pos.getX() * coef + pitch_pos.x);
-        int y = (int) ((Pitch.HALF_HEIGHT - pos.getY()) * coef) + pitch_pos.y;
-        return new Point(x, y);
+        int px = (int) (x * coef + pitch_pos.x);
+        int py = (int) ((Pitch.HALF_HEIGHT - y) * coef) + pitch_pos.y;
+        return new Point(px, py);
+    }
+    
+    private Point widget_pos(Vector2D pos)
+    {
+        return widget_pos(pos.getX(), pos.getY());
+    }
+    
+    private Rectangle widget_rect(double x1, double y1, double x2, double y2) {
+        Point p1 = widget_pos(x1, y1);
+        Point p2 = widget_pos(x2, y2);
+        return new Rectangle(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
+    }
+    
+    private Rectangle widget_rect(Vector2D topLeft, Vector2D bottomRight) {
+        return widget_rect(topLeft.getX(), topLeft.getY(), bottomRight.getX(), bottomRight.getY());
     }
 
     private double pitch_size_coef()
@@ -217,9 +235,19 @@ public class PitchWidget extends Canvas
     {
         gc.setBackground(PITCH_COLOR);
         gc.setLineWidth(2);
-        gc.fillRectangle(pitch_pos.x, pitch_pos.y, pitch_size.x, pitch_size.y);
+        Rectangle pitchRectangle = widget_rect(0, Pitch.HALF_HEIGHT, Pitch.WIDTH, -Pitch.HALF_HEIGHT);
+        gc.fillRectangle(pitchRectangle);
+        gc.setBackground(DARK_PITCH_COLOR);
+
+        if (DRAW_BLOCKED_ZONES) {
+            double homePlayerBlockedZoneLength = pitch.calculateNetBlockedZoneLength(pitch.getPlayer(Side.HOME).getPosition());
+            gc.fillRectangle(widget_rect(0, 0, Pitch.WIDTH, -homePlayerBlockedZoneLength));
+            double awayPlayerBlockedZoneLength = pitch.calculateNetBlockedZoneLength(pitch.getPlayer(Side.AWAY).getPosition());
+            gc.fillRectangle(widget_rect(0, awayPlayerBlockedZoneLength, Pitch.WIDTH, 0));
+        }
+        
         gc.setForeground(TenisMasters.display.getSystemColor(SWT.COLOR_DARK_RED));
-        gc.drawRectangle(pitch_pos.x, pitch_pos.y, pitch_size.x, pitch_size.y);
+        gc.drawRectangle(pitchRectangle);
         gc.drawLine(pitch_pos.x, pitch_pos.y + pitch_size.y / 2, pitch_pos.x + pitch_size.x, pitch_pos.y + pitch_size.y / 2);
     }
 

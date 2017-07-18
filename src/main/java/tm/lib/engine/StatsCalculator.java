@@ -33,15 +33,15 @@ public class StatsCalculator {
     }
 
     public double getVenueSpeedModifier() {
-        return map(getVenue().roughness, MIN_VENUE_SPEED_MODIFIER, MAX_VENUE_SPEED_MODIFIER);
+        return map(getVenue().getRoughness(), MIN_VENUE_SPEED_MODIFIER, MAX_VENUE_SPEED_MODIFIER);
     }
 
     private double getVenueAccelerationModifier() {
-        return map(100 - getVenue().slippery, MIN_VENUE_ACC_MODIFIER, MAX_VENUE_ACC_MODIFIER);
+        return map(100 - getVenue().getSlippery(), MIN_VENUE_ACC_MODIFIER, MAX_VENUE_ACC_MODIFIER);
     }
 
     public double getNetZone() {
-        return map(getVenue().net_height, MIN_NET_ZONE_LENGTH, MAX_NET_ZONE_LENGTH);
+        return map(getVenue().getNetHeight(), MIN_NET_ZONE_LENGTH, MAX_NET_ZONE_LENGTH);
     }
 
     public double getActualPlayerSpeed(Player p) {

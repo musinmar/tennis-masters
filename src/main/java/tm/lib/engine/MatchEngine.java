@@ -57,10 +57,6 @@ public class MatchEngine {
     private StatsCalculator getStatsCalculator() {
         return statsCalculator;
     }
-
-    private double getPlayerModifier(Player p) {
-        return p.getSide().getModifier();
-    }
     
     private void decreasePlayerEnergy(Player p, double value) {
         double energyDecreaseModifier = getStatsCalculator().getEnergyDecreaseModifier(p);
@@ -77,8 +73,8 @@ public class MatchEngine {
 
     private boolean isTargetHighEnough(Player p, Vector2D target) {
         double netZoneLength = getPitch().calculateNetBlockedZoneLength(p);
-        double mod = getPlayerModifier(p);
-        if (target.getY() * mod > 0) {
+        double modifier = p.getSide().getModifier();
+        if (target.getY() * modifier > 0) {
             return true;
         }
         return Math.abs(target.getY()) > netZoneLength;
@@ -330,23 +326,9 @@ public class MatchEngine {
         }
     }
 
-    private Side getBallSide(Ball b) {
-        Vector2D position = b.getPosition();
-        if (position.getX() >= 0 && position.getX() <= Pitch.WIDTH
-                && position.getY() >= -Pitch.HALF_HEIGHT && position.getY() <= Pitch.HALF_HEIGHT) {
-            if (position.getY() >= 0) {
-                return Side.HOME;
-            } else {
-                return Side.AWAY;
-            }
-        } else {
-            return null;
-        }
-    }
-
     private void performBallAction(Ball b) {
         if (hasBallHittedGround(b)) {
-            endGame(getBallSide(b));
+            endGame(getPitch().getBallSide(b));
         } else {
             moveBall(b);
         }

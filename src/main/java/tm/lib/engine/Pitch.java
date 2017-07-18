@@ -61,6 +61,20 @@ public class Pitch {
         ball.setFlyingAboveNet(true);
     }
     
+    public Side getBallSide(Ball b) {
+        Vector2D position = b.getPosition();
+        if (position.getX() >= 0 && position.getX() <= Pitch.WIDTH
+                && position.getY() >= -Pitch.HALF_HEIGHT && position.getY() <= Pitch.HALF_HEIGHT) {
+            if (position.getY() >= 0) {
+                return Side.HOME;
+            } else {
+                return Side.AWAY;
+            }
+        } else {
+            return null;
+        }
+    }
+    
     boolean isInsideZone(Side side, Vector2D position) {
         PolygonsSet zone = side == Side.HOME ? Pitch.HOME_ZONE : Pitch.AWAY_ZONE;
         Region.Location location = zone.checkPoint(position);

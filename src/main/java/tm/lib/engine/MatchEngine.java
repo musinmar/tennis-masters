@@ -10,8 +10,6 @@ public class MatchEngine {
 
     public static final double TIME_STEP = 0.02;
     
-    //private static final double NET_ZONE_MAX_LENGTH = Pitch.HHEIGHT / 5;
-    
     /**
      * Percentage of momentum a ball will keep after hitting net
      */
@@ -224,18 +222,47 @@ public class MatchEngine {
             player.setLying(false);
         }
     }
+    
+    private boolean isInSaveRange(Player player, Vector2D position) {
+        double saveRange = MatchEngineConstants.PLAYER_HAND_LENGTH + getStatsCalculator().getActualSaveAddDistance(player);
+        return player.getPosition().distance(position) <= saveRange;
+    }
+    private boolean isBallStillInSaveRange(Player player, Ball ball) {
+        Vector2D nextBallPosition = getNextBallPosition(ball);
+        return isInSaveRange(player, ball.getPosition()) && !isInSaveRange(player, nextBallPosition);
+    }
+
+    private boolean trySave(Player player, Ball ball) {
+        if (isInSaveRange(player, ball.getPosition())) {
+            player.lieDown();
+            hitBall(player);
+            decreasePlayerEnergy(player, ENERGY_LOSS_PER_SAVE);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     private void performPlayerAction(Player player) {
         Ball ball = getPitch().getBall();
         if (player.isLying()) {
             performLyingAction(player);
-        } else if (hasBallHittedGround(ball) && isPlayerZoneTargeted(player, ball)) {
-            trySave(player.getSide());
-        } else if (isPlayerZoneTargeted(player, ball) && canPlayerHitBall(player, ball)) {
-            hitBall(player);
-        } else {
-            decideAndMovePlayer(player);
+            return;
         }
+        
+        if (isPlayerZoneTargeted(player, ball)) {
+            if (canPlayerHitBall(player, ball)) {
+                hitBall(player);
+                return;
+            } else if (hasBallHittedGround(ball) || isBallStillInSaveRange(player, ball)) {
+                boolean saved = trySave(player, ball);
+                if (saved) {
+                    return;
+                }
+            }
+        }
+        
+        decideAndMovePlayer(player);
     }
 
     boolean isPlayerZoneTargeted(Player player, Ball ball) {
@@ -260,7 +287,7 @@ public class MatchEngine {
         ball.setVisibleTarget(newTarget);
     }
     
-    private void moveBall(Ball ball) {
+    private Vector2D getNextBallPosition(Ball ball) {
         Vector2D d = ball.getVisibleTarget().subtract(ball.getPosition());
         double distToVisibleTarget = d.getNorm();
         double distToRealTarget = ball.getRealTarget().distance(ball.getPosition());
@@ -269,7 +296,13 @@ public class MatchEngine {
         if (distToVisibleTarget > modifiedStep) {
             d = d.scalarMultiply(1 / distToVisibleTarget).scalarMultiply(modifiedStep);
         }
-        Vector2D nextBallPosition = ball.getPosition().add(d);
+        return ball.getPosition().add(d);
+    }
+    
+    private void moveBall(Ball ball) {
+        double distToRealTarget = ball.getRealTarget().distance(ball.getPosition());
+        double step = TIME_STEP * ball.getSpeed();
+        Vector2D nextBallPosition = getNextBallPosition(ball);
         
         if (!ball.isFlyingAboveNet()) {
             if (Math.signum(ball.getPosition().getY()) * Math.signum(nextBallPosition.getY()) <= 0) {
@@ -308,19 +341,6 @@ public class MatchEngine {
             }
         } else {
             return null;
-        }
-    }
-
-    private boolean trySave(Side sideHitted) {
-        Player p = getPitch().getPlayer(sideHitted);
-        double save_max_distance = MatchEngineConstants.PLAYER_HAND_LENGTH + getStatsCalculator().getActualSaveAddDistance(p);
-        if (p.getPosition().subtract(getPitch().getBall().getPosition()).getNorm() <= save_max_distance && !p.isLying()) {
-            p.lieDown();
-            hitBall(p);
-            decreasePlayerEnergy(p, ENERGY_LOSS_PER_SAVE);
-            return true;
-        } else {
-            return false;
         }
     }
 

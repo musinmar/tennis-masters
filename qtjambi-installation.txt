@@ -1,0 +1,6 @@
+- Download Qt Jambi 4.8.7
+- Set JAVA_HOME to Java location
+- Start cmd:
+cd C:\Program Files\NetBeans 8.2\java\maven\bin
+mvn install:install-file -Dfile="C:\Program Files\qtjambi-community-4.8.7-win64-msvc2013\qtjambi-4.8.7.jar" -DgroupId=com.trolltech.qt -DartifactId=qtjambi -Dversion=4.8.7 -Dpackaging=jar
+mvn install:install-file -Dfile="C:\Program Files\qtjambi-community-4.8.7-win64-msvc2013\qtjambi-native-win64-msvc2013x64-4.8.7.jar" -DgroupId=com.trolltech.qt -DartifactId=qtjambi-native-win64-msvc2013x64 -Dversion=4.8.7 -Dpackaging=jar

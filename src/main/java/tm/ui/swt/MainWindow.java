@@ -1,4 +1,4 @@
-package tm.ui;
+package tm.ui.swt;
 
 import tm.lib.domain.world.GameWorld;
 import org.eclipse.swt.*;

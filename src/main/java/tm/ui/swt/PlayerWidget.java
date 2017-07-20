@@ -1,4 +1,4 @@
-package tm.ui;
+package tm.ui.swt;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;

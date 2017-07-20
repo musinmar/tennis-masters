@@ -1,4 +1,4 @@
-package tm.ui;
+package tm.ui.swt;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.eclipse.swt.*;

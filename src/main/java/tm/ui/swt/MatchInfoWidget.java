@@ -1,4 +1,4 @@
-package tm.ui;
+package tm.ui.swt;
 
 import tm.lib.domain.competition.Match;
 import org.eclipse.swt.*;

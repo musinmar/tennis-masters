@@ -1,4 +1,4 @@
-package tm.ui;
+package tm.ui.swt;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;

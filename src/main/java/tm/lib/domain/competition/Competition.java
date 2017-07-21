@@ -1,5 +1,7 @@
 package tm.lib.domain.competition;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import tm.lib.domain.core.Stadium;
 import tm.lib.domain.core.Person;
 import java.io.PrintStream;
@@ -18,6 +20,13 @@ abstract public class Competition implements IMatchEndListener
     {
         stream.println(getName());
         stream.println();
+    }
+    
+    public String printToString() {
+        OutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        print(printStream);
+        return outputStream.toString();
     }
 
     abstract public Match getNextMatch();

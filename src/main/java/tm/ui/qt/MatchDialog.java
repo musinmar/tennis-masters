@@ -45,7 +45,7 @@ public class MatchDialog extends QDialog {
         PlayerInfoWidget homePlayerInfoWidget = new PlayerInfoWidget(matchSimulator.getPitch().getPlayer(Side.HOME), this);
         pitchPanelLayout.addWidget(homePlayerInfoWidget, 0, 0, Qt.AlignmentFlag.AlignHCenter);
 
-        PitchWidget pitchWidget = new PitchWidget(this);
+        PitchWidget pitchWidget = new PitchWidget(matchSimulator.getPitch(), this);
         pitchPanelLayout.addWidget(pitchWidget, 1, 0);
 
         PlayerInfoWidget awayPlayerInfoWidget = new PlayerInfoWidget(matchSimulator.getPitch().getPlayer(Side.AWAY), this);

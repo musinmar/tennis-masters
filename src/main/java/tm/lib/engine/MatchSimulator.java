@@ -7,15 +7,17 @@ package tm.lib.engine;
 
 import tm.lib.domain.competition.Match;
 import tm.lib.domain.core.MatchScore;
+import tm.lib.domain.core.Person;
 
 public class MatchSimulator {
 
+    private final Match match;
     private final MatchEngine matchEngine;
     private final MatchProgressTracker matchProgressTracker;
     private long matchTime = 0;
     private Side lastGameResult;
 
-    public static enum State {
+    public enum State {
         PLAYING,
         GAME_ENDED,
         SET_ENDED,
@@ -23,6 +25,7 @@ public class MatchSimulator {
     }
 
     public MatchSimulator(Match match) {
+        this.match = match;
         matchEngine = new MatchEngine(match);
         matchProgressTracker = new MatchProgressTracker(match.getSets(), match.isPlayoff());
         matchProgressTracker.startNewSet();
@@ -39,6 +42,10 @@ public class MatchSimulator {
     public Side getLastGameResult() {
         assert lastGameResult != null;
         return lastGameResult;
+    }
+
+    public Person getLastGameWinner() {
+        return getLastGameResult() == Side.HOME ? match.getFirstPlayer() : match.getSecondPlayer();
     }
     
     public Pitch getPitch() {

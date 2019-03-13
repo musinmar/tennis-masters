@@ -1,11 +1,14 @@
 package tm.ui.qt;
 
+import com.trolltech.qt.core.QPoint;
 import com.trolltech.qt.core.QPointF;
 import com.trolltech.qt.core.QRectF;
+import com.trolltech.qt.core.QSize;
 import com.trolltech.qt.core.QSizeF;
 import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.gui.QColor;
 import com.trolltech.qt.gui.QFrame;
+import com.trolltech.qt.gui.QLabel;
 import com.trolltech.qt.gui.QPaintEvent;
 import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QPen;
@@ -26,6 +29,8 @@ public class PitchWidget extends QFrame {
     private static final QColor PITCH_COLOR = new QColor(254, 251, 126);
     private static final QColor DARK_PITCH_COLOR = new QColor(203, 200, 75);
 
+    private QLabel infoLabel;
+
     private final Pitch pitch;
     private QRectF pitchRect = new QRectF();
 
@@ -38,6 +43,11 @@ public class PitchWidget extends QFrame {
     private void setupUi() {
         setFrameShape(QFrame.Shape.Box);
         setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding);
+
+        infoLabel = new QLabel(this);
+        infoLabel.setStyleSheet("QLabel {background-color: white; padding: 6px;}");
+        infoLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);
+        infoLabel.setVisible(false);
     }
 
     @Override
@@ -53,6 +63,16 @@ public class PitchWidget extends QFrame {
         QPointF topLeft = new QPointF((currentSize.width() - realSize.width()) / 2 + HORIZONTAL_MARGIN,
                 (currentSize.height() - realSize.height()) / 2 + VERTICAL_MARGIN);
         pitchRect = new QRectF(topLeft, realSize);
+
+        updateInfoLabelPosition();
+    }
+
+    private void updateInfoLabelPosition() {
+        QSize infoLabelSize = infoLabel.size();
+        QSize size = size();
+        QPoint position = new QPoint(size.width() / 2 - infoLabelSize.width() / 2,
+                size.height() / 2 - infoLabelSize.height() / 2);
+        infoLabel.move(position);
     }
 
     @Override
@@ -169,5 +189,16 @@ public class PitchWidget extends QFrame {
         gc.setLineWidth(1);
         gc.drawLine(pos.x - size, pos.y - size, pos.x + size, pos.y + size);
         gc.drawLine(pos.x - size, pos.y + size, pos.x + size, pos.y - size);*/
+    }
+
+    public void showInfoLabel(String text) {
+        if (text == null) {
+            infoLabel.setVisible(false);
+        } else {
+            infoLabel.setText(text);
+            infoLabel.resize(infoLabel.sizeHint());
+            updateInfoLabelPosition();
+            infoLabel.setVisible(true);
+        }
     }
 }

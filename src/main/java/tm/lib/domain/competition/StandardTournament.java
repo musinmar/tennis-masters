@@ -6,22 +6,22 @@ import java.util.Arrays;
 import java.util.List;
 
 public class StandardTournament extends MultiStageCompetition {
+    private final GroupStage groupStage;
+    private final PlayoffStage playoffStage;
+
     public StandardTournament(Competition parentCompetition, List<Person> players) {
         super(parentCompetition);
         setName("Стандартный турнир");
         setParticipants(players);
 
         Competition[] stages = new Competition[2];
-        stages[0] = new GroupStage(this, players);
-        stages[0].setName("Групповой этап");
-        stages[1] = new PlayoffStage(this, 4);
-        stages[1].setName("Плей-офф");
+        groupStage = new GroupStage(this, players);
+        groupStage.setName("Групповой этап");
+        stages[0] = groupStage;
+        playoffStage = new PlayoffStage(this, 4);
+        playoffStage.setName("Плей-офф");
+        stages[1] = playoffStage;
         setStages(stages);
-    }
-
-    @Override
-    public List<Person> getPositions() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -32,13 +32,13 @@ public class StandardTournament extends MultiStageCompetition {
 
     @Override
     public void onCompetitionEnded(Competition competition) {
-        if (competition == getStages()[0]) {
-            List<Person> positions = competition.getPositions();
+        if (competition == groupStage) {
+            List<List<Person>> groupResults = groupStage.getResults().getGroupResults();
             List<Person> playoffParticipants = Arrays.asList(
-                    positions.get(0),
-                    positions.get(5),
-                    positions.get(4),
-                    positions.get(1)
+                    groupResults.get(0).get(0),
+                    groupResults.get(1).get(1),
+                    groupResults.get(1).get(0),
+                    groupResults.get(0).get(1)
             );
             getStages()[1].setParticipants(playoffParticipants);
         }

@@ -6,22 +6,23 @@ import tm.lib.domain.world.Season;
 import java.util.List;
 
 public class SimpleFourTournament extends MultiStageCompetition {
+
+    private final GroupStage groupStage;
+    private final PlayoffStage playoffStage;
+
     public SimpleFourTournament(Season season, List<Person> players) {
         super(season);
         setName("Тестовый турнир");
         setParticipants(players);
 
         Competition[] stages = new Competition[2];
-        stages[0] = new GroupStage(this, players);
-        stages[0].setName("Групповой этап");
-        stages[1] = new PlayoffStage(this, 4);
-        stages[1].setName("Плей-офф");
+        groupStage = new GroupStage(this, players);
+        groupStage.setName("Групповой этап");
+        stages[0] = groupStage;
+        playoffStage = new PlayoffStage(this, 4);
+        playoffStage.setName("Плей-офф");
+        stages[1] = playoffStage;
         setStages(stages);
-    }
-
-    @Override
-    public List<Person> getPositions() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -32,8 +33,8 @@ public class SimpleFourTournament extends MultiStageCompetition {
 
     @Override
     public void onCompetitionEnded(Competition competition) {
-        if (competition == getStages()[0]) {
-            getStages()[1].setParticipants(competition.getPositions());
+        if (competition == groupStage) {
+            playoffStage.setParticipants(groupStage.getResults().getGroupResults().get(0));
         }
     }
 }

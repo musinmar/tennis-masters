@@ -34,11 +34,6 @@ public class SeasonCompetition extends MultiStageCompetition {
     }
 
     @Override
-    public List<Person> getPositions() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public void setStartingDate(int date) {
     }
 

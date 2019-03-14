@@ -133,8 +133,7 @@ public class GroupSubStage extends SimpleCompetition {
         }
     }
 
-    @Override
-    public List<Person> getPositions() {
+    public List<Person> getResults() {
         return Arrays.stream(results)
                 .map(groupResult -> groupResult.player)
                 .collect(Collectors.toList());

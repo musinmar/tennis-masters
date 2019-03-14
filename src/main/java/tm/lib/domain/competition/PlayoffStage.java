@@ -2,7 +2,6 @@ package tm.lib.domain.competition;
 
 import tm.lib.domain.core.Person;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PlayoffStage extends MultiStageCompetition {
@@ -35,18 +34,6 @@ public class PlayoffStage extends MultiStageCompetition {
     }
 
     @Override
-    public List<Person> getPositions() {
-        throw new UnsupportedOperationException();
-//        Person[] pos = new Person[getParticipants().size()];
-//        for (int i = 0; i < getStages().length; ++i)
-//        {
-//            //Person[] group_pos = sub_stages[i].get_positions();
-//            //System.arraycopy(group_pos, 0, pos, i * 4, 4);
-//        }
-//        return pos;
-    }
-
-    @Override
     public void setStartingDate(int date) {
         for (int i = 0; i < getStages().length; ++i) {
             getStages()[i].setStartingDate(date + i * 2);
@@ -61,21 +48,16 @@ public class PlayoffStage extends MultiStageCompetition {
 
     @Override
     public void onCompetitionEnded(Competition competition) {
-        Competition nextStage = null;
+        PlayoffSubStage nextStage = null;
         for (int i = 0; i < getStages().length - 1; ++i) {
             if (getStages()[i] == competition) {
-                nextStage = getStages()[i + 1];
+                nextStage = (PlayoffSubStage) getStages()[i + 1];
                 break;
             }
         }
         if (nextStage != null) {
-            int winnerCount = competition.getParticipants().size() / 2;
-            List<Person> nextStageParticipants = new ArrayList<>();
-            List<Person> positions = competition.getPositions();
-            for (int j = 0; j < winnerCount; ++j) {
-                nextStageParticipants.add(positions.get(j));
-            }
-            nextStage.setParticipants(nextStageParticipants);
+            PlayoffSubStage currentStage = (PlayoffSubStage) competition;
+            nextStage.setParticipants(currentStage.getResults().getWinners());
         }
         super.onCompetitionEnded(competition);
     }

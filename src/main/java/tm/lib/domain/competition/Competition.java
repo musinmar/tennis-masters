@@ -33,8 +33,6 @@ abstract public class Competition implements IMatchEndListener {
 
     abstract public List<Match> getAllMatches();
 
-    abstract public List<Person> getPositions();
-
     abstract public void setStartingDate(int date);
 
     protected void endCompetition() {

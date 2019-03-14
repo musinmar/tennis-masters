@@ -44,8 +44,7 @@ public class PlayoffSubStage extends SimpleCompetition {
         }
     }
 
-    @Override
-    public List<Person> getPositions() {
+    public PlayoffSubStageResult getResults() {
         List<Person> winners = new ArrayList<>();
         List<Person> losers = new ArrayList<>();
         for (int i = 0; i < getAllMatches().size(); i++) {
@@ -54,16 +53,13 @@ public class PlayoffSubStage extends SimpleCompetition {
                 BasicScore s = m.getResult().getScoreBySets();
                 if (s.v1 > s.v2) {
                     winners.add(m.getFirstPlayer());
-                    winners.add(m.getSecondPlayer());
+                    losers.add(m.getSecondPlayer());
                 } else {
                     winners.add(m.getSecondPlayer());
                     losers.add(m.getFirstPlayer());
                 }
             }
         }
-        List<Person> positions = new ArrayList<>();
-        positions.addAll(winners);
-        positions.addAll(losers);
-        return positions;
+        return new PlayoffSubStageResult(winners, losers);
     }
 }

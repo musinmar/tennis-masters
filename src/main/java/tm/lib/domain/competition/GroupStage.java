@@ -28,11 +28,10 @@ public class GroupStage extends MultiStageCompetition {
         setStages(groups);
     }
 
-    @Override
-    public List<Person> getPositions() {
-        return Arrays.stream(getStages())
-                .flatMap(stage -> stage.getPositions().stream())
-                .collect(Collectors.toList());
+    public GroupStageResult getResults() {
+        return new GroupStageResult(Arrays.stream(getStages())
+                .map(stage -> ((GroupSubStage) stage).getResults())
+                .collect(Collectors.toList()));
     }
 
     @Override

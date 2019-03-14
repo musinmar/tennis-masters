@@ -13,8 +13,8 @@ public class MatchEngineConstants {
     public static final double PLAYER_MAX_ACCELERATION = PLAYER_MAX_SPEED / 3;
     public static final double PLAYER_MIN_ACCELERATION = PLAYER_MIN_SPEED / 8;
     public static final double ACCELERATION_ENERGY_MODIFIER = 0.5;
-    public static final double BALL_MAX_SPEED = Pitch.WIDTH / 1;
-    public static final double BALL_MIN_SPEED = Pitch.WIDTH / 1.8;
+    public static final double BALL_MAX_SPEED = Pitch.WIDTH / 0.7;
+    public static final double BALL_MIN_SPEED = Pitch.WIDTH / 1.1;
     public static final double BALL_SPEED_ENERGY_MODIFIER = 0.7;
     public static final double SHOT_MAX_RANGE = Pitch.HEIGHT * 8 / 6;
     public static final double SHOT_MIN_RANGE = Pitch.HEIGHT * 4 / 8;

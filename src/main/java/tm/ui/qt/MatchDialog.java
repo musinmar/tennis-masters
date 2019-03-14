@@ -39,6 +39,8 @@ public class MatchDialog extends QDialog {
     private QLabel matchTimeLabel;
     private MatchSimulator.State currentState;
     private QLabel matchScoreLabel;
+    private PlayerInfoWidget homePlayerInfoWidget;
+    private PlayerInfoWidget awayPlayerInfoWidget;
 
     public MatchDialog(Match match, QWidget parent) {
         super(parent);
@@ -60,13 +62,13 @@ public class MatchDialog extends QDialog {
         QGridLayout pitchPanelLayout = new QGridLayout();
         mainLayout.addItem(pitchPanelLayout);
 
-        PlayerInfoWidget homePlayerInfoWidget = new PlayerInfoWidget(matchSimulator.getPitch().getPlayer(Side.HOME), this);
+        homePlayerInfoWidget = new PlayerInfoWidget(matchSimulator.getPitch().getPlayer(Side.HOME), this);
         pitchPanelLayout.addWidget(homePlayerInfoWidget, 0, 0, Qt.AlignmentFlag.AlignHCenter);
 
         pitchWidget = new PitchWidget(matchSimulator.getPitch(), this);
         pitchPanelLayout.addWidget(pitchWidget, 1, 0);
 
-        PlayerInfoWidget awayPlayerInfoWidget = new PlayerInfoWidget(matchSimulator.getPitch().getPlayer(Side.AWAY), this);
+        awayPlayerInfoWidget = new PlayerInfoWidget(matchSimulator.getPitch().getPlayer(Side.AWAY), this);
         pitchPanelLayout.addWidget(awayPlayerInfoWidget, 2, 0, Qt.AlignmentFlag.AlignHCenter);
 
         QFrame infoWidget = new QFrame(this);
@@ -173,6 +175,8 @@ public class MatchDialog extends QDialog {
         currentState = matchSimulator.proceed();
         if (currentState == MatchSimulator.State.PLAYING) {
             pitchWidget.update();
+            homePlayerInfoWidget.updateEnergy();
+            awayPlayerInfoWidget.updateEnergy();
             updateMatchTimeLabel();
         } else {
             activeTimer.stop();
@@ -216,7 +220,7 @@ public class MatchDialog extends QDialog {
 
     private void updateMatchTimeLabel() {
         Duration matchDuration = Duration.ofMillis(matchSimulator.getMatchTime());
-        matchTimeLabel.setText(String.format("%02d:%02d", matchDuration.toMinutes(), matchDuration.getSeconds()));
+        matchTimeLabel.setText(String.format("%02d:%02d.%04d", matchDuration.toMinutes(), matchDuration.getSeconds() % 60, matchDuration.getNano() / 100000));
     }
 
     private void updateMatchScoreLabel() {

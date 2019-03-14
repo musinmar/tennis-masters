@@ -15,15 +15,16 @@ public class MatchEngine {
      * Percentage of momentum a ball will keep after hitting net
      */
     private static final double NET_PONG_FACTOR = 0.5;
+    private static final double AIR_FRICTION_COEFFECIENT = 0.0015;
     
     private static final double ENERGY_LOSS_PER_DISTANCE = 0.9 / Pitch.WIDTH;
     private static final double ENERGY_LOSS_PER_HIT = 0.3;
     private static final double ENERGY_LOSS_PER_SAVE = 0.3;
     private static final double ENERGY_REGAIN_PER_GAME = 1;
     private static final double ENERGY_REGAIN_PER_SET = 3;
-    
+
     private static final Random RANDOM = new Random(System.currentTimeMillis());
-        
+
     private final Pitch pitch;
     private final StatsCalculator statsCalculator;
     private Side winningSide;
@@ -300,6 +301,7 @@ public class MatchEngine {
     private void moveBall(Ball ball) {
         double distToRealTarget = ball.getRealTarget().distance(ball.getPosition());
         double step = getScaledTimeStep() * ball.getSpeed();
+        decreaseBallSpeed(ball);
         Vector2D nextBallPosition = getNextBallPosition(ball);
         
         if (!ball.isFlyingAboveNet()) {
@@ -318,6 +320,12 @@ public class MatchEngine {
             Vector2D visibleTargetD = ball.getRealTarget().subtract(ball.getVisibleTarget()).scalarMultiply(1 / (double) steps);
             ball.setVisibleTarget(ball.getVisibleTarget().add(visibleTargetD));
         }
+    }
+
+    private void decreaseBallSpeed(Ball ball) {
+        double speed = ball.getSpeed();
+        double frictionForce = speed * speed * AIR_FRICTION_COEFFECIENT * getScaledTimeStep();
+        ball.setSpeed(speed - frictionForce);
     }
 
     private void endGame(Side sideHitted) {

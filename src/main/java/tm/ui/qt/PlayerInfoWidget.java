@@ -13,6 +13,7 @@ import tm.lib.engine.Player;
 public class PlayerInfoWidget extends QFrame {
 
     private final Player player;
+    private QProgressBar energyBar;
 
     public PlayerInfoWidget(Player player, QWidget parent) {
         super(parent);
@@ -33,10 +34,14 @@ public class PlayerInfoWidget extends QFrame {
         label.setAlignment(Qt.AlignmentFlag.AlignCenter);
         label.setText(player.getPerson().getFullName());
 
-        QProgressBar progressBar = new QProgressBar(this);
-        layout.addWidget(progressBar);
-        progressBar.setRange(0, 100);
-        progressBar.setValue(100);
-        progressBar.setMaximumWidth(150);
+        energyBar = new QProgressBar(this);
+        layout.addWidget(energyBar);
+        energyBar.setRange(0, 100);
+        energyBar.setValue(100);
+        energyBar.setMaximumWidth(150);
+    }
+
+    public void updateEnergy() {
+        energyBar.setValue((int) player.getEnergy());
     }
 }

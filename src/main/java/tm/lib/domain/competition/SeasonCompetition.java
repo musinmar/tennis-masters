@@ -16,7 +16,7 @@ public class SeasonCompetition extends MultiStageCompetition {
         super(season);
         setParticipants(players);
 
-        Competition[] tournaments = new Competition[TOURNAMENT_COUNT];
+        List<Competition> tournaments = new ArrayList<>();
 
         for (int i = 0; i < TOURNAMENT_COUNT; ++i) {
             List<Person> allPlayers = new ArrayList<>(players);
@@ -26,7 +26,7 @@ public class SeasonCompetition extends MultiStageCompetition {
             Competition tournament = new StandardTournament(this, tournamentPlayers);
             tournament.setVenue(Stadium.test_stadium());
             tournament.setStartingDate(8 * i);
-            tournaments[i] = tournament;
+            tournaments.add(tournament);
         }
 
         initParticipants();

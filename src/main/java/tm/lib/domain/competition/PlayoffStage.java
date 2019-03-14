@@ -2,6 +2,7 @@ package tm.lib.domain.competition;
 
 import tm.lib.domain.core.Person;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlayoffStage extends MultiStageCompetition {
@@ -17,17 +18,17 @@ public class PlayoffStage extends MultiStageCompetition {
             }
         }
 
-        Competition[] stages = new Competition[roundCount];
+        List<Competition> stages = new ArrayList<>();
         int roundPlayerCount = playerCount;
         for (int i = 0; i < roundCount; i++) {
-            stages[i] = new PlayoffSubStage(this, roundPlayerCount);
+            stages.add(new PlayoffSubStage(this, roundPlayerCount));
             roundPlayerCount /= 2;
         }
 
-        stages[roundCount - 1].setName("Финал");
-        stages[roundCount - 2].setName("1/2 Финала");
+        stages.get(roundCount - 1).setName("Финал");
+        stages.get(roundCount - 2).setName("1/2 Финала");
         if (roundCount - 3 > 0) {
-            stages[roundCount - 3].setName("1/4 Финала");
+            stages.get(roundCount - 3).setName("1/4 Финала");
         }
 
         setStages(stages);
@@ -35,23 +36,23 @@ public class PlayoffStage extends MultiStageCompetition {
 
     @Override
     public void setStartingDate(int date) {
-        for (int i = 0; i < getStages().length; ++i) {
-            getStages()[i].setStartingDate(date + i * 2);
+        for (int i = 0; i < getStages().size(); ++i) {
+            getStages().get(i).setStartingDate(date + i * 2);
         }
     }
 
     @Override
     protected void setParticipants(List<Person> participants) {
         super.setParticipants(participants);
-        getStages()[0].setParticipants(participants);
+        getStages().get(0).setParticipants(participants);
     }
 
     @Override
     public void onCompetitionEnded(Competition competition) {
         PlayoffSubStage nextStage = null;
-        for (int i = 0; i < getStages().length - 1; ++i) {
-            if (getStages()[i] == competition) {
-                nextStage = (PlayoffSubStage) getStages()[i + 1];
+        for (int i = 0; i < getStages().size() - 1; ++i) {
+            if (getStages().get(i) == competition) {
+                nextStage = (PlayoffSubStage) getStages().get(i + 1);
                 break;
             }
         }

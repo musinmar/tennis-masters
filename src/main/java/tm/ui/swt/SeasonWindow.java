@@ -3,6 +3,8 @@ package tm.ui.swt;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -188,8 +190,8 @@ public class SeasonWindow
     private void fillTournamentCombo()
     {
         MultiStageCompetition seasonCompetition = (MultiStageCompetition) season.getSeasonCompetition();
-        Competition[] tournaments = seasonCompetition.getStages();
-        String[] comboItems = new String[tournaments.length + 1];
+        List<Competition> tournaments = seasonCompetition.getStages();
+        String[] comboItems = new String[tournaments.size() + 1];
         comboItems[0] = "Все";
         int index = 1;
         for (Competition tournament : tournaments)
@@ -212,11 +214,11 @@ public class SeasonWindow
 
         stageCombo.setEnabled(true);
         MultiStageCompetition seasonCompetition = (MultiStageCompetition) season.getSeasonCompetition();
-        Competition[] tournaments = seasonCompetition.getStages();
-        Competition tournament = tournaments[tournamentCombo.getSelectionIndex() - 1];
-        Competition[] stages = ((MultiStageCompetition) tournament).getStages();
+        List<Competition> tournaments = seasonCompetition.getStages();
+        Competition tournament = tournaments.get(tournamentCombo.getSelectionIndex() - 1);
+        List<Competition> stages = ((MultiStageCompetition) tournament).getStages();
 
-        String[] comboItems = new String[stages.length + 1];
+        String[] comboItems = new String[stages.size() + 1];
         comboItems[0] = "Все";
         int index = 1;
         for (Competition stage : stages)
@@ -239,13 +241,13 @@ public class SeasonWindow
 
         subStageCombo.setEnabled(true);
         MultiStageCompetition seasonCompetition = (MultiStageCompetition) season.getSeasonCompetition();
-        Competition[] tournaments = seasonCompetition.getStages();
-        Competition tournament = tournaments[tournamentCombo.getSelectionIndex() - 1];
-        Competition[] stages = ((MultiStageCompetition) tournament).getStages();
-        Competition stage = stages[stageCombo.getSelectionIndex() - 1];
-        Competition[] subStages = ((MultiStageCompetition) stage).getStages();
+        List<Competition>  tournaments = seasonCompetition.getStages();
+        Competition tournament = tournaments.get(tournamentCombo.getSelectionIndex() - 1);
+        List<Competition>  stages = ((MultiStageCompetition) tournament).getStages();
+        Competition stage = stages.get(stageCombo.getSelectionIndex() - 1);
+        List<Competition> subStages = ((MultiStageCompetition) stage).getStages();
 
-        String[] comboItems = new String[subStages.length + 1];
+        String[] comboItems = new String[subStages.size() + 1];
         comboItems[0] = "Все";
         int index = 1;
         for (Competition subStage : subStages)
@@ -266,24 +268,24 @@ public class SeasonWindow
         }
         else
         {
-            Competition[] tournaments = ((MultiStageCompetition) season.getSeasonCompetition()).getStages();
-            Competition tournament = tournaments[tournamentCombo.getSelectionIndex() - 1];
+            List<Competition> tournaments = ((MultiStageCompetition) season.getSeasonCompetition()).getStages();
+            Competition tournament = tournaments.get(tournamentCombo.getSelectionIndex() - 1);
             if (stageCombo.getSelectionIndex() <= 0)
             {
                 competitionToPrint = tournament;
             }
             else
             {
-                Competition[] stages = ((MultiStageCompetition) tournament).getStages();
-                Competition stage = stages[stageCombo.getSelectionIndex() - 1];
+                List<Competition> stages = ((MultiStageCompetition) tournament).getStages();
+                Competition stage = stages.get(stageCombo.getSelectionIndex() - 1);
                 if (subStageCombo.getSelectionIndex() <= 0)
                 {
                     competitionToPrint = stage;
                 }
                 else
                 {
-                    Competition[] subStages = ((MultiStageCompetition) stage).getStages();
-                    competitionToPrint = subStages[subStageCombo.getSelectionIndex() - 1];
+                    List<Competition> subStages = ((MultiStageCompetition) stage).getStages();
+                    competitionToPrint = subStages.get(subStageCombo.getSelectionIndex() - 1);
                 }
             }
         }

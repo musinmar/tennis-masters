@@ -1,50 +1,41 @@
 package tm.lib.domain.competition;
 
+import tm.lib.domain.world.Season;
+
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import tm.lib.domain.world.Season;
 
-abstract public class MultiStageCompetition extends Competition implements ICompetitionEndListener
-{
-    private Competition[] stages;
+abstract public class MultiStageCompetition extends Competition implements ICompetitionEndListener {
+    private List<Competition> stages;
 
-    MultiStageCompetition(Season season)
-    {
+    MultiStageCompetition(Season season) {
         super(season);
     }
 
-    MultiStageCompetition(Competition parentCompetition)
-    {
+    MultiStageCompetition(Competition parentCompetition) {
         super(parentCompetition);
     }
 
     @Override
-    public void print(PrintStream stream)
-    {
+    public void print(PrintStream stream) {
         super.print(stream);
-        for (Competition stage : stages)
-        {
-            stage.print(stream);
-            if (stage != stages[stages.length - 1])
-            {
+        for (int i = 0; i < stages.size(); ++i) {
+            stages.get(i).print(stream);
+            if (i != stages.size() - 1) {
                 stream.println();
             }
         }
     }
 
     @Override
-    public Match getNextMatch()
-    {
+    public Match getNextMatch() {
         Match nextMatch = null;
-        for (Competition stage : getStages())
-        {
+        for (Competition stage : getStages()) {
             Match stageNextMatch = stage.getNextMatch();
-            if (nextMatch == null || stageNextMatch.getDate() < nextMatch.getDate())
-            {
+            if (nextMatch == null || stageNextMatch.getDate() < nextMatch.getDate()) {
                 nextMatch = stageNextMatch;
             }
         }
@@ -52,8 +43,7 @@ abstract public class MultiStageCompetition extends Competition implements IComp
     }
 
     @Override
-    public List<Match> getAllMatches()
-    {
+    public List<Match> getAllMatches() {
         /*SortedSet<Match> sortedMatches = new TreeSet<Match>();
          for (Competition stage : getStages())
          {
@@ -61,31 +51,24 @@ abstract public class MultiStageCompetition extends Competition implements IComp
          }
          return new ArrayList<Match>(sortedMatches);*/
         List<Match> sortedMatches = new LinkedList<Match>();
-        for (Competition stage : getStages())
-        {
+        for (Competition stage : getStages()) {
             List<Match> stageMatches = stage.getAllMatches();
             ListIterator<Match> stageIt = stageMatches.listIterator();
             ListIterator<Match> it = sortedMatches.listIterator();
-            while (it.hasNext())
-            {
-                if (!stageIt.hasNext())
-                {
+            while (it.hasNext()) {
+                if (!stageIt.hasNext()) {
                     break;
                 }
 
                 Match nextStageMatch = stageIt.next();
-                if (it.next().getDate() > nextStageMatch.getDate())
-                {
+                if (it.next().getDate() > nextStageMatch.getDate()) {
                     it.previous();
                     sortedMatches.add(it.nextIndex(), nextStageMatch);
-                }
-                else
-                {
+                } else {
                     stageIt.previous();
                 }
             }
-            while (stageIt.hasNext())
-            {
+            while (stageIt.hasNext()) {
                 sortedMatches.add(stageIt.next());
             }
         }
@@ -93,21 +76,17 @@ abstract public class MultiStageCompetition extends Competition implements IComp
         return new ArrayList<Match>(sortedMatches);
     }
 
-    public Competition[] getStages()
-    {
+    public List<Competition> getStages() {
         return stages;
     }
 
-    protected void setStages(Competition[] stages)
-    {
+    protected void setStages(List<Competition> stages) {
         this.stages = stages;
     }
 
     @Override
-    public void onCompetitionEnded(Competition competition)
-    {
-        if (getNextMatch() == null)
-        {
+    public void onCompetitionEnded(Competition competition) {
+        if (getNextMatch() == null) {
             endCompetition();
         }
     }

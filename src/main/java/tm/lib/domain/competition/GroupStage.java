@@ -3,7 +3,6 @@ package tm.lib.domain.competition;
 import tm.lib.domain.core.Person;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,7 +13,7 @@ public class GroupStage extends MultiStageCompetition {
         setParticipants(players);
 
         int groupCount = players.size() / 4;
-        Competition[] groups = new Competition[groupCount];
+        List<Competition> groups = new ArrayList<>();
 
         for (int i = 0; i < groupCount; ++i) {
             List<Person> groupPlayers = new ArrayList<>();
@@ -23,21 +22,21 @@ public class GroupStage extends MultiStageCompetition {
             }
             GroupSubStage group = new GroupSubStage(this, groupPlayers);
             group.setName("Группа " + (i + 1));
-            groups[i] = group;
+            groups.add(group);
         }
         setStages(groups);
     }
 
     public GroupStageResult getResults() {
-        return new GroupStageResult(Arrays.stream(getStages())
+        return new GroupStageResult(getStages().stream()
                 .map(stage -> ((GroupSubStage) stage).getResults())
                 .collect(Collectors.toList()));
     }
 
     @Override
     public void setStartingDate(int date) {
-        for (int i = 0; i < getStages().length; i++) {
-            getStages()[i].setStartingDate(date);
+        for (Competition stage : getStages()) {
+            stage.setStartingDate(date);
         }
     }
 }

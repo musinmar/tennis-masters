@@ -3,6 +3,7 @@ package tm.lib.domain.competition;
 import tm.lib.domain.core.Person;
 import tm.lib.domain.world.Season;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class SimpleFourTournament extends MultiStageCompetition {
@@ -15,20 +16,17 @@ public class SimpleFourTournament extends MultiStageCompetition {
         setName("Тестовый турнир");
         setParticipants(players);
 
-        Competition[] stages = new Competition[2];
         groupStage = new GroupStage(this, players);
         groupStage.setName("Групповой этап");
-        stages[0] = groupStage;
         playoffStage = new PlayoffStage(this, 4);
         playoffStage.setName("Плей-офф");
-        stages[1] = playoffStage;
-        setStages(stages);
+        setStages(Arrays.asList(groupStage, playoffStage));
     }
 
     @Override
     public void setStartingDate(int date) {
-        getStages()[0].setStartingDate(date);
-        getStages()[1].setStartingDate(date + 4);
+        groupStage.setStartingDate(date);
+        playoffStage.setStartingDate(date + 4);
     }
 
     @Override

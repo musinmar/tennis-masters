@@ -15,6 +15,7 @@ import com.trolltech.qt.gui.QSpacerItem;
 import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QWidget;
 import tm.lib.domain.competition.Match;
+import tm.lib.domain.core.MatchScore;
 import tm.lib.engine.MatchEngine;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.Side;
@@ -30,6 +31,8 @@ public class MatchDialog extends QDialog {
     private final MatchSimulator matchSimulator;
 
     private boolean paused = true;
+    private MatchScore finalScore;
+
     private QTimer activeTimer;
     private QPushButton startButton;
     private PitchWidget pitchWidget;
@@ -99,17 +102,32 @@ public class MatchDialog extends QDialog {
         infoPanelLayout.addItem(new QSpacerItem(10, 10, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding));
 
         startButton = new QPushButton(this);
-        startButton.setText("Start");
+        startButton.setText("Начать");
         startButton.clicked.connect(this, "onStartButtonClicked()");
         infoPanelLayout.addWidget(startButton);
 
         QPushButton closeButton = new QPushButton(this);
-        closeButton.setText("Close");
+        closeButton.setText("Закрыть");
         closeButton.clicked.connect(this, "onCloseButtonClicked()");
         infoPanelLayout.addWidget(closeButton);
     }
 
+    public MatchScore getFinalScore() {
+        return finalScore;
+    }
+
     private void onCloseButtonClicked() {
+        if (finalScore == null) {
+            if (activeTimer != null) {
+                activeTimer.stop();
+            }
+            MatchSimulator.State state;
+            do {
+                state = matchSimulator.proceed();
+            } while (state != MatchSimulator.State.MATCH_ENDED);
+            finishMatch();
+        }
+
         close();
     }
 
@@ -118,11 +136,11 @@ public class MatchDialog extends QDialog {
             if (activeTimer == null) {
                 activeTimer = createSimulationTimer();
             }
-            startButton.setText("Pause");
+            startButton.setText("Пауза");
             paused = false;
             activeTimer.start();
         } else {
-            startButton.setText("Continue");
+            startButton.setText("Продолжить");
             paused = true;
             activeTimer.stop();
         }
@@ -191,7 +209,7 @@ public class MatchDialog extends QDialog {
             String info = String.format("Матч закончен, победитель - %s<br>Итоговый счёт: %s",
                     matchSimulator.getLastGameWinner().getFullName(), matchSimulator.getCurrentScore());
             pitchWidget.showInfoLabel(info);
-            startButton.setDisabled(true);
+            finishMatch();
             activeTimer = null;
         }
     }
@@ -203,5 +221,10 @@ public class MatchDialog extends QDialog {
 
     private void updateMatchScoreLabel() {
         matchScoreLabel.setText(matchSimulator.getCurrentScore().toString());
+    }
+
+    private void finishMatch() {
+        startButton.setDisabled(true);
+        finalScore = matchSimulator.getCurrentScore();
     }
 }

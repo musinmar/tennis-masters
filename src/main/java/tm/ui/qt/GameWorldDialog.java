@@ -66,7 +66,12 @@ public class GameWorldDialog extends QDialog {
     private void onNextMatchButtonClicked() {
         Match match = gameWorld.getCurrentSeason().getNextMatch();
         MatchDialog matchDialog = new MatchDialog(match, this);
-        matchDialog.open();
+        matchDialog.exec();
+        MatchScore score = matchDialog.getFinalScore();
+        if (score != null) {
+            gameWorld.getCurrentSeason().processMatch(match, score);
+            updateLogText();
+        }
     }
 
     private void onNextMatchFastButtonClicked() {

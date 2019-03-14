@@ -9,6 +9,7 @@ import tm.lib.domain.competition.Match;
 public class MatchEngine {
 
     public static final double TIME_STEP = 0.02;
+    private static final double TIME_SCALE = 0.75;
     
     /**
      * Percentage of momentum a ball will keep after hitting net
@@ -56,6 +57,10 @@ public class MatchEngine {
 
     private StatsCalculator getStatsCalculator() {
         return statsCalculator;
+    }
+
+    private double getScaledTimeStep() {
+        return TIME_STEP * TIME_SCALE;
     }
     
     private void decreasePlayerEnergy(Player player, double value) {
@@ -171,10 +176,10 @@ public class MatchEngine {
     private void movePlayerToTarget(Player player, Vector2D target) {
         double speed = getStatsCalculator().getActualPlayerSpeed(player);
         double acc = getStatsCalculator().getActualPlayerAcceleration(player);
-        double step = speed * TIME_STEP;
-        double ac_step = acc * TIME_STEP;
+        double step = speed * getScaledTimeStep();
+        double ac_step = acc * getScaledTimeStep();
 
-        Vector2D v = player.getDirection().scalarMultiply(player.getSpeed() * TIME_STEP);
+        Vector2D v = player.getDirection().scalarMultiply(player.getSpeed() * getScaledTimeStep());
         Vector2D d = target.subtract(player.getPosition());
         double dd = d.getNorm();
 
@@ -189,12 +194,12 @@ public class MatchEngine {
         }
 
         v = v.add(dv);
-        player.setSpeed(v.getNorm() / TIME_STEP);
+        player.setSpeed(v.getNorm() / getScaledTimeStep());
         if (player.getSpeed() != 0) {
-            player.setDirection(v.scalarMultiply(1 / (player.getSpeed() * TIME_STEP)));
+            player.setDirection(v.scalarMultiply(1 / (player.getSpeed() * getScaledTimeStep())));
         }
 
-        Vector2D move = player.getDirection().scalarMultiply(player.getSpeed() * TIME_STEP);
+        Vector2D move = player.getDirection().scalarMultiply(player.getSpeed() * getScaledTimeStep());
         player.setPosition(player.getPosition().add(move));
         decreasePlayerEnergy(player, move.getNorm() / getStatsCalculator().getVenueSpeedModifier() * ENERGY_LOSS_PER_DISTANCE);
     }
@@ -210,7 +215,7 @@ public class MatchEngine {
     }
 
     private void performLyingAction(Player player) {
-        player.addLyingTime(TIME_STEP);
+        player.addLyingTime(getScaledTimeStep());
         if (player.getLyingTime() >= getStatsCalculator().getTotalLyingTime(player)) {
             player.setLying(false);
         }
@@ -284,7 +289,7 @@ public class MatchEngine {
         Vector2D d = ball.getVisibleTarget().subtract(ball.getPosition());
         double distToVisibleTarget = d.getNorm();
         double distToRealTarget = ball.getRealTarget().distance(ball.getPosition());
-        double step = TIME_STEP * ball.getSpeed();
+        double step = getScaledTimeStep() * ball.getSpeed();
         double modifiedStep = step * distToVisibleTarget / distToRealTarget;
         if (distToVisibleTarget > modifiedStep) {
             d = d.scalarMultiply(1 / distToVisibleTarget).scalarMultiply(modifiedStep);
@@ -294,7 +299,7 @@ public class MatchEngine {
     
     private void moveBall(Ball ball) {
         double distToRealTarget = ball.getRealTarget().distance(ball.getPosition());
-        double step = TIME_STEP * ball.getSpeed();
+        double step = getScaledTimeStep() * ball.getSpeed();
         Vector2D nextBallPosition = getNextBallPosition(ball);
         
         if (!ball.isFlyingAboveNet()) {

@@ -1,13 +1,13 @@
 package tm.lib.domain.competition;
 
-import tm.lib.domain.core.Stadium;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Stadium;
+
 import java.util.LinkedList;
 import java.util.List;
 
-public class Match
-{
+public class Match {
     private int date;
     private final Competition competition;
     private Person player_1;
@@ -18,8 +18,7 @@ public class Match
     private MatchScore result;
     private List<IMatchEndListener> listeners;
 
-    public Match(Competition parent, Person p1, Person p2)
-    {
+    public Match(Competition parent, Person p1, Person p2) {
         competition = parent;
         listeners = new LinkedList<IMatchEndListener>();
         listeners.add(competition);
@@ -30,8 +29,7 @@ public class Match
         result = null;
     }
 
-    public Match(Competition parent, Person p1, Person p2, int s, boolean is_playoff)
-    {
+    public Match(Competition parent, Person p1, Person p2, int s, boolean is_playoff) {
         this(parent, p1, p2);
         sets = s;
         playoff = is_playoff;
@@ -43,85 +41,69 @@ public class Match
      else 
      return true;
      }*/
-    public int getDate()
-    {
+    public int getDate() {
         return date;
     }
 
-    public void setDate(int date)
-    {
+    public void setDate(int date) {
         this.date = date;
     }
 
-    public Competition getCompetition()
-    {
+    public Competition getCompetition() {
         return competition;
     }
 
-    public Person getFirstPlayer()
-    {
+    public Person getFirstPlayer() {
         return player_1;
     }
 
-    public void setFirstPlayer(Person person)
-    {
+    public void setFirstPlayer(Person person) {
         player_1 = person;
     }
 
-    public Person getSecondPlayer()
-    {
+    public Person getSecondPlayer() {
         return player_2;
     }
 
-    public void setSecondPlayer(Person person)
-    {
+    public void setSecondPlayer(Person person) {
         player_2 = person;
     }
 
-    public int getSets()
-    {
+    public int getSets() {
         return sets;
     }
 
-    public boolean isPlayoff()
-    {
+    public boolean isPlayoff() {
         return playoff;
     }
 
-    public Stadium getVenue()
-    {
+    public Stadium getVenue() {
         return venue;
     }
 
-    public void setVenue(Stadium venue)
-    {
+    public void setVenue(Stadium venue) {
         this.venue = venue;
     }
 
-    public MatchScore getResult()
-    {
+    public MatchScore getResult() {
         return result;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         String resultString = getResult() == null ? "" : " " + getResult().toString();
         String firstPlayerName = getFirstPlayer() == null ? "TBD" : getFirstPlayer().getFullName();
         String secondPlayerName = getSecondPlayer() == null ? "TBD" : getSecondPlayer().getFullName();
         return firstPlayerName + " - " + secondPlayerName + resultString;
     }
 
-    public void addMatchEndListener(IMatchEndListener listener)
-    {
+    public void addMatchEndListener(IMatchEndListener listener) {
         listeners.add(listener);
     }
 
-    public void setResult(MatchScore result)
-    {
+    public void setResult(MatchScore result) {
         this.result = result;
-        for (IMatchEndListener listener : listeners)
-        {
+        for (IMatchEndListener listener : listeners) {
             listener.onMatchEnded(this);
         }
     }

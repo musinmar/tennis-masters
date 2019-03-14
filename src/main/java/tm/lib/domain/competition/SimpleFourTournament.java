@@ -1,12 +1,12 @@
 package tm.lib.domain.competition;
 
-import tm.lib.domain.world.Season;
 import tm.lib.domain.core.Person;
+import tm.lib.domain.world.Season;
 
-public class SimpleFourTournament extends MultiStageCompetition
-{
-    public SimpleFourTournament(Season season, Person[] players)
-    {
+import java.util.List;
+
+public class SimpleFourTournament extends MultiStageCompetition {
+    public SimpleFourTournament(Season season, List<Person> players) {
         super(season);
         setName("Тестовый турнир");
         setParticipants(players);
@@ -20,23 +20,19 @@ public class SimpleFourTournament extends MultiStageCompetition
     }
 
     @Override
-    public Person[] getPositions()
-    {
+    public List<Person> getPositions() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void setStartingDate(int date)
-    {
+    public void setStartingDate(int date) {
         getStages()[0].setStartingDate(date);
         getStages()[1].setStartingDate(date + 4);
     }
 
     @Override
-    public void onCompetitionEnded(Competition competition)
-    {
-        if (competition == getStages()[0])
-        {
+    public void onCompetitionEnded(Competition competition) {
+        if (competition == getStages()[0]) {
             getStages()[1].setParticipants(competition.getPositions());
         }
     }

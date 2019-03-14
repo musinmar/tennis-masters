@@ -1,31 +1,28 @@
 package tm.lib.domain.competition;
 
-import tm.lib.domain.core.Stadium;
 import tm.lib.domain.core.Person;
-import java.util.Arrays;
+import tm.lib.domain.core.Stadium;
+import tm.lib.domain.world.Season;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import tm.lib.domain.world.Season;
 
-public class SeasonCompetition extends MultiStageCompetition
-{
+public class SeasonCompetition extends MultiStageCompetition {
     private static final int TOURNAMENT_COUNT = 1;
 
-    public SeasonCompetition(Season season, Person[] players)
-    {
+    public SeasonCompetition(Season season, List<Person> players) {
         super(season);
         setParticipants(players);
 
         Competition[] tournaments = new Competition[TOURNAMENT_COUNT];
 
-        for (int i = 0; i < TOURNAMENT_COUNT; ++i)
-        {
-            List<Person> allPlayers = Arrays.asList(players);
+        for (int i = 0; i < TOURNAMENT_COUNT; ++i) {
+            List<Person> allPlayers = new ArrayList<>(players);
             Random r = new Random(System.currentTimeMillis());
             Collections.shuffle(allPlayers, r);
-            Person[] tournamentPlayers = new Person[8];
-            tournamentPlayers = allPlayers.subList(0, 8).toArray(tournamentPlayers);
+            List<Person> tournamentPlayers = allPlayers.subList(0, 8);
             Competition tournament = new StandardTournament(this, tournamentPlayers);
             tournament.setVenue(Stadium.test_stadium());
             tournament.setStartingDate(8 * i);
@@ -37,24 +34,20 @@ public class SeasonCompetition extends MultiStageCompetition
     }
 
     @Override
-    public Person[] getPositions()
-    {
+    public List<Person> getPositions() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void setStartingDate(int date)
-    {
+    public void setStartingDate(int date) {
     }
 
     @Override
-    public void onCompetitionEnded(Competition competition)
-    {
+    public void onCompetitionEnded(Competition competition) {
         super.onCompetitionEnded(competition);
     }
 
-    private void initParticipants()
-    {
+    private void initParticipants() {
         //Person[][] tournamentPlayers = new Person[TOURNAMENT_COUNT][8];
         //Person[] players = getParticipants();
 

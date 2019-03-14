@@ -28,6 +28,9 @@ public class PitchWidget extends QFrame {
 
     private static final QColor PITCH_COLOR = new QColor(254, 251, 126);
     private static final QColor DARK_PITCH_COLOR = new QColor(203, 200, 75);
+    private static final QColor PITCH_BORDER_COLOR = new QColor(Qt.GlobalColor.darkRed);
+
+    private static final boolean DRAW_BLOCKED_ZONES = true;
 
     private QLabel infoLabel;
 
@@ -54,8 +57,13 @@ public class PitchWidget extends QFrame {
     protected void resizeEvent(QResizeEvent resizeEvent) {
         super.resizeEvent(resizeEvent);
 
-        QSizeF currentSize = new QSizeF(resizeEvent.size().width() - 2 * HORIZONTAL_MARGIN,
-                resizeEvent.size().height() - 2 * VERTICAL_MARGIN);
+        updatePitchRect(resizeEvent.size());
+        updateInfoLabelPosition();
+    }
+
+    private void updatePitchRect(QSize newWidgetSize) {
+        QSizeF currentSize = new QSizeF(newWidgetSize.width() - 2 * HORIZONTAL_MARGIN,
+        newWidgetSize.height() - 2 * VERTICAL_MARGIN);
         QSizeF realSize = new QSizeF(Pitch.WIDTH, Pitch.HEIGHT);
 
         realSize.scale(currentSize, Qt.AspectRatioMode.KeepAspectRatio);
@@ -63,8 +71,6 @@ public class PitchWidget extends QFrame {
         QPointF topLeft = new QPointF((currentSize.width() - realSize.width()) / 2 + HORIZONTAL_MARGIN,
                 (currentSize.height() - realSize.height()) / 2 + VERTICAL_MARGIN);
         pitchRect = new QRectF(topLeft, realSize);
-
-        updateInfoLabelPosition();
     }
 
     private void updateInfoLabelPosition() {
@@ -101,28 +107,20 @@ public class PitchWidget extends QFrame {
 
     private void drawPitch(QPainter painter) {
         painter.setBrush(PITCH_COLOR);
-        QPen borderPen = new QPen(new QColor(Qt.GlobalColor.darkRed), 2);
+        painter.setPen(Qt.PenStyle.NoPen);
+        painter.drawRect(new QRectF(0, 0, Pitch.WIDTH, Pitch.HEIGHT));
+        if (DRAW_BLOCKED_ZONES) {
+            painter.setBrush(DARK_PITCH_COLOR);
+            double homePlayerBlockedZoneLength = pitch.calculateNetBlockedZoneLength(pitch.getPlayer(Side.HOME));
+            double awayPlayerBlockedZoneLength = pitch.calculateNetBlockedZoneLength(pitch.getPlayer(Side.AWAY));
+            painter.drawRect(new QRectF(0, Pitch.HALF_HEIGHT - awayPlayerBlockedZoneLength,
+                    Pitch.WIDTH, homePlayerBlockedZoneLength + awayPlayerBlockedZoneLength));
+        }
+        QPen borderPen = new QPen(PITCH_BORDER_COLOR, 2);
         painter.setPen(borderPen);
+        painter.setBrush(Qt.BrushStyle.NoBrush);
         painter.drawRect(new QRectF(0, 0, Pitch.WIDTH, Pitch.HEIGHT));
         painter.drawLine(new QPointF(0, Pitch.HALF_HEIGHT), new QPointF(Pitch.WIDTH, Pitch.HALF_HEIGHT));
-
-        /*gc.setBackground(PITCH_COLOR);
-        gc.setLineWidth(2);
-        Rectangle pitchRectangle = mapRect(0, Pitch.HALF_HEIGHT, Pitch.WIDTH, -Pitch.HALF_HEIGHT);
-        gc.fillRectangle(pitchRectangle);
-        gc.setBackground(DARK_PITCH_COLOR);
-
-        if (DRAW_BLOCKED_ZONES) {
-            double homePlayerBlockedZoneLength = pitch.calculateNetBlockedZoneLength(pitch.getPlayer(Side.HOME));
-            gc.fillRectangle(mapRect(0, 0, Pitch.WIDTH, -homePlayerBlockedZoneLength));
-            double awayPlayerBlockedZoneLength = pitch.calculateNetBlockedZoneLength(pitch.getPlayer(Side.AWAY));
-            gc.fillRectangle(mapRect(0, awayPlayerBlockedZoneLength, Pitch.WIDTH, 0));
-        }
-
-        gc.setForeground(TenisMasters.display.getSystemColor(SWT.COLOR_DARK_RED));
-        gc.drawRectangle(pitchRectangle);
-        gc.drawLine(pitchPos.x, pitchPos.y + pitchSize.y / 2, pitchPos.x + pitchSize.x, pitchPos.y + pitchSize.y / 2);
-         */
     }
 
     private void drawPlayer(QPainter painter, Side side) {
@@ -161,34 +159,6 @@ public class PitchWidget extends QFrame {
                 new QPointF(visibleTarget.x() + VISIBLE_TARGET_SIZE, visibleTarget.y() + VISIBLE_TARGET_SIZE));
         painter.drawLine(new QPointF(visibleTarget.x() - VISIBLE_TARGET_SIZE, visibleTarget.y() + VISIBLE_TARGET_SIZE),
                 new QPointF(visibleTarget.x() + VISIBLE_TARGET_SIZE, visibleTarget.y() - VISIBLE_TARGET_SIZE));
-
-        /*
-        Point pos = mapPos(ball.getPosition());
-        double coef = getPitchSizeCoef();
-        int radius = (int) (coef * BALL_SIZE / 2);
-        if (radius < 1) {
-            radius = 1;
-        }
-        gc.setBackground(TenisMasters.display.getSystemColor(SWT.COLOR_BLACK));
-        int ballColorId = ball.isFlyingAboveNet() ? SWT.COLOR_BLACK : SWT.COLOR_RED;
-        gc.setForeground(TenisMasters.display.getSystemColor(ballColorId));
-        gc.fillOval(pos.x - radius, pos.y - radius, radius * 2, radius * 2);
-
-        pos = mapPos(ball.getRealTarget());
-        int size = (int) (coef * TARGET_SIZE / 2);
-        if (size < 1) {
-            size = 1;
-        }
-        gc.drawOval(pos.x - size, pos.y - size, size * 2, size * 2);
-
-        pos = mapPos(ball.getVisibleTarget());
-        size = (int) (coef * VISIBLE_TARGET_SIZE / 2);
-        if (size < 1) {
-            size = 1;
-        }
-        gc.setLineWidth(1);
-        gc.drawLine(pos.x - size, pos.y - size, pos.x + size, pos.y + size);
-        gc.drawLine(pos.x - size, pos.y + size, pos.x + size, pos.y - size);*/
     }
 
     public void showInfoLabel(String text) {

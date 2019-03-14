@@ -35,6 +35,7 @@ public class MatchDialog extends QDialog {
     private PitchWidget pitchWidget;
     private QLabel matchTimeLabel;
     private MatchSimulator.State currentState;
+    private QLabel matchScoreLabel;
 
     public MatchDialog(Match match, QWidget parent) {
         super(parent);
@@ -79,8 +80,14 @@ public class MatchDialog extends QDialog {
         playersLabel.setAlignment(Qt.AlignmentFlag.AlignHCenter);
         playersLabel.setText(match.getFirstPlayer().getFullName() + " - " + match.getSecondPlayer().getFullName());
 
+        matchScoreLabel = new QLabel();
+        matchScoreLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);
+        updateMatchScoreLabel();
+        infoPanelLayout.addWidget(matchScoreLabel);
+
         matchTimeLabel = new QLabel();
-        setMatchTimeLabel(0);
+        matchTimeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);
+        updateMatchTimeLabel();
         infoPanelLayout.addWidget(matchTimeLabel);
 
         QLabel resultLabel = new QLabel();
@@ -148,11 +155,12 @@ public class MatchDialog extends QDialog {
         currentState = matchSimulator.proceed();
         if (currentState == MatchSimulator.State.PLAYING) {
             pitchWidget.update();
-            setMatchTimeLabel(matchSimulator.getMatchTime());
+            updateMatchTimeLabel();
         } else {
             activeTimer.stop();
             String info = String.format("Гейм разыгран, победитель - %s<br>Счёт в игре: %s",
                     matchSimulator.getLastGameWinner().getFullName(), matchSimulator.getCurrentScore());
+            updateMatchScoreLabel();
             pitchWidget.showInfoLabel(info);
             activeTimer = createNextGameTimer();
             activeTimer.start();
@@ -188,8 +196,12 @@ public class MatchDialog extends QDialog {
         }
     }
 
-    private void setMatchTimeLabel(long matchDurationInMillis) {
-        Duration matchDuration = Duration.ofMillis(matchDurationInMillis);
+    private void updateMatchTimeLabel() {
+        Duration matchDuration = Duration.ofMillis(matchSimulator.getMatchTime());
         matchTimeLabel.setText(String.format("%02d:%02d", matchDuration.toMinutes(), matchDuration.getSeconds()));
+    }
+
+    private void updateMatchScoreLabel() {
+        matchScoreLabel.setText(matchSimulator.getCurrentScore().toString());
     }
 }

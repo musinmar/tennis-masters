@@ -1,8 +1,7 @@
-package tm.lib.domain.competition;
+package tm.lib.domain.competition.base;
 
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Match;
-import tm.lib.domain.core.Person;
 import tm.lib.domain.core.Stadium;
 
 import java.util.LinkedList;

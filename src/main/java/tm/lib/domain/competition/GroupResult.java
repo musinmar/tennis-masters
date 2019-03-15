@@ -1,5 +1,6 @@
 package tm.lib.domain.competition;
 
+import tm.lib.domain.competition.base.Participant;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.MatchScore;
 

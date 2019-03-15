@@ -1,6 +1,6 @@
 package tm.ui.swt;
 
-import tm.lib.domain.competition.MatchEvent;
+import tm.lib.domain.competition.base.MatchEvent;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.DisposeEvent;

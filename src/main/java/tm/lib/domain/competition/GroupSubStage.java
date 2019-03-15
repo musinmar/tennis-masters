@@ -1,5 +1,8 @@
 package tm.lib.domain.competition;
 
+import tm.lib.domain.competition.base.MatchEvent;
+import tm.lib.domain.competition.base.Participant;
+import tm.lib.domain.competition.base.SimpleCompetition;
 import tm.lib.domain.core.Person;
 import tm.lib.domain.world.Season;
 

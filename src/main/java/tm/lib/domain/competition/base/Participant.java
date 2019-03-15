@@ -1,4 +1,4 @@
-package tm.lib.domain.competition;
+package tm.lib.domain.competition.base;
 
 import tm.lib.domain.core.Person;
 

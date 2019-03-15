@@ -1,5 +1,7 @@
 package tm.lib.domain.competition;
 
+import tm.lib.domain.competition.base.Competition;
+import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.core.Person;
 import tm.lib.domain.core.Stadium;
 import tm.lib.domain.world.Season;
@@ -7,7 +9,6 @@ import tm.lib.domain.world.Season;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class SeasonCompetition extends MultiStageCompetition {
     private static final int TOURNAMENT_COUNT = 8;

@@ -1,7 +1,7 @@
 package tm.lib.domain.world;
 
-import tm.lib.domain.competition.Competition;
-import tm.lib.domain.competition.MatchEvent;
+import tm.lib.domain.competition.base.Competition;
+import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.SeasonCompetition;
 import tm.lib.domain.core.MatchScore;
 

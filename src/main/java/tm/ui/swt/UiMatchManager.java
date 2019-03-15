@@ -5,7 +5,7 @@
  */
 package tm.ui.swt;
 
-import tm.lib.domain.competition.MatchEvent;
+import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.Person;
 import tm.lib.domain.core.BasicScore;

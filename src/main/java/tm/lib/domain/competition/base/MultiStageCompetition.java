@@ -1,4 +1,4 @@
-package tm.lib.domain.competition;
+package tm.lib.domain.competition.base;
 
 import com.google.common.collect.ImmutableList;
 import tm.lib.domain.world.Season;

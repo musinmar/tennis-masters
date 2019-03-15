@@ -1,13 +1,14 @@
 package tm.lib.domain.competition;
 
 import tm.lib.domain.core.Person;
+import tm.lib.domain.world.Season;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayoffStage extends MultiStageCompetition {
-    public PlayoffStage(Competition parent, String name, int playerCount) {
-        super(parent, name);
+    public PlayoffStage(Season season, String name, int playerCount) {
+        super(season, name);
 
         int roundCount = 0;
         if (playerCount == 4) {
@@ -22,10 +23,10 @@ public class PlayoffStage extends MultiStageCompetition {
         int roundPlayerCount = playerCount;
         for (int i = 0; i < roundCount; i++) {
             String subStageName = getDefaultRoundName(roundPlayerCount);
-            stages.add(new PlayoffSubStage(this, subStageName, roundPlayerCount));
+            stages.add(new PlayoffSubStage(season, subStageName, roundPlayerCount));
             roundPlayerCount /= 2;
         }
-        setStages(stages);
+        initStages(stages);
     }
 
     private String getDefaultRoundName(int playerCount) {

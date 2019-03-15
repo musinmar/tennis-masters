@@ -1,5 +1,6 @@
 package tm.lib.domain.competition;
 
+import com.google.common.collect.ImmutableList;
 import tm.lib.domain.world.Season;
 
 import java.io.PrintStream;
@@ -13,10 +14,6 @@ abstract public class MultiStageCompetition extends Competition implements IComp
 
     protected MultiStageCompetition(Season season, String name) {
         super(season, name);
-    }
-
-    protected MultiStageCompetition(Competition parentCompetition, String name) {
-        super(parentCompetition, name);
     }
 
     @Override
@@ -80,8 +77,10 @@ abstract public class MultiStageCompetition extends Competition implements IComp
         return stages;
     }
 
-    protected void setStages(List<Competition> stages) {
-        this.stages = stages;
+    protected void initStages(List<Competition> stages) {
+        this.stages = ImmutableList.copyOf(stages);
+        stages.forEach(stage -> stage.addCompetitionEndListener(this));
+        stages.forEach(stage -> stage.setParent(this));
     }
 
     @Override

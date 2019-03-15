@@ -3,6 +3,7 @@ package tm.lib.domain.competition;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Person;
+import tm.lib.domain.world.Season;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -96,8 +97,8 @@ public class GroupSubStage extends SimpleCompetition {
 
     private GroupResult[] results;
 
-    public GroupSubStage(Competition parent, String name, List<Person> players) {
-        super(parent, name);
+    public GroupSubStage(Season season, String name, List<Person> players) {
+        super(season, name);
         setParticipants(players);
 
         List<Match> matches = new ArrayList<>(6);

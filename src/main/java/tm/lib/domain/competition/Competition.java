@@ -16,7 +16,40 @@ abstract public class Competition implements IMatchEndListener {
     private final String name;
 
     private List<Person> participants;
-    private List<ICompetitionEndListener> listeners;
+    private List<ICompetitionEndListener> listeners = new LinkedList<>();
+
+    protected Competition(Season season, String name) {
+        this.name = name;
+        this.season = season;
+    }
+
+    public Season getSeason() {
+        return season;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Competition getParent() {
+        return parent;
+    }
+
+    protected void setParent(Competition parent) {
+        this.parent = parent;
+    }
+
+    public List<Person> getParticipants() {
+        return participants;
+    }
+
+    protected void setParticipants(List<Person> participants) {
+        this.participants = participants;
+    }
+
+    public void addCompetitionEndListener(ICompetitionEndListener listener) {
+        listeners.add(listener);
+    }
 
     public void print(PrintStream stream) {
         stream.println(getName());
@@ -54,45 +87,5 @@ abstract public class Competition implements IMatchEndListener {
         for (Match match : matches) {
             match.setVenue(venue);
         }
-    }
-
-    protected Competition(Competition parent, String name) {
-        this(parent.getSeason(), name);
-        this.parent = parent;
-
-        listeners = new LinkedList<ICompetitionEndListener>();
-        if (parent instanceof ICompetitionEndListener) {
-            listeners.add((ICompetitionEndListener) parent);
-        }
-    }
-
-    protected Competition(Season season, String name) {
-        this.name = name;
-        this.season = season;
-        this.parent = null;
-    }
-
-    public Season getSeason() {
-        return season;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Competition getParent() {
-        return parent;
-    }
-
-    public List<Person> getParticipants() {
-        return participants;
-    }
-
-    protected void setParticipants(List<Person> participants) {
-        this.participants = participants;
-    }
-
-    public void addCompetitionEndListener(ICompetitionEndListener listener) {
-        listeners.add(listener);
     }
 }

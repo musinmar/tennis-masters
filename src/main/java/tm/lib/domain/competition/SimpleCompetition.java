@@ -14,11 +14,6 @@ abstract public class SimpleCompetition extends Competition {
         nextMatchIndex = 0;
     }
 
-    protected SimpleCompetition(Competition parent, String name) {
-        super(parent, name);
-        nextMatchIndex = 0;
-    }
-
     @Override
     public void print(PrintStream stream) {
         super.print(stream);

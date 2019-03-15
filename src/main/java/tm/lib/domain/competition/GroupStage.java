@@ -1,14 +1,15 @@
 package tm.lib.domain.competition;
 
 import tm.lib.domain.core.Person;
+import tm.lib.domain.world.Season;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class GroupStage extends MultiStageCompetition {
-    public GroupStage(Competition parentCompetition, String name, List<Person> players) {
-        super(parentCompetition, name);
+    public GroupStage(Season season, String name, List<Person> players) {
+        super(season, name);
         setParticipants(players);
 
         int groupCount = players.size() / 4;
@@ -19,10 +20,10 @@ public class GroupStage extends MultiStageCompetition {
             for (int j = 0; j < 4; ++j) {
                 groupPlayers.add(players.get(i * 4 + j));
             }
-            GroupSubStage group = new GroupSubStage(this, "Группа " + (i + 1), groupPlayers);
+            GroupSubStage group = new GroupSubStage(season, "Группа " + (i + 1), groupPlayers);
             groups.add(group);
         }
-        setStages(groups);
+        initStages(groups);
     }
 
     public GroupStageResult getResults() {

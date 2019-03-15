@@ -15,9 +15,9 @@ public class SimpleFourTournament extends MultiStageCompetition {
         super(season, "Тестовый турнир");
         setParticipants(players);
 
-        groupStage = new GroupStage(this, "Групповой этап", players);
-        playoffStage = new PlayoffStage(this, "Плей-офф", 4);
-        setStages(Arrays.asList(groupStage, playoffStage));
+        groupStage = new GroupStage(season, "Групповой этап", players);
+        playoffStage = new PlayoffStage(season, "Плей-офф", 4);
+        initStages(Arrays.asList(groupStage, playoffStage));
     }
 
     @Override

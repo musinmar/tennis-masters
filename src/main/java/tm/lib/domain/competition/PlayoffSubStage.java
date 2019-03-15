@@ -2,13 +2,14 @@ package tm.lib.domain.competition;
 
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.Person;
+import tm.lib.domain.world.Season;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayoffSubStage extends SimpleCompetition {
-    public PlayoffSubStage(Competition parent, String name, int playerCount) {
-        super(parent, name);
+    public PlayoffSubStage(Season season, String name, int playerCount) {
+        super(season, name);
 
         List<Match> matches = new ArrayList<Match>(playerCount / 2);
         for (int i = 0; i < playerCount / 2; i++) {

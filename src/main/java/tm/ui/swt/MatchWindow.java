@@ -82,7 +82,7 @@ public class MatchWindow
         player2_widget.setLayoutData(data);
 
         shell.pack();
-		//pitch_widget.update();
+		//pitch_widget.applyMatchResult();
 
         shell.addPaintListener(new PaintListener()
         {

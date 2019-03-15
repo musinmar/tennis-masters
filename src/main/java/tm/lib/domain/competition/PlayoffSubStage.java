@@ -17,7 +17,7 @@ public class PlayoffSubStage extends SimpleCompetition {
             MatchEvent match = new MatchEvent(this, getParticipants().get(i * 2),  getParticipants().get(i * 2 + 1), 4, true);
             matches.add(match);
         }
-        setMatches(matches);
+        initMatches(matches);
     }
 
     @Override

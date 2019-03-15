@@ -43,8 +43,8 @@ abstract public class SimpleCompetition extends Competition {
         super.onMatchEnded(match);
     }
 
-    protected void setMatches(List<MatchEvent> matches) {
-        assert this.matches == null;
+    protected void initMatches(List<MatchEvent> matches) {
         this.matches = matches;
+        matches.forEach(m -> m.addMatchEndListener(this));
     }
 }

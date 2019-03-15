@@ -1,135 +1,71 @@
 package tm.lib.domain.competition;
 
-import tm.lib.domain.core.BasicScore;
-import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Person;
 import tm.lib.domain.world.Season;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.reverseOrder;
+
 public class GroupSubStage extends SimpleCompetition {
-    static private class GroupResult implements Comparable<GroupResult> {
-        private Participant participant;
-        private int matchesPlayed;
-        private int points;
-        private int gamesWon;
-        private int gamesLost;
 
-        public GroupResult() {
-            participant = null;
-            matchesPlayed = 0;
-            points = 0;
-            gamesWon = 0;
-            gamesLost = 0;
-        }
+    private List<GroupResult> groupResults;
 
-        void setParticipant(Participant participant) {
-            this.participant = participant;
-        }
-
-        @Override
-        public int compareTo(GroupResult other) {
-            if (other.points > this.points) {
-                return -1;
-            } else {
-                if (other.points < this.points) {
-                    return 1;
-                }
-            }
-
-            if (other.gamesWon - other.gamesLost > this.gamesWon - this.gamesLost) {
-                return -1;
-            } else {
-                if (other.gamesWon - other.gamesLost < this.gamesWon - this.gamesLost) {
-                    return 1;
-                }
-            }
-
-            if (other.gamesWon > this.gamesWon) {
-                return -1;
-            } else {
-                if (other.gamesWon < this.gamesWon) {
-                    return 1;
-                }
-            }
-
-            return 0;
-        }
-
-        public void update(MatchEvent match) {
-            assert match.getResult() != null;
-            MatchScore score;
-            if (match.getHomePlayer() == participant) {
-                score = match.getResult();
-            } else {
-                if (match.getAwayPlayer() == participant) {
-                    score = match.getResult().reversed();
-                } else {
-                    return;
-                }
-            }
-
-            matchesPlayed += 1;
-            if (score.isFirstPlayerWinner()) {
-                points += 2;
-            } else {
-                if (score.isDraw()) {
-                    points += 1;
-                }
-            }
-
-            BasicScore totalScore = score.getScoreByGames();
-            gamesWon += totalScore.v1;
-            gamesLost += totalScore.v2;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("%1$-20s %2$-3d %3$d-%4$-2d %5$3d", participant.getFullNameOrId(),
-                    matchesPlayed, gamesWon, gamesLost, points);
-        }
-    }
-
-    private GroupResult[] results;
-
-    public GroupSubStage(Season season, String name, List<Participant> participants) {
+    public GroupSubStage(Season season, String name, int playerCount) {
         super(season, name);
-        setParticipants(participants);
+        setParticipants(Participant.createNewList(playerCount));
 
         List<MatchEvent> matches = Arrays.asList(
-                new MatchEvent(this, participants.get(0), participants.get(2), 2, false),
-                new MatchEvent(this, participants.get(1), participants.get(3), 2, false),
-                new MatchEvent(this, participants.get(0), participants.get(3), 2, false),
-                new MatchEvent(this, participants.get(1), participants.get(2), 2, false),
-                new MatchEvent(this, participants.get(0), participants.get(1), 2, false),
-                new MatchEvent(this, participants.get(2), participants.get(3), 2, false));
-        setMatches(matches);
+                new MatchEvent(this, getParticipants().get(0), getParticipants().get(2), 2, false),
+                new MatchEvent(this, getParticipants().get(1), getParticipants().get(3), 2, false),
+                new MatchEvent(this, getParticipants().get(0), getParticipants().get(3), 2, false),
+                new MatchEvent(this, getParticipants().get(1), getParticipants().get(2), 2, false),
+                new MatchEvent(this, getParticipants().get(0), getParticipants().get(1), 2, false),
+                new MatchEvent(this, getParticipants().get(2), getParticipants().get(3), 2, false));
+        initMatches(matches);
 
-        results = new GroupResult[participants.size()];
-        for (int i = 0; i < results.length; ++i) {
-            results[i] = new GroupResult();
-            results[i].setParticipant(participants.get(i));
+        initGroupResults(getParticipants());
+    }
+
+    private void initGroupResults(List<Participant> participants) {
+        groupResults = new ArrayList<>();
+        for (int i = 0; i < participants.size(); ++i) {
+            groupResults.add(new GroupResult(participants.get(i)));
         }
     }
 
     @Override
     public void print(PrintStream stream) {
         super.print(stream);
-
         stream.println();
-        for (int i = 0; i < results.length; ++i) {
-            stream.printf("%1$-2d %2$s", i + 1, results[i].toString());
+        printGroupResults(stream);
+    }
+
+    private void printGroupResults(PrintStream stream) {
+        int len = groupResults.size();
+        int maxNameLength = groupResults.stream()
+                .map(r -> r.getParticipant().getPlayer().getFullName())
+                .mapToInt(String::length)
+                .max()
+                .orElse(0);
+
+        String formatString = "%d. %-" + (maxNameLength + 1) + "s  %-3d %3d:%-3d %3d";
+        for (int i = 0; i < len; i++) {
+            GroupResult r = groupResults.get(i);
+            stream.printf(formatString, (i + 1), r.getParticipant().getPlayer().getFullName(),
+                    r.getMatchesPlayed(), r.getGamesWon(), r.getGamesLost(), r.getPoints());
             stream.println();
         }
     }
 
     public List<Person> getResults() {
-        return Arrays.stream(results)
-                .map(groupResult -> groupResult.participant.getPlayer())
+        return groupResults.stream()
+                .map(groupResult -> groupResult.getParticipant().getPlayer())
                 .collect(Collectors.toList());
     }
 
@@ -146,10 +82,33 @@ public class GroupSubStage extends SimpleCompetition {
 
     @Override
     public void onMatchEnded(MatchEvent match) {
-        for (GroupResult groupResult : results) {
-            groupResult.update(match);
-        }
-        Arrays.sort(results, Collections.reverseOrder());
+        applyMatchResult(match);
+        sortGroupResults();
         super.onMatchEnded(match);
     }
+
+    private void sortGroupResults() {
+        groupResults.sort(reverseOrder(buildGroupResultComparator()));
+    }
+
+    private void applyMatchResult(MatchEvent match) {
+        GroupResult groupResult1 = findGroupResult(match.getHomePlayer());
+        groupResult1.applyMatchResult(match.getResult());
+        GroupResult groupResult2 = findGroupResult(match.getAwayPlayer());
+        groupResult2.applyMatchResult(match.getResult().reversed());
+    }
+
+    private Comparator<GroupResult> buildGroupResultComparator() {
+        return Comparator.comparingDouble(GroupResult::getPoints)
+                .thenComparingDouble((GroupResult gr) -> gr.getGamesWon() - gr.getGamesLost())
+                .thenComparingDouble(GroupResult::getGamesWon);
+    }
+
+    private GroupResult findGroupResult(Participant participant) {
+        return groupResults.stream()
+                .filter(gr -> gr.getParticipant() == participant)
+                .findAny()
+                .orElseThrow(IllegalStateException::new);
+    }
+
 }

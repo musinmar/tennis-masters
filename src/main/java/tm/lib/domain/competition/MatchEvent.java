@@ -27,7 +27,6 @@ public class MatchEvent {
 
     public MatchEvent(Competition parent, Participant p1, Participant p2) {
         competition = parent;
-        listeners.add(competition);
         homePlayer = p1;
         awayPlayer = p2;
         sets = 2;

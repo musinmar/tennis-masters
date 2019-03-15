@@ -28,10 +28,10 @@ abstract public class MultiStageCompetition extends Competition implements IComp
     }
 
     @Override
-    public Match getNextMatch() {
-        Match nextMatch = null;
+    public MatchEvent getNextMatch() {
+        MatchEvent nextMatch = null;
         for (Competition stage : getStages()) {
-            Match stageNextMatch = stage.getNextMatch();
+            MatchEvent stageNextMatch = stage.getNextMatch();
             if (nextMatch == null || stageNextMatch.getDate() < nextMatch.getDate()) {
                 nextMatch = stageNextMatch;
             }
@@ -40,24 +40,24 @@ abstract public class MultiStageCompetition extends Competition implements IComp
     }
 
     @Override
-    public List<Match> getAllMatches() {
-        /*SortedSet<Match> sortedMatches = new TreeSet<Match>();
+    public List<MatchEvent> getAllMatches() {
+        /*SortedSet<MatchEvent> sortedMatches = new TreeSet<MatchEvent>();
          for (Competition stage : getStages())
          {
          sortedMatches.addAll(stage.getAllMatches());
          }
-         return new ArrayList<Match>(sortedMatches);*/
-        List<Match> sortedMatches = new LinkedList<Match>();
+         return new ArrayList<MatchEvent>(sortedMatches);*/
+        List<MatchEvent> sortedMatches = new LinkedList<MatchEvent>();
         for (Competition stage : getStages()) {
-            List<Match> stageMatches = stage.getAllMatches();
-            ListIterator<Match> stageIt = stageMatches.listIterator();
-            ListIterator<Match> it = sortedMatches.listIterator();
+            List<MatchEvent> stageMatches = stage.getAllMatches();
+            ListIterator<MatchEvent> stageIt = stageMatches.listIterator();
+            ListIterator<MatchEvent> it = sortedMatches.listIterator();
             while (it.hasNext()) {
                 if (!stageIt.hasNext()) {
                     break;
                 }
 
-                Match nextStageMatch = stageIt.next();
+                MatchEvent nextStageMatch = stageIt.next();
                 if (it.next().getDate() > nextStageMatch.getDate()) {
                     it.previous();
                     sortedMatches.add(it.nextIndex(), nextStageMatch);
@@ -70,7 +70,7 @@ abstract public class MultiStageCompetition extends Competition implements IComp
             }
         }
 
-        return new ArrayList<Match>(sortedMatches);
+        return new ArrayList<MatchEvent>(sortedMatches);
     }
 
     public List<Competition> getStages() {

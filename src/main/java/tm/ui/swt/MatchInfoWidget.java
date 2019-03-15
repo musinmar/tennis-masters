@@ -1,6 +1,6 @@
 package tm.ui.swt;
 
-import tm.lib.domain.competition.Match;
+import tm.lib.domain.competition.MatchEvent;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.DisposeEvent;
@@ -11,14 +11,14 @@ import org.eclipse.swt.layout.*;
 
 public class MatchInfoWidget extends Composite
 {
-    Match match;
+    MatchEvent match;
     Label p1_label;
     Label p2_label;
     public Label score_label;
     public Label time_label;
     Font font;
 
-    public MatchInfoWidget(Composite parent, Match m)
+    public MatchInfoWidget(Composite parent, MatchEvent m)
     {
         super(parent, SWT.BORDER);
         match = m;
@@ -60,8 +60,8 @@ public class MatchInfoWidget extends Composite
 
     public void update()
     {
-        p1_label.setText(match.getFirstPlayer().getShortName());
-        p2_label.setText(match.getSecondPlayer().getShortName());
+        p1_label.setText(match.getHomePlayer().getShortName());
+        p2_label.setText(match.getAwayPlayer().getShortName());
         score_label.setText("0:0/ 0:0/ д.в. 0:0");
         time_label.setText("00:00");
     }

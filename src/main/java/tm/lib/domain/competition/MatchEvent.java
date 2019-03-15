@@ -1,46 +1,40 @@
 package tm.lib.domain.competition;
 
 import tm.lib.domain.core.MatchScore;
+import tm.lib.domain.core.Match;
 import tm.lib.domain.core.Person;
 import tm.lib.domain.core.Stadium;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class Match {
+public class MatchEvent {
     private int date;
     private final Competition competition;
-    private Person player_1;
-    private Person player_2;
+    private Person homePlayer;
+    private Person awayPlayer;
     private int sets;
     private boolean playoff;
     private Stadium venue;
     private MatchScore result;
-    private List<IMatchEndListener> listeners;
+    private List<IMatchEndListener> listeners = new LinkedList<>();
 
-    public Match(Competition parent, Person p1, Person p2) {
+    public MatchEvent(Competition parent, Person p1, Person p2) {
         competition = parent;
-        listeners = new LinkedList<IMatchEndListener>();
         listeners.add(competition);
-        player_1 = p1;
-        player_2 = p2;
+        homePlayer = p1;
+        awayPlayer = p2;
         sets = 2;
         playoff = false;
         result = null;
     }
 
-    public Match(Competition parent, Person p1, Person p2, int s, boolean is_playoff) {
+    public MatchEvent(Competition parent, Person p1, Person p2, int sets, boolean isPlayoff) {
         this(parent, p1, p2);
-        sets = s;
-        playoff = is_playoff;
+        this.sets = sets;
+        playoff = isPlayoff;
     }
 
-    /*public boolean is_playoff() {
-     if (sets % 2 == 0)
-     return false;
-     else 
-     return true;
-     }*/
     public int getDate() {
         return date;
     }
@@ -53,20 +47,20 @@ public class Match {
         return competition;
     }
 
-    public Person getFirstPlayer() {
-        return player_1;
+    public Person getHomePlayer() {
+        return homePlayer;
     }
 
-    public void setFirstPlayer(Person person) {
-        player_1 = person;
+    public void setHomePlayer(Person homePlayer) {
+        this.homePlayer = homePlayer;
     }
 
-    public Person getSecondPlayer() {
-        return player_2;
+    public Person getAwayPlayer() {
+        return awayPlayer;
     }
 
-    public void setSecondPlayer(Person person) {
-        player_2 = person;
+    public void setAwayPlayer(Person awayPlayer) {
+        this.awayPlayer = awayPlayer;
     }
 
     public int getSets() {
@@ -92,8 +86,8 @@ public class Match {
     @Override
     public String toString() {
         String resultString = getResult() == null ? "" : " " + getResult().toString();
-        String firstPlayerName = getFirstPlayer() == null ? "TBD" : getFirstPlayer().getFullName();
-        String secondPlayerName = getSecondPlayer() == null ? "TBD" : getSecondPlayer().getFullName();
+        String firstPlayerName = getHomePlayer() == null ? "TBD" : getHomePlayer().getFullName();
+        String secondPlayerName = getAwayPlayer() == null ? "TBD" : getAwayPlayer().getFullName();
         return firstPlayerName + " - " + secondPlayerName + resultString;
     }
 
@@ -106,5 +100,15 @@ public class Match {
         for (IMatchEndListener listener : listeners) {
             listener.onMatchEnded(this);
         }
+    }
+
+    public Match createMatchSpec() {
+        Match match = new Match();
+        match.setHomePlayer(homePlayer);
+        match.setAwayPlayer(awayPlayer);
+        match.setSets(sets);
+        match.setPlayoff(playoff);
+        match.setVenue(venue);
+        return match;
     }
 }

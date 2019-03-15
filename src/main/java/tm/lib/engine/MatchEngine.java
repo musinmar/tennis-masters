@@ -4,7 +4,7 @@ import java.util.Random;
 import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.util.Precision;
-import tm.lib.domain.competition.Match;
+import tm.lib.domain.core.Match;
 
 public class MatchEngine {
 
@@ -31,7 +31,7 @@ public class MatchEngine {
     private Player lastHittedPlayer;
 
     public MatchEngine(Match match) {
-        pitch = new Pitch(match.getFirstPlayer(), match.getSecondPlayer(), match.getVenue());
+        pitch = new Pitch(match.getHomePlayer(), match.getAwayPlayer(), match.getVenue());
         pitch.setInitialPositions(Side.HOME);
         statsCalculator = new StatsCalculator(match.getVenue());
         lastHittedPlayer = null;

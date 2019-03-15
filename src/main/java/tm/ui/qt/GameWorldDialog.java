@@ -9,7 +9,7 @@ import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QWidget;
 import tm.lib.domain.competition.Competition;
-import tm.lib.domain.competition.Match;
+import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.GameWorld;
 import tm.lib.engine.MatchSimulator;
@@ -64,7 +64,7 @@ public class GameWorldDialog extends QDialog {
     }
 
     private void onNextMatchButtonClicked() {
-        Match match = gameWorld.getCurrentSeason().getNextMatch();
+        MatchEvent match = gameWorld.getCurrentSeason().getNextMatch();
         MatchDialog matchDialog = new MatchDialog(match, this);
         matchDialog.exec();
         MatchScore score = matchDialog.getFinalScore();
@@ -75,8 +75,8 @@ public class GameWorldDialog extends QDialog {
     }
 
     private void onNextMatchFastButtonClicked() {
-        Match match = gameWorld.getCurrentSeason().getNextMatch();
-        MatchSimulator matchSimulator = new MatchSimulator(match);
+        MatchEvent match = gameWorld.getCurrentSeason().getNextMatch();
+        MatchSimulator matchSimulator = new MatchSimulator(match.createMatchSpec());
         MatchSimulator.State state;
         do {
             state = matchSimulator.proceed();

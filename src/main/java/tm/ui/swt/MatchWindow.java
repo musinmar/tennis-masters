@@ -1,7 +1,7 @@
 package tm.ui.swt;
 
 import tm.lib.domain.core.MatchScore;
-import tm.lib.domain.competition.Match;
+import tm.lib.domain.competition.MatchEvent;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
@@ -22,7 +22,7 @@ public class MatchWindow
     boolean started;
     public MatchScore final_score;
 
-    MatchWindow(Shell parent, Match match)
+    MatchWindow(Shell parent, MatchEvent match)
     {
         manager = new UiMatchManager(this, match);
         started = false;

@@ -5,7 +5,7 @@
  */
 package tm.ui.swt;
 
-import tm.lib.domain.competition.Match;
+import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.core.Person;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.engine.MatchEngine;
@@ -19,7 +19,7 @@ import tm.lib.engine.Side;
  */
 public class UiMatchManager {
 
-    public Match match;
+    public MatchEvent match;
     private MatchSimulator matchSimulator;
     private MatchSimulator.State currentState;
 
@@ -35,9 +35,9 @@ public class UiMatchManager {
     static public final int CAPTION_TIME = 1500;
     static public final int CAPTION_TICKS = (int) (CAPTION_TIME / TIMER_INTERVAL);
 
-    public UiMatchManager(MatchWindow match_window, Match match) {
+    public UiMatchManager(MatchWindow match_window, MatchEvent match) {
         this.match = match;
-        matchSimulator = new MatchSimulator(match);
+        matchSimulator = new MatchSimulator(match.createMatchSpec());
         ui = match_window;
 
         game_timer = new Runnable() {
@@ -155,9 +155,9 @@ public class UiMatchManager {
     private void show_game_result_caption() {
         Person won;
         if (matchSimulator.getLastGameResult() == Side.HOME) {
-            won = match.getFirstPlayer();
+            won = match.getHomePlayer();
         } else {
-            won = match.getSecondPlayer();
+            won = match.getAwayPlayer();
         }
         ui.match_info_widget.score_label.setText(matchSimulator.getCurrentScore().toString());
         ui.match_info_widget.score_label.pack();
@@ -168,7 +168,7 @@ public class UiMatchManager {
     }
 
     private void show_set_result_caption() {
-        Person won = (matchSimulator.getLastGameResult() == Side.HOME) ? match.getFirstPlayer() : match.getSecondPlayer();
+        Person won = (matchSimulator.getLastGameResult() == Side.HOME) ? match.getHomePlayer() : match.getAwayPlayer();
         ui.pitch_widget.setUpperText("Сет разыгран, победитель -  " + won.getFullName());
         ui.pitch_widget.setBottomText("Счёт в игре: " + matchSimulator.getCurrentScore());
     }
@@ -177,16 +177,16 @@ public class UiMatchManager {
         Person won;
         BasicScore s = matchSimulator.getCurrentScore().getScoreBySets();
         if (s.v1 > s.v2) {
-            won = match.getFirstPlayer();
+            won = match.getHomePlayer();
         } else {
             if (s.v1 < s.v2) {
-                won = match.getSecondPlayer();
+                won = match.getAwayPlayer();
             } else {
                 if (match.isPlayoff()) {
                     if (matchSimulator.getCurrentScore().getAdditionalTime().v1 > matchSimulator.getCurrentScore().getAdditionalTime().v2) {
-                        won = match.getFirstPlayer();
+                        won = match.getHomePlayer();
                     } else {
-                        won = match.getSecondPlayer();
+                        won = match.getAwayPlayer();
                     }
                 } else {
                     won = null;

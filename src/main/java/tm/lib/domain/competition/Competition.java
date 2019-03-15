@@ -63,9 +63,9 @@ abstract public class Competition implements IMatchEndListener {
         return outputStream.toString();
     }
 
-    abstract public Match getNextMatch();
+    abstract public MatchEvent getNextMatch();
 
-    abstract public List<Match> getAllMatches();
+    abstract public List<MatchEvent> getAllMatches();
 
     abstract public void setStartingDate(int date);
 
@@ -76,15 +76,15 @@ abstract public class Competition implements IMatchEndListener {
     }
 
     @Override
-    public void onMatchEnded(Match match) {
+    public void onMatchEnded(MatchEvent match) {
         if (getNextMatch() == null) {
             endCompetition();
         }
     }
 
     public void setVenue(Stadium venue) {
-        List<Match> matches = getAllMatches();
-        for (Match match : matches) {
+        List<MatchEvent> matches = getAllMatches();
+        for (MatchEvent match : matches) {
             match.setVenue(venue);
         }
     }

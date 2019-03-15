@@ -61,13 +61,13 @@ public class GroupSubStage extends SimpleCompetition {
             return 0;
         }
 
-        public void update(Match match) {
+        public void update(MatchEvent match) {
             assert match.getResult() != null;
             MatchScore score;
-            if (match.getFirstPlayer() == player) {
+            if (match.getHomePlayer() == player) {
                 score = match.getResult();
             } else {
-                if (match.getSecondPlayer() == player) {
+                if (match.getAwayPlayer() == player) {
                     score = match.getResult().reversed();
                 } else {
                     return;
@@ -101,18 +101,18 @@ public class GroupSubStage extends SimpleCompetition {
         super(season, name);
         setParticipants(players);
 
-        List<Match> matches = new ArrayList<>(6);
-        Match match = new Match(this, players.get(0), players.get(2), 2, false);
+        List<MatchEvent> matches = new ArrayList<>(6);
+        MatchEvent match = new MatchEvent(this, players.get(0), players.get(2), 2, false);
         matches.add(match);
-        match = new Match(this, players.get(1), players.get(3), 2, false);
+        match = new MatchEvent(this, players.get(1), players.get(3), 2, false);
         matches.add(match);
-        match = new Match(this, players.get(0), players.get(3), 2, false);
+        match = new MatchEvent(this, players.get(0), players.get(3), 2, false);
         matches.add(match);
-        match = new Match(this, players.get(1), players.get(2), 2, false);
+        match = new MatchEvent(this, players.get(1), players.get(2), 2, false);
         matches.add(match);
-        match = new Match(this, players.get(0), players.get(1), 2, false);
+        match = new MatchEvent(this, players.get(0), players.get(1), 2, false);
         matches.add(match);
-        match = new Match(this, players.get(2), players.get(3), 2, false);
+        match = new MatchEvent(this, players.get(2), players.get(3), 2, false);
         matches.add(match);
         setMatches(matches);
 
@@ -142,7 +142,7 @@ public class GroupSubStage extends SimpleCompetition {
 
     @Override
     public void setStartingDate(int date) {
-        List<Match> matches = getAllMatches();
+        List<MatchEvent> matches = getAllMatches();
         matches.get(0).setDate(date);
         matches.get(1).setDate(date);
         matches.get(2).setDate(date + 1);
@@ -152,7 +152,7 @@ public class GroupSubStage extends SimpleCompetition {
     }
 
     @Override
-    public void onMatchEnded(Match match) {
+    public void onMatchEnded(MatchEvent match) {
         for (GroupResult groupResult : results) {
             groupResult.update(match);
         }

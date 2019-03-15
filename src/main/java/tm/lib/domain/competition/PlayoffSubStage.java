@@ -11,9 +11,9 @@ public class PlayoffSubStage extends SimpleCompetition {
     public PlayoffSubStage(Season season, String name, int playerCount) {
         super(season, name);
 
-        List<Match> matches = new ArrayList<Match>(playerCount / 2);
+        List<MatchEvent> matches = new ArrayList<MatchEvent>(playerCount / 2);
         for (int i = 0; i < playerCount / 2; i++) {
-            Match match = new Match(this, null, null, 4, true);
+            MatchEvent match = new MatchEvent(this, null, null, 4, true);
             matches.add(match);
         }
         setMatches(matches);
@@ -28,7 +28,7 @@ public class PlayoffSubStage extends SimpleCompetition {
          matches.get(3).date = date + 1;
          }
          else {*/
-        for (Match match : getAllMatches()) {
+        for (MatchEvent match : getAllMatches()) {
             match.setDate(date);
         }
         //}
@@ -37,11 +37,11 @@ public class PlayoffSubStage extends SimpleCompetition {
     @Override
     protected void setParticipants(List<Person> participants) {
         super.setParticipants(participants);
-        List<Match> matches = getAllMatches();
+        List<MatchEvent> matches = getAllMatches();
         int playerIndex = 0;
         for (int i = 0; i < matches.size(); ++i) {
-            matches.get(i).setFirstPlayer(participants.get(playerIndex++));
-            matches.get(i).setSecondPlayer(participants.get(playerIndex++));
+            matches.get(i).setHomePlayer(participants.get(playerIndex++));
+            matches.get(i).setAwayPlayer(participants.get(playerIndex++));
         }
     }
 
@@ -49,15 +49,15 @@ public class PlayoffSubStage extends SimpleCompetition {
         List<Person> winners = new ArrayList<>();
         List<Person> losers = new ArrayList<>();
         for (int i = 0; i < getAllMatches().size(); i++) {
-            Match m = getAllMatches().get(i);
+            MatchEvent m = getAllMatches().get(i);
             if (m.getResult() != null) {
                 BasicScore s = m.getResult().getScoreBySets();
                 if (s.v1 > s.v2) {
-                    winners.add(m.getFirstPlayer());
-                    losers.add(m.getSecondPlayer());
+                    winners.add(m.getHomePlayer());
+                    losers.add(m.getAwayPlayer());
                 } else {
-                    winners.add(m.getSecondPlayer());
-                    losers.add(m.getFirstPlayer());
+                    winners.add(m.getAwayPlayer());
+                    losers.add(m.getHomePlayer());
                 }
             }
         }

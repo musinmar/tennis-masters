@@ -1,7 +1,7 @@
 package tm.lib.domain.world;
 
 import tm.lib.domain.competition.Competition;
-import tm.lib.domain.competition.Match;
+import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.SeasonCompetition;
 import tm.lib.domain.core.MatchScore;
 
@@ -24,11 +24,11 @@ public class Season {
         return seasonCompetition;
     }
 
-    public Match getNextMatch() {
+    public MatchEvent getNextMatch() {
         return seasonCompetition.getNextMatch();
     }
 
-    public void processMatch(Match m, MatchScore s) {
+    public void processMatch(MatchEvent m, MatchScore s) {
         m.setResult(s);
         print(System.out);
     }

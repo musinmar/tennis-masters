@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import tm.lib.domain.competition.Competition;
-import tm.lib.domain.competition.Match;
+import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.MultiStageCompetition;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.Season;
@@ -72,7 +72,7 @@ public class SeasonWindow
             @Override
             public void widgetSelected(SelectionEvent e)
             {
-                Match match = season.getNextMatch();
+                MatchEvent match = season.getNextMatch();
                 MatchWindow match_window = new MatchWindow(shell, match);
                 match_window.shell.setMaximized(true);
                 MatchScore score = match_window.open();
@@ -94,8 +94,8 @@ public class SeasonWindow
             @Override
             public void widgetSelected(SelectionEvent e)
             {
-                Match match = season.getNextMatch();
-                MatchSimulator matchSimulator = new MatchSimulator(match);
+                MatchEvent match = season.getNextMatch();
+                MatchSimulator matchSimulator = new MatchSimulator(match.createMatchSpec());
                 MatchSimulator.State state;
                 do
                 {

@@ -1,34 +1,34 @@
 package tm.lib.domain.core;
 
-public enum Nation
-{
+import java.util.Arrays;
+
+public enum Nation {
     ALMAGEST("Альмагест"),
-    BELEROFON("Белерофон"),
+    BELLEROFON("Беллерофон"),
     GALILEO("Галилео"),
     KAMELEOPARD("Камелеопард"),
-    OBERON22("Оберон-22");
-    private final String text;
+    OBERON_22("Оберон-22");
 
-    Nation(String name)
-    {
-        text = name;
+    public static final int COUNT = 5;
+
+    private final String name;
+
+    Nation(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override
-    public String toString()
-    {
-        return text;
+    public String toString() {
+        return name;
     }
 
-    static Nation fromString(String text)
-    {
-        for (Nation nation : Nation.values())
-        {
-            if (nation.text.equals(text))
-            {
-                return nation;
-            }
-        }
-        return Nation.ALMAGEST;
+    public static Nation fromName(String name) {
+        return Arrays.stream(values())
+                .filter(v -> v.getName().equals(name))
+                .findAny().orElseThrow(IllegalArgumentException::new);
     }
 }

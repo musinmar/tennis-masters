@@ -52,7 +52,7 @@ public class MatchWindow
         data.verticalSpan = 3;
         left_panel.setLayoutData(data);
 
-        match_info_widget = new MatchInfoWidget(left_panel, manager.match);
+        match_info_widget = new MatchInfoWidget(left_panel, manager.matchEvent);
         data = new GridData();
         data.horizontalAlignment = GridData.FILL;
         data.grabExcessHorizontalSpace = true;

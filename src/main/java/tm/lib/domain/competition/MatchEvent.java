@@ -11,15 +11,21 @@ import java.util.List;
 public class MatchEvent {
     private int date;
     private final Competition competition;
-    private Person homePlayer;
-    private Person awayPlayer;
+    private final Participant homePlayer;
+    private final Participant awayPlayer;
     private int sets;
     private boolean playoff;
     private Stadium venue;
     private MatchScore result;
     private List<IMatchEndListener> listeners = new LinkedList<>();
 
-    public MatchEvent(Competition parent, Person p1, Person p2) {
+    public MatchEvent(Competition parent, Participant p1, Participant p2, int sets, boolean isPlayoff) {
+        this(parent, p1, p2);
+        this.sets = sets;
+        playoff = isPlayoff;
+    }
+
+    public MatchEvent(Competition parent, Participant p1, Participant p2) {
         competition = parent;
         listeners.add(competition);
         homePlayer = p1;
@@ -27,12 +33,6 @@ public class MatchEvent {
         sets = 2;
         playoff = false;
         result = null;
-    }
-
-    public MatchEvent(Competition parent, Person p1, Person p2, int sets, boolean isPlayoff) {
-        this(parent, p1, p2);
-        this.sets = sets;
-        playoff = isPlayoff;
     }
 
     public int getDate() {
@@ -47,20 +47,12 @@ public class MatchEvent {
         return competition;
     }
 
-    public Person getHomePlayer() {
+    public Participant getHomePlayer() {
         return homePlayer;
     }
 
-    public void setHomePlayer(Person homePlayer) {
-        this.homePlayer = homePlayer;
-    }
-
-    public Person getAwayPlayer() {
+    public Participant getAwayPlayer() {
         return awayPlayer;
-    }
-
-    public void setAwayPlayer(Person awayPlayer) {
-        this.awayPlayer = awayPlayer;
     }
 
     public int getSets() {
@@ -86,8 +78,8 @@ public class MatchEvent {
     @Override
     public String toString() {
         String resultString = getResult() == null ? "" : " " + getResult().toString();
-        String firstPlayerName = getHomePlayer() == null ? "TBD" : getHomePlayer().getFullName();
-        String secondPlayerName = getAwayPlayer() == null ? "TBD" : getAwayPlayer().getFullName();
+        String firstPlayerName = getHomePlayer() == null ? "TBD" : getHomePlayer().getFullNameOrId();
+        String secondPlayerName = getAwayPlayer() == null ? "TBD" : getAwayPlayer().getFullNameOrId();
         return firstPlayerName + " - " + secondPlayerName + resultString;
     }
 
@@ -104,8 +96,8 @@ public class MatchEvent {
 
     public Match createMatchSpec() {
         Match match = new Match();
-        match.setHomePlayer(homePlayer);
-        match.setAwayPlayer(awayPlayer);
+        match.setHomePlayer(homePlayer.getPlayer());
+        match.setAwayPlayer(awayPlayer.getPlayer());
         match.setSets(sets);
         match.setPlayoff(playoff);
         match.setVenue(venue);

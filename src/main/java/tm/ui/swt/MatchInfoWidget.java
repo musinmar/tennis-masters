@@ -60,8 +60,8 @@ public class MatchInfoWidget extends Composite
 
     public void update()
     {
-        p1_label.setText(match.getHomePlayer().getShortName());
-        p2_label.setText(match.getAwayPlayer().getShortName());
+        p1_label.setText(match.getHomePlayer().getPlayer().getShortName());
+        p2_label.setText(match.getAwayPlayer().getPlayer().getShortName());
         score_label.setText("0:0/ 0:0/ д.в. 0:0");
         time_label.setText("00:00");
     }

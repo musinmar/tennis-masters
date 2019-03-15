@@ -6,6 +6,7 @@
 package tm.ui.swt;
 
 import tm.lib.domain.competition.MatchEvent;
+import tm.lib.domain.core.Match;
 import tm.lib.domain.core.Person;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.engine.MatchEngine;
@@ -19,7 +20,8 @@ import tm.lib.engine.Side;
  */
 public class UiMatchManager {
 
-    public MatchEvent match;
+    public MatchEvent matchEvent;
+    public Match match;
     private MatchSimulator matchSimulator;
     private MatchSimulator.State currentState;
 
@@ -35,9 +37,10 @@ public class UiMatchManager {
     static public final int CAPTION_TIME = 1500;
     static public final int CAPTION_TICKS = (int) (CAPTION_TIME / TIMER_INTERVAL);
 
-    public UiMatchManager(MatchWindow match_window, MatchEvent match) {
-        this.match = match;
-        matchSimulator = new MatchSimulator(match.createMatchSpec());
+    public UiMatchManager(MatchWindow match_window, MatchEvent matchEvent) {
+        this.matchEvent = matchEvent;
+        match = matchEvent.createMatchSpec();
+        matchSimulator = new MatchSimulator(match);
         ui = match_window;
 
         game_timer = new Runnable() {

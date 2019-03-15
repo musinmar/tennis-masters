@@ -48,11 +48,11 @@ public class PlayoffStage extends MultiStageCompetition {
         }
     }
 
-    @Override
-    protected void setParticipants(List<Person> participants) {
-        super.setParticipants(participants);
-        getStages().get(0).setParticipants(participants);
-    }
+//    @Override
+//    protected void setParticipants(List<Person> participants) {
+//        super.setParticipants(participants);
+//        getStages().get(0).setParticipants(participants);
+//    }
 
     @Override
     public void onCompetitionEnded(Competition competition) {
@@ -65,8 +65,13 @@ public class PlayoffStage extends MultiStageCompetition {
         }
         if (nextStage != null) {
             PlayoffSubStage currentStage = (PlayoffSubStage) competition;
-            nextStage.setParticipants(currentStage.getResults().getWinners());
+            nextStage.setActualParticipants(currentStage.getResults().getWinners());
         }
         super.onCompetitionEnded(competition);
+    }
+
+    @Override
+    public void setActualParticipants(List<Person> players) {
+        getStages().get(0).setActualParticipants(players);
     }
 }

@@ -10,10 +10,11 @@ import java.util.List;
 public class PlayoffSubStage extends SimpleCompetition {
     public PlayoffSubStage(Season season, String name, int playerCount) {
         super(season, name);
+        setParticipants(Participant.createNewList(playerCount));
 
-        List<MatchEvent> matches = new ArrayList<MatchEvent>(playerCount / 2);
+        List<MatchEvent> matches = new ArrayList<>(playerCount / 2);
         for (int i = 0; i < playerCount / 2; i++) {
-            MatchEvent match = new MatchEvent(this, null, null, 4, true);
+            MatchEvent match = new MatchEvent(this, getParticipants().get(i * 2),  getParticipants().get(i * 2 + 1), 4, true);
             matches.add(match);
         }
         setMatches(matches);
@@ -34,16 +35,16 @@ public class PlayoffSubStage extends SimpleCompetition {
         //}
     }
 
-    @Override
-    protected void setParticipants(List<Person> participants) {
-        super.setParticipants(participants);
-        List<MatchEvent> matches = getAllMatches();
-        int playerIndex = 0;
-        for (int i = 0; i < matches.size(); ++i) {
-            matches.get(i).setHomePlayer(participants.get(playerIndex++));
-            matches.get(i).setAwayPlayer(participants.get(playerIndex++));
-        }
-    }
+//    @Override
+//    protected void setActualParticipants(List<Person> participants) {
+//        super.setParticipants(participants);
+//        List<MatchEvent> matches = getAllMatches();
+//        int playerIndex = 0;
+//        for (int i = 0; i < matches.size(); ++i) {
+//            matches.get(i).setHomePlayer(participants.get(playerIndex++));
+//            matches.get(i).setAwayPlayer(participants.get(playerIndex++));
+//        }
+//    }
 
     public PlayoffSubStageResult getResults() {
         List<Person> winners = new ArrayList<>();
@@ -53,11 +54,11 @@ public class PlayoffSubStage extends SimpleCompetition {
             if (m.getResult() != null) {
                 BasicScore s = m.getResult().getScoreBySets();
                 if (s.v1 > s.v2) {
-                    winners.add(m.getHomePlayer());
-                    losers.add(m.getAwayPlayer());
+                    winners.add(m.getHomePlayer().getPlayer());
+                    losers.add(m.getAwayPlayer().getPlayer());
                 } else {
-                    winners.add(m.getAwayPlayer());
-                    losers.add(m.getHomePlayer());
+                    winners.add(m.getAwayPlayer().getPlayer());
+                    losers.add(m.getHomePlayer().getPlayer());
                 }
             }
         }

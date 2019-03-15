@@ -83,7 +83,7 @@ public class MatchDialog extends QDialog {
         QLabel playersLabel = new QLabel();
         infoPanelLayout.addWidget(playersLabel);
         playersLabel.setAlignment(Qt.AlignmentFlag.AlignHCenter);
-        playersLabel.setText(match.getHomePlayer().getFullName() + " - " + match.getAwayPlayer().getFullName());
+        playersLabel.setText(match.getHomePlayer().getPlayer().getFullName() + " - " + match.getAwayPlayer().getPlayer().getFullName());
 
         matchScoreLabel = new QLabel();
         matchScoreLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);

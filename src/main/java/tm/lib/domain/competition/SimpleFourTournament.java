@@ -13,9 +13,10 @@ public class SimpleFourTournament extends MultiStageCompetition {
 
     public SimpleFourTournament(Season season, List<Person> players) {
         super(season, "Тестовый турнир");
-        setParticipants(players);
+        //setParticipants(Participant.createNewList(players));
 
-        groupStage = new GroupStage(season, "Групповой этап", players);
+        groupStage = new GroupStage(season, "Групповой этап", 4);
+        groupStage.setActualParticipants(players);
         playoffStage = new PlayoffStage(season, "Плей-офф", 4);
         initStages(Arrays.asList(groupStage, playoffStage));
     }
@@ -29,7 +30,7 @@ public class SimpleFourTournament extends MultiStageCompetition {
     @Override
     public void onCompetitionEnded(Competition competition) {
         if (competition == groupStage) {
-            playoffStage.setParticipants(groupStage.getResults().getGroupResults().get(0));
+            playoffStage.setActualParticipants(groupStage.getResults().getGroupResults().get(0));
         }
     }
 }

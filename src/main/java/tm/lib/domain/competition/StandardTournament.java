@@ -12,9 +12,10 @@ public class StandardTournament extends MultiStageCompetition {
 
     public StandardTournament(Season season, List<Person> players) {
         super(season, "Стандартный турнир");
-        setParticipants(players);
+        //setParticipants(players);
 
-        groupStage = new GroupStage(season, "Групповой этап", players);
+        groupStage = new GroupStage(season, "Групповой этап", 8);
+        groupStage.setActualParticipants(players);
         playoffStage = new PlayoffStage(season, "Плей-офф", 4);
         initStages(Arrays.asList(groupStage, playoffStage));
     }
@@ -35,7 +36,7 @@ public class StandardTournament extends MultiStageCompetition {
                     groupResults.get(1).get(0),
                     groupResults.get(0).get(1)
             );
-            playoffStage.setParticipants(playoffParticipants);
+            playoffStage.setActualParticipants(playoffParticipants);
         }
     }
 }

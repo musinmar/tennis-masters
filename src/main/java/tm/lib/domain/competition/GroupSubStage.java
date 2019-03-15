@@ -6,7 +6,6 @@ import tm.lib.domain.core.Person;
 import tm.lib.domain.world.Season;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -14,22 +13,22 @@ import java.util.stream.Collectors;
 
 public class GroupSubStage extends SimpleCompetition {
     static private class GroupResult implements Comparable<GroupResult> {
-        private Person player;
+        private Participant participant;
         private int matchesPlayed;
         private int points;
         private int gamesWon;
         private int gamesLost;
 
         public GroupResult() {
-            player = null;
+            participant = null;
             matchesPlayed = 0;
             points = 0;
             gamesWon = 0;
             gamesLost = 0;
         }
 
-        void setPlayer(Person player) {
-            this.player = player;
+        void setParticipant(Participant participant) {
+            this.participant = participant;
         }
 
         @Override
@@ -64,10 +63,10 @@ public class GroupSubStage extends SimpleCompetition {
         public void update(MatchEvent match) {
             assert match.getResult() != null;
             MatchScore score;
-            if (match.getHomePlayer() == player) {
+            if (match.getHomePlayer() == participant) {
                 score = match.getResult();
             } else {
-                if (match.getAwayPlayer() == player) {
+                if (match.getAwayPlayer() == participant) {
                     score = match.getResult().reversed();
                 } else {
                     return;
@@ -90,36 +89,30 @@ public class GroupSubStage extends SimpleCompetition {
 
         @Override
         public String toString() {
-            return String.format("%1$-20s %2$-3d %3$d-%4$-2d %5$3d", player.getFullName(),
+            return String.format("%1$-20s %2$-3d %3$d-%4$-2d %5$3d", participant.getFullNameOrId(),
                     matchesPlayed, gamesWon, gamesLost, points);
         }
     }
 
     private GroupResult[] results;
 
-    public GroupSubStage(Season season, String name, List<Person> players) {
+    public GroupSubStage(Season season, String name, List<Participant> participants) {
         super(season, name);
-        setParticipants(players);
+        setParticipants(participants);
 
-        List<MatchEvent> matches = new ArrayList<>(6);
-        MatchEvent match = new MatchEvent(this, players.get(0), players.get(2), 2, false);
-        matches.add(match);
-        match = new MatchEvent(this, players.get(1), players.get(3), 2, false);
-        matches.add(match);
-        match = new MatchEvent(this, players.get(0), players.get(3), 2, false);
-        matches.add(match);
-        match = new MatchEvent(this, players.get(1), players.get(2), 2, false);
-        matches.add(match);
-        match = new MatchEvent(this, players.get(0), players.get(1), 2, false);
-        matches.add(match);
-        match = new MatchEvent(this, players.get(2), players.get(3), 2, false);
-        matches.add(match);
+        List<MatchEvent> matches = Arrays.asList(
+                new MatchEvent(this, participants.get(0), participants.get(2), 2, false),
+                new MatchEvent(this, participants.get(1), participants.get(3), 2, false),
+                new MatchEvent(this, participants.get(0), participants.get(3), 2, false),
+                new MatchEvent(this, participants.get(1), participants.get(2), 2, false),
+                new MatchEvent(this, participants.get(0), participants.get(1), 2, false),
+                new MatchEvent(this, participants.get(2), participants.get(3), 2, false));
         setMatches(matches);
 
-        results = new GroupResult[players.size()];
+        results = new GroupResult[participants.size()];
         for (int i = 0; i < results.length; ++i) {
             results[i] = new GroupResult();
-            results[i].setPlayer(players.get(i));
+            results[i].setParticipant(participants.get(i));
         }
     }
 
@@ -136,7 +129,7 @@ public class GroupSubStage extends SimpleCompetition {
 
     public List<Person> getResults() {
         return Arrays.stream(results)
-                .map(groupResult -> groupResult.player)
+                .map(groupResult -> groupResult.participant.getPlayer())
                 .collect(Collectors.toList());
     }
 

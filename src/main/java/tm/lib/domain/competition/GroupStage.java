@@ -8,19 +8,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GroupStage extends MultiStageCompetition {
-    public GroupStage(Season season, String name, List<Person> players) {
+    public GroupStage(Season season, String name, int playerCount) {
         super(season, name);
-        setParticipants(players);
+        setParticipants(Participant.createNewList(playerCount));
 
-        int groupCount = players.size() / 4;
+        int groupCount = playerCount / 4;
         List<Competition> groups = new ArrayList<>();
-
         for (int i = 0; i < groupCount; ++i) {
-            List<Person> groupPlayers = new ArrayList<>();
-            for (int j = 0; j < 4; ++j) {
-                groupPlayers.add(players.get(i * 4 + j));
-            }
-            GroupSubStage group = new GroupSubStage(season, "Группа " + (i + 1), groupPlayers);
+            List<Participant> groupParticipants = getParticipants().subList(i * 4, i * 4 + 4);
+            GroupSubStage group = new GroupSubStage(season, "Группа " + (i + 1), groupParticipants);
             groups.add(group);
         }
         initStages(groups);

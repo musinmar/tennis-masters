@@ -15,7 +15,7 @@ abstract public class Competition implements IMatchEndListener {
     private Competition parent;
     private final String name;
 
-    private List<Person> participants;
+    private List<Participant> participants;
     private List<ICompetitionEndListener> listeners = new LinkedList<>();
 
     protected Competition(Season season, String name) {
@@ -39,16 +39,22 @@ abstract public class Competition implements IMatchEndListener {
         this.parent = parent;
     }
 
-    public List<Person> getParticipants() {
+    public List<Participant> getParticipants() {
         return participants;
     }
 
-    protected void setParticipants(List<Person> participants) {
+    public void setParticipants(List<Participant> participants) {
         this.participants = participants;
     }
 
     public void addCompetitionEndListener(ICompetitionEndListener listener) {
         listeners.add(listener);
+    }
+
+    public void setActualParticipants(List<Person> players) {
+        for (int i = 0; i < participants.size(); i++) {
+            participants.get(i).setPlayer(players.get(i));
+        }
     }
 
     public void print(PrintStream stream) {
@@ -83,9 +89,6 @@ abstract public class Competition implements IMatchEndListener {
     }
 
     public void setVenue(Stadium venue) {
-        List<MatchEvent> matches = getAllMatches();
-        for (MatchEvent match : matches) {
-            match.setVenue(venue);
-        }
+        getAllMatches().forEach(match -> match.setVenue(venue));
     }
 }

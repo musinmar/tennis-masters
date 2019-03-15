@@ -38,7 +38,6 @@ public class Season {
     }
 
     private void initSeasonCompetition() {
-        seasonCompetition = new SeasonCompetition(this, world.getPlayers());
-        seasonCompetition.setName("Сезон " + String.valueOf(year + 1));
+        seasonCompetition = new SeasonCompetition(this,"Сезон " + String.valueOf(year + 1), world.getPlayers());
     }
 }

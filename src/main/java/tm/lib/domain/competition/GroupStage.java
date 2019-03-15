@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GroupStage extends MultiStageCompetition {
-    public GroupStage(Competition parentCompetition, List<Person> players) {
-        super(parentCompetition);
-        setName("Групповой этап");
+    public GroupStage(Competition parentCompetition, String name, List<Person> players) {
+        super(parentCompetition, name);
         setParticipants(players);
 
         int groupCount = players.size() / 4;
@@ -20,8 +19,7 @@ public class GroupStage extends MultiStageCompetition {
             for (int j = 0; j < 4; ++j) {
                 groupPlayers.add(players.get(i * 4 + j));
             }
-            GroupSubStage group = new GroupSubStage(this, groupPlayers);
-            group.setName("Группа " + (i + 1));
+            GroupSubStage group = new GroupSubStage(this, "Группа " + (i + 1), groupPlayers);
             groups.add(group);
         }
         setStages(groups);

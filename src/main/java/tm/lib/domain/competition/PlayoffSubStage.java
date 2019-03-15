@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayoffSubStage extends SimpleCompetition {
-    public PlayoffSubStage(Competition parent, int playerCount) {
-        super(parent);
+    public PlayoffSubStage(Competition parent, String name, int playerCount) {
+        super(parent, name);
 
         List<Match> matches = new ArrayList<Match>(playerCount / 2);
         for (int i = 0; i < playerCount / 2; i++) {

@@ -11,12 +11,12 @@ import java.util.ListIterator;
 abstract public class MultiStageCompetition extends Competition implements ICompetitionEndListener {
     private List<Competition> stages;
 
-    MultiStageCompetition(Season season) {
-        super(season);
+    protected MultiStageCompetition(Season season, String name) {
+        super(season, name);
     }
 
-    MultiStageCompetition(Competition parentCompetition) {
-        super(parentCompetition);
+    protected MultiStageCompetition(Competition parentCompetition, String name) {
+        super(parentCompetition, name);
     }
 
     @Override

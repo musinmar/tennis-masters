@@ -11,9 +11,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 abstract public class Competition implements IMatchEndListener {
-    private Season season;
-    private Competition parentCompetition;
-    private String name;
+    private final Season season;
+    private Competition parent;
+    private final String name;
+
     private List<Person> participants;
     private List<ICompetitionEndListener> listeners;
 
@@ -55,23 +56,20 @@ abstract public class Competition implements IMatchEndListener {
         }
     }
 
-    Competition(Season season) {
-        this.name = "Unnamed competition";
-        this.season = season;
-        parentCompetition = null;
-        participants = null;
-    }
-
-    Competition(Competition parentCompetition) {
-        this.parentCompetition = parentCompetition;
-        this.name = "Unnamed competition";
-        this.season = parentCompetition.season;
-        participants = null;
+    protected Competition(Competition parent, String name) {
+        this(parent.getSeason(), name);
+        this.parent = parent;
 
         listeners = new LinkedList<ICompetitionEndListener>();
-        if (parentCompetition instanceof ICompetitionEndListener) {
-            listeners.add((ICompetitionEndListener) parentCompetition);
+        if (parent instanceof ICompetitionEndListener) {
+            listeners.add((ICompetitionEndListener) parent);
         }
+    }
+
+    protected Competition(Season season, String name) {
+        this.name = name;
+        this.season = season;
+        this.parent = null;
     }
 
     public Season getSeason() {
@@ -82,12 +80,8 @@ abstract public class Competition implements IMatchEndListener {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Competition getParentCompetition() {
-        return parentCompetition;
+    public Competition getParent() {
+        return parent;
     }
 
     public List<Person> getParticipants() {

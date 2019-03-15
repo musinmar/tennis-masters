@@ -96,8 +96,8 @@ public class GroupSubStage extends SimpleCompetition {
 
     private GroupResult[] results;
 
-    public GroupSubStage(Competition parentCompetition, List<Person> players) {
-        super(parentCompetition);
+    public GroupSubStage(Competition parent, String name, List<Person> players) {
+        super(parent, name);
         setParticipants(players);
 
         List<Match> matches = new ArrayList<>(6);

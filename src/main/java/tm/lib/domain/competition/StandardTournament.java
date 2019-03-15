@@ -10,14 +10,11 @@ public class StandardTournament extends MultiStageCompetition {
     private final PlayoffStage playoffStage;
 
     public StandardTournament(Competition parentCompetition, List<Person> players) {
-        super(parentCompetition);
-        setName("Стандартный турнир");
+        super(parentCompetition, "Стандартный турнир");
         setParticipants(players);
 
-        groupStage = new GroupStage(this, players);
-        groupStage.setName("Групповой этап");
-        playoffStage = new PlayoffStage(this, 4);
-        playoffStage.setName("Плей-офф");
+        groupStage = new GroupStage(this, "Групповой этап", players);
+        playoffStage = new PlayoffStage(this, "Плей-офф", 4);
         setStages(Arrays.asList(groupStage, playoffStage));
     }
 

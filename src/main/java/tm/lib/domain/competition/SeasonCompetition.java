@@ -12,8 +12,8 @@ import java.util.Random;
 public class SeasonCompetition extends MultiStageCompetition {
     private static final int TOURNAMENT_COUNT = 1;
 
-    public SeasonCompetition(Season season, List<Person> players) {
-        super(season);
+    public SeasonCompetition(Season season, String name, List<Person> players) {
+        super(season, name);
         setParticipants(players);
 
         List<Competition> tournaments = new ArrayList<>();

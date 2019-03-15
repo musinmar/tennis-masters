@@ -9,13 +9,13 @@ abstract public class SimpleCompetition extends Competition {
     private List<Match> matches;
     private int nextMatchIndex;
 
-    SimpleCompetition(Season season) {
-        super(season);
+    protected SimpleCompetition(Season season, String name) {
+        super(season, name);
         nextMatchIndex = 0;
     }
 
-    SimpleCompetition(Competition parentCompetition) {
-        super(parentCompetition);
+    protected SimpleCompetition(Competition parent, String name) {
+        super(parent, name);
         nextMatchIndex = 0;
     }
 

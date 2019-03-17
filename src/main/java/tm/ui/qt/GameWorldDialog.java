@@ -1,5 +1,6 @@
 package tm.ui.qt;
 
+import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.gui.QComboBox;
 import com.trolltech.qt.gui.QDialog;
 import com.trolltech.qt.gui.QFont;
@@ -27,6 +28,7 @@ public class GameWorldDialog extends QDialog {
     private QComboBox tournamentComboBox;
     private QComboBox stageComboBox;
     private QComboBox subStageComboBox;
+    private QLabel nextMatchLabel;
 
     public GameWorldDialog(GameWorld gameWorld, QWidget parent) {
         super(parent);
@@ -34,12 +36,11 @@ public class GameWorldDialog extends QDialog {
         setupUi();
         populateSeasonComboBox();
         updateLogText();
+        updateNextMatchLabel();
     }
 
     private void setupUi() {
         setWindowTitle("Game World");
-
-        QLayout mainLayout = new QVBoxLayout(this);
 
         QLabel seasonComboBoxLabel = new QLabel(this);
         seasonComboBoxLabel.setText("Сезон:");
@@ -72,32 +73,40 @@ public class GameWorldDialog extends QDialog {
         competitionSelectorLayout.addWidget(stageComboBox);
         competitionSelectorLayout.addWidget(subStageComboBoxLabel);
         competitionSelectorLayout.addWidget(subStageComboBox);
-        mainLayout.addItem(competitionSelectorLayout);
 
         gameWorldLogTextEdit = new QPlainTextEdit(this);
         gameWorldLogTextEdit.setFont(new QFont("Courier New"));
         gameWorldLogTextEdit.setMinimumSize(200, 30);
-        mainLayout.addWidget(gameWorldLogTextEdit);
-
-        QLayout bottomButtonsLayout = new QHBoxLayout();
-        mainLayout.addItem(bottomButtonsLayout);
 
         QPushButton nextButton = new QPushButton(this);
-        nextButton.setText("Next Match");
+        nextButton.setText("Смотреть матч");
         nextButton.clicked.connect(this, "onNextMatchButtonClicked()");
-        bottomButtonsLayout.addWidget(nextButton);
 
         QPushButton nextFastButton = new QPushButton(this);
-        nextFastButton.setText("Next Match Fast");
+        nextFastButton.setText("Симулировать матч");
         nextFastButton.clicked.connect(this, "onNextMatchFastButtonClicked()");
-        bottomButtonsLayout.addWidget(nextFastButton);
 
-        QPushButton closeButton = new QPushButton(this);
-        closeButton.setText("Close");
-        closeButton.clicked.connect(this, "onCloseButtonClicked()");
-        bottomButtonsLayout.addWidget(closeButton);
+        nextMatchLabel = new QLabel(this);
+        nextMatchLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);
 
-        resize(1000, 600);
+        QLayout matchSimulationButtonLayout = new QHBoxLayout();
+        matchSimulationButtonLayout.addWidget(nextButton);
+        matchSimulationButtonLayout.addWidget(nextFastButton);
+
+        QVBoxLayout leftLayout = new QVBoxLayout();
+        leftLayout.setSpacing(5);
+        leftLayout.addItem(competitionSelectorLayout);
+        leftLayout.addWidget(gameWorldLogTextEdit);
+
+        QVBoxLayout rightLayout = new QVBoxLayout();
+        rightLayout.addWidget(nextMatchLabel);
+        rightLayout.addItem(matchSimulationButtonLayout);
+
+        QLayout mainLayout = new QHBoxLayout(this);
+        mainLayout.addItem(leftLayout);
+        mainLayout.addItem(rightLayout);
+
+        resize(1200, 600);
         move(200, 50);
     }
 
@@ -156,10 +165,6 @@ public class GameWorldDialog extends QDialog {
         updateLogText();
     }
 
-    private void onCloseButtonClicked() {
-        close();
-    }
-
     private void onNextMatchButtonClicked() {
         MatchEvent match = gameWorld.getCurrentSeason().getNextMatch();
         MatchDialog matchDialog = new MatchDialog(match, this);
@@ -183,6 +188,7 @@ public class GameWorldDialog extends QDialog {
         selectCompetition(match.getCompetition());
         gameWorld.getCurrentSeason().processMatch(match, score);
         updateLogText();
+        updateNextMatchLabel();
     }
 
     private void updateLogText() {
@@ -252,5 +258,14 @@ public class GameWorldDialog extends QDialog {
         }
 
         subStageComboBox.setCurrentIndex(subStageComboBox.findData(competition));
+    }
+
+    private void updateNextMatchLabel() {
+        MatchEvent nextMatch = gameWorld.getCurrentSeason().getNextMatch();
+        if (nextMatch == null) {
+            return;
+        }
+        nextMatchLabel.setText("Следующий матч:<br>" + nextMatch.getCompetition().getFullName(false) +
+                "<br>" + nextMatch.toString());
     }
 }

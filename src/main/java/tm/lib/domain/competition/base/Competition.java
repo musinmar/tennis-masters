@@ -91,4 +91,20 @@ abstract public class Competition implements IMatchEndListener {
     public void setVenue(Stadium venue) {
         getAllMatches().forEach(match -> match.setVenue(venue));
     }
+
+    public String getFullName(boolean includeSeason) {
+        String name = getName();
+        Competition parent = getParent();
+        while (true) {
+            boolean isSeasonCompetition = (parent == getSeason().getSeasonCompetition());
+            if (includeSeason || !isSeasonCompetition) {
+                name = parent.getName() + " - " + name;
+            }
+            if (isSeasonCompetition) {
+                break;
+            }
+            parent = parent.getParent();
+        }
+        return name;
+    }
 }

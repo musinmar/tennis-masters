@@ -56,15 +56,16 @@ public class MatchScore {
 
     @Override
     public String toString() {
-        String buf = "";
-        buf += sets.get(0);
+        StringBuilder builder = new StringBuilder();
+        builder.append(sets.get(0));
         for (int i = 1; i < sets.size(); i++) {
-            buf += " / " + sets.get(i);
+            builder.append(" / ").append(sets.get(i));
         }
         if (additionalTime != null) {
-            buf += " / д.в. " + additionalTime;
+            builder.append(" / д.в. ").append(additionalTime);
         }
-        return buf;
+        builder.append(" (").append(getScoreBySets()).append(")");
+        return builder.toString();
     }
 
     public BasicScore getScoreBySets() {

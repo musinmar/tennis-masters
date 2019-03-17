@@ -1,8 +1,8 @@
 package tm.lib.domain.world;
 
-import tm.lib.domain.competition.base.Competition;
-import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.SeasonCompetition;
+import tm.lib.domain.competition.base.MatchEvent;
+import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.core.MatchScore;
 
 import java.io.PrintStream;
@@ -10,7 +10,7 @@ import java.io.PrintStream;
 public class Season {
     private static final int SEASON_DAYS = 200;
     private GameWorld world;
-    private Competition seasonCompetition;
+    private MultiStageCompetition seasonCompetition;
     private int year;
 
     public Season(GameWorld world, int year) {
@@ -20,7 +20,7 @@ public class Season {
         initSeasonCompetition();
     }
 
-    public Competition getSeasonCompetition() {
+    public MultiStageCompetition getSeasonCompetition() {
         return seasonCompetition;
     }
 
@@ -38,6 +38,6 @@ public class Season {
     }
 
     private void initSeasonCompetition() {
-        seasonCompetition = new SeasonCompetition(this,"Сезон " + String.valueOf(year + 1), world.getPlayers());
+        seasonCompetition = new SeasonCompetition(this, "Сезон " + String.valueOf(year + 1), world.getPlayers());
     }
 }

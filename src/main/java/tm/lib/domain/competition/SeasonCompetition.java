@@ -23,7 +23,7 @@ public class SeasonCompetition extends MultiStageCompetition {
             List<Person> allPlayers = new ArrayList<>(players);
             Collections.shuffle(allPlayers);
             List<Person> tournamentPlayers = allPlayers.subList(0, 8);
-            Competition tournament = new StandardTournament(season, tournamentPlayers);
+            Competition tournament = new StandardTournament(season, tournamentPlayers, i + 1);
             tournament.setVenue(Stadium.test_stadium());
             tournament.setStartingDate(8 * i);
             tournaments.add(tournament);

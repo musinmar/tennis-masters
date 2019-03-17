@@ -12,8 +12,8 @@ public class StandardTournament extends MultiStageCompetition {
     private final GroupStage groupStage;
     private final PlayoffStage playoffStage;
 
-    public StandardTournament(Season season, List<Person> players) {
-        super(season, "Стандартный турнир");
+    public StandardTournament(Season season, List<Person> players, int index) {
+        super(season, "Стандартный турнир " + index);
         //setParticipants(players);
 
         groupStage = new GroupStage(season, "Групповой этап", 8);

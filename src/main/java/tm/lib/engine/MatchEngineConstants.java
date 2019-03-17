@@ -52,6 +52,6 @@ public class MatchEngineConstants {
     public static final double MIN_VENUE_SPEED_MODIFIER = 0.75;
     public static final double MAX_VENUE_ACC_MODIFIER = 1.40;
     public static final double MIN_VENUE_ACC_MODIFIER = 0.60;
-    public static final double MAX_NET_ZONE_LENGTH = Pitch.HALF_HEIGHT * 3 / 10;
-    public static final double MIN_NET_ZONE_LENGTH = Pitch.HALF_HEIGHT * 3 / 20;
+    public static final double MAX_NET_ZONE_LENGTH = Pitch.HALF_HEIGHT * 10 / 20;
+    public static final double MIN_NET_ZONE_LENGTH = Pitch.HALF_HEIGHT * 5 / 20;
 }

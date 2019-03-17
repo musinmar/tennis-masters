@@ -17,9 +17,9 @@ public class MatchEngine {
     private static final double NET_PONG_FACTOR = 0.5;
     private static final double AIR_FRICTION_COEFFECIENT = 0.0015;
     
-    private static final double ENERGY_LOSS_PER_DISTANCE = 0.9 / Pitch.WIDTH;
+    private static final double ENERGY_LOSS_PER_DISTANCE = 2 / Pitch.WIDTH;
     private static final double ENERGY_LOSS_PER_HIT = 0.3;
-    private static final double ENERGY_LOSS_PER_SAVE = 0.3;
+    private static final double ENERGY_LOSS_PER_SAVE = 0.6;
     private static final double ENERGY_REGAIN_PER_GAME = 1;
     private static final double ENERGY_REGAIN_PER_SET = 3;
 

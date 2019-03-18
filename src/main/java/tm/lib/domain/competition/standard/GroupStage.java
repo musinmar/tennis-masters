@@ -1,4 +1,4 @@
-package tm.lib.domain.competition;
+package tm.lib.domain.competition.standard;
 
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;

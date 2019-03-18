@@ -2,6 +2,8 @@ package tm.lib.domain.competition;
 
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
+import tm.lib.domain.competition.standard.GroupStage;
+import tm.lib.domain.competition.standard.PlayoffStage;
 import tm.lib.domain.core.Person;
 import tm.lib.domain.world.Season;
 

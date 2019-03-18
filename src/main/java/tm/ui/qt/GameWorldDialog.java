@@ -29,6 +29,7 @@ public class GameWorldDialog extends QDialog {
     private QComboBox stageComboBox;
     private QComboBox subStageComboBox;
     private QLabel nextMatchLabel;
+    private QLabel previousMatchLabel;
 
     public GameWorldDialog(GameWorld gameWorld, QWidget parent) {
         super(parent);
@@ -86,6 +87,9 @@ public class GameWorldDialog extends QDialog {
         nextFastButton.setText("Симулировать матч");
         nextFastButton.clicked.connect(this, "onNextMatchFastButtonClicked()");
 
+        previousMatchLabel = new QLabel(this);
+        previousMatchLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);
+
         nextMatchLabel = new QLabel(this);
         nextMatchLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);
 
@@ -99,6 +103,7 @@ public class GameWorldDialog extends QDialog {
         leftLayout.addWidget(gameWorldLogTextEdit);
 
         QVBoxLayout rightLayout = new QVBoxLayout();
+        rightLayout.addWidget(previousMatchLabel);
         rightLayout.addWidget(nextMatchLabel);
         rightLayout.addItem(matchSimulationButtonLayout);
 
@@ -188,6 +193,7 @@ public class GameWorldDialog extends QDialog {
         selectCompetition(match.getCompetition());
         gameWorld.getCurrentSeason().processMatch(match, score);
         updateLogText();
+        updatePreviousMatchLabel(match);
         updateNextMatchLabel();
     }
 
@@ -260,12 +266,21 @@ public class GameWorldDialog extends QDialog {
         subStageComboBox.setCurrentIndex(subStageComboBox.findData(competition));
     }
 
+    private void updatePreviousMatchLabel(MatchEvent match) {
+        previousMatchLabel.setText("Последний матч:" + createMatchDescription(match));
+    }
+
     private void updateNextMatchLabel() {
         MatchEvent nextMatch = gameWorld.getCurrentSeason().getNextMatch();
         if (nextMatch == null) {
             return;
         }
-        nextMatchLabel.setText("Следующий матч:<br>" + nextMatch.getCompetition().getFullName(false) +
-                "<br>" + nextMatch.toString());
+        nextMatchLabel.setText("Следующий матч:" + createMatchDescription(nextMatch));
+    }
+
+    private String createMatchDescription(MatchEvent match) {
+        return String.format("<br>%s<br>%s",
+                match.getCompetition().getFullName(false),
+                match.toString());
     }
 }

@@ -115,6 +115,4 @@ public class MatchScore {
         }
         return true;
     }
-    
-    
 }

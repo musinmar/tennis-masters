@@ -9,26 +9,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayoffStage extends MultiStageCompetition {
+
     public PlayoffStage(Season season, String name, int playerCount) {
+        this(season, name, playerCount, new PlayoffStageConfiguration());
+    }
+
+    public PlayoffStage(Season season, String name, int playerCount, PlayoffStageConfiguration configuration) {
         super(season, name);
 
-        int roundCount = 0;
-        if (playerCount == 4) {
-            roundCount = 2;
-        } else {
-            if (playerCount == 8) {
-                roundCount = 3;
+        int rounds = configuration.getRounds();
+        if (rounds == 0) {
+            if (playerCount == 4) {
+                rounds = 2;
+            } else if (playerCount == 8) {
+                rounds = 3;
             }
         }
 
         List<Competition> stages = new ArrayList<>();
         int roundPlayerCount = playerCount;
-        for (int i = 0; i < roundCount; i++) {
+        for (int i = 0; i < rounds; i++) {
             String subStageName = getDefaultRoundName(roundPlayerCount);
             stages.add(new PlayoffSubStage(season, subStageName, roundPlayerCount));
             roundPlayerCount /= 2;
         }
         initStages(stages);
+        setParticipants(stages.get(0).getParticipants());
     }
 
     private String getDefaultRoundName(int playerCount) {
@@ -43,18 +49,13 @@ public class PlayoffStage extends MultiStageCompetition {
         }
     }
 
+
     @Override
     public void setStartingDate(int date) {
         for (int i = 0; i < getStages().size(); ++i) {
             getStages().get(i).setStartingDate(date + i * 2);
         }
     }
-
-//    @Override
-//    protected void setParticipants(List<Person> participants) {
-//        super.setParticipants(participants);
-//        getStages().get(0).setParticipants(participants);
-//    }
 
     @Override
     public void onCompetitionEnded(Competition competition) {
@@ -75,5 +76,10 @@ public class PlayoffStage extends MultiStageCompetition {
     @Override
     public void setActualParticipants(List<Person> players) {
         getStages().get(0).setActualParticipants(players);
+    }
+
+    public PlayoffSubStageResult getLastRoundResults() {
+        PlayoffSubStage lastRound = (PlayoffSubStage) getStages().get(getStages().size() - 1);
+        return lastRound.getResults();
     }
 }

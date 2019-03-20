@@ -14,40 +14,36 @@ public class PlayoffSubStage extends SimpleCompetition {
     public PlayoffSubStage(Season season, String name, int playerCount) {
         super(season, name);
         setParticipants(Participant.createNewList(playerCount));
+        setDefaultParticipantIds(playerCount);
 
         List<MatchEvent> matches = new ArrayList<>(playerCount / 2);
         for (int i = 0; i < playerCount / 2; i++) {
-            MatchEvent match = new MatchEvent(this, getParticipants().get(i * 2),  getParticipants().get(i * 2 + 1), 4, true);
+            MatchEvent match = new MatchEvent(this, getParticipants().get(i * 2), getParticipants().get(i * 2 + 1), 4, true);
             matches.add(match);
         }
         initMatches(matches);
     }
 
+    private void setDefaultParticipantIds(int playerCount) {
+        switch (playerCount) {
+            case 2:
+                setParticipantPrefix("F");
+                break;
+            case 4:
+                setParticipantPrefix("SF");
+                break;
+            case 8:
+                setParticipantPrefix("QF");
+                break;
+        }
+    }
+
     @Override
     public void setStartingDate(int date) {
-        /*if (matches.size() == 4) {
-         matches.get(0).date = date;
-         matches.get(1).date = date;
-         matches.get(2).date = date + 1;
-         matches.get(3).date = date + 1;
-         }
-         else {*/
         for (MatchEvent match : getAllMatches()) {
             match.setDate(date);
         }
-        //}
     }
-
-//    @Override
-//    protected void setActualParticipants(List<Person> participants) {
-//        super.setParticipants(participants);
-//        List<MatchEvent> matches = getAllMatches();
-//        int playerIndex = 0;
-//        for (int i = 0; i < matches.size(); ++i) {
-//            matches.get(i).setHomePlayer(participants.get(playerIndex++));
-//            matches.get(i).setAwayPlayer(participants.get(playerIndex++));
-//        }
-//    }
 
     public PlayoffSubStageResult getResults() {
         List<Person> winners = new ArrayList<>();

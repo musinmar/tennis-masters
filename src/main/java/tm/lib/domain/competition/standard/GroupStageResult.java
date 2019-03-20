@@ -14,4 +14,8 @@ public class GroupStageResult {
     public List<List<Person>> getGroupResults() {
         return groupResults;
     }
+
+    public Person getGroupPosition(int group, int place) {
+        return groupResults.get(group).get(place);
+    }
 }

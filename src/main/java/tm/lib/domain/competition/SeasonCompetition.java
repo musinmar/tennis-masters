@@ -19,15 +19,22 @@ public class SeasonCompetition extends MultiStageCompetition {
 
         List<Competition> tournaments = new ArrayList<>();
 
-        for (int i = 0; i < TOURNAMENT_COUNT; ++i) {
-            List<Person> allPlayers = new ArrayList<>(players);
-            Collections.shuffle(allPlayers);
-            List<Person> tournamentPlayers = allPlayers.subList(0, 8);
-            Competition tournament = new StandardTournament(season, tournamentPlayers, i + 1);
-            tournament.setVenue(Stadium.test_stadium());
-            tournament.setStartingDate(8 * i);
-            tournaments.add(tournament);
-        }
+//        for (int i = 0; i < TOURNAMENT_COUNT; ++i) {
+//            List<Person> allPlayers = new ArrayList<>(players);
+//            Collections.shuffle(allPlayers);
+//            List<Person> tournamentPlayers = allPlayers.subList(0, 8);
+//            Competition tournament = new StandardTournament(season, tournamentPlayers, i + 1);
+//            tournament.setVenue(Stadium.test_stadium());
+//            tournament.setStartingDate(8 * i);
+//            tournaments.add(tournament);
+//        }
+        WorldCupCompetition worldCupCompetition = new WorldCupCompetition(season);
+        ArrayList<Person> worldCupParticipants = new ArrayList<>(players);
+        Collections.shuffle(worldCupParticipants);
+        worldCupCompetition.setActualParticipants(worldCupParticipants);
+        worldCupCompetition.setVenue(Stadium.test_stadium());
+        worldCupCompetition.setStartingDate(0);
+        tournaments.add(worldCupCompetition);
 
         initStages(tournaments);
     }

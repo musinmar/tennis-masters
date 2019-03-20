@@ -89,4 +89,27 @@ abstract public class MultiStageCompetition extends Competition implements IComp
             endCompetition();
         }
     }
+
+    @Override
+    public int getStartingDate() {
+        return getStages().get(0).getStartingDate();
+    }
+
+    @Override
+    public void setStartingDate(int date) {
+        Competition previousStage = null;
+        for (Competition stage : getStages()) {
+            if (previousStage == null) {
+                stage.setStartingDate(date);
+            } else {
+                stage.setStartingDate(previousStage.getLastDate() + 2);
+            }
+            previousStage = stage;
+        }
+    }
+
+    @Override
+    public int getLastDate() {
+        return getStages().get(getStages().size() - 1).getLastDate();
+    }
 }

@@ -52,7 +52,7 @@ public class GroupSubStage extends SimpleCompetition {
     private void printGroupResults(PrintStream stream) {
         int len = groupResults.size();
         int maxNameLength = groupResults.stream()
-                .map(r -> r.getParticipant().getPlayer().getFullName())
+                .map(r -> r.getParticipant().getFullNameOrId())
                 .mapToInt(String::length)
                 .max()
                 .orElse(0);
@@ -60,7 +60,7 @@ public class GroupSubStage extends SimpleCompetition {
         String formatString = "%d. %-" + (maxNameLength + 1) + "s  %-3d %3d:%-3d %3d";
         for (int i = 0; i < len; i++) {
             GroupResult r = groupResults.get(i);
-            stream.printf(formatString, (i + 1), r.getParticipant().getPlayer().getFullName(),
+            stream.printf(formatString, (i + 1), r.getParticipant().getFullNameOrId(),
                     r.getMatchesPlayed(), r.getGamesWon(), r.getGamesLost(), r.getPoints());
             stream.println();
         }
@@ -113,5 +113,4 @@ public class GroupSubStage extends SimpleCompetition {
                 .findAny()
                 .orElseThrow(IllegalStateException::new);
     }
-
 }

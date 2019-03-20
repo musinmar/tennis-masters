@@ -51,9 +51,19 @@ abstract public class Competition implements IMatchEndListener {
         listeners.add(listener);
     }
 
-    public void setActualParticipants(List<Person> players) {
+    public void setParticipantPrefix(String prefix) {
         for (int i = 0; i < participants.size(); i++) {
-            participants.get(i).setPlayer(players.get(i));
+            participants.get(i).setId(prefix + (i + 1));
+        }
+    }
+
+    public void setActualParticipants(List<Person> players) {
+        setActualParticipants(0, players);
+    }
+
+    public void setActualParticipants(int fromIndex, List<Person> players) {
+        for (int i = 0; i < players.size(); i++) {
+            participants.get(fromIndex + i).setPlayer(players.get(i));
         }
     }
 
@@ -73,7 +83,11 @@ abstract public class Competition implements IMatchEndListener {
 
     abstract public List<MatchEvent> getAllMatches();
 
+    abstract public int getStartingDate();
+
     abstract public void setStartingDate(int date);
+
+    abstract public int getLastDate();
 
     protected void endCompetition() {
         for (ICompetitionEndListener listener : listeners) {

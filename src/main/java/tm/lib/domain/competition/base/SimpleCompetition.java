@@ -47,4 +47,19 @@ abstract public class SimpleCompetition extends Competition {
         this.matches = matches;
         matches.forEach(m -> m.addMatchEndListener(this));
     }
+
+    @Override
+    public int getStartingDate() {
+        return getAllMatches().get(0).getDate();
+    }
+
+    @Override
+    public void setStartingDate(int date) {
+        getAllMatches().forEach(match -> match.setDate(date));
+    }
+
+    @Override
+    public int getLastDate() {
+        return getAllMatches().get(getAllMatches().size() - 1).getDate();
+    }
 }

@@ -3,6 +3,7 @@ package tm.lib.domain.competition.standard;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.competition.base.Participant;
+import tm.lib.domain.core.Person;
 import tm.lib.domain.world.Season;
 
 import java.util.ArrayList;
@@ -16,7 +17,9 @@ public class GroupStage extends MultiStageCompetition {
         int groupCount = playerCount / 4;
         List<Competition> groups = new ArrayList<>();
         for (int i = 0; i < groupCount; ++i) {
-            GroupSubStage group = new GroupSubStage(season, "Группа " + (i + 1), 4);
+            char groupId = (char) ('A' + i);
+            GroupSubStage group = new GroupSubStage(season, "Группа " + groupId, 4);
+            group.setParticipantPrefix(groupId + "");
             groups.add(group);
         }
         initStages(groups);
@@ -37,6 +40,12 @@ public class GroupStage extends MultiStageCompetition {
     public void setStartingDate(int date) {
         for (Competition stage : getStages()) {
             stage.setStartingDate(date);
+        }
+    }
+
+    public void setActualParticipantsByGroups(List<List<Person>> players) {
+        for (int i = 0; i < getStages().size(); i++) {
+            getStages().get(i).setActualParticipants(players.get(i));
         }
     }
 }

@@ -1,15 +1,15 @@
 package tm.lib.domain.competition.base;
 
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Participant {
     private String id;
-    private Person player;
+    private Knight player;
 
-    public Participant(String id, Person player) {
+    public Participant(String id, Knight player) {
         this.id = id;
         this.player = player;
     }
@@ -26,11 +26,11 @@ public class Participant {
         this.id = id;
     }
 
-    public Person getPlayer() {
+    public Knight getPlayer() {
         return player;
     }
 
-    public void setPlayer(Person player) {
+    public void setPlayer(Knight player) {
         this.player = player;
     }
 
@@ -46,7 +46,7 @@ public class Participant {
         return participants;
     }
 
-    public static List<Participant> createNewList(List<Person> players) {
+    public static List<Participant> createNewList(List<Knight> players) {
         ArrayList<Participant> participants = new ArrayList<>();
         for (int i = 0; i < players.size(); i++) {
             participants.add(new Participant("ID" + (i + 1), players.get(i)));

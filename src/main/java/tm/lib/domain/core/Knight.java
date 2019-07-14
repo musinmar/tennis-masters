@@ -2,8 +2,7 @@ package tm.lib.domain.core;
 
 import org.w3c.dom.Element;
 
-public class Person
-{
+public class Knight {
     private String name;
     private String surname;
 
@@ -21,8 +20,7 @@ public class Person
     private double endurance;
     private double dexterity;
 
-    public Person()
-    {
+    public Knight() {
         name = "Nil_name";
         surname = "Nil_surname";
         nation = Nation.ALMAGEST;
@@ -40,19 +38,16 @@ public class Person
         dexterity = 50;
     }
 
-    public String getFullName()
-    {
+    public String getFullName() {
         return getName() + " " + getSurname();
     }
 
-    public String getShortName()
-    {
+    public String getShortName() {
         return getName().charAt(0) + ". " + getSurname();
     }
 
-    public static Person getTestPerson1()
-    {
-        Person a = new Person();
+    public static Knight getTestPerson1() {
+        Knight a = new Knight();
         a.name = "Флер";
         a.surname = "Рокки";
         a.country = Country.CONJUCTION;
@@ -72,9 +67,8 @@ public class Person
         return a;
     }
 
-    public static Person getTestPerson2()
-    {
-        Person b = new Person();
+    public static Knight getTestPerson2() {
+        Knight b = new Knight();
         b.name = "Майкл";
         b.surname = "Холл";
         b.country = Country.ALDORUM;
@@ -96,9 +90,8 @@ public class Person
 
     static int randomIndex = 1;
 
-    public static Person getRandomPerson()
-    {
-        Person a = new Person();
+    public static Knight getRandomPerson() {
+        Knight a = new Knight();
         java.util.Random r = new java.util.Random(System.currentTimeMillis());
 
         a.name = "Энди";
@@ -120,9 +113,8 @@ public class Person
         return a;
     }
 
-    public static Person getPowerfulPerson()
-    {
-        Person a = new Person();
+    public static Knight getPowerfulPerson() {
+        Knight a = new Knight();
         a.name = "Мр.";
         a.surname = "Большой";
         a.country = Country.CONJUCTION;
@@ -142,9 +134,8 @@ public class Person
         return a;
     }
 
-    public static Person getAthleticPerson()
-    {
-        Person a = new Person();
+    public static Knight getAthleticPerson() {
+        Knight a = new Knight();
         a.name = "Мр.";
         a.surname = "Быстрый";
         a.country = Country.CONJUCTION;
@@ -164,9 +155,8 @@ public class Person
         return a;
     }
 
-    public static Person getSmartPerson()
-    {
-        Person a = new Person();
+    public static Knight getSmartPerson() {
+        Knight a = new Knight();
         a.name = "Мр.";
         a.surname = "Умный";
         a.country = Country.CONJUCTION;
@@ -186,9 +176,8 @@ public class Person
         return a;
     }
 
-    public static Person getAveragePerson()
-    {
-        Person a = new Person();
+    public static Knight getAveragePerson() {
+        Knight a = new Knight();
         a.name = "Мр.";
         a.surname = "Средний";
         a.country = Country.CONJUCTION;
@@ -208,78 +197,63 @@ public class Person
         return a;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public String getSurname()
-    {
+    public String getSurname() {
         return surname;
     }
 
-    public Nation getNation()
-    {
+    public Nation getNation() {
         return nation;
     }
 
-    public Country getCountry()
-    {
+    public Country getCountry() {
         return country;
     }
 
-    public double getSpeed()
-    {
+    public double getSpeed() {
         return speed;
     }
 
-    public double getAcceleration()
-    {
+    public double getAcceleration() {
         return acceleration;
     }
 
-    public double getHitPower()
-    {
+    public double getHitPower() {
         return hitPower;
     }
 
-    public double getShotRange()
-    {
+    public double getShotRange() {
         return shotRange;
     }
 
-    public double getAccuracy()
-    {
+    public double getAccuracy() {
         return accuracy;
     }
 
-    public double getCunning()
-    {
+    public double getCunning() {
         return cunning;
     }
 
-    public double getSkill()
-    {
+    public double getSkill() {
         return skill;
     }
 
-    public double getRisk()
-    {
+    public double getRisk() {
         return risk;
     }
 
-    public double getEndurance()
-    {
+    public double getEndurance() {
         return endurance;
     }
 
-    public double getDexterity()
-    {
+    public double getDexterity() {
         return dexterity;
     }
 
-    public void init(Element playerElement)
-    {
+    public void init(Element playerElement) {
         String fullName = playerElement.getAttribute("name");
         int spaceIndex = fullName.indexOf(' ');
         name = fullName.substring(0, spaceIndex);

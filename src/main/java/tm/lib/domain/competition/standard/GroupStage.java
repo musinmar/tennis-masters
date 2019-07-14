@@ -3,7 +3,7 @@ package tm.lib.domain.competition.standard;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.competition.base.Participant;
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 import tm.lib.domain.world.Season;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class GroupStage extends MultiStageCompetition {
         }
     }
 
-    public void setActualParticipantsByGroups(List<List<Person>> players) {
+    public void setActualParticipantsByGroups(List<List<Knight>> players) {
         for (int i = 0; i < getStages().size(); i++) {
             getStages().get(i).setActualParticipants(players.get(i));
         }

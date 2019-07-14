@@ -73,7 +73,7 @@ public class PlayerWidget extends Composite
 
     public void update()
     {
-        name_label.setText(player.getPerson().getFullName() + " (" + player.getPerson().getNation() + ")");
+        name_label.setText(player.getKnight().getFullName() + " (" + player.getKnight().getNation() + ")");
         this.pack();
         energy_bar.setSelection((int) player.getEnergy());
     }

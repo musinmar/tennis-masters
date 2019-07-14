@@ -7,7 +7,7 @@ import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.GroupStageResult;
 import tm.lib.domain.competition.standard.PlayoffStage;
 import tm.lib.domain.competition.standard.PlayoffStageConfiguration;
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 import tm.lib.domain.world.Season;
 
 import java.util.ArrayList;
@@ -26,8 +26,8 @@ public class WorldCupCompetition extends MultiStageCompetition {
     private final GroupStage groupStage;
     private final PlayoffStage playoffStage;
 
-    private List<Person> secondQualifyingStageParticipants;
-    private ArrayList<Person> groupRoundParticipants;
+    private List<Knight> secondQualifyingStageParticipants;
+    private ArrayList<Knight> groupRoundParticipants;
 
     public WorldCupCompetition(Season season) {
         super(season, "Чемпионат Мира");
@@ -56,7 +56,7 @@ public class WorldCupCompetition extends MultiStageCompetition {
     }
 
     @Override
-    public void setActualParticipants(List<Person> players) {
+    public void setActualParticipants(List<Knight> players) {
         firstQualifyingStageGroupRound.setActualParticipants(players.subList(22, 30));
         secondQualifyingStageParticipants = newArrayList(players.subList(8, 22));
         groupRoundParticipants = newArrayList(players.subList(0, 8));
@@ -68,7 +68,7 @@ public class WorldCupCompetition extends MultiStageCompetition {
 
         if (competition == firstQualifyingStageGroupRound) {
             GroupStageResult results = firstQualifyingStageGroupRound.getResults();
-            List<Person> playoffParticipants = Arrays.asList(
+            List<Knight> playoffParticipants = Arrays.asList(
                     results.getGroupPosition(0, 0),
                     results.getGroupPosition(1, 1),
                     results.getGroupPosition(1, 0),
@@ -76,9 +76,9 @@ public class WorldCupCompetition extends MultiStageCompetition {
             );
             firstQualifyingStagePlayoff.setActualParticipants(playoffParticipants);
         } else if (competition == firstQualifyingStagePlayoff) {
-            List<Person> winners = firstQualifyingStagePlayoff.getLastRoundResults().getWinners();
+            List<Knight> winners = firstQualifyingStagePlayoff.getLastRoundResults().getWinners();
             secondQualifyingStageParticipants.addAll(winners);
-            List<List<Person>> groups = performPotBasedDraw(secondQualifyingStageParticipants);
+            List<List<Knight>> groups = performPotBasedDraw(secondQualifyingStageParticipants);
             secondQualifyingStage.setActualParticipantsByGroups(groups);
         } else if (competition == secondQualifyingStage) {
             GroupStageResult results = secondQualifyingStage.getResults();
@@ -87,11 +87,11 @@ public class WorldCupCompetition extends MultiStageCompetition {
                     groupRoundParticipants.add(results.getGroupPosition(j, i));
                 }
             }
-            List<List<Person>> groups = performPotBasedDraw(groupRoundParticipants);
+            List<List<Knight>> groups = performPotBasedDraw(groupRoundParticipants);
             groupStage.setActualParticipantsByGroups(groups);
         } else if (competition == groupStage) {
             GroupStageResult results = groupStage.getResults();
-            List<Person> playoffParticipants = Arrays.asList(
+            List<Knight> playoffParticipants = Arrays.asList(
                     results.getGroupPosition(0, 0),
                     results.getGroupPosition(1, 1),
                     results.getGroupPosition(2, 0),
@@ -105,8 +105,8 @@ public class WorldCupCompetition extends MultiStageCompetition {
         }
     }
 
-    private static List<List<Person>> performPotBasedDraw(List<Person> players) {
-        List<List<Person>> pots = new ArrayList<>();
+    private static List<List<Knight>> performPotBasedDraw(List<Knight> players) {
+        List<List<Knight>> pots = new ArrayList<>();
         for (int i = 0; i < 4; ++i) {
             pots.add(new ArrayList<>());
         }
@@ -116,10 +116,10 @@ public class WorldCupCompetition extends MultiStageCompetition {
         for (int i = 0; i < 4; ++i) {
             Collections.shuffle(pots.get(i));
         }
-        List<List<Person>> groups = new ArrayList<>();
+        List<List<Knight>> groups = new ArrayList<>();
         for (int i = 0; i < 4; ++i) {
             final int groupIndex = i;
-            List<Person> group = pots.stream().map(pot -> pot.get(groupIndex)).collect(Collectors.toList());
+            List<Knight> group = pots.stream().map(pot -> pot.get(groupIndex)).collect(Collectors.toList());
             groups.add(group);
         }
         return groups;

@@ -4,7 +4,7 @@ import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.PlayoffStage;
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 import tm.lib.domain.world.Season;
 
 import java.util.Arrays;
@@ -15,7 +15,7 @@ public class SimpleFourTournament extends MultiStageCompetition {
     private final GroupStage groupStage;
     private final PlayoffStage playoffStage;
 
-    public SimpleFourTournament(Season season, List<Person> players) {
+    public SimpleFourTournament(Season season, List<Knight> players) {
         super(season, "Тестовый турнир");
         //setParticipants(Participant.createNewList(players));
 

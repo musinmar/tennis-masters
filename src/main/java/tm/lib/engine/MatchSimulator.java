@@ -7,7 +7,7 @@ package tm.lib.engine;
 
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Match;
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 
 public class MatchSimulator {
 
@@ -44,7 +44,7 @@ public class MatchSimulator {
         return lastGameResult;
     }
 
-    public Person getLastGameWinner() {
+    public Knight getLastGameWinner() {
         return getLastGameResult() == Side.HOME ? match.getHomePlayer() : match.getAwayPlayer();
     }
     

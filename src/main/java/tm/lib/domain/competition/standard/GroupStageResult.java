@@ -1,21 +1,21 @@
 package tm.lib.domain.competition.standard;
 
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 
 import java.util.List;
 
 public class GroupStageResult {
-    private final List<List<Person>> groupResults;
+    private final List<List<Knight>> groupResults;
 
-    public GroupStageResult(List<List<Person>> groupResults) {
+    public GroupStageResult(List<List<Knight>> groupResults) {
         this.groupResults = groupResults;
     }
 
-    public List<List<Person>> getGroupResults() {
+    public List<List<Knight>> getGroupResults() {
         return groupResults;
     }
 
-    public Person getGroupPosition(int group, int place) {
+    public Knight getGroupPosition(int group, int place) {
         return groupResults.get(group).get(place);
     }
 }

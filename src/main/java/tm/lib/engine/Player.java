@@ -1,11 +1,11 @@
 package tm.lib.engine;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 
 public class Player {
 
-    private final Person person;
+    private final Knight knight;
     private final Side side;
 
     private Vector2D position = Vector2D.ZERO;
@@ -15,13 +15,13 @@ public class Player {
     private double lyingTime = 0;
     private double energy = 100;
 
-    public Player(Person person, Side side) {
-        this.person = person;
+    public Player(Knight knight, Side side) {
+        this.knight = knight;
         this.side = side;
     }
 
-    public Person getPerson() {
-        return person;
+    public Knight getKnight() {
+        return knight;
     }
 
     public Side getSide() {

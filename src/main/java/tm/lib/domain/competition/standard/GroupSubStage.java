@@ -3,7 +3,7 @@ package tm.lib.domain.competition.standard;
 import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.base.Participant;
 import tm.lib.domain.competition.base.SimpleCompetition;
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 import tm.lib.domain.world.Season;
 
 import java.io.PrintStream;
@@ -66,7 +66,7 @@ public class GroupSubStage extends SimpleCompetition {
         }
     }
 
-    public List<Person> getResults() {
+    public List<Knight> getResults() {
         return groupResults.stream()
                 .map(groupResult -> groupResult.getParticipant().getPlayer())
                 .collect(Collectors.toList());

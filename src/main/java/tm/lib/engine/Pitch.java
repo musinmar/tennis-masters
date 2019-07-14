@@ -3,7 +3,7 @@ package tm.lib.engine;
 import org.apache.commons.math3.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.geometry.partitioning.Region;
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Stadium;
 
 public class Pitch {
@@ -22,7 +22,7 @@ public class Pitch {
     static private final PolygonsSet HOME_ZONE = new PolygonsSet(0, WIDTH, 0, HALF_HEIGHT, VectorUtils.DEFAULT_TOLERANCE);
     static private final PolygonsSet AWAY_ZONE = new PolygonsSet(0, WIDTH, -HALF_HEIGHT, 0, VectorUtils.DEFAULT_TOLERANCE);
 
-    public Pitch(Person homePlayer, Person awayPlayer, Stadium venue) {
+    public Pitch(Knight homePlayer, Knight awayPlayer, Stadium venue) {
         this.homePlayer = new Player(homePlayer, Side.HOME);
         this.awayPlayer = new Player(awayPlayer, Side.AWAY);
         this.ball = new Ball();

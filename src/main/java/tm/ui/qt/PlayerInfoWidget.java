@@ -32,7 +32,7 @@ public class PlayerInfoWidget extends QFrame {
         QLabel label = new QLabel(this);
         layout.addWidget(label);
         label.setAlignment(Qt.AlignmentFlag.AlignCenter);
-        label.setText(player.getPerson().getFullName());
+        label.setText(player.getKnight().getFullName());
 
         energyBar = new QProgressBar(this);
         layout.addWidget(energyBar);

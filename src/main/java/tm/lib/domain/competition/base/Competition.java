@@ -1,6 +1,6 @@
 package tm.lib.domain.competition.base;
 
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Stadium;
 import tm.lib.domain.world.Season;
 
@@ -57,11 +57,11 @@ abstract public class Competition implements IMatchEndListener {
         }
     }
 
-    public void setActualParticipants(List<Person> players) {
+    public void setActualParticipants(List<Knight> players) {
         setActualParticipants(0, players);
     }
 
-    public void setActualParticipants(int fromIndex, List<Person> players) {
+    public void setActualParticipants(int fromIndex, List<Knight> players) {
         for (int i = 0; i < players.size(); i++) {
             participants.get(fromIndex + i).setPlayer(players.get(i));
         }

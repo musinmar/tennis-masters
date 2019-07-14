@@ -4,14 +4,14 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 
 public class MatchEngineTest {
 
     @Test
     public void testCanPlayerHitBall() {
-        Person person = mock(Person.class);
-        Player player = new Player(person, Side.HOME);
+        Knight knight = mock(Knight.class);
+        Player player = new Player(knight, Side.HOME);
         Ball ball = new Ball();
         Vector2D ballPosition = new Vector2D(10, 20);
         ball.setPosition(ballPosition);

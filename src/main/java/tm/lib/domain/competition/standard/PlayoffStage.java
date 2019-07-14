@@ -2,7 +2,7 @@ package tm.lib.domain.competition.standard;
 
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 import tm.lib.domain.world.Season;
 
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class PlayoffStage extends MultiStageCompetition {
     }
 
     @Override
-    public void setActualParticipants(List<Person> players) {
+    public void setActualParticipants(List<Knight> players) {
         getStages().get(0).setActualParticipants(players);
     }
 

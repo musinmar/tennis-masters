@@ -1,14 +1,18 @@
 package tm.ui.qt;
 
 import com.trolltech.qt.core.Qt;
+import com.trolltech.qt.gui.QAction;
 import com.trolltech.qt.gui.QComboBox;
 import com.trolltech.qt.gui.QDialog;
 import com.trolltech.qt.gui.QFont;
 import com.trolltech.qt.gui.QHBoxLayout;
+import com.trolltech.qt.gui.QKeySequence;
 import com.trolltech.qt.gui.QLabel;
 import com.trolltech.qt.gui.QLayout;
 import com.trolltech.qt.gui.QPlainTextEdit;
 import com.trolltech.qt.gui.QPushButton;
+import com.trolltech.qt.gui.QSizePolicy;
+import com.trolltech.qt.gui.QSpacerItem;
 import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QWidget;
 import tm.lib.domain.competition.base.Competition;
@@ -79,6 +83,14 @@ public class GameWorldDialog extends QDialog {
         gameWorldLogTextEdit.setFont(new QFont("Courier New"));
         gameWorldLogTextEdit.setMinimumSize(200, 30);
 
+        QPushButton showEloRatingButton = new QPushButton(this);
+        showEloRatingButton.setText("Рейтинг");
+        showEloRatingButton.clicked.connect(this, "onShowEloRatingButtonClicked()");
+
+        QHBoxLayout bottomButtonsLayout = new QHBoxLayout();
+        bottomButtonsLayout.addWidget(showEloRatingButton);
+        bottomButtonsLayout.addSpacerItem(new QSpacerItem(10, 10, QSizePolicy.Policy.Expanding));
+
         QPushButton nextButton = new QPushButton(this);
         nextButton.setText("Смотреть матч");
         nextButton.clicked.connect(this, "onNextMatchButtonClicked()");
@@ -101,6 +113,7 @@ public class GameWorldDialog extends QDialog {
         leftLayout.setSpacing(5);
         leftLayout.addItem(competitionSelectorLayout);
         leftLayout.addWidget(gameWorldLogTextEdit);
+        leftLayout.addItem(bottomButtonsLayout);
 
         QVBoxLayout rightLayout = new QVBoxLayout();
         rightLayout.addWidget(previousMatchLabel);
@@ -110,6 +123,11 @@ public class GameWorldDialog extends QDialog {
         QLayout mainLayout = new QHBoxLayout(this);
         mainLayout.addItem(leftLayout);
         mainLayout.addItem(rightLayout);
+
+        QAction simulateNextMatchAction = new QAction(this);
+        simulateNextMatchAction.setShortcut("Space");
+        simulateNextMatchAction.triggered.connect(nextFastButton.clicked);
+        addAction(simulateNextMatchAction);
 
         resize(1200, 600);
         move(200, 50);
@@ -282,5 +300,10 @@ public class GameWorldDialog extends QDialog {
         return String.format("<br>%s<br>%s",
                 match.getCompetition().getFullName(false),
                 match.toString());
+    }
+
+    private void onShowEloRatingButtonClicked() {
+        EloRatingDialog eloRatingDialog = new EloRatingDialog(this, gameWorld.getEloRating());
+        eloRatingDialog.exec();
     }
 }

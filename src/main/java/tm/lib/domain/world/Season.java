@@ -9,12 +9,12 @@ import java.io.PrintStream;
 
 public class Season {
     private static final int SEASON_DAYS = 200;
-    private GameWorld world;
+    private GameWorld gameWorld;
     private MultiStageCompetition seasonCompetition;
     private int year;
 
-    public Season(GameWorld world, int year) {
-        this.world = world;
+    public Season(GameWorld gameWorld, int year) {
+        this.gameWorld = gameWorld;
         this.year = year;
 
         initSeasonCompetition();
@@ -28,9 +28,11 @@ public class Season {
         return seasonCompetition.getNextMatch();
     }
 
-    public void processMatch(MatchEvent m, MatchScore s) {
-        m.setResult(s);
-        print(System.out);
+    public void processMatch(MatchEvent match, MatchScore score) {
+        match.setResult(score);
+        gameWorld.getEloRating().updateRatings(match.getHomePlayer().getPlayer(), match.getAwayPlayer().getPlayer(), score.getScoreBySets());
+
+//        print(System.out);
     }
 
     public void print(PrintStream stream) {
@@ -38,6 +40,6 @@ public class Season {
     }
 
     private void initSeasonCompetition() {
-        seasonCompetition = new SeasonCompetition(this, "Сезон " + String.valueOf(year + 1), world.getPlayers());
+        seasonCompetition = new SeasonCompetition(this, "Сезон " + String.valueOf(year + 1), gameWorld.getPlayers());
     }
 }

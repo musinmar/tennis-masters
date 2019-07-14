@@ -1,25 +1,25 @@
 package tm.lib.domain.core;
 
 public class Match {
-    private Person homePlayer;
-    private Person awayPlayer;
+    private Knight homePlayer;
+    private Knight awayPlayer;
     private int sets;
     private boolean isPlayoff;
     private Stadium venue;
 
-    public Person getHomePlayer() {
+    public Knight getHomePlayer() {
         return homePlayer;
     }
 
-    public void setHomePlayer(Person homePlayer) {
+    public void setHomePlayer(Knight homePlayer) {
         this.homePlayer = homePlayer;
     }
 
-    public Person getAwayPlayer() {
+    public Knight getAwayPlayer() {
         return awayPlayer;
     }
 
-    public void setAwayPlayer(Person awayPlayer) {
+    public void setAwayPlayer(Knight awayPlayer) {
         this.awayPlayer = awayPlayer;
     }
 

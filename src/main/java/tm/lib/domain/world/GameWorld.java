@@ -3,7 +3,7 @@ package tm.lib.domain.world;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -12,10 +12,13 @@ import java.util.List;
 
 public class GameWorld {
     private List<Season> seasons = new ArrayList<Season>();
-    private List<Person> players = new ArrayList<Person>();
+    private List<Knight> players = new ArrayList<Knight>();
+
+    private EloRating eloRating;
 
     public GameWorld() {
         init();
+        eloRating = new EloRating(players);
         seasons.add(new Season(this, 0));
     }
 
@@ -27,8 +30,12 @@ public class GameWorld {
         return seasons.get(seasons.size() - 1);
     }
 
-    public List<Person> getPlayers() {
+    public List<Knight> getPlayers() {
         return players;
+    }
+
+    public EloRating getEloRating() {
+        return eloRating;
     }
 
     private void init() {
@@ -40,9 +47,9 @@ public class GameWorld {
             NodeList playerNodes = document.getElementsByTagName("player");
             for (int i = 0; i < playerNodes.getLength(); ++i) {
                 Element playerElement = (Element) playerNodes.item(i);
-                Person person = new Person();
-                person.init(playerElement);
-                players.add(person);
+                Knight knight = new Knight();
+                knight.init(playerElement);
+                players.add(knight);
             }
 
         } catch (Exception exception) {

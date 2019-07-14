@@ -3,9 +3,9 @@ package tm.lib.engine;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.mockito.Mock;
+
 import static org.mockito.Mockito.*;
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Stadium;
 
 public class StatsCalculatorTest {
@@ -38,23 +38,23 @@ public class StatsCalculatorTest {
 
     @Test
     public void testGetTotalLyingTime() {
-        Person person = mock(Person.class);
+        Knight knight = mock(Knight.class);
         Player player = mock(Player.class);
-        when(player.getPerson()).thenReturn(person);
+        when(player.getKnight()).thenReturn(knight);
 
-        when(person.getDexterity()).thenReturn(100.0);
+        when(knight.getDexterity()).thenReturn(100.0);
         when(player.getEnergy()).thenReturn(100.0);
         assertEquals(MatchEngineConstants.MIN_LYING_TIME, statsCalculator.getTotalLyingTime(player), VectorUtils.DEFAULT_TOLERANCE);
 
-        when(person.getDexterity()).thenReturn(100.0);
+        when(knight.getDexterity()).thenReturn(100.0);
         when(player.getEnergy()).thenReturn(0.0);
         assertEquals(MatchEngineConstants.MIN_LYING_TIME * (1 + MatchEngineConstants.LYING_TIME_ENERGY_MODIFIER), statsCalculator.getTotalLyingTime(player), VectorUtils.DEFAULT_TOLERANCE);
 
-        when(person.getDexterity()).thenReturn(0.0);
+        when(knight.getDexterity()).thenReturn(0.0);
         when(player.getEnergy()).thenReturn(100.0);
         assertEquals(MatchEngineConstants.MAX_LYING_TIME, statsCalculator.getTotalLyingTime(player), VectorUtils.DEFAULT_TOLERANCE);
 
-        when(person.getDexterity()).thenReturn(0.0);
+        when(knight.getDexterity()).thenReturn(0.0);
         when(player.getEnergy()).thenReturn(0.0);
         assertEquals(MatchEngineConstants.MAX_LYING_TIME * (1 + MatchEngineConstants.LYING_TIME_ENERGY_MODIFIER), statsCalculator.getTotalLyingTime(player), VectorUtils.DEFAULT_TOLERANCE);
     }

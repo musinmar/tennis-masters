@@ -4,7 +4,7 @@ import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.base.Participant;
 import tm.lib.domain.competition.base.SimpleCompetition;
 import tm.lib.domain.core.BasicScore;
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 import tm.lib.domain.world.Season;
 
 import java.util.ArrayList;
@@ -46,8 +46,8 @@ public class PlayoffSubStage extends SimpleCompetition {
     }
 
     public PlayoffSubStageResult getResults() {
-        List<Person> winners = new ArrayList<>();
-        List<Person> losers = new ArrayList<>();
+        List<Knight> winners = new ArrayList<>();
+        List<Knight> losers = new ArrayList<>();
         for (int i = 0; i < getAllMatches().size(); i++) {
             MatchEvent m = getAllMatches().get(i);
             if (m.getResult() != null) {

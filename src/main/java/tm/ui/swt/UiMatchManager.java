@@ -6,8 +6,8 @@
 package tm.ui.swt;
 
 import tm.lib.domain.competition.base.MatchEvent;
+import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
-import tm.lib.domain.core.Person;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.engine.MatchEngine;
 import tm.lib.engine.MatchSimulator;
@@ -156,7 +156,7 @@ public class UiMatchManager {
     }
 
     private void show_game_result_caption() {
-        Person won;
+        Knight won;
         if (matchSimulator.getLastGameResult() == Side.HOME) {
             won = match.getHomePlayer();
         } else {
@@ -171,13 +171,13 @@ public class UiMatchManager {
     }
 
     private void show_set_result_caption() {
-        Person won = (matchSimulator.getLastGameResult() == Side.HOME) ? match.getHomePlayer() : match.getAwayPlayer();
+        Knight won = (matchSimulator.getLastGameResult() == Side.HOME) ? match.getHomePlayer() : match.getAwayPlayer();
         ui.pitch_widget.setUpperText("Сет разыгран, победитель -  " + won.getFullName());
         ui.pitch_widget.setBottomText("Счёт в игре: " + matchSimulator.getCurrentScore());
     }
 
     private void show_match_result_caption() {
-        Person won;
+        Knight won;
         BasicScore s = matchSimulator.getCurrentScore().getScoreBySets();
         if (s.v1 > s.v2) {
             won = match.getHomePlayer();

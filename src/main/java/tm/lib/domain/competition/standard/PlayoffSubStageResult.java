@@ -1,23 +1,23 @@
 package tm.lib.domain.competition.standard;
 
-import tm.lib.domain.core.Person;
+import tm.lib.domain.core.Knight;
 
 import java.util.List;
 
 public class PlayoffSubStageResult {
-    private final List<Person> winners;
-    private final List<Person> losers;
+    private final List<Knight> winners;
+    private final List<Knight> losers;
 
-    public PlayoffSubStageResult(List<Person> winners, List<Person> losers) {
+    public PlayoffSubStageResult(List<Knight> winners, List<Knight> losers) {
         this.winners = winners;
         this.losers = losers;
     }
 
-    public List<Person> getWinners() {
+    public List<Knight> getWinners() {
         return winners;
     }
 
-    public List<Person> getLosers() {
+    public List<Knight> getLosers() {
         return losers;
     }
 }

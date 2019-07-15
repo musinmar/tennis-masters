@@ -1,12 +1,16 @@
-package tm.lib.engine;
+package tm.lib.engine.strategies;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import tm.lib.engine.*;
+
+import static tm.lib.engine.Side.HOME;
 
 public class StandardStrategy implements Strategy {
 
     @Override
-    public Decision makeDecision(Pitch pitch, Player player) {
+    public Decision makeDecision(Pitch pitch) {
+        Player player = pitch.getPlayer(HOME);
         if (isPlayerZoneTargeted(pitch, player)) {
             if (pitch.canPlayerHitBall(player)) {
                 return createHitBallDecision(pitch, player);
@@ -48,7 +52,7 @@ public class StandardStrategy implements Strategy {
         while (true) {
             Vector2D target = VectorUtils.generateRandomVector(riskMargin, Pitch.WIDTH - riskMargin,
                     netZoneLength + riskMargin, Pitch.HALF_HEIGHT - riskMargin);
-            if (player.getSide() == Side.HOME) {
+            if (player.getSide() == HOME) {
                 target = VectorUtils.mirror(target);
             }
 

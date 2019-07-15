@@ -2,6 +2,9 @@ package tm.lib.engine;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import tm.lib.domain.core.Knight;
+import tm.lib.engine.strategies.StandardStrategy;
+
+import static tm.lib.engine.VectorUtils.mirror;
 
 public class Player {
 
@@ -82,6 +85,10 @@ public class Player {
         return energy;
     }
 
+    public void setEnergy(double energy) {
+        this.energy = energy;
+    }
+
     public void changeEnergy(double dif) {
         double newEnergy = energy + dif;
         energy = Math.max(Math.min(newEnergy, 100), 0);
@@ -99,5 +106,16 @@ public class Player {
         setSpeed(0);
         setLying(false);
         setLyingTime(0);
+    }
+
+    public Player createMirrored() {
+        Player mirroredPlayer = new Player(knight, side.getOpposite());
+        mirroredPlayer.setPosition(mirror(position));
+        mirroredPlayer.setDirection(mirror(direction));
+        mirroredPlayer.setSpeed(speed);
+        mirroredPlayer.setLying(lying);
+        mirroredPlayer.setLyingTime(lyingTime);
+        mirroredPlayer.setEnergy(energy);
+        return mirroredPlayer;
     }
 }

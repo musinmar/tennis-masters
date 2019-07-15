@@ -6,6 +6,8 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.util.Precision;
 import tm.lib.domain.core.Match;
 
+import static tm.lib.engine.Side.HOME;
+
 public class MatchEngine {
 
     public static final double TIME_STEP = 0.02;
@@ -32,7 +34,7 @@ public class MatchEngine {
 
     public MatchEngine(Match match) {
         pitch = new Pitch(match.getHomePlayer(), match.getAwayPlayer(), match.getVenue());
-        pitch.setInitialPositions(Side.HOME);
+        pitch.setInitialPositions(HOME);
         statsCalculator = new StatsCalculator(match.getVenue());
         lastHittedPlayer = null;
     }
@@ -43,7 +45,7 @@ public class MatchEngine {
     }
 
     public void next() {
-        performPlayerAction(getPitch().getPlayer(Side.HOME));
+        performPlayerAction(getPitch().getPlayer(HOME));
         performPlayerAction(getPitch().getPlayer(Side.AWAY));
         performBallAction(getPitch().getBall());
     }
@@ -180,7 +182,7 @@ public class MatchEngine {
             return;
         }
 
-        Decision decision = player.getStrategy().makeDecision(getPitch(), player);
+        Decision decision = getPlayerDecision(player);
 
         if (decision.isHitBall()) {
             if (getPitch().canPlayerHitBall(player)) {
@@ -192,6 +194,16 @@ public class MatchEngine {
             }
         } else {
             movePlayerToTarget(player, decision.getMoveToPosition());
+        }
+    }
+
+    private Decision getPlayerDecision(Player player) {
+        if (player.getSide() == HOME) {
+            return player.getStrategy().makeDecision(getPitch());
+        } else {
+            Pitch mirroredPitch = getPitch().createMirrored();
+            Decision decision = player.getStrategy().makeDecision(mirroredPitch);
+            return decision.createMirrored();
         }
     }
 
@@ -263,12 +275,12 @@ public class MatchEngine {
     }
 
     public void performEndOfGameActions() {
-        getPitch().getPlayer(Side.HOME).changeEnergy(ENERGY_REGAIN_PER_GAME);
+        getPitch().getPlayer(HOME).changeEnergy(ENERGY_REGAIN_PER_GAME);
         getPitch().getPlayer(Side.AWAY).changeEnergy(ENERGY_REGAIN_PER_GAME);
     }
 
     public void performEndOfSetActions() {
-        getPitch().getPlayer(Side.HOME).changeEnergy(ENERGY_REGAIN_PER_SET);
+        getPitch().getPlayer(HOME).changeEnergy(ENERGY_REGAIN_PER_SET);
         getPitch().getPlayer(Side.AWAY).changeEnergy(ENERGY_REGAIN_PER_SET);
     }
 }

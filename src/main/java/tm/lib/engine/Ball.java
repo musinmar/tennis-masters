@@ -2,6 +2,8 @@ package tm.lib.engine;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
+import static tm.lib.engine.VectorUtils.mirror;
+
 public class Ball {
 
     private Vector2D position = Vector2D.ZERO;
@@ -52,5 +54,15 @@ public class Ball {
 
     public boolean hasHittedGround() {
         return VectorUtils.equalsWithTolerance(getRealTarget(), getPosition(), 0.001);
+    }
+
+    public Ball createMirrored() {
+        Ball mirroredBall = new Ball();
+        mirroredBall.position = mirror(position);
+        mirroredBall.realTarget = mirror(realTarget);
+        mirroredBall.visibleTarget = mirror(visibleTarget);
+        mirroredBall.speed = speed;
+        mirroredBall.flyingAboveNet = flyingAboveNet;
+        return mirroredBall;
     }
 }

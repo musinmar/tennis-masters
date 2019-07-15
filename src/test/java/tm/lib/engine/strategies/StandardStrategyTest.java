@@ -1,7 +1,12 @@
-package tm.lib.engine;
+package tm.lib.engine.strategies;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.junit.Test;
+import tm.lib.engine.Ball;
+import tm.lib.engine.Pitch;
+import tm.lib.engine.Player;
+import tm.lib.engine.Side;
+import tm.lib.engine.VectorUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

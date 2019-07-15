@@ -3,6 +3,7 @@ package tm.lib.engine;
 import org.apache.commons.math3.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.geometry.partitioning.Region;
+import org.apache.commons.math3.util.Precision;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Stadium;
 
@@ -30,6 +31,14 @@ public class Pitch {
         statsCalculator = new StatsCalculator(venue);
     }
 
+    public Pitch(Knight homePlayer, Knight awayPlayer, Stadium venue, Ball ball) {
+        this.homePlayer = new Player(homePlayer, Side.HOME);
+        this.awayPlayer = new Player(awayPlayer, Side.AWAY);
+        this.ball = new Ball();
+        this.venue = venue;
+        statsCalculator = new StatsCalculator(venue);
+    }
+
     public Player getPlayer(Side side) {
         return side == Side.HOME ? homePlayer : awayPlayer;
     }
@@ -45,7 +54,11 @@ public class Pitch {
     public Stadium getVenue() {
         return venue;
     }
-    
+
+    public StatsCalculator getStatsCalculator() {
+        return statsCalculator;
+    }
+
     public void setInitialPositions(Side startingSide) {
         Vector2D startingPosition = new Vector2D(WIDTH / 2, HALF_HEIGHT / 3 * 2);
         Vector2D startingDirection = new Vector2D(0, -1);
@@ -101,5 +114,16 @@ public class Pitch {
     
     public double calculateNetBlockedZoneLength(Player player) {
         return calculateNetBlockedZoneLength(player.getPosition());
+    }
+
+    public boolean canPlayerHitBall(Player player) {
+        double distanceToBall = player.getPosition().distance(ball.getPosition());
+        return Precision.compareTo(distanceToBall, MatchEngineConstants.PLAYER_HAND_LENGTH, VectorUtils.DEFAULT_TOLERANCE) <= 0;
+    }
+
+    public boolean canPlayerSaveBall(Player player, Vector2D position) {
+        double distanceToBall = player.getPosition().distance(position);
+        double saveRange = MatchEngineConstants.PLAYER_HAND_LENGTH + getStatsCalculator().getActualSaveAddDistance(player);
+        return Precision.compareTo(distanceToBall, saveRange, VectorUtils.DEFAULT_TOLERANCE) <= 0;
     }
 }

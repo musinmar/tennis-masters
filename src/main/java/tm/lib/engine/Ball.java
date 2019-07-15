@@ -49,4 +49,8 @@ public class Ball {
     public void setFlyingAboveNet(boolean flyingAboveNet) {
         this.flyingAboveNet = flyingAboveNet;
     }
+
+    public boolean hasHittedGround() {
+        return VectorUtils.equalsWithTolerance(getRealTarget(), getPosition(), 0.001);
+    }
 }

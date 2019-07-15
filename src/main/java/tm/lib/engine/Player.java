@@ -7,6 +7,7 @@ public class Player {
 
     private final Knight knight;
     private final Side side;
+    private final Strategy strategy;
 
     private Vector2D position = Vector2D.ZERO;
     private Vector2D direction = Vector2D.ZERO;
@@ -18,6 +19,7 @@ public class Player {
     public Player(Knight knight, Side side) {
         this.knight = knight;
         this.side = side;
+        this.strategy = new StandardStrategy();
     }
 
     public Knight getKnight() {
@@ -26,6 +28,10 @@ public class Player {
 
     public Side getSide() {
         return side;
+    }
+
+    public Strategy getStrategy() {
+        return strategy;
     }
 
     public Vector2D getPosition() {

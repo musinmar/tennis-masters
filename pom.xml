@@ -20,6 +20,10 @@
             <id>jspresso</id>
             <url>http://repository.jspresso.org/maven2/</url>
         </repository>
+        <repository>
+            <id>neuroph.sourceforge.net</id>
+            <url>http://neuroph.sourceforge.net/maven2/</url>
+        </repository>
     </repositories>
     
     <dependencies>
@@ -47,6 +51,16 @@
             <groupId>com.trolltech.qt</groupId>
             <artifactId>qtjambi-native-win64-msvc2013x64</artifactId>
             <version>4.8.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neuroph</groupId>
+            <artifactId>neuroph-core</artifactId>
+            <version>2.96</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jenetics</groupId>
+            <artifactId>jenetics</artifactId>
+            <version>3.7.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

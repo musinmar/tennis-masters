@@ -23,6 +23,7 @@ import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.Season;
 import tm.lib.engine.MatchSimulator;
+import tm.lib.engine.StrategyProvider;
 
 public class SeasonWindow
 {
@@ -95,7 +96,7 @@ public class SeasonWindow
             public void widgetSelected(SelectionEvent e)
             {
                 MatchEvent match = season.getNextMatch();
-                MatchSimulator matchSimulator = new MatchSimulator(match.createMatchSpec());
+                MatchSimulator matchSimulator = new MatchSimulator(match.createMatchSpec(), StrategyProvider.standard());
                 MatchSimulator.State state;
                 do
                 {

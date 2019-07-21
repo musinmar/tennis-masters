@@ -19,6 +19,7 @@ import tm.lib.domain.core.MatchScore;
 import tm.lib.engine.MatchEngine;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.Side;
+import tm.lib.engine.StrategyProvider;
 
 import java.time.Duration;
 
@@ -42,10 +43,10 @@ public class MatchDialog extends QDialog {
     private PlayerInfoWidget homePlayerInfoWidget;
     private PlayerInfoWidget awayPlayerInfoWidget;
 
-    public MatchDialog(MatchEvent match, QWidget parent) {
+    public MatchDialog(MatchEvent match, StrategyProvider strategyProvider, QWidget parent) {
         super(parent);
         this.match = match;
-        matchSimulator = new MatchSimulator(match.createMatchSpec());
+        matchSimulator = new MatchSimulator(match.createMatchSpec(), strategyProvider);
         setupUi();
     }
 

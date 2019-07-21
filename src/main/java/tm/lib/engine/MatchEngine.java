@@ -29,10 +29,12 @@ public class MatchEngine {
 
     private final Pitch pitch;
     private final StatsCalculator statsCalculator;
+    private final StrategyProvider strategyProvider;
     private Side winningSide;
     private Player lastHittedPlayer;
 
-    public MatchEngine(Match match) {
+    public MatchEngine(Match match, StrategyProvider strategyProvider) {
+        this.strategyProvider = strategyProvider;
         pitch = new Pitch(match.getHomePlayer(), match.getAwayPlayer(), match.getVenue());
         pitch.setInitialPositions(HOME);
         statsCalculator = new StatsCalculator(match.getVenue());
@@ -132,6 +134,10 @@ public class MatchEngine {
     }
 
     private void movePlayerToTarget(Player player, Vector2D target) {
+        if (Math.signum(target.getY()) != Math.signum(player.getSide().getModifier())) {
+            target = new Vector2D(target.getX(), 0);
+        }
+
         double speed = getStatsCalculator().getActualPlayerSpeed(player);
         double acc = getStatsCalculator().getActualPlayerAcceleration(player);
         double step = speed * getScaledTimeStep();
@@ -198,11 +204,12 @@ public class MatchEngine {
     }
 
     private Decision getPlayerDecision(Player player) {
+        Strategy strategy = strategyProvider.getStrategy(player.getSide());
         if (player.getSide() == HOME) {
-            return player.getStrategy().makeDecision(getPitch());
+            return strategy.makeDecision(getPitch());
         } else {
             Pitch mirroredPitch = getPitch().createMirrored();
-            Decision decision = player.getStrategy().makeDecision(mirroredPitch);
+            Decision decision = strategy.makeDecision(mirroredPitch);
             return decision.createMirrored();
         }
     }

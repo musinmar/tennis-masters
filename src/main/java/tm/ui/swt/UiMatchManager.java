@@ -13,6 +13,7 @@ import tm.lib.engine.MatchEngine;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.Pitch;
 import tm.lib.engine.Side;
+import tm.lib.engine.StrategyProvider;
 
 /**
  *
@@ -40,7 +41,7 @@ public class UiMatchManager {
     public UiMatchManager(MatchWindow match_window, MatchEvent matchEvent) {
         this.matchEvent = matchEvent;
         match = matchEvent.createMatchSpec();
-        matchSimulator = new MatchSimulator(match);
+        matchSimulator = new MatchSimulator(match, StrategyProvider.standard());
         ui = match_window;
 
         game_timer = new Runnable() {

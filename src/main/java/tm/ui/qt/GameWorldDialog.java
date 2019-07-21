@@ -4,9 +4,9 @@ import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.gui.QAction;
 import com.trolltech.qt.gui.QComboBox;
 import com.trolltech.qt.gui.QDialog;
+import com.trolltech.qt.gui.QFileDialog;
 import com.trolltech.qt.gui.QFont;
 import com.trolltech.qt.gui.QHBoxLayout;
-import com.trolltech.qt.gui.QKeySequence;
 import com.trolltech.qt.gui.QLabel;
 import com.trolltech.qt.gui.QLayout;
 import com.trolltech.qt.gui.QPlainTextEdit;
@@ -22,6 +22,9 @@ import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.GameWorld;
 import tm.lib.domain.world.Season;
 import tm.lib.engine.MatchSimulator;
+import tm.lib.engine.StrategyProvider;
+import tm.lib.engine.strategies.NeuralNetworkStrategy;
+import tm.lib.engine.strategies.StandardStrategy;
 
 public class GameWorldDialog extends QDialog {
 
@@ -35,9 +38,12 @@ public class GameWorldDialog extends QDialog {
     private QLabel nextMatchLabel;
     private QLabel previousMatchLabel;
 
+    private NeuralNetworkTeacher neuralNetworkTeacher;
+
     public GameWorldDialog(GameWorld gameWorld, QWidget parent) {
         super(parent);
         this.gameWorld = gameWorld;
+        this.neuralNetworkTeacher = new NeuralNetworkTeacher(gameWorld);
         setupUi();
         populateSeasonComboBox();
         updateLogText();
@@ -83,11 +89,21 @@ public class GameWorldDialog extends QDialog {
         gameWorldLogTextEdit.setFont(new QFont("Courier New"));
         gameWorldLogTextEdit.setMinimumSize(200, 30);
 
+        QPushButton teachNeuralNetworkButton = new QPushButton(this);
+        teachNeuralNetworkButton.setText("Обучить нейронную сеть");
+        teachNeuralNetworkButton.clicked.connect(this, "onTeachNeuralNetworkButtonClicked()");
+
+        QPushButton saveNeuralNetworkButton = new QPushButton(this);
+        saveNeuralNetworkButton.setText("Сохранить нейронную сеть");
+        saveNeuralNetworkButton.clicked.connect(this, "onSaveNeuralNetworkButtonClicked()");
+
         QPushButton showEloRatingButton = new QPushButton(this);
         showEloRatingButton.setText("Рейтинг");
         showEloRatingButton.clicked.connect(this, "onShowEloRatingButtonClicked()");
 
         QHBoxLayout bottomButtonsLayout = new QHBoxLayout();
+        bottomButtonsLayout.addWidget(teachNeuralNetworkButton);
+        bottomButtonsLayout.addWidget(saveNeuralNetworkButton);
         bottomButtonsLayout.addWidget(showEloRatingButton);
         bottomButtonsLayout.addSpacerItem(new QSpacerItem(10, 10, QSizePolicy.Policy.Expanding));
 
@@ -190,7 +206,8 @@ public class GameWorldDialog extends QDialog {
 
     private void onNextMatchButtonClicked() {
         MatchEvent match = gameWorld.getCurrentSeason().getNextMatch();
-        MatchDialog matchDialog = new MatchDialog(match, this);
+        StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(neuralNetworkTeacher.getBestFoundPerceptron()), new StandardStrategy());
+        MatchDialog matchDialog = new MatchDialog(match, strategyProvider, this);
         matchDialog.exec();
         MatchScore score = matchDialog.getFinalScore();
         applyMatchResult(match, score);
@@ -198,7 +215,8 @@ public class GameWorldDialog extends QDialog {
 
     private void onNextMatchFastButtonClicked() {
         MatchEvent match = gameWorld.getCurrentSeason().getNextMatch();
-        MatchSimulator matchSimulator = new MatchSimulator(match.createMatchSpec());
+        StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(neuralNetworkTeacher.getBestFoundPerceptron()), new StandardStrategy());
+        MatchSimulator matchSimulator = new MatchSimulator(match.createMatchSpec(), strategyProvider);
         MatchSimulator.State state;
         do {
             state = matchSimulator.proceed();
@@ -305,5 +323,14 @@ public class GameWorldDialog extends QDialog {
     private void onShowEloRatingButtonClicked() {
         EloRatingDialog eloRatingDialog = new EloRatingDialog(this, gameWorld.getEloRating());
         eloRatingDialog.exec();
+    }
+
+    private void onTeachNeuralNetworkButtonClicked() {
+        neuralNetworkTeacher.teach();
+    }
+
+    private void onSaveNeuralNetworkButtonClicked() {
+        String saveFileName = QFileDialog.getSaveFileName(this, "Файл ANN");
+        neuralNetworkTeacher.getBestFoundPerceptron().save(saveFileName);
     }
 }

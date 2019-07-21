@@ -5,17 +5,22 @@
  */
 package tm.lib.engine;
 
-import tm.lib.domain.core.MatchScore;
-import tm.lib.domain.core.Match;
 import tm.lib.domain.core.Knight;
+import tm.lib.domain.core.Match;
+import tm.lib.domain.core.MatchScore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MatchSimulator {
 
     private final Match match;
     private final MatchEngine matchEngine;
     private final MatchProgressTracker matchProgressTracker;
-    private long matchTime = 0;
+    private long matchTime;
+    private long gameStartTime;
     private Side lastGameResult;
+    private List<PointResult> pointResults = new ArrayList<>();
 
     public enum State {
         PLAYING,
@@ -24,9 +29,27 @@ public class MatchSimulator {
         MATCH_ENDED
     }
 
-    public MatchSimulator(Match match) {
+    public static class PointResult {
+        private final Side winningSide;
+        private final long time;
+
+        public PointResult(Side winningSide, long time) {
+            this.winningSide = winningSide;
+            this.time = time;
+        }
+
+        public Side getWinningSide() {
+            return winningSide;
+        }
+
+        public long getTime() {
+            return time;
+        }
+    }
+
+    public MatchSimulator(Match match, StrategyProvider strategyProvider) {
         this.match = match;
-        matchEngine = new MatchEngine(match);
+        matchEngine = new MatchEngine(match, strategyProvider);
         matchProgressTracker = new MatchProgressTracker(match.getSets(), match.isPlayoff());
         matchProgressTracker.startNewSet();
     }
@@ -39,6 +62,10 @@ public class MatchSimulator {
         return matchProgressTracker.buildScore();
     }
 
+    public List<PointResult> getPointResults() {
+        return pointResults;
+    }
+
     public Side getLastGameResult() {
         assert lastGameResult != null;
         return lastGameResult;
@@ -47,7 +74,7 @@ public class MatchSimulator {
     public Knight getLastGameWinner() {
         return getLastGameResult() == Side.HOME ? match.getHomePlayer() : match.getAwayPlayer();
     }
-    
+
     public Pitch getPitch() {
         return matchEngine.getPitch();
     }
@@ -69,8 +96,10 @@ public class MatchSimulator {
     private State performEndOfGameActions() {
         lastGameResult = matchEngine.getWinningSide();
         matchProgressTracker.addPoint(lastGameResult);
+        pointResults.add(new PointResult(lastGameResult, matchTime - gameStartTime));
+        gameStartTime = matchTime;
         matchEngine.performEndOfGameActions();
-        
+
         if (!matchProgressTracker.isSetFinished()) {
             matchEngine.reset(matchProgressTracker.getServingSide());
             return State.GAME_ENDED;

@@ -326,7 +326,7 @@ public class GameWorldDialog extends QDialog {
     }
 
     private void onTeachNeuralNetworkButtonClicked() {
-        neuralNetworkTeacher.teach();
+        neuralNetworkTeacher.teachWithCustomEvolution();
     }
 
     private void onSaveNeuralNetworkButtonClicked() {

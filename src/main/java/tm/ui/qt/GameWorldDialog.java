@@ -1,5 +1,6 @@
 package tm.ui.qt;
 
+import com.trolltech.qt.core.QMargins;
 import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.gui.QAction;
 import com.trolltech.qt.gui.QComboBox;
@@ -9,6 +10,8 @@ import com.trolltech.qt.gui.QFont;
 import com.trolltech.qt.gui.QHBoxLayout;
 import com.trolltech.qt.gui.QLabel;
 import com.trolltech.qt.gui.QLayout;
+import com.trolltech.qt.gui.QMenu;
+import com.trolltech.qt.gui.QMenuBar;
 import com.trolltech.qt.gui.QPlainTextEdit;
 import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QSizePolicy;
@@ -21,10 +24,10 @@ import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.GameWorld;
 import tm.lib.domain.world.Season;
-import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.StrategyProvider;
 import tm.lib.engine.strategies.NeuralNetworkStrategy;
 import tm.lib.engine.strategies.StandardStrategy;
+import tm.ui.qt.simulation.SimulationHelper;
 
 public class GameWorldDialog extends QDialog {
 
@@ -136,9 +139,23 @@ public class GameWorldDialog extends QDialog {
         rightLayout.addWidget(nextMatchLabel);
         rightLayout.addItem(matchSimulationButtonLayout);
 
-        QLayout mainLayout = new QHBoxLayout(this);
+        QLayout mainLayout = new QHBoxLayout();
+        mainLayout.setContentsMargins(new QMargins(2, 2, 2, 2));
         mainLayout.addItem(leftLayout);
         mainLayout.addItem(rightLayout);
+
+        QMenu toolsMenu = new QMenu("Инструменты");
+        QAction showMatchConfigurationDialogAction = toolsMenu.addAction("Настроить матч");
+        showMatchConfigurationDialogAction.triggered.connect(this, "onShowMatchConfigurationDialogActionTriggered()");
+
+        QMenuBar menuBar = new QMenuBar(this);
+        menuBar.addMenu(toolsMenu);
+
+        QVBoxLayout menuBarLayout = new QVBoxLayout(this);
+        menuBarLayout.setSpacing(3);
+        menuBarLayout.setContentsMargins(0, 0, 0, 0);
+        menuBarLayout.addWidget(menuBar);
+        menuBarLayout.addItem(mainLayout);
 
         QAction simulateNextMatchAction = new QAction(this);
         simulateNextMatchAction.setShortcut("Space");
@@ -206,22 +223,15 @@ public class GameWorldDialog extends QDialog {
 
     private void onNextMatchButtonClicked() {
         MatchEvent match = gameWorld.getCurrentSeason().getNextMatch();
-        StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(neuralNetworkTeacher.getBestFoundPerceptron()), new StandardStrategy());
-        MatchDialog matchDialog = new MatchDialog(match, strategyProvider, this);
-        matchDialog.exec();
-        MatchScore score = matchDialog.getFinalScore();
+        //StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(neuralNetworkTeacher.getBestFoundPerceptron()), new StandardStrategy());
+        MatchScore score = SimulationHelper.showMatch(match.createMatchSpec(), StrategyProvider.standard(), this);
         applyMatchResult(match, score);
     }
 
     private void onNextMatchFastButtonClicked() {
         MatchEvent match = gameWorld.getCurrentSeason().getNextMatch();
-        StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(neuralNetworkTeacher.getBestFoundPerceptron()), new StandardStrategy());
-        MatchSimulator matchSimulator = new MatchSimulator(match.createMatchSpec(), strategyProvider);
-        MatchSimulator.State state;
-        do {
-            state = matchSimulator.proceed();
-        } while (state != MatchSimulator.State.MATCH_ENDED);
-        MatchScore score = matchSimulator.getCurrentScore();
+        //StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(neuralNetworkTeacher.getBestFoundPerceptron()), new StandardStrategy());
+        MatchScore score = SimulationHelper.simulateMatch(match.createMatchSpec(), StrategyProvider.standard());
         applyMatchResult(match, score);
     }
 
@@ -332,5 +342,10 @@ public class GameWorldDialog extends QDialog {
     private void onSaveNeuralNetworkButtonClicked() {
         String saveFileName = QFileDialog.getSaveFileName(this, "Файл ANN");
         neuralNetworkTeacher.getBestFoundPerceptron().save(saveFileName);
+    }
+
+    private void onShowMatchConfigurationDialogActionTriggered() {
+        MatchConfigurationDialog matchConfigurationDialog = new MatchConfigurationDialog(gameWorld, this);
+        matchConfigurationDialog.exec();
     }
 }

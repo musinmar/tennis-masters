@@ -2,6 +2,7 @@ package tm.lib.engine.strategies;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.neuroph.core.NeuralNetwork;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import tm.lib.engine.Ball;
 import tm.lib.engine.Decision;
@@ -15,14 +16,14 @@ import static tm.lib.engine.Side.HOME;
 
 public class NeuralNetworkStrategy implements Strategy {
 
-    private final MultiLayerPerceptron perceptron;
+    private final NeuralNetwork<?> perceptron;
 
     public NeuralNetworkStrategy() {
         perceptron = new MultiLayerPerceptron(6, 15, 10, 2);
         perceptron.randomizeWeights(-1000, 1000);
     }
 
-    public NeuralNetworkStrategy(MultiLayerPerceptron perceptron) {
+    public NeuralNetworkStrategy(NeuralNetwork<?> perceptron) {
         this.perceptron = perceptron;
     }
 

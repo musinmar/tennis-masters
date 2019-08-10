@@ -15,6 +15,7 @@ import com.trolltech.qt.gui.QSpacerItem;
 import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QWidget;
 import tm.lib.domain.competition.base.MatchEvent;
+import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.engine.MatchEngine;
 import tm.lib.engine.MatchSimulator;
@@ -28,7 +29,7 @@ public class MatchDialog extends QDialog {
     private static final double ANIMATION_SPEED_FACTOR = 1;
     private static final int INFO_LABEL_DURATION_MS = 3000;
 
-    private final MatchEvent match;
+    private final Match match;
     private final MatchSimulator matchSimulator;
 
     private boolean paused = true;
@@ -43,10 +44,10 @@ public class MatchDialog extends QDialog {
     private PlayerInfoWidget homePlayerInfoWidget;
     private PlayerInfoWidget awayPlayerInfoWidget;
 
-    public MatchDialog(MatchEvent match, StrategyProvider strategyProvider, QWidget parent) {
+    public MatchDialog(Match match, StrategyProvider strategyProvider, QWidget parent) {
         super(parent);
         this.match = match;
-        matchSimulator = new MatchSimulator(match.createMatchSpec(), strategyProvider);
+        matchSimulator = new MatchSimulator(match, strategyProvider);
         setupUi();
     }
 
@@ -84,7 +85,7 @@ public class MatchDialog extends QDialog {
         QLabel playersLabel = new QLabel();
         infoPanelLayout.addWidget(playersLabel);
         playersLabel.setAlignment(Qt.AlignmentFlag.AlignHCenter);
-        playersLabel.setText(match.getHomePlayer().getPlayer().getFullName() + " - " + match.getAwayPlayer().getPlayer().getFullName());
+        playersLabel.setText(match.getHomePlayer().getFullName() + " - " + match.getAwayPlayer().getFullName());
 
         matchScoreLabel = new QLabel();
         matchScoreLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);

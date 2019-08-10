@@ -20,7 +20,6 @@ import tm.lib.domain.core.Stadium;
 import tm.lib.domain.world.GameWorld;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.Side;
-import tm.lib.engine.Strategy;
 import tm.lib.engine.StrategyProvider;
 import tm.lib.engine.strategies.NeuralNetworkStrategy;
 import tm.lib.engine.strategies.StandardStrategy;
@@ -42,7 +41,7 @@ import static org.jenetics.util.RandomRegistry.getRandom;
 public class NeuralNetworkTeacher {
 
     private static final int POPULATION_SIZE = 128;
-    private static final int EVOLUTION_STEPS = 2000;
+    private static final int EVOLUTION_STEPS = 8000;
     private static final int OFFSPRING_MATCH_COUNT = 1;
     private static final int SELECTION_MATCH_COUNT = 10;
     private static final double MIN_WEIGHT = -10;
@@ -145,7 +144,7 @@ public class NeuralNetworkTeacher {
         match.setAwayPlayer(gameWorld.getPlayers().get(5));
         match.setSets(2);
         match.setPlayoff(false);
-        match.setVenue(Stadium.test_stadium());
+        match.setVenue(Stadium.standard());
 
         int winCount = 0;
         int lossCount = 0;
@@ -220,7 +219,7 @@ public class NeuralNetworkTeacher {
         match.setAwayPlayer(gameWorld.getPlayers().get(5));
         match.setSets(2);
         match.setPlayoff(false);
-        match.setVenue(Stadium.test_stadium());
+        match.setVenue(Stadium.standard());
 
         int winCount = 0;
         int lossCount = 0;

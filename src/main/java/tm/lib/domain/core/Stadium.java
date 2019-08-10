@@ -17,7 +17,7 @@ public class Stadium {
         slippery = 50;
     }
 
-    public static Stadium test_stadium() {
+    public static Stadium standard() {
         Stadium s = new Stadium();
         s.name = "Ириф";
         s.country = Country.ALDORUM;

@@ -1,4 +1,4 @@
-package tm.ui.qt;
+package tm.ui.qt.simulation;
 
 import org.jenetics.DoubleChromosome;
 import org.jenetics.DoubleGene;
@@ -15,9 +15,9 @@ import org.jenetics.stat.DoubleMomentStatistics;
 import org.jenetics.util.Factory;
 import org.jenetics.util.RandomRegistry;
 import org.neuroph.nnet.MultiLayerPerceptron;
+import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.Stadium;
-import tm.lib.domain.world.GameWorld;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.Side;
 import tm.lib.engine.StrategyProvider;
@@ -41,36 +41,40 @@ import static org.jenetics.util.RandomRegistry.getRandom;
 public class NeuralNetworkTeacher {
 
     private static final int POPULATION_SIZE = 128;
-    private static final int EVOLUTION_STEPS = 8000;
     private static final int OFFSPRING_MATCH_COUNT = 1;
     private static final int SELECTION_MATCH_COUNT = 10;
     private static final double MIN_WEIGHT = -10;
     private static final double MAX_WEIGHT = 10;
 
-    private final GameWorld gameWorld;
+    private Knight knight;
+    private int iterations;
     private MultiLayerPerceptron bestFoundPerceptron;
 
-    public NeuralNetworkTeacher(GameWorld gameWorld) {
-        this.gameWorld = gameWorld;
+    public NeuralNetworkTeacher(Knight knight, int iterations) {
+        this.knight = knight;
+        this.iterations = iterations;
     }
 
     public MultiLayerPerceptron getBestFoundPerceptron() {
         return bestFoundPerceptron;
     }
 
-    public void teachWithCustomEvolution() {
+    public MultiLayerPerceptron teachWithCustomEvolution() {
         List<MultiLayerPerceptron> population = generateInitialPopulation();
 
-        for (int i = 0; i < EVOLUTION_STEPS; i++) {
+        for (int i = 0; i < iterations; i++) {
             population = performEvolutionStep(population);
-
-            double approximateScore = eval(population.get(0));
-            System.out.println("Iteration " + i + ": " + approximateScore);
+            System.out.println("Iteration " + (i + 1));
+//            double approximateScore = eval(population.get(0));
+//            System.out.println("Iteration " + i + ": " + approximateScore);
         }
 
         bestFoundPerceptron = findBestPerceptron(population);
-        double approximateScore = eval(bestFoundPerceptron);
-        System.out.println("Final score: " + approximateScore);
+        System.out.println("Finished");
+//        double approximateScore = eval(bestFoundPerceptron);
+//        System.out.println("Final score: " + approximateScore);
+
+        return bestFoundPerceptron;
     }
 
     private List<MultiLayerPerceptron> generateInitialPopulation() {
@@ -140,8 +144,8 @@ public class NeuralNetworkTeacher {
     private MultiLayerPerceptron selectBetterPerceptron(MultiLayerPerceptron a, MultiLayerPerceptron b, int matchCount) {
         StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(a), new NeuralNetworkStrategy(b));
         Match match = new Match();
-        match.setHomePlayer(gameWorld.getPlayers().get(5));
-        match.setAwayPlayer(gameWorld.getPlayers().get(5));
+        match.setHomePlayer(knight);
+        match.setAwayPlayer(knight);
         match.setSets(2);
         match.setPlayoff(false);
         match.setVenue(Stadium.standard());
@@ -202,7 +206,7 @@ public class NeuralNetworkTeacher {
     }
 
     private MultiLayerPerceptron generateTemplatePerceptron() {
-        return new MultiLayerPerceptron(6, 20, 12, 8, 2);
+        return new MultiLayerPerceptron(6, 10, 6, 6, 2);
     }
 
     private Double eval(Genotype<DoubleGene> gt) {
@@ -215,8 +219,8 @@ public class NeuralNetworkTeacher {
     private Double eval(MultiLayerPerceptron perceptron) {
         StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(perceptron), new StandardStrategy());
         Match match = new Match();
-        match.setHomePlayer(gameWorld.getPlayers().get(5));
-        match.setAwayPlayer(gameWorld.getPlayers().get(5));
+        match.setHomePlayer(knight);
+        match.setAwayPlayer(knight);
         match.setSets(2);
         match.setPlayoff(false);
         match.setVenue(Stadium.standard());

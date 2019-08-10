@@ -37,9 +37,8 @@ import java.util.List;
 
 import static com.trolltech.qt.gui.QDialogButtonBox.ButtonRole.RejectRole;
 import static com.trolltech.qt.gui.QSizePolicy.Policy.Expanding;
-import static com.trolltech.qt.gui.QSizePolicy.Policy.Fixed;
-import static com.trolltech.qt.gui.QSizePolicy.Policy.Minimum;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static tm.ui.qt.simulation.WidgetsHelper.fillPlayerComboBox;
 
 public class MatchConfigurationDialog extends QDialog {
 
@@ -73,6 +72,7 @@ public class MatchConfigurationDialog extends QDialog {
         playerSelectorsLayout.addWidget(awayPlayerSelector.rootGroupBox);
 
         QGroupBox simulationGroupBox = createSimulationGroupBox();
+
         QDialogButtonBox buttonBox = new QDialogButtonBox(this);
         buttonBox.addButton("Закрыть", RejectRole);
         buttonBox.rejected.connect(this, "onCloseButtonClicked()");
@@ -91,7 +91,7 @@ public class MatchConfigurationDialog extends QDialog {
 
         QLabel playerLabel = new QLabel("Игрок:", this);
         playerSelector.playerComboBox = new QComboBox(this);
-        fillPlayerComboBox(playerSelector.playerComboBox);
+        fillPlayerComboBox(playerSelector.playerComboBox, gameWorld);
         QLabel networkLabel = new QLabel("Сеть:", this);
         playerSelector.annPathEdit = new QLineEdit(this);
         playerSelector.selectNetworkButton = new QPushButton(this);
@@ -110,12 +110,6 @@ public class MatchConfigurationDialog extends QDialog {
         homePlayerGroupBoxLayout.addWidget(playerSelector.selectNetworkButton, 1, 2);
 
         return playerSelector;
-    }
-
-    private void fillPlayerComboBox(QComboBox comboBox) {
-        for (Knight player : gameWorld.getPlayers()) {
-            comboBox.addItem(player.getFullName(), player);
-        }
     }
 
     private QGroupBox createSimulationGroupBox() {

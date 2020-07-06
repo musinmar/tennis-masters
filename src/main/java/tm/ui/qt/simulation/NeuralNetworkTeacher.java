@@ -14,7 +14,10 @@ import org.jenetics.engine.EvolutionStatistics;
 import org.jenetics.stat.DoubleMomentStatistics;
 import org.jenetics.util.Factory;
 import org.jenetics.util.RandomRegistry;
+import org.neuroph.core.Layer;
 import org.neuroph.nnet.MultiLayerPerceptron;
+import org.neuroph.nnet.learning.BackPropagation;
+import org.neuroph.nnet.learning.MomentumBackpropagation;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.Stadium;
@@ -43,23 +46,28 @@ public class NeuralNetworkTeacher {
     private static final int POPULATION_SIZE = 128;
     private static final int OFFSPRING_MATCH_COUNT = 1;
     private static final int SELECTION_MATCH_COUNT = 10;
+//    private static final double MIN_WEIGHT = -1;
+//    private static final double MAX_WEIGHT = 1;
     private static final double MIN_WEIGHT = -10;
     private static final double MAX_WEIGHT = 10;
 
     private Knight knight;
     private int iterations;
-    private MultiLayerPerceptron bestFoundPerceptron;
+    private MultiLayerPerceptron templatePerceptron;
+    private boolean doInitialLearning;
 
-    public NeuralNetworkTeacher(Knight knight, int iterations) {
+    public NeuralNetworkTeacher(Knight knight, int iterations, MultiLayerPerceptron templatePerceptron, boolean doInitialLearning) {
         this.knight = knight;
         this.iterations = iterations;
-    }
-
-    public MultiLayerPerceptron getBestFoundPerceptron() {
-        return bestFoundPerceptron;
+        this.templatePerceptron = templatePerceptron;
+        this.doInitialLearning = doInitialLearning;
     }
 
     public MultiLayerPerceptron teachWithCustomEvolution() {
+        if (doInitialLearning) {
+            performStartingTemplateLearning();
+        }
+
         List<MultiLayerPerceptron> population = generateInitialPopulation();
 
         for (int i = 0; i < iterations; i++) {
@@ -69,7 +77,7 @@ public class NeuralNetworkTeacher {
 //            System.out.println("Iteration " + i + ": " + approximateScore);
         }
 
-        bestFoundPerceptron = findBestPerceptron(population);
+        MultiLayerPerceptron bestFoundPerceptron = findBestPerceptron(population);
         System.out.println("Finished");
 //        double approximateScore = eval(bestFoundPerceptron);
 //        System.out.println("Final score: " + approximateScore);
@@ -77,11 +85,19 @@ public class NeuralNetworkTeacher {
         return bestFoundPerceptron;
     }
 
+    private void performStartingTemplateLearning() {
+        System.out.println("Initial learning started");
+        templatePerceptron.randomizeWeights(MIN_WEIGHT, MAX_WEIGHT);
+        BackPropagation rule = new MomentumBackpropagation();
+        rule.setMaxError(0.00001);
+        this.templatePerceptron.learn(TrainingData.createTrainingDataSet(), rule);
+        System.out.println("Initial learning finished");
+    }
+
     private List<MultiLayerPerceptron> generateInitialPopulation() {
         List<MultiLayerPerceptron> population = new ArrayList<>();
         for (int i = 0; i < POPULATION_SIZE; i++) {
-            MultiLayerPerceptron perceptron = generateTemplatePerceptron();
-            perceptron.randomizeWeights(MIN_WEIGHT, MAX_WEIGHT);
+            MultiLayerPerceptron perceptron = createNewPerceptronWithTemplateWeights();
             population.add(perceptron);
         }
         return population;
@@ -107,12 +123,17 @@ public class NeuralNetworkTeacher {
         Double[] weights = parent.getWeights();
 
         Random random = RandomRegistry.getRandom();
+//        indexes(random, weights.length, 0.2)
+//                .forEach(i -> weights[i] = mutateGaussian(weights[i], MIN_WEIGHT, MAX_WEIGHT, random));
+//        indexes(random, weights.length, 0.1)
+//                .forEach(i -> weights[i] = mutateOverall(MIN_WEIGHT, MAX_WEIGHT, random));
         indexes(random, weights.length, 0.1)
                 .forEach(i -> weights[i] = mutateGaussian(weights[i], MIN_WEIGHT, MAX_WEIGHT, random));
         indexes(random, weights.length, 0.05)
                 .forEach(i -> weights[i] = mutateOverall(MIN_WEIGHT, MAX_WEIGHT, random));
 
-        MultiLayerPerceptron child = generateTemplatePerceptron();
+
+        MultiLayerPerceptron child = createNewPerceptronWithoutWeights();
         child.setWeights(Arrays.stream(weights).mapToDouble(d -> d).toArray());
         return child;
     }
@@ -171,8 +192,8 @@ public class NeuralNetworkTeacher {
         return winCount >= lossCount ? a : b;
     }
 
-    public void teach() {
-        MultiLayerPerceptron perceptron = generateTemplatePerceptron();
+    public MultiLayerPerceptron teach() {
+        MultiLayerPerceptron perceptron = createNewPerceptronWithRandomWeights();
         Double[] weights = perceptron.getWeights();
 
         Factory<Genotype<DoubleGene>> gtf = Genotype.of(DoubleChromosome.of(-10, 10, weights.length));
@@ -202,16 +223,41 @@ public class NeuralNetworkTeacher {
         System.out.println(statistics);
         double[] doubles = result.getChromosome().as(DoubleChromosome.class).toArray();
         perceptron.setWeights(doubles);
-        bestFoundPerceptron = perceptron;
+        return perceptron;
     }
 
-    private MultiLayerPerceptron generateTemplatePerceptron() {
-        return new MultiLayerPerceptron(6, 10, 6, 6, 2);
+    private MultiLayerPerceptron createNewPerceptronWithoutWeights() {
+        return copyTemplatePerceptron(false);
+    }
+
+    private MultiLayerPerceptron createNewPerceptronWithRandomWeights() {
+        MultiLayerPerceptron perceptron = copyTemplatePerceptron(false);
+        perceptron.randomizeWeights(MIN_WEIGHT, MAX_WEIGHT);
+        return perceptron;
+    }
+
+    private MultiLayerPerceptron createNewPerceptronWithTemplateWeights() {
+        MultiLayerPerceptron perceptron = copyTemplatePerceptron(true);
+//        perceptron.randomizeWeights(MIN_WEIGHT, MAX_WEIGHT);
+        return perceptron;
+    }
+
+    private MultiLayerPerceptron copyTemplatePerceptron(boolean withWeights) {
+        int[] neuronsInLayers = templatePerceptron.getLayers().stream()
+                .map(Layer::getNeuronsCount)
+                .mapToInt(i -> i - 1)
+                .toArray();
+        neuronsInLayers[neuronsInLayers.length - 1]++;
+        MultiLayerPerceptron perceptron = new MultiLayerPerceptron(neuronsInLayers);
+        if (withWeights) {
+            perceptron.setWeights(Arrays.stream(templatePerceptron.getWeights()).mapToDouble(d -> d).toArray());
+        }
+        return perceptron;
     }
 
     private Double eval(Genotype<DoubleGene> gt) {
         double[] doubles = gt.getChromosome().as(DoubleChromosome.class).toArray();
-        MultiLayerPerceptron perceptron = generateTemplatePerceptron();
+        MultiLayerPerceptron perceptron = createNewPerceptronWithoutWeights();
         perceptron.setWeights(doubles);
         return eval(perceptron);
     }

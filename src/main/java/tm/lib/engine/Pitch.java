@@ -134,4 +134,17 @@ public class Pitch {
         double saveRange = MatchEngineConstants.PLAYER_HAND_LENGTH + getStatsCalculator().getActualSaveAddDistance(player);
         return Precision.compareTo(distanceToBall, saveRange, VectorUtils.DEFAULT_TOLERANCE) <= 0;
     }
+
+    public static Vector2D normalize(Vector2D vector2D) {
+        return normalize(vector2D.getX(), vector2D.getY());
+    }
+
+    public static Vector2D normalize(double x, double y) {
+        //return new Vector2D((x - Pitch.WIDTH / 2) / (2 * Pitch.WIDTH), y / Pitch.HEIGHT);
+        return new Vector2D((x + Pitch.WIDTH / 2) / (2 * Pitch.WIDTH), (y + Pitch.HEIGHT) / (2 * Pitch.HEIGHT));
+    }
+
+    public static Vector2D denormalize(double x, double y) {
+        return new Vector2D((x - 0.5) * 2 * Pitch.WIDTH + Pitch.WIDTH / 2, (y - 0.5) * 2 * Pitch.HEIGHT);
+    }
 }

@@ -129,7 +129,7 @@ public class GameWorldDialog extends QDialog {
         mainLayout.addItem(rightLayout);
 
         QMenu toolsMenu = new QMenu("Инструменты");
-        QAction showMatchConfigurationDialogAction = toolsMenu.addAction("Настроить матч");
+        QAction showMatchConfigurationDialogAction = toolsMenu.addAction("Сыграть матч");
         showMatchConfigurationDialogAction.triggered.connect(this, "onShowMatchConfigurationDialogActionTriggered()");
         QAction teachAnnDialogAction = toolsMenu.addAction("Обучить сеть");
         teachAnnDialogAction.triggered.connect(this, "onTeachAnnDialogActionTriggered()");

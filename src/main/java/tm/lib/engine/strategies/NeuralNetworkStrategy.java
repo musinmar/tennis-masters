@@ -16,16 +16,32 @@ import static tm.lib.engine.Side.HOME;
 
 public class NeuralNetworkStrategy implements Strategy {
 
-    private final NeuralNetwork<?> perceptron;
+    private final NeuralNetwork<?> neuralNetwork;
 
     public NeuralNetworkStrategy() {
-        perceptron = new MultiLayerPerceptron(6, 15, 10, 2);
-        perceptron.randomizeWeights(-1000, 1000);
+        neuralNetwork = new MultiLayerPerceptron(6, 15, 10, 2);
+        neuralNetwork.randomizeWeights(-1000, 1000);
     }
 
-    public NeuralNetworkStrategy(NeuralNetwork<?> perceptron) {
-        this.perceptron = perceptron;
+    public NeuralNetworkStrategy(NeuralNetwork<?> neuralNetwork) {
+        this.neuralNetwork = neuralNetwork;
     }
+
+//    @Override
+//    public Decision makeDecision(Pitch pitch) {
+//        Decision decision = createDecision(pitch);
+//
+//        Player player = pitch.getPlayer(HOME);
+//        if (isPlayerZoneTargeted(pitch, player)) {
+//            if (pitch.canPlayerHitBall(player)) {
+//                decision.setHitBall(true);
+//            } else if (pitch.getBall().hasHittedGround() || isBallStillInSaveRange(pitch, player)) {
+//                decision.setHitBall(true);
+//            }
+//        }
+//
+//        return decision;
+//    }
 
     @Override
     public Decision makeDecision(Pitch pitch) {
@@ -91,6 +107,33 @@ public class NeuralNetworkStrategy implements Strategy {
         return distance >= acceptableDistance;
     }
 
+//    private Decision createDecision(Pitch pitch) {
+//        Player player = pitch.getPlayer(HOME);
+//        Player oppositePlayer = pitch.getPlayer(AWAY);
+//        double[] perceptronInput = {
+//                normalize(player.getPosition()).getX(),
+//                normalize(player.getPosition()).getY(),
+//                //normalize(oppositePlayer.getPosition()).getX(),
+//                //normalize(oppositePlayer.getPosition()).getY(),
+//                normalize(pitch.getBall().getPosition()).getX(),
+//                normalize(pitch.getBall().getPosition()).getY(),
+//                normalize(pitch.getBall().getVisibleTarget()).getX(),
+//                normalize(pitch.getBall().getVisibleTarget()).getY()
+//        };
+//
+//        neuralNetwork.setInput(perceptronInput);
+//        neuralNetwork.calculate();
+//        double[] perceptronOutput = neuralNetwork.getOutput();
+//
+//        Decision decision = new Decision();
+//        decision.setMoveToPosition(denormalize(perceptronOutput[0], perceptronOutput[1]));
+////        decision.setBallTargetPosition(denormalize(perceptronOutput[2], perceptronOutput[3]));
+////        System.out.println("Inputs: " + Arrays.toString(perceptronInput));
+////        System.out.println("Target to move: " + decision.getMoveToPosition());
+////        System.out.println("Target to strike: " + decision.getBallTargetPosition());
+//        return decision;
+//    }
+
     private Decision createMoveToDecision(Pitch pitch, Player player) {
 //        Vector2D target;
 //        if (mayBallHitPlayerZone(pitch, player)) {
@@ -107,9 +150,9 @@ public class NeuralNetworkStrategy implements Strategy {
                 pitch.getBall().getVisibleTarget().getY()
         };
 
-        perceptron.setInput(perceptronInput);
-        perceptron.calculate();
-        double[] perceptronOutput = perceptron.getOutput();
+        neuralNetwork.setInput(perceptronInput);
+        neuralNetwork.calculate();
+        double[] perceptronOutput = neuralNetwork.getOutput();
         Vector2D target = denormalize(perceptronOutput[0], perceptronOutput[1]);
 
         Decision decision = new Decision();
@@ -118,7 +161,7 @@ public class NeuralNetworkStrategy implements Strategy {
     }
 
     private static Vector2D normalize(double x, double y) {
-        return new Vector2D((x - Pitch.WIDTH / 2) / (2 * Pitch.WIDTH),y / Pitch.HEIGHT);
+        return new Vector2D((x - Pitch.WIDTH / 2) / (2 * Pitch.WIDTH), y / Pitch.HEIGHT);
     }
 
     private static Vector2D denormalize(double x, double y) {
@@ -146,5 +189,4 @@ public class NeuralNetworkStrategy implements Strategy {
         double optimalY = player.getSide().getModifier() * ((Pitch.HALF_HEIGHT + blockedLengthForOppositePlayer) / 2);
         return new Vector2D(optimalX, optimalY);
     }
-
 }

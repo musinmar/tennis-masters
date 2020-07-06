@@ -4,6 +4,7 @@ import com.trolltech.qt.core.QDir;
 import com.trolltech.qt.gui.QComboBox;
 import com.trolltech.qt.gui.QDialog;
 import com.trolltech.qt.gui.QDialogButtonBox;
+import com.trolltech.qt.gui.QFileDialog;
 import com.trolltech.qt.gui.QGridLayout;
 import com.trolltech.qt.gui.QGroupBox;
 import com.trolltech.qt.gui.QHBoxLayout;
@@ -25,6 +26,7 @@ import java.util.List;
 import static com.trolltech.qt.gui.QDialogButtonBox.ButtonRole.RejectRole;
 import static com.trolltech.qt.gui.QSizePolicy.Policy.Expanding;
 import static java.util.stream.Collectors.joining;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static tm.ui.qt.simulation.WidgetsHelper.fillPlayerComboBox;
 
 public class TeachNeuralNetworkDialog extends QDialog {
@@ -34,6 +36,7 @@ public class TeachNeuralNetworkDialog extends QDialog {
     private QSpinBox iterationCountSpinBox;
     private QLineEdit outputDirectoryEdit;
     private QLabel teachingStatusLabel;
+    private QLineEdit templatePerceptronPathEdit;
 
     public TeachNeuralNetworkDialog(GameWorld gameWorld, QWidget parent) {
         super(parent);
@@ -53,6 +56,11 @@ public class TeachNeuralNetworkDialog extends QDialog {
         iterationCountSpinBox.setSingleStep(1000);
         iterationCountSpinBox.setValue(1000);
 
+        QLabel templatePerceptronPathLabel = new QLabel("Базовая сеть:", this);
+        templatePerceptronPathEdit = new QLineEdit(this);
+        QPushButton selectTemplatePerceptronPathButton = new QPushButton("Выбрать", this);
+        selectTemplatePerceptronPathButton.clicked.connect(this, "onSelectTemplatePerceptronPathButtonClicked()");
+
         QLabel outputDirectoryLabel = new QLabel("Целевой каталог:", this);
         outputDirectoryEdit = new QLineEdit(this);
         outputDirectoryEdit.setText(System.getProperty("user.dir"));
@@ -64,11 +72,14 @@ public class TeachNeuralNetworkDialog extends QDialog {
 
         QGridLayout inputBoxLayout = new QGridLayout();
         inputBoxLayout.addWidget(playerLabel, 0, 0);
-        inputBoxLayout.addWidget(playerComboBox, 0, 1);
+        inputBoxLayout.addWidget(playerComboBox, 0, 1, 1, 2);
         inputBoxLayout.addWidget(iterationCountLabel, 1, 0);
-        inputBoxLayout.addWidget(iterationCountSpinBox, 1, 1);
-        inputBoxLayout.addWidget(outputDirectoryLabel, 2, 0);
-        inputBoxLayout.addWidget(outputDirectoryEdit, 2, 1);
+        inputBoxLayout.addWidget(iterationCountSpinBox, 1, 1, 1, 2);
+        inputBoxLayout.addWidget(templatePerceptronPathLabel, 2, 0);
+        inputBoxLayout.addWidget(templatePerceptronPathEdit, 2, 1);
+        inputBoxLayout.addWidget(selectTemplatePerceptronPathButton, 2, 2);
+        inputBoxLayout.addWidget(outputDirectoryLabel, 3, 0);
+        inputBoxLayout.addWidget(outputDirectoryEdit, 3, 1, 1, 2);
 
         QHBoxLayout buttonsLayout = new QHBoxLayout();
         buttonsLayout.addWidget(launchButton);
@@ -100,6 +111,14 @@ public class TeachNeuralNetworkDialog extends QDialog {
         close();
     }
 
+    private void onSelectTemplatePerceptronPathButtonClicked() {
+        String selectedFileName = QFileDialog.getOpenFileName(this, "Выберите нейронную сеть", null,
+                new QFileDialog.Filter("Файлы ANN (*.ann)"));
+        if (selectedFileName != null) {
+            templatePerceptronPathEdit.setText(selectedFileName);
+        }
+    }
+
     private String createDefaultFileName(String directory, Knight knight, int iterations, MultiLayerPerceptron perceptron) {
         List<Layer> layers = perceptron.getLayers();
         String layerSpec = layers.stream()
@@ -108,10 +127,27 @@ public class TeachNeuralNetworkDialog extends QDialog {
         return directory + QDir.separator() + String.format("%s%s_%s_%d.ann", knight.getName(), knight.getSurname(), layerSpec, iterations);
     }
 
+    private boolean isTemplatePerceptronSpecified() {
+        return !isEmpty(templatePerceptronPathEdit.text());
+    }
+
+    private MultiLayerPerceptron createTemplatePerceptron() {
+        if (isTemplatePerceptronSpecified()) {
+            String path = templatePerceptronPathEdit.text();
+            return (MultiLayerPerceptron) MultiLayerPerceptron.createFromFile(path);
+        } else {
+            //return new MultiLayerPerceptron(8, 20, 12, 8, 4);
+//            return new MultiLayerPerceptron(8, 10, 8, 4);
+            return new MultiLayerPerceptron(6, 10, 6, 6, 2);
+        }
+    }
+
     private void onLaunchButtonClicked() {
         Knight knight = (Knight) playerComboBox.itemData(playerComboBox.currentIndex());
         int iterations = iterationCountSpinBox.value();
-        NeuralNetworkTeacher teacher = new NeuralNetworkTeacher(knight, iterations);
+        MultiLayerPerceptron templatePerceptron = createTemplatePerceptron();
+//        NeuralNetworkTeacher teacher = new NeuralNetworkTeacher(knight, iterations, templatePerceptron, !isTemplatePerceptronSpecified());
+        NeuralNetworkTeacher teacher = new NeuralNetworkTeacher(knight, iterations, templatePerceptron, false);
         MultiLayerPerceptron perceptron = teacher.teachWithCustomEvolution();
         teachingStatusLabel.setText("Обучение завершено");
         String outputDirectory = outputDirectoryEdit.text();

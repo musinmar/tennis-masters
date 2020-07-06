@@ -10,3 +10,4 @@ manifest.mf
 nbactions.xml
 /.idea
 *.iml
+*.ann

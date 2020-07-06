@@ -10,5 +10,6 @@ public class WidgetsHelper {
         for (Knight player : gameWorld.getPlayers()) {
             comboBox.addItem(player.getFullName(), player);
         }
+        comboBox.setCurrentIndex(5);
     }
 }

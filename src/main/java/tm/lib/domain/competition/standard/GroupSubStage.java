@@ -23,16 +23,65 @@ public class GroupSubStage extends SimpleCompetition {
         super(season, name);
         setParticipants(Participant.createNewList(playerCount));
 
-        List<MatchEvent> matches = Arrays.asList(
-                new MatchEvent(this, getParticipants().get(0), getParticipants().get(2), 2, false),
-                new MatchEvent(this, getParticipants().get(1), getParticipants().get(3), 2, false),
-                new MatchEvent(this, getParticipants().get(0), getParticipants().get(3), 2, false),
-                new MatchEvent(this, getParticipants().get(1), getParticipants().get(2), 2, false),
-                new MatchEvent(this, getParticipants().get(0), getParticipants().get(1), 2, false),
-                new MatchEvent(this, getParticipants().get(2), getParticipants().get(3), 2, false));
+        List<MatchEvent> matches = createSchedule(getParticipants());
         initMatches(matches);
 
         initGroupResults(getParticipants());
+    }
+
+    private List<MatchEvent> createSchedule(List<Participant> participants) {
+        int size = participants.size();
+        List<Participant> ps = getParticipants();
+        if (size == 4) {
+            return createScheduleFor6(ps);
+        } else if (size % 2 == 0) {
+            return createScheduleForEven(size, ps);
+        } else {
+            throw new IllegalArgumentException("Can't create group schedule for " + size + " players");
+        }
+    }
+
+    private List<MatchEvent> createScheduleForEven(int count, List<Participant> ps) {
+        List<MatchEvent> matchEvents = new ArrayList<>();
+
+        int[] buf = new int[count];
+        for (int i = 0; i < count; ++i) {
+            buf[i] = i;
+        }
+
+        int halfCount = count / 2;
+        for (int i = 1; i < count; ++i) {
+            for (int j = 0; j < halfCount; ++j) {
+                matchEvents.add(new MatchEvent(this, ps.get(buf[j]), ps.get(buf[j + halfCount]), 2, false));
+            }
+
+            int[] buf2 = new int[count];
+            buf2[0] = buf[0];
+            buf2[1] = buf[halfCount];
+            for (int j = 2; j < halfCount; ++j) {
+                buf2[j] = buf[j - 1];
+            }
+            for (int j = halfCount; j < count - 1; j++) {
+                buf2[j] = buf[j + 1];
+            }
+            buf2[count - 1] = buf[halfCount - 1];
+            for (int j = 0; j < count; ++j) {
+                buf[j] = buf2[j];
+            }
+        }
+
+        return matchEvents;
+    }
+
+    private List<MatchEvent> createScheduleFor6(List<Participant> ps) {
+        return Arrays.asList(
+                new MatchEvent(this, ps.get(0), ps.get(2), 2, false),
+                new MatchEvent(this, ps.get(1), ps.get(3), 2, false),
+                new MatchEvent(this, ps.get(0), ps.get(3), 2, false),
+                new MatchEvent(this, ps.get(1), ps.get(2), 2, false),
+                new MatchEvent(this, ps.get(0), ps.get(1), 2, false),
+                new MatchEvent(this, ps.get(2), ps.get(3), 2, false)
+        );
     }
 
     private void initGroupResults(List<Participant> participants) {

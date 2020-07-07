@@ -14,7 +14,7 @@ public class MatchEvent {
     private final Participant awayPlayer;
     private int sets;
     private boolean playoff;
-    private Stadium venue;
+    private Stadium venue = Stadium.standard();
     private MatchScore result;
     private List<IMatchEndListener> listeners = new LinkedList<>();
 
@@ -63,10 +63,6 @@ public class MatchEvent {
 
     public Stadium getVenue() {
         return venue;
-    }
-
-    public void setVenue(Stadium venue) {
-        this.venue = venue;
     }
 
     public MatchScore getResult() {

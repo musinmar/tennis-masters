@@ -1,70 +1,44 @@
 package tm.lib.domain.core;
 
+import static tm.lib.domain.core.Country.ALDORUM;
+
 public class Stadium {
-    private String name;
-    private Country country;
+    private final String name;
+    private final Country country;
 
-    private double netHeight;
-    private double roughness;
-    private double slippery;
+    private final double netHeight;
+    private final double roughness;
+    private final double slippery;
 
-    public Stadium() {
-        name = "Nil_stadium";
-        country = Country.ALDORUM;
-
+    public Stadium(String name, Country country) {
+        this.name = name;
+        this.country = country;
         netHeight = 50;
         roughness = 50;
         slippery = 50;
     }
 
     public static Stadium standard() {
-        Stadium s = new Stadium();
-        s.name = "Ириф";
-        s.country = Country.ALDORUM;
-
-        //s.net_height = 100;
-        //s.roughness = 0;
-        //s.slippery = 100;	
-        return s;
+        return new Stadium("Ириф", ALDORUM);
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Country getCountry() {
         return country;
-    }
-
-    public void setCountry(Country country) {
-        this.country = country;
     }
 
     public double getNetHeight() {
         return netHeight;
     }
 
-    public void setNetHeight(double netHeight) {
-        this.netHeight = netHeight;
-    }
-
     public double getRoughness() {
         return roughness;
     }
 
-    public void setRoughness(double roughness) {
-        this.roughness = roughness;
-    }
-
     public double getSlippery() {
         return slippery;
-    }
-
-    public void setSlippery(double slippery) {
-        this.slippery = slippery;
     }
 }

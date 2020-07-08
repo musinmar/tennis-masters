@@ -45,7 +45,7 @@ public class PlayoffStage extends MultiStageCompetition {
         } else if (playerCount == 8) {
             return "1/4 Финала";
         } else {
-            return null;
+            return "Плей-офф";
         }
     }
 

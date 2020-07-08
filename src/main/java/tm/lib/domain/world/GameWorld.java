@@ -15,10 +15,14 @@ public class GameWorld {
     private List<Knight> players = new ArrayList<Knight>();
 
     private EloRating eloRating;
+    private NationRating nationRating;
 
     public GameWorld() {
         init();
         eloRating = new EloRating(players);
+        nationRating = new NationRating();
+        nationRating.initDefault();
+        nationRating.calculateRankingsAndPrint();
         seasons.add(new Season(this, 0));
     }
 
@@ -36,6 +40,10 @@ public class GameWorld {
 
     public EloRating getEloRating() {
         return eloRating;
+    }
+
+    public NationRating getNationRating() {
+        return nationRating;
     }
 
     private void init() {

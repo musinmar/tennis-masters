@@ -20,6 +20,10 @@ public class Season {
         initSeasonCompetition();
     }
 
+    public GameWorld getGameWorld() {
+        return gameWorld;
+    }
+
     public MultiStageCompetition getSeasonCompetition() {
         return seasonCompetition;
     }

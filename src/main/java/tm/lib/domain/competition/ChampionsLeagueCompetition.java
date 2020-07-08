@@ -6,7 +6,6 @@ import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.PlayoffStage;
 import tm.lib.domain.competition.standard.PlayoffStageConfiguration;
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.world.Season;
 
 import java.util.List;
 
@@ -19,22 +18,22 @@ public class ChampionsLeagueCompetition extends MultiStageCompetition {
     private final GroupStage groupStage;
     private final PlayoffStage playoffStage;
 
-    public ChampionsLeagueCompetition(Season season) {
-        super(season, "Лига Чемпионов");
+    public ChampionsLeagueCompetition() {
+        super("Лига Чемпионов");
 
         PlayoffStageConfiguration firstQualifyingRoundConfiguration = new PlayoffStageConfiguration();
         firstQualifyingRoundConfiguration.setRounds(1);
-        firstQualifyingStage = new PlayoffStage(season, "Первый квалификационный раунд", 6, firstQualifyingRoundConfiguration);
+        firstQualifyingStage = new PlayoffStage("Первый квалификационный раунд", 6, firstQualifyingRoundConfiguration);
 
         PlayoffStageConfiguration secondQualifyingRoundConfiguration = new PlayoffStageConfiguration();
         secondQualifyingRoundConfiguration.setRounds(1);
-        secondQualifyingStage = new PlayoffStage(season, "Второй квалификационный раунд", 8, secondQualifyingRoundConfiguration);
+        secondQualifyingStage = new PlayoffStage("Второй квалификационный раунд", 8, secondQualifyingRoundConfiguration);
 
-        groupStage = new GroupStage(season, "Групповой раунд", 8);
+        groupStage = new GroupStage("Групповой раунд", 8);
 
         PlayoffStageConfiguration playoffStageConfiguration = new PlayoffStageConfiguration();
         playoffStageConfiguration.setRounds(2);
-        playoffStage = new PlayoffStage(season, "Плей-офф", 4, playoffStageConfiguration);
+        playoffStage = new PlayoffStage("Плей-офф", 4, playoffStageConfiguration);
 
         initStages(asList(
                 firstQualifyingStage,

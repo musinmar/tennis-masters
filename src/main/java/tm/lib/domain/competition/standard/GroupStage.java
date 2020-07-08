@@ -4,21 +4,20 @@ import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.competition.base.Participant;
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.world.Season;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class GroupStage extends MultiStageCompetition {
-    public GroupStage(Season season, String name, int playerCount) {
-        super(season, name);
+    public GroupStage(String name, int playerCount) {
+        super(name);
 
         int groupCount = playerCount / 4;
         List<Competition> groups = new ArrayList<>();
         for (int i = 0; i < groupCount; ++i) {
             char groupId = (char) ('A' + i);
-            GroupSubStage group = new GroupSubStage(season, "Группа " + groupId, 4);
+            GroupSubStage group = new GroupSubStage("Группа " + groupId, 4);
             group.setParticipantPrefix(groupId + "");
             groups.add(group);
         }

@@ -1,7 +1,5 @@
 package tm.lib.domain.competition.base;
 
-import tm.lib.domain.world.Season;
-
 import java.io.PrintStream;
 import java.util.List;
 
@@ -9,8 +7,8 @@ abstract public class SimpleCompetition extends Competition {
     private List<MatchEvent> matches;
     private int nextMatchIndex;
 
-    protected SimpleCompetition(Season season, String name) {
-        super(season, name);
+    protected SimpleCompetition(String name) {
+        super(name);
         nextMatchIndex = 0;
     }
 

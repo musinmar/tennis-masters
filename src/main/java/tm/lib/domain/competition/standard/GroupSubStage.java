@@ -4,7 +4,6 @@ import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.base.Participant;
 import tm.lib.domain.competition.base.SimpleCompetition;
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.world.Season;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -19,8 +18,8 @@ public class GroupSubStage extends SimpleCompetition {
 
     private List<GroupResult> groupResults;
 
-    public GroupSubStage(Season season, String name, int playerCount) {
-        super(season, name);
+    public GroupSubStage(String name, int playerCount) {
+        super(name);
         setParticipants(Participant.createNewList(playerCount));
 
         List<MatchEvent> matches = createSchedule(getParticipants());

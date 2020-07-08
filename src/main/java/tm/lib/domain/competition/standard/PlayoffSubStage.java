@@ -5,14 +5,13 @@ import tm.lib.domain.competition.base.Participant;
 import tm.lib.domain.competition.base.SimpleCompetition;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.world.Season;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayoffSubStage extends SimpleCompetition {
-    public PlayoffSubStage(Season season, String name, int playerCount) {
-        super(season, name);
+    public PlayoffSubStage(String name, int playerCount) {
+        super(name);
         setParticipants(Participant.createNewList(playerCount));
         setDefaultParticipantIds(playerCount);
 

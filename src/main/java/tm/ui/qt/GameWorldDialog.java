@@ -17,12 +17,12 @@ import com.trolltech.qt.gui.QSizePolicy;
 import com.trolltech.qt.gui.QSpacerItem;
 import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QWidget;
+import tm.lib.domain.competition.SeasonCompetition;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.GameWorld;
-import tm.lib.domain.world.Season;
 import tm.lib.engine.StrategyProvider;
 import tm.ui.qt.simulation.SimulationHelper;
 
@@ -153,17 +153,17 @@ public class GameWorldDialog extends QDialog {
     }
 
     private void populateSeasonComboBox() {
-        for (Season season : gameWorld.getSeasons()) {
-            seasonComboBox.addItem(season.getSeasonCompetition().getName(), season);
+        for (SeasonCompetition season : gameWorld.getSeasons()) {
+            seasonComboBox.addItem(season.getName(), season);
         }
         seasonComboBox.setCurrentIndex(seasonComboBox.findData(gameWorld.getCurrentSeason()));
     }
 
     private void onSeasonComboBoxIndexChanged() {
-        Season selectedSeason = (Season) seasonComboBox.itemData(seasonComboBox.currentIndex());
+        SeasonCompetition selectedSeason = (SeasonCompetition) seasonComboBox.itemData(seasonComboBox.currentIndex());
         tournamentComboBox.clear();
         tournamentComboBox.addItem("Все", null);
-        for (Competition competition : selectedSeason.getSeasonCompetition().getStages()) {
+        for (Competition competition : selectedSeason.getStages()) {
             tournamentComboBox.addItem(competition.getName(), competition);
         }
         updateLogText();
@@ -223,7 +223,7 @@ public class GameWorldDialog extends QDialog {
 
     private void applyMatchResult(MatchEvent match, MatchScore score) {
         selectCompetition(match.getCompetition());
-        gameWorld.getCurrentSeason().processMatch(match, score);
+        gameWorld.processMatch(match, score);
         updateLogText();
         updatePreviousMatchLabel(match);
         updateNextMatchLabel();
@@ -259,11 +259,24 @@ public class GameWorldDialog extends QDialog {
             }
         }
 
-        return ((Season) seasonComboBox.itemData(seasonComboBox.currentIndex())).getSeasonCompetition();
+        return (SeasonCompetition) seasonComboBox.itemData(seasonComboBox.currentIndex());
     }
 
     private void selectCompetition(Competition competition) {
-        seasonComboBox.setCurrentIndex(seasonComboBox.findData(competition.getSeason()));
+        Competition season = competition;
+        int seasonComboBoxIndex;
+        while (true) {
+            seasonComboBoxIndex = seasonComboBox.findData(season);
+            if (seasonComboBoxIndex != -1) {
+                break;
+            }
+            season = season.getParent();
+        }
+        seasonComboBox.setCurrentIndex(seasonComboBoxIndex);
+        if (season == competition) {
+            tournamentComboBox.setCurrentIndex(tournamentComboBox.findData(null));
+            return;
+        }
 
         Competition tournament = competition;
         int tournamentComboBoxIndex;

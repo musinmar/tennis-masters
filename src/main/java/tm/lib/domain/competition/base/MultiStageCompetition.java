@@ -1,7 +1,6 @@
 package tm.lib.domain.competition.base;
 
 import com.google.common.collect.ImmutableList;
-import tm.lib.domain.world.Season;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -12,8 +11,8 @@ import java.util.ListIterator;
 abstract public class MultiStageCompetition extends Competition implements ICompetitionEndListener {
     private List<Competition> stages;
 
-    protected MultiStageCompetition(Season season, String name) {
-        super(season, name);
+    protected MultiStageCompetition(String name) {
+        super(name);
     }
 
     @Override

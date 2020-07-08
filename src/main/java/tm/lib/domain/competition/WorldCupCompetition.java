@@ -8,7 +8,6 @@ import tm.lib.domain.competition.standard.GroupStageResult;
 import tm.lib.domain.competition.standard.PlayoffStage;
 import tm.lib.domain.competition.standard.PlayoffStageConfiguration;
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.world.Season;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,23 +28,23 @@ public class WorldCupCompetition extends MultiStageCompetition {
     private List<Knight> secondQualifyingStageParticipants;
     private ArrayList<Knight> groupRoundParticipants;
 
-    public WorldCupCompetition(Season season) {
-        super(season, "Чемпионат Мира");
+    public WorldCupCompetition() {
+        super("Чемпионат Мира");
 
-        firstQualifyingStageGroupRound = new GroupStage(season, "Первый квалификационный раунд", 8);
+        firstQualifyingStageGroupRound = new GroupStage("Первый квалификационный раунд", 8);
 
         PlayoffStageConfiguration firstQualifyingRoundPlayoffConfiguration = new PlayoffStageConfiguration();
         firstQualifyingRoundPlayoffConfiguration.setRounds(1);
-        firstQualifyingStagePlayoff = new PlayoffStage(season, "Плей-офф первого квалификационного раунда", 4, firstQualifyingRoundPlayoffConfiguration);
+        firstQualifyingStagePlayoff = new PlayoffStage("Плей-офф первого квалификационного раунда", 4, firstQualifyingRoundPlayoffConfiguration);
         List<Participant> firstQualifyingStagePlayoffParticipants = firstQualifyingStagePlayoff.getParticipants();
         firstQualifyingStagePlayoffParticipants.get(0).setId("A1");
         firstQualifyingStagePlayoffParticipants.get(1).setId("B2");
         firstQualifyingStagePlayoffParticipants.get(2).setId("B1");
         firstQualifyingStagePlayoffParticipants.get(3).setId("A2");
 
-        secondQualifyingStage = new GroupStage(season, "Второй квалификационный раунд", 16);
-        groupStage = new GroupStage(season, "Групповой раунд", 16);
-        playoffStage = new PlayoffStage(season, "Плей-офф", 8);
+        secondQualifyingStage = new GroupStage("Второй квалификационный раунд", 16);
+        groupStage = new GroupStage("Групповой раунд", 16);
+        playoffStage = new PlayoffStage("Плей-офф", 8);
 
         initStages(Arrays.asList(
                 firstQualifyingStageGroupRound,

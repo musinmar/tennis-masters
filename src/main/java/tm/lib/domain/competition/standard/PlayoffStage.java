@@ -3,19 +3,18 @@ package tm.lib.domain.competition.standard;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.world.Season;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayoffStage extends MultiStageCompetition {
 
-    public PlayoffStage(Season season, String name, int playerCount) {
-        this(season, name, playerCount, new PlayoffStageConfiguration());
+    public PlayoffStage(String name, int playerCount) {
+        this(name, playerCount, new PlayoffStageConfiguration());
     }
 
-    public PlayoffStage(Season season, String name, int playerCount, PlayoffStageConfiguration configuration) {
-        super(season, name);
+    public PlayoffStage(String name, int playerCount, PlayoffStageConfiguration configuration) {
+        super(name);
 
         int rounds = configuration.getRounds();
         if (rounds == 0) {
@@ -30,7 +29,7 @@ public class PlayoffStage extends MultiStageCompetition {
         int roundPlayerCount = playerCount;
         for (int i = 0; i < rounds; i++) {
             String subStageName = getDefaultRoundName(roundPlayerCount);
-            stages.add(new PlayoffSubStage(season, subStageName, roundPlayerCount));
+            stages.add(new PlayoffSubStage(subStageName, roundPlayerCount));
             roundPlayerCount /= 2;
         }
         initStages(stages);

@@ -1,10 +1,5 @@
 package tm.ui.swt;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -17,18 +12,22 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import tm.lib.domain.competition.SeasonCompetition;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.core.MatchScore;
-import tm.lib.domain.world.Season;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.StrategyProvider;
 
-public class SeasonWindow
-{
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.List;
+
+public class SeasonWindow {
     private Shell shell;
-    private Season season;
+    private SeasonCompetition season;
     private Text output;
     private Font outputFont;
 
@@ -36,8 +35,7 @@ public class SeasonWindow
     private Combo stageCombo;
     private Combo subStageCombo;
 
-    SeasonWindow(Shell parent, Season watchedSeason)
-    {
+    SeasonWindow(Shell parent, SeasonCompetition watchedSeason) {
         this.season = watchedSeason;
 
         shell = new Shell(parent, SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.RESIZE | SWT.MIN | SWT.MAX);
@@ -68,44 +66,37 @@ public class SeasonWindow
         data = new GridData();
         data.verticalAlignment = GridData.END;
         nextButton.setLayoutData(data);
-        nextButton.addSelectionListener(new SelectionAdapter()
-        {
+        nextButton.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e)
-            {
+            public void widgetSelected(SelectionEvent e) {
                 MatchEvent match = season.getNextMatch();
                 MatchWindow match_window = new MatchWindow(shell, match);
                 match_window.shell.setMaximized(true);
                 MatchScore score = match_window.open();
-                if (score != null)
-                {
-                    season.processMatch(match, score);
+                if (score != null) {
+                    season.getGameWorld().processMatch(match, score);
                     updateText();
                 }
             }
         });
-        
+
         Button nextFastButton = new Button(shell, SWT.PUSH);
         nextFastButton.setText("Следующий матч (быстро)");
         data = new GridData();
         data.verticalAlignment = GridData.END;
         nextFastButton.setLayoutData(data);
-        nextFastButton.addSelectionListener(new SelectionAdapter()
-        {
+        nextFastButton.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e)
-            {
+            public void widgetSelected(SelectionEvent e) {
                 MatchEvent match = season.getNextMatch();
                 MatchSimulator matchSimulator = new MatchSimulator(match.createMatchSpec(), StrategyProvider.standard());
                 MatchSimulator.State state;
-                do
-                {
+                do {
                     state = matchSimulator.proceed();
                 } while (state != MatchSimulator.State.MATCH_ENDED);
                 MatchScore score = matchSimulator.getCurrentScore();
-                if (score != null)
-                {
-                    season.processMatch(match, score);
+                if (score != null) {
+                    season.getGameWorld().processMatch(match, score);
                     updateText();
                 }
             }
@@ -115,8 +106,7 @@ public class SeasonWindow
         updateText();
     }
 
-    final Composite createComboBoxes()
-    {
+    final Composite createComboBoxes() {
         Composite composite = new Composite(shell, SWT.NONE);
 
         GridLayout gridLayout = new GridLayout();
@@ -125,9 +115,9 @@ public class SeasonWindow
 
         Combo combo0 = new Combo(composite, SWT.READ_ONLY);
         combo0.setItems(new String[]
-        {
-            "Item 1", "Item 2", "Item 2"
-        });
+                {
+                        "Item 1", "Item 2", "Item 2"
+                });
         combo0.setText("combo0");
         GridData data = new GridData();
         data.widthHint = 150;
@@ -140,11 +130,9 @@ public class SeasonWindow
         data.widthHint = 150;
         data.grabExcessHorizontalSpace = true;
         stageCombo.setLayoutData(data);
-        stageCombo.addSelectionListener(new SelectionAdapter()
-        {
+        stageCombo.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e)
-            {
+            public void widgetSelected(SelectionEvent e) {
                 fillSubStageCombo();
                 updateText();
             }
@@ -155,11 +143,9 @@ public class SeasonWindow
         data.widthHint = 150;
         data.grabExcessHorizontalSpace = true;
         tournamentCombo.setLayoutData(data);
-        tournamentCombo.addSelectionListener(new SelectionAdapter()
-        {
+        tournamentCombo.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e)
-            {
+            public void widgetSelected(SelectionEvent e) {
                 fillStageCombo();
                 fillSubStageCombo();
                 updateText();
@@ -172,11 +158,9 @@ public class SeasonWindow
         data.widthHint = 150;
         data.grabExcessHorizontalSpace = true;
         subStageCombo.setLayoutData(data);
-        subStageCombo.addSelectionListener(new SelectionAdapter()
-        {
+        subStageCombo.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e)
-            {
+            public void widgetSelected(SelectionEvent e) {
                 updateText();
             }
         });
@@ -188,25 +172,21 @@ public class SeasonWindow
         return composite;
     }
 
-    private void fillTournamentCombo()
-    {
-        MultiStageCompetition seasonCompetition = (MultiStageCompetition) season.getSeasonCompetition();
+    private void fillTournamentCombo() {
+        MultiStageCompetition seasonCompetition = season;
         List<Competition> tournaments = seasonCompetition.getStages();
         String[] comboItems = new String[tournaments.size() + 1];
         comboItems[0] = "Все";
         int index = 1;
-        for (Competition tournament : tournaments)
-        {
+        for (Competition tournament : tournaments) {
             comboItems[index++] = tournament.getName();
         }
         tournamentCombo.setItems(comboItems);
         tournamentCombo.select(0);
     }
 
-    private void fillStageCombo()
-    {
-        if (tournamentCombo.getSelectionIndex() <= 0)
-        {
+    private void fillStageCombo() {
+        if (tournamentCombo.getSelectionIndex() <= 0) {
             stageCombo.setEnabled(false);
             stageCombo.deselectAll();
             //stageCombo.select(0);
@@ -214,7 +194,7 @@ public class SeasonWindow
         }
 
         stageCombo.setEnabled(true);
-        MultiStageCompetition seasonCompetition = (MultiStageCompetition) season.getSeasonCompetition();
+        MultiStageCompetition seasonCompetition = season;
         List<Competition> tournaments = seasonCompetition.getStages();
         Competition tournament = tournaments.get(tournamentCombo.getSelectionIndex() - 1);
         List<Competition> stages = ((MultiStageCompetition) tournament).getStages();
@@ -222,18 +202,15 @@ public class SeasonWindow
         String[] comboItems = new String[stages.size() + 1];
         comboItems[0] = "Все";
         int index = 1;
-        for (Competition stage : stages)
-        {
+        for (Competition stage : stages) {
             comboItems[index++] = stage.getName();
         }
         stageCombo.setItems(comboItems);
         stageCombo.select(0);
     }
 
-    private void fillSubStageCombo()
-    {
-        if (stageCombo.getSelectionIndex() <= 0)
-        {
+    private void fillSubStageCombo() {
+        if (stageCombo.getSelectionIndex() <= 0) {
             subStageCombo.setEnabled(false);
             subStageCombo.deselectAll();
             //subStageCombo.select(0);
@@ -241,50 +218,39 @@ public class SeasonWindow
         }
 
         subStageCombo.setEnabled(true);
-        MultiStageCompetition seasonCompetition = (MultiStageCompetition) season.getSeasonCompetition();
-        List<Competition>  tournaments = seasonCompetition.getStages();
+        MultiStageCompetition seasonCompetition = season;
+        List<Competition> tournaments = seasonCompetition.getStages();
         Competition tournament = tournaments.get(tournamentCombo.getSelectionIndex() - 1);
-        List<Competition>  stages = ((MultiStageCompetition) tournament).getStages();
+        List<Competition> stages = ((MultiStageCompetition) tournament).getStages();
         Competition stage = stages.get(stageCombo.getSelectionIndex() - 1);
         List<Competition> subStages = ((MultiStageCompetition) stage).getStages();
 
         String[] comboItems = new String[subStages.size() + 1];
         comboItems[0] = "Все";
         int index = 1;
-        for (Competition subStage : subStages)
-        {
+        for (Competition subStage : subStages) {
             comboItems[index++] = subStage.getName();
         }
         subStageCombo.setItems(comboItems);
         subStageCombo.select(0);
     }
 
-    private void updateText()
-    {
+    private void updateText() {
         Competition competitionToPrint;
 
-        if (tournamentCombo.getSelectionIndex() <= 0)
-        {
-            competitionToPrint = season.getSeasonCompetition();
-        }
-        else
-        {
-            List<Competition> tournaments = ((MultiStageCompetition) season.getSeasonCompetition()).getStages();
+        if (tournamentCombo.getSelectionIndex() <= 0) {
+            competitionToPrint = season;
+        } else {
+            List<Competition> tournaments = season.getStages();
             Competition tournament = tournaments.get(tournamentCombo.getSelectionIndex() - 1);
-            if (stageCombo.getSelectionIndex() <= 0)
-            {
+            if (stageCombo.getSelectionIndex() <= 0) {
                 competitionToPrint = tournament;
-            }
-            else
-            {
+            } else {
                 List<Competition> stages = ((MultiStageCompetition) tournament).getStages();
                 Competition stage = stages.get(stageCombo.getSelectionIndex() - 1);
-                if (subStageCombo.getSelectionIndex() <= 0)
-                {
+                if (subStageCombo.getSelectionIndex() <= 0) {
                     competitionToPrint = stage;
-                }
-                else
-                {
+                } else {
                     List<Competition> subStages = ((MultiStageCompetition) stage).getStages();
                     competitionToPrint = subStages.get(subStageCombo.getSelectionIndex() - 1);
                 }
@@ -297,14 +263,11 @@ public class SeasonWindow
         output.setText(outputStream.toString());
     }
 
-    public void open()
-    {
+    public void open() {
         shell.open();
         Display display = TenisMasters.display;
-        while (!shell.isDisposed())
-        {
-            if (!display.readAndDispatch())
-            {
+        while (!shell.isDisposed()) {
+            if (!display.readAndDispatch()) {
                 display.sleep();
             }
         }

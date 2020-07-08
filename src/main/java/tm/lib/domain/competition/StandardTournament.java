@@ -5,7 +5,6 @@ import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.PlayoffStage;
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.world.Season;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,13 +13,13 @@ public class StandardTournament extends MultiStageCompetition {
     private final GroupStage groupStage;
     private final PlayoffStage playoffStage;
 
-    public StandardTournament(Season season, List<Knight> players, int index) {
-        super(season, "Стандартный турнир " + index);
+    public StandardTournament(List<Knight> players, int index) {
+        super("Стандартный турнир " + index);
         //setParticipants(players);
 
-        groupStage = new GroupStage(season, "Групповой этап", 8);
+        groupStage = new GroupStage("Групповой этап", 8);
         groupStage.setActualParticipants(players);
-        playoffStage = new PlayoffStage(season, "Плей-офф", 4);
+        playoffStage = new PlayoffStage("Плей-офф", 4);
         initStages(Arrays.asList(groupStage, playoffStage));
     }
 

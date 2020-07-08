@@ -1,8 +1,6 @@
 package tm.lib.domain.competition.base;
 
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.core.Stadium;
-import tm.lib.domain.world.Season;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -11,20 +9,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 abstract public class Competition implements IMatchEndListener {
-    private final Season season;
     private Competition parent;
     private final String name;
 
     private List<Participant> participants;
     private List<ICompetitionEndListener> listeners = new LinkedList<>();
 
-    protected Competition(Season season, String name) {
+    protected Competition(String name) {
         this.name = name;
-        this.season = season;
-    }
-
-    public Season getSeason() {
-        return season;
     }
 
     public String getName() {
@@ -106,7 +98,7 @@ abstract public class Competition implements IMatchEndListener {
         String name = getName();
         Competition parent = getParent();
         while (true) {
-            boolean isSeasonCompetition = (parent == getSeason().getSeasonCompetition());
+            boolean isSeasonCompetition = (parent != null && parent.getParent() == null);
             if (includeSeason || !isSeasonCompetition) {
                 name = parent.getName() + " - " + name;
             }

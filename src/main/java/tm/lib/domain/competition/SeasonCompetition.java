@@ -6,7 +6,7 @@ import tm.lib.domain.competition.standard.GroupSubStage;
 import tm.lib.domain.competition.standard.PlayoffSubStageResult;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Nation;
-import tm.lib.domain.world.Season;
+import tm.lib.domain.world.GameWorld;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,26 +20,29 @@ import static tm.lib.domain.core.Nation.OBERON_22;
 
 public class SeasonCompetition extends MultiStageCompetition {
 
+    private final GameWorld gameWorld;
+
     private final Map<Nation, GroupSubStage> nationalCups = new HashMap<>();
     private final ChampionsLeagueCompetition championsLeagueCompetition;
 
-    public SeasonCompetition(Season season, String name, List<Knight> players) {
-        super(season, name);
+    public SeasonCompetition(String name, GameWorld gameWorld, List<Knight> players) {
+        super(name);
 
+        this.gameWorld = gameWorld;
         //setParticipants(players);
 
         List<Competition> tournaments = new ArrayList<>();
 
         for (Nation nation : Nation.values()) {
             List<Knight> nationKnights = players.stream().filter(p -> p.getNation() == nation).collect(toList());
-            GroupSubStage nationalCup = new GroupSubStage(season, "Кубок " + nation.getNameGenitive(), nationKnights.size());
+            GroupSubStage nationalCup = new GroupSubStage("Кубок " + nation.getNameGenitive(), nationKnights.size());
             nationalCup.setActualParticipants(nationKnights);
             nationalCup.setStartingDate(nation.ordinal() * 8);
             nationalCups.put(nation, nationalCup);
             tournaments.add(nationalCup);
         }
 
-        championsLeagueCompetition = new ChampionsLeagueCompetition(season);
+        championsLeagueCompetition = new ChampionsLeagueCompetition();
         championsLeagueCompetition.setStartingDate(40);
         championsLeagueCompetition.getFirstQualifyingStage().addCompetitionEndListener(this);
         championsLeagueCompetition.getSecondQualifyingStage().addCompetitionEndListener(this);
@@ -68,6 +71,10 @@ public class SeasonCompetition extends MultiStageCompetition {
 
 
         initStages(tournaments);
+    }
+
+    public GameWorld getGameWorld() {
+        return gameWorld;
     }
 
     @Override
@@ -129,7 +136,7 @@ public class SeasonCompetition extends MultiStageCompetition {
 
     private List<List<Knight>> makeCLGroups(List<Knight> knights) {
         List<Knight> sortedKnights = new ArrayList<>(knights);
-        getSeason().getGameWorld().getEloRating().sortPersonsByRating(sortedKnights);
+        gameWorld.getEloRating().sortPersonsByRating(sortedKnights);
         List<Knight> top = new ArrayList<>(sortedKnights.subList(0, 4));
         List<Knight> bottom = new ArrayList<>(sortedKnights.subList(4, 8));
         top = drawPlayersInPairs(top, false);
@@ -149,7 +156,7 @@ public class SeasonCompetition extends MultiStageCompetition {
     }
 
     private Knight get_player_from(int rank, int pos) {
-        Nation nation = getSeason().getGameWorld().getNationRating().getRankedNation(rank - 1);
+        Nation nation = gameWorld.getNationRating().getRankedNation(rank - 1);
         return nationalCups.get(nation).getResults().get(pos - 1);
     }
 

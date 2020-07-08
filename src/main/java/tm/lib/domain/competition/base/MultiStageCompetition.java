@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-abstract public class MultiStageCompetition extends Competition implements ICompetitionEndListener {
+abstract public class MultiStageCompetition extends Competition {
     private List<Competition> stages;
 
     protected MultiStageCompetition(String name) {
@@ -78,15 +78,8 @@ abstract public class MultiStageCompetition extends Competition implements IComp
 
     protected void initStages(List<Competition> stages) {
         this.stages = ImmutableList.copyOf(stages);
-        stages.forEach(stage -> stage.addCompetitionEndListener(this));
+        stages.forEach(stage -> stage.registerOnFinishedCallback(this::checkIfCompetitionFinished));
         stages.forEach(stage -> stage.setParent(this));
-    }
-
-    @Override
-    public void onCompetitionEnded(Competition competition) {
-        if (getNextMatch() == null) {
-            endCompetition();
-        }
     }
 
     @Override

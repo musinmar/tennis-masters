@@ -13,7 +13,7 @@ abstract public class Competition implements IMatchEndListener {
     private final String name;
 
     private List<Participant> participants;
-    private List<ICompetitionEndListener> listeners = new LinkedList<>();
+    private List<Runnable> competitionFinishedCallbacks = new LinkedList<>();
 
     protected Competition(String name) {
         this.name = name;
@@ -39,8 +39,8 @@ abstract public class Competition implements IMatchEndListener {
         this.participants = participants;
     }
 
-    public void addCompetitionEndListener(ICompetitionEndListener listener) {
-        listeners.add(listener);
+    public void registerOnFinishedCallback(Runnable callback) {
+        competitionFinishedCallbacks.add(callback);
     }
 
     public void setParticipantPrefix(String prefix) {
@@ -81,17 +81,21 @@ abstract public class Competition implements IMatchEndListener {
 
     abstract public int getLastDate();
 
-    protected void endCompetition() {
-        for (ICompetitionEndListener listener : listeners) {
-            listener.onCompetitionEnded(this);
+    private void runOnFinishedCallbacks() {
+        for (Runnable callback : competitionFinishedCallbacks) {
+            callback.run();
+        }
+    }
+
+    protected void checkIfCompetitionFinished() {
+        if (getNextMatch() == null) {
+            runOnFinishedCallbacks();
         }
     }
 
     @Override
     public void onMatchEnded(MatchEvent match) {
-        if (getNextMatch() == null) {
-            endCompetition();
-        }
+        checkIfCompetitionFinished();
     }
 
     public String getFullName(boolean includeSeason) {

@@ -42,10 +42,12 @@ public class SeasonCompetition extends MultiStageCompetition {
             tournaments.add(nationalCup);
         }
 
+        nationalCups.get(OBERON_22).registerOnFinishedCallback(this::initCLFirstQualifyingStage);
+
         championsLeagueCompetition = new ChampionsLeagueCompetition();
         championsLeagueCompetition.setStartingDate(40);
-        championsLeagueCompetition.getFirstQualifyingStage().addCompetitionEndListener(this);
-        championsLeagueCompetition.getSecondQualifyingStage().addCompetitionEndListener(this);
+        championsLeagueCompetition.getFirstQualifyingStage().registerOnFinishedCallback(this::initCLSecondQualifyingStage);
+        championsLeagueCompetition.getSecondQualifyingStage().registerOnFinishedCallback(this::initCLGroupStage);
 
         tournaments.add(championsLeagueCompetition);
 
@@ -79,19 +81,6 @@ public class SeasonCompetition extends MultiStageCompetition {
 
     @Override
     public void setStartingDate(int date) {
-    }
-
-    @Override
-    public void onCompetitionEnded(Competition competition) {
-        super.onCompetitionEnded(competition);
-
-        if (competition == nationalCups.get(OBERON_22)) {
-            initCLFirstQualifyingStage();
-        } else if (competition == championsLeagueCompetition.getFirstQualifyingStage()) {
-            initCLSecondQualifyingStage();
-        } else if (competition == championsLeagueCompetition.getSecondQualifyingStage()) {
-            initCLGroupStage();
-        }
     }
 
     private void initCLFirstQualifyingStage() {

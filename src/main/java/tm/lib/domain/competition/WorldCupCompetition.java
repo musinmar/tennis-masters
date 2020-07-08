@@ -32,6 +32,7 @@ public class WorldCupCompetition extends MultiStageCompetition {
         super("Чемпионат Мира");
 
         firstQualifyingStageGroupRound = new GroupStage("Первый квалификационный раунд", 8);
+        firstQualifyingStageGroupRound.registerOnFinishedCallback(this::onFirstQualifyingStageFinished);
 
         PlayoffStageConfiguration firstQualifyingRoundPlayoffConfiguration = new PlayoffStageConfiguration();
         firstQualifyingRoundPlayoffConfiguration.setRounds(1);
@@ -41,9 +42,14 @@ public class WorldCupCompetition extends MultiStageCompetition {
         firstQualifyingStagePlayoffParticipants.get(1).setId("B2");
         firstQualifyingStagePlayoffParticipants.get(2).setId("B1");
         firstQualifyingStagePlayoffParticipants.get(3).setId("A2");
+        firstQualifyingStagePlayoff.registerOnFinishedCallback(this::onFirstQualifyingStagePlayoffFinished);
 
         secondQualifyingStage = new GroupStage("Второй квалификационный раунд", 16);
+        secondQualifyingStage.registerOnFinishedCallback(this::onSecondQualifyingStageFinished);
+
         groupStage = new GroupStage("Групповой раунд", 16);
+        groupStage.registerOnFinishedCallback(this::onGroupStageFinished);
+
         playoffStage = new PlayoffStage("Плей-офф", 8);
 
         initStages(Arrays.asList(
@@ -61,47 +67,48 @@ public class WorldCupCompetition extends MultiStageCompetition {
         groupRoundParticipants = newArrayList(players.subList(0, 8));
     }
 
-    @Override
-    public void onCompetitionEnded(Competition competition) {
-        super.onCompetitionEnded(competition);
+    private void onFirstQualifyingStageFinished() {
+        GroupStageResult results = firstQualifyingStageGroupRound.getResults();
+        List<Knight> playoffParticipants = Arrays.asList(
+                results.getGroupPosition(0, 0),
+                results.getGroupPosition(1, 1),
+                results.getGroupPosition(1, 0),
+                results.getGroupPosition(0, 1)
+        );
+        firstQualifyingStagePlayoff.setActualParticipants(playoffParticipants);
+    }
 
-        if (competition == firstQualifyingStageGroupRound) {
-            GroupStageResult results = firstQualifyingStageGroupRound.getResults();
-            List<Knight> playoffParticipants = Arrays.asList(
-                    results.getGroupPosition(0, 0),
-                    results.getGroupPosition(1, 1),
-                    results.getGroupPosition(1, 0),
-                    results.getGroupPosition(0, 1)
-            );
-            firstQualifyingStagePlayoff.setActualParticipants(playoffParticipants);
-        } else if (competition == firstQualifyingStagePlayoff) {
-            List<Knight> winners = firstQualifyingStagePlayoff.getLastRoundResults().getWinners();
-            secondQualifyingStageParticipants.addAll(winners);
-            List<List<Knight>> groups = performPotBasedDraw(secondQualifyingStageParticipants);
-            secondQualifyingStage.setActualParticipantsByGroups(groups);
-        } else if (competition == secondQualifyingStage) {
-            GroupStageResult results = secondQualifyingStage.getResults();
-            for (int i = 0; i < 2; ++i) {
-                for (int j = 0; j < 4; j++) {
-                    groupRoundParticipants.add(results.getGroupPosition(j, i));
-                }
+    private void onFirstQualifyingStagePlayoffFinished() {
+        List<Knight> winners = firstQualifyingStagePlayoff.getLastRoundResults().getWinners();
+        secondQualifyingStageParticipants.addAll(winners);
+        List<List<Knight>> groups = performPotBasedDraw(secondQualifyingStageParticipants);
+        secondQualifyingStage.setActualParticipantsByGroups(groups);
+    }
+
+    private void onSecondQualifyingStageFinished() {
+        GroupStageResult results = secondQualifyingStage.getResults();
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < 4; j++) {
+                groupRoundParticipants.add(results.getGroupPosition(j, i));
             }
-            List<List<Knight>> groups = performPotBasedDraw(groupRoundParticipants);
-            groupStage.setActualParticipantsByGroups(groups);
-        } else if (competition == groupStage) {
-            GroupStageResult results = groupStage.getResults();
-            List<Knight> playoffParticipants = Arrays.asList(
-                    results.getGroupPosition(0, 0),
-                    results.getGroupPosition(1, 1),
-                    results.getGroupPosition(2, 0),
-                    results.getGroupPosition(3, 1),
-                    results.getGroupPosition(1, 0),
-                    results.getGroupPosition(0, 1),
-                    results.getGroupPosition(3, 0),
-                    results.getGroupPosition(2, 1)
-            );
-            playoffStage.setActualParticipants(playoffParticipants);
         }
+        List<List<Knight>> groups = performPotBasedDraw(groupRoundParticipants);
+        groupStage.setActualParticipantsByGroups(groups);
+    }
+
+    private void onGroupStageFinished() {
+        GroupStageResult results = groupStage.getResults();
+        List<Knight> playoffParticipants = Arrays.asList(
+                results.getGroupPosition(0, 0),
+                results.getGroupPosition(1, 1),
+                results.getGroupPosition(2, 0),
+                results.getGroupPosition(3, 1),
+                results.getGroupPosition(1, 0),
+                results.getGroupPosition(0, 1),
+                results.getGroupPosition(3, 0),
+                results.getGroupPosition(2, 1)
+        );
+        playoffStage.setActualParticipants(playoffParticipants);
     }
 
     private static List<List<Knight>> performPotBasedDraw(List<Knight> players) {

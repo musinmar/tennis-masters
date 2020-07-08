@@ -1,6 +1,5 @@
 package tm.lib.domain.competition;
 
-import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.PlayoffStage;
@@ -30,6 +29,7 @@ public class ChampionsLeagueCompetition extends MultiStageCompetition {
         secondQualifyingStage = new PlayoffStage("Второй квалификационный раунд", 8, secondQualifyingRoundConfiguration);
 
         groupStage = new GroupStage("Групповой раунд", 8);
+        groupStage.registerOnFinishedCallback(this::onGroupStageFinished);
 
         PlayoffStageConfiguration playoffStageConfiguration = new PlayoffStageConfiguration();
         playoffStageConfiguration.setRounds(2);
@@ -55,19 +55,14 @@ public class ChampionsLeagueCompetition extends MultiStageCompetition {
         return groupStage;
     }
 
-    @Override
-    public void onCompetitionEnded(Competition competition) {
-        super.onCompetitionEnded(competition);
-
-        if (competition == groupStage) {
-            List<List<Knight>> groupResults = groupStage.getResults().getGroupResults();
-            List<Knight> playoffParticipants = asList(
-                    groupResults.get(0).get(0),
-                    groupResults.get(1).get(1),
-                    groupResults.get(1).get(0),
-                    groupResults.get(0).get(1)
-            );
-            playoffStage.setActualParticipants(playoffParticipants);
-        }
+    private void onGroupStageFinished() {
+        List<List<Knight>> groupResults = groupStage.getResults().getGroupResults();
+        List<Knight> playoffParticipants = asList(
+                groupResults.get(0).get(0),
+                groupResults.get(1).get(1),
+                groupResults.get(1).get(0),
+                groupResults.get(0).get(1)
+        );
+        playoffStage.setActualParticipants(playoffParticipants);
     }
 }

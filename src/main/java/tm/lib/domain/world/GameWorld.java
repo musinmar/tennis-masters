@@ -71,7 +71,7 @@ public class GameWorld {
     }
 
     public void processMatch(MatchEvent match, MatchScore score) {
-        match.setResult(score);
+        match.getCompetition().processMatchResult(match, score);
         getEloRating().updateRatings(match.getHomePlayer().getPlayer(), match.getAwayPlayer().getPlayer(), score.getScoreBySets());
     }
 }

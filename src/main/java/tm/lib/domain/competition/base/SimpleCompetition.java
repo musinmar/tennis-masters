@@ -1,5 +1,7 @@
 package tm.lib.domain.competition.base;
 
+import tm.lib.domain.core.MatchScore;
+
 import java.io.PrintStream;
 import java.util.List;
 
@@ -34,16 +36,20 @@ abstract public class SimpleCompetition extends Competition {
         return matches;
     }
 
-    @Override
-    public void onMatchEnded(MatchEvent match) {
-        assert match == getNextMatch();
-        ++nextMatchIndex;
-        super.onMatchEnded(match);
+    protected void setMatches(List<MatchEvent> matches) {
+        this.matches = matches;
     }
 
-    protected void initMatches(List<MatchEvent> matches) {
-        this.matches = matches;
-        matches.forEach(m -> m.addMatchEndListener(this));
+    @Override
+     public final void processMatchResult(MatchEvent match, MatchScore score) {
+        assert match == getNextMatch();
+        match.setResult(score);
+        doProcessMatchResult(match, score);
+        ++nextMatchIndex;
+        checkIfCompetitionFinished();
+    }
+
+    protected void doProcessMatchResult(MatchEvent match, MatchScore score) {
     }
 
     @Override

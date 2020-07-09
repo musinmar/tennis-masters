@@ -1,11 +1,8 @@
 package tm.lib.domain.competition.base;
 
-import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Match;
+import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Stadium;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class MatchEvent {
     private int date;
@@ -16,7 +13,6 @@ public class MatchEvent {
     private boolean playoff;
     private Stadium venue = Stadium.standard();
     private MatchScore result;
-    private List<IMatchEndListener> listeners = new LinkedList<>();
 
     public MatchEvent(Competition parent, Participant p1, Participant p2, int sets, boolean isPlayoff) {
         this(parent, p1, p2);
@@ -77,15 +73,8 @@ public class MatchEvent {
         return firstPlayerName + " - " + secondPlayerName + resultString;
     }
 
-    public void addMatchEndListener(IMatchEndListener listener) {
-        listeners.add(listener);
-    }
-
     public void setResult(MatchScore result) {
         this.result = result;
-        for (IMatchEndListener listener : listeners) {
-            listener.onMatchEnded(this);
-        }
     }
 
     public Match createMatchSpec() {

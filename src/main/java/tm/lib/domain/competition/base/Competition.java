@@ -1,6 +1,7 @@
 package tm.lib.domain.competition.base;
 
 import tm.lib.domain.core.Knight;
+import tm.lib.domain.core.MatchScore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -8,7 +9,7 @@ import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 
-abstract public class Competition implements IMatchEndListener {
+abstract public class Competition {
     private Competition parent;
     private final String name;
 
@@ -75,6 +76,8 @@ abstract public class Competition implements IMatchEndListener {
 
     abstract public List<MatchEvent> getAllMatches();
 
+    abstract public void processMatchResult(MatchEvent match, MatchScore score);
+
     abstract public int getStartingDate();
 
     abstract public void setStartingDate(int date);
@@ -91,11 +94,6 @@ abstract public class Competition implements IMatchEndListener {
         if (getNextMatch() == null) {
             runOnFinishedCallbacks();
         }
-    }
-
-    @Override
-    public void onMatchEnded(MatchEvent match) {
-        checkIfCompetitionFinished();
     }
 
     public String getFullName(boolean includeSeason) {

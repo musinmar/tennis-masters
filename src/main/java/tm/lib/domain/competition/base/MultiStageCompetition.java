@@ -1,6 +1,7 @@
 package tm.lib.domain.competition.base;
 
 import com.google.common.collect.ImmutableList;
+import tm.lib.domain.core.MatchScore;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -80,6 +81,11 @@ abstract public class MultiStageCompetition extends Competition {
         this.stages = ImmutableList.copyOf(stages);
         stages.forEach(stage -> stage.registerOnFinishedCallback(this::checkIfCompetitionFinished));
         stages.forEach(stage -> stage.setParent(this));
+    }
+
+    @Override
+    public void processMatchResult(MatchEvent match, MatchScore score) {
+        throw new UnsupportedOperationException("Competition " + getName() + " does not have any own matches");
     }
 
     @Override

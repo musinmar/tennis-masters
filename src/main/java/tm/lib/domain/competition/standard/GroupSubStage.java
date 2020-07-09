@@ -4,6 +4,7 @@ import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.base.Participant;
 import tm.lib.domain.competition.base.SimpleCompetition;
 import tm.lib.domain.core.Knight;
+import tm.lib.domain.core.MatchScore;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class GroupSubStage extends SimpleCompetition {
         setParticipants(Participant.createNewList(playerCount));
 
         List<MatchEvent> matches = createSchedule(getParticipants());
-        initMatches(matches);
+        setMatches(matches);
 
         initGroupResults(getParticipants());
     }
@@ -132,10 +133,9 @@ public class GroupSubStage extends SimpleCompetition {
     }
 
     @Override
-    public void onMatchEnded(MatchEvent match) {
+    protected void doProcessMatchResult(MatchEvent match, MatchScore score) {
         applyMatchResult(match);
         sortGroupResults();
-        super.onMatchEnded(match);
     }
 
     private void sortGroupResults() {

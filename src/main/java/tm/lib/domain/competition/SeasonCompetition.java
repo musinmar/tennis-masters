@@ -9,6 +9,7 @@ import tm.lib.domain.core.Nation;
 import tm.lib.domain.world.GameWorld;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,8 @@ public class SeasonCompetition extends MultiStageCompetition {
     private final GameWorld gameWorld;
 
     private final Map<Nation, GroupSubStage> nationalCups = new HashMap<>();
-    private final ChampionsLeagueCompetition championsLeagueCompetition;
+    private final ChampionsLeagueCompetition championsLeague;
+    private final FederationCupCompetition federationsCup;
 
     public SeasonCompetition(String name, GameWorld gameWorld, List<Knight> players) {
         super(name);
@@ -44,12 +46,23 @@ public class SeasonCompetition extends MultiStageCompetition {
 
         nationalCups.get(OBERON_22).registerOnFinishedCallback(this::initCLFirstQualifyingStage);
 
-        championsLeagueCompetition = new ChampionsLeagueCompetition();
-        championsLeagueCompetition.setStartingDate(40);
-        championsLeagueCompetition.getFirstQualifyingStage().registerOnFinishedCallback(this::initCLSecondQualifyingStage);
-        championsLeagueCompetition.getSecondQualifyingStage().registerOnFinishedCallback(this::initCLGroupStage);
+        championsLeague = new ChampionsLeagueCompetition();
+        championsLeague.getFirstQualifyingStage().registerOnFinishedCallback(this::onCLFirstQualifyingStageFinished);
+        championsLeague.getSecondQualifyingStage().registerOnFinishedCallback(this::onCLSecondQualifyingStageFinished);
 
-        tournaments.add(championsLeagueCompetition);
+        federationsCup = new FederationCupCompetition();
+        federationsCup.getSecondQualifyingStage().registerOnFinishedCallback(this::initFCGroupStage);
+
+        championsLeague.getFirstQualifyingStage().setStartingDateAfter(nationalCups.get(OBERON_22));
+        federationsCup.getFirstQualifyingStage().setStartingDateAfter(championsLeague.getFirstQualifyingStage());
+        championsLeague.getSecondQualifyingStage().setStartingDateAfter(federationsCup.getFirstQualifyingStage());
+        federationsCup.getSecondQualifyingStage().setStartingDateAfter(championsLeague.getSecondQualifyingStage());
+        federationsCup.getGroupStage().setStartingDateAfter(federationsCup.getSecondQualifyingStage());
+        championsLeague.getGroupStage().setStartingDateAfter(federationsCup.getGroupStage());
+        federationsCup.getPlayoffStage().setStartingDateAfter(championsLeague.getGroupStage());
+        championsLeague.getPlayoffStage().setStartingDateAfter(federationsCup.getPlayoffStage());
+
+        tournaments.addAll(asList(championsLeague, federationsCup));
 
 //        for (int i = 0; i < TOURNAMENT_COUNT; ++i) {
 //            List<Knight> allPlayers = new ArrayList<>(players);
@@ -93,10 +106,10 @@ public class SeasonCompetition extends MultiStageCompetition {
                 get_player_from(5, 2)));
 
         clQualifyingRound1 = drawPlayersInPairs(clQualifyingRound1, true);
-        championsLeagueCompetition.getFirstQualifyingStage().setActualParticipants(clQualifyingRound1);
+        championsLeague.getFirstQualifyingStage().setActualParticipants(clQualifyingRound1);
     }
 
-    private void initCLSecondQualifyingStage() {
+    private void onCLFirstQualifyingStageFinished() {
         List<Knight> clQualifyingRound2 = new ArrayList<>(asList(
                 get_player_from(1, 3),
                 get_player_from(2, 2),
@@ -104,23 +117,54 @@ public class SeasonCompetition extends MultiStageCompetition {
                 get_player_from(3, 2),
                 get_player_from(4, 1)));
 
-        PlayoffSubStageResult results = championsLeagueCompetition.getFirstQualifyingStage().getLastRoundResults();
+        PlayoffSubStageResult results = championsLeague.getFirstQualifyingStage().getLastRoundResults();
         clQualifyingRound2.addAll(results.getWinners());
         clQualifyingRound2 = drawPlayersInPairs(clQualifyingRound2, true);
-        championsLeagueCompetition.getSecondQualifyingStage().setActualParticipants(clQualifyingRound2);
+        championsLeague.getSecondQualifyingStage().setActualParticipants(clQualifyingRound2);
+
+        List<Knight> fcQualifyingRound1 = new ArrayList<>(Collections.singletonList(
+                get_player_from(1, 5)));
+
+        fcQualifyingRound1.addAll(results.getLosers());
+        fcQualifyingRound1 = drawPlayersInPairs(fcQualifyingRound1, true);
+        federationsCup.getFirstQualifyingStage().setActualParticipants(fcQualifyingRound1);
     }
 
-    private void initCLGroupStage() {
+    private void onCLSecondQualifyingStageFinished() {
         List<Knight> clGroupRound = new ArrayList<>(asList(
                 get_player_from(1, 1),
                 get_player_from(1, 2),
                 get_player_from(2, 1),
                 get_player_from(3, 1)));
 
-        PlayoffSubStageResult results = championsLeagueCompetition.getSecondQualifyingStage().getLastRoundResults();
-        clGroupRound.addAll(results.getWinners());
+        PlayoffSubStageResult clSecondQualifyingStageResults = championsLeague.getSecondQualifyingStage().getLastRoundResults();
+        clGroupRound.addAll(clSecondQualifyingStageResults.getWinners());
         List<List<Knight>> groups = makeCLGroups(clGroupRound);
-        championsLeagueCompetition.getGroupStage().setActualParticipantsByGroups(groups);
+        championsLeague.getGroupStage().setActualParticipantsByGroups(groups);
+
+        List<Knight> fcQualifyingRound2 = new ArrayList<>(asList(
+                get_player_from(2, 5),
+                get_player_from(3, 5),
+                get_player_from(4, 4),
+                get_player_from(5, 4)));
+
+        PlayoffSubStageResult fcFirstQualifyingStageResults = federationsCup.getFirstQualifyingStage().getLastRoundResults();
+        fcQualifyingRound2.addAll(clSecondQualifyingStageResults.getLosers());
+        fcQualifyingRound2.addAll(fcFirstQualifyingStageResults.getWinners());
+        fcQualifyingRound2 = drawPlayersInPairs(fcQualifyingRound2, true);
+        federationsCup.getSecondQualifyingStage().setActualParticipants(fcQualifyingRound2);
+    }
+
+    private void initFCGroupStage() {
+        List<Knight> fcGroupRound = new ArrayList<>(asList(
+                get_player_from(2, 4),
+                get_player_from(3, 4),
+                get_player_from(5, 3)));
+
+        PlayoffSubStageResult results = federationsCup.getSecondQualifyingStage().getLastRoundResults();
+        fcGroupRound.addAll(results.getWinners());
+        List<List<Knight>> groups = makeCLGroups(fcGroupRound);
+        federationsCup.getGroupStage().setActualParticipantsByGroups(groups);
     }
 
     private List<List<Knight>> makeCLGroups(List<Knight> knights) {

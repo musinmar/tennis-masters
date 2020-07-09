@@ -124,12 +124,10 @@ public class GroupSubStage extends SimpleCompetition {
     @Override
     public void setStartingDate(int date) {
         List<MatchEvent> matches = getAllMatches();
-        matches.get(0).setDate(date);
-        matches.get(1).setDate(date);
-        matches.get(2).setDate(date + 1);
-        matches.get(3).setDate(date + 1);
-        matches.get(4).setDate(date + 2);
-        matches.get(5).setDate(date + 2);
+        int roundSize = getParticipants().size() / 2;
+        for (int i = 0; i < matches.size(); i++) {
+            matches.get(i).setDate(date + i / roundSize);
+        }
     }
 
     @Override

@@ -82,6 +82,10 @@ abstract public class Competition {
 
     abstract public void setStartingDate(int date);
 
+    public void setStartingDateAfter(Competition other) {
+        setStartingDate(other.getLastDate() + 2);
+    }
+
     abstract public int getLastDate();
 
     private void runOnFinishedCallbacks() {

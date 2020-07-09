@@ -1,6 +1,5 @@
 package tm.lib.domain.competition;
 
-import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.competition.base.Participant;
 import tm.lib.domain.competition.standard.GroupStage;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static tm.lib.domain.competition.standard.PlayoffUtils.drawPlayersInPairsFromGroupResults;
 
 public class WorldCupCompetition extends MultiStageCompetition {
 
@@ -69,12 +69,7 @@ public class WorldCupCompetition extends MultiStageCompetition {
 
     private void onFirstQualifyingStageFinished() {
         GroupStageResult results = firstQualifyingStageGroupRound.getResults();
-        List<Knight> playoffParticipants = Arrays.asList(
-                results.getGroupPosition(0, 0),
-                results.getGroupPosition(1, 1),
-                results.getGroupPosition(1, 0),
-                results.getGroupPosition(0, 1)
-        );
+        List<Knight> playoffParticipants = drawPlayersInPairsFromGroupResults(results);
         firstQualifyingStagePlayoff.setActualParticipants(playoffParticipants);
     }
 
@@ -97,17 +92,8 @@ public class WorldCupCompetition extends MultiStageCompetition {
     }
 
     private void onGroupStageFinished() {
-        GroupStageResult results = groupStage.getResults();
-        List<Knight> playoffParticipants = Arrays.asList(
-                results.getGroupPosition(0, 0),
-                results.getGroupPosition(1, 1),
-                results.getGroupPosition(2, 0),
-                results.getGroupPosition(3, 1),
-                results.getGroupPosition(1, 0),
-                results.getGroupPosition(0, 1),
-                results.getGroupPosition(3, 0),
-                results.getGroupPosition(2, 1)
-        );
+        GroupStageResult groupResults = groupStage.getResults();
+        List<Knight> playoffParticipants = drawPlayersInPairsFromGroupResults(groupResults);
         playoffStage.setActualParticipants(playoffParticipants);
     }
 

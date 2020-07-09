@@ -15,6 +15,10 @@ public class GroupStageResult {
         return groupResults;
     }
 
+    public int getGroupCount() {
+        return groupResults.size();
+    }
+
     public Knight getGroupPosition(int group, int place) {
         return groupResults.get(group).get(place);
     }

@@ -32,7 +32,7 @@ abstract public class MultiStageCompetition extends Competition {
         MatchEvent nextMatch = null;
         for (Competition stage : getStages()) {
             MatchEvent stageNextMatch = stage.getNextMatch();
-            if (nextMatch == null || stageNextMatch.getDate() < nextMatch.getDate()) {
+            if (nextMatch == null || (stageNextMatch != null && stageNextMatch.getDate() < nextMatch.getDate())) {
                 nextMatch = stageNextMatch;
             }
         }

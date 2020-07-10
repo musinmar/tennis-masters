@@ -99,10 +99,16 @@ public class GameWorld {
 
         logger.println(match.toString());
 
-        if (match.getCompetition() instanceof GroupSubStage && match.getCompetition().isFinished()) {
+        if (match.getCompetition() instanceof GroupSubStage) {
             GroupSubStage groupSubStage = (GroupSubStage) match.getCompetition();
-            logger.println();
-            logger.println(groupSubStage.printGroupResultsToString());
+            if (groupSubStage.doesNextMatchStartNewRound()) {
+                if (groupSubStage.isFinished()) {
+                    logger.println();
+                    logger.println("Итоговое положение");
+                }
+                logger.println();
+                logger.println(groupSubStage.printGroupResultsToString());
+            }
         }
     }
 }

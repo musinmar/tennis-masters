@@ -168,4 +168,10 @@ public class GroupSubStage extends SimpleCompetition {
                 .findAny()
                 .orElseThrow(IllegalStateException::new);
     }
+
+    public boolean doesNextMatchStartNewRound() {
+        int ind = getNextMatchIndex();
+        int roundSize = getParticipants().size() / 2;
+        return ind % roundSize == 0;
+    }
 }

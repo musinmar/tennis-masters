@@ -14,6 +14,10 @@ abstract public class SimpleCompetition extends Competition {
         nextMatchIndex = 0;
     }
 
+    protected int getNextMatchIndex() {
+        return nextMatchIndex;
+    }
+
     @Override
     public void print(PrintStream stream) {
         super.print(stream);

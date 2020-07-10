@@ -6,6 +6,8 @@ import tm.lib.domain.competition.base.SimpleCompetition;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,6 +98,13 @@ public class GroupSubStage extends SimpleCompetition {
         super.print(stream);
         stream.println();
         printGroupResults(stream);
+    }
+
+    public String printGroupResultsToString() {
+        OutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        printGroupResults(printStream);
+        return outputStream.toString();
     }
 
     private void printGroupResults(PrintStream stream) {

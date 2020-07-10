@@ -14,7 +14,7 @@ abstract public class Competition {
     private final String name;
 
     private List<Participant> participants;
-    private List<Runnable> competitionFinishedCallbacks = new LinkedList<>();
+    private final List<Runnable> competitionFinishedCallbacks = new LinkedList<>();
 
     protected Competition(String name) {
         this.name = name;
@@ -114,5 +114,9 @@ abstract public class Competition {
             parent = parent.getParent();
         }
         return name;
+    }
+
+    public boolean isFinished() {
+        return getNextMatch() == null;
     }
 }

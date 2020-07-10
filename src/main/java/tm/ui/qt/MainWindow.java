@@ -31,7 +31,7 @@ public class MainWindow extends QMainWindow {
         exitButton.clicked.connect(this, "onExitButtonClicked()");
         layout.addWidget(exitButton);
     }
-    
+
     private void onNewButtonClicked() {
         GameWorldDialog gameWorldDialog = new GameWorldDialog(new GameWorld(), this);
         gameWorldDialog.open();

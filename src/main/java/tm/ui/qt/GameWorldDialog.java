@@ -24,6 +24,7 @@ import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.GameWorld;
+import tm.lib.domain.world.GameWorldLogger;
 import tm.lib.engine.StrategyProvider;
 import tm.ui.qt.simulation.SimulationHelper;
 
@@ -31,13 +32,14 @@ public class GameWorldDialog extends QDialog {
 
     private final GameWorld gameWorld;
 
-    private QPlainTextEdit gameWorldLogTextEdit;
+    private QPlainTextEdit competitionBrowserTextEdit;
     private QComboBox seasonComboBox;
     private QComboBox tournamentComboBox;
     private QComboBox stageComboBox;
     private QComboBox subStageComboBox;
     private QLabel nextMatchLabel;
     private QLabel previousMatchLabel;
+    private QPlainTextEdit seasonLogTextEdit;
 
     public GameWorldDialog(GameWorld gameWorld, QWidget parent) {
         super(parent);
@@ -46,6 +48,7 @@ public class GameWorldDialog extends QDialog {
         populateSeasonComboBox();
         updateLogText();
         updateNextMatchLabel();
+        configureGameWorldLogger();
     }
 
     private void setupUi() {
@@ -83,31 +86,31 @@ public class GameWorldDialog extends QDialog {
         competitionSelectorLayout.addWidget(subStageComboBoxLabel);
         competitionSelectorLayout.addWidget(subStageComboBox);
 
-        gameWorldLogTextEdit = new QPlainTextEdit(this);
-        gameWorldLogTextEdit.setFont(new QFont("Courier New"));
-        gameWorldLogTextEdit.setMinimumSize(200, 30);
-        gameWorldLogTextEdit.setReadOnly(true);
+        competitionBrowserTextEdit = new QPlainTextEdit(this);
+        competitionBrowserTextEdit.setFont(new QFont("Courier New"));
+        competitionBrowserTextEdit.setMinimumSize(200, 30);
+        competitionBrowserTextEdit.setReadOnly(true);
 
         QVBoxLayout seasonBrowserLayout = new QVBoxLayout();
         seasonBrowserLayout.setSpacing(5);
         seasonBrowserLayout.addItem(competitionSelectorLayout);
-        seasonBrowserLayout.addWidget(gameWorldLogTextEdit);
+        seasonBrowserLayout.addWidget(competitionBrowserTextEdit);
 
         QWidget seasonBrowserWidget = new QWidget(this);
         seasonBrowserWidget.setLayout(seasonBrowserLayout);
 
-        QPlainTextEdit logTextEdit = new QPlainTextEdit(this);
-        logTextEdit.setFont(new QFont("Courier New"));
-        logTextEdit.setReadOnly(true);
+        seasonLogTextEdit = new QPlainTextEdit(this);
+        seasonLogTextEdit.setFont(new QFont("Courier New"));
+        seasonLogTextEdit.setReadOnly(true);
 
         QVBoxLayout logWidgetLayout = new QVBoxLayout();
-        logWidgetLayout.addWidget(logTextEdit);
+        logWidgetLayout.addWidget(seasonLogTextEdit);
 
         QWidget logWidget = new QWidget(this);
         logWidget.setLayout(logWidgetLayout);
 
         QTabWidget tabWidget = new QTabWidget(this);
-        tabWidget.addTab(logTextEdit, "Лог");
+        tabWidget.addTab(seasonLogTextEdit, "Лог");
         tabWidget.addTab(seasonBrowserWidget, "Турниры");
 
         QPushButton showEloRatingButton = new QPushButton(this);
@@ -251,7 +254,7 @@ public class GameWorldDialog extends QDialog {
 
     private void updateLogText() {
         Competition selectedCompetition = getSelectedCompetition();
-        gameWorldLogTextEdit.setPlainText(selectedCompetition.printToString());
+        competitionBrowserTextEdit.setPlainText(selectedCompetition.printToString());
     }
 
     private Competition getSelectedCompetition() {
@@ -362,5 +365,30 @@ public class GameWorldDialog extends QDialog {
     private void onTeachAnnDialogActionTriggered() {
         TeachNeuralNetworkDialog teachNeuralNetworkDialog = new TeachNeuralNetworkDialog(gameWorld, this);
         teachNeuralNetworkDialog.exec();
+    }
+
+    private void configureGameWorldLogger() {
+        GameWorldLogger logger = new GameWorldLogger() {
+            @Override
+            public void print(String str) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void println() {
+                seasonLogTextEdit.appendPlainText("");
+            }
+
+            @Override
+            public void println(String str) {
+                seasonLogTextEdit.appendPlainText(str);
+            }
+
+            @Override
+            public void println(String formatString, Object... args) {
+                seasonLogTextEdit.appendPlainText(String.format(formatString, args));
+            }
+        };
+        gameWorld.setLogger(logger);
     }
 }

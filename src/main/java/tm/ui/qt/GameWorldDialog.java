@@ -15,6 +15,7 @@ import com.trolltech.qt.gui.QPlainTextEdit;
 import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QSizePolicy;
 import com.trolltech.qt.gui.QSpacerItem;
+import com.trolltech.qt.gui.QTabWidget;
 import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QWidget;
 import tm.lib.domain.competition.SeasonCompetition;
@@ -85,14 +86,33 @@ public class GameWorldDialog extends QDialog {
         gameWorldLogTextEdit = new QPlainTextEdit(this);
         gameWorldLogTextEdit.setFont(new QFont("Courier New"));
         gameWorldLogTextEdit.setMinimumSize(200, 30);
+        gameWorldLogTextEdit.setReadOnly(true);
+
+        QVBoxLayout seasonBrowserLayout = new QVBoxLayout();
+        seasonBrowserLayout.setSpacing(5);
+        seasonBrowserLayout.addItem(competitionSelectorLayout);
+        seasonBrowserLayout.addWidget(gameWorldLogTextEdit);
+
+        QWidget seasonBrowserWidget = new QWidget(this);
+        seasonBrowserWidget.setLayout(seasonBrowserLayout);
+
+        QPlainTextEdit logTextEdit = new QPlainTextEdit(this);
+        logTextEdit.setFont(new QFont("Courier New"));
+        logTextEdit.setReadOnly(true);
+
+        QVBoxLayout logWidgetLayout = new QVBoxLayout();
+        logWidgetLayout.addWidget(logTextEdit);
+
+        QWidget logWidget = new QWidget(this);
+        logWidget.setLayout(logWidgetLayout);
+
+        QTabWidget tabWidget = new QTabWidget(this);
+        tabWidget.addTab(logTextEdit, "Лог");
+        tabWidget.addTab(seasonBrowserWidget, "Турниры");
 
         QPushButton showEloRatingButton = new QPushButton(this);
         showEloRatingButton.setText("Рейтинг");
         showEloRatingButton.clicked.connect(this, "onShowEloRatingButtonClicked()");
-
-        QHBoxLayout bottomButtonsLayout = new QHBoxLayout();
-        bottomButtonsLayout.addWidget(showEloRatingButton);
-        bottomButtonsLayout.addSpacerItem(new QSpacerItem(10, 10, QSizePolicy.Policy.Expanding));
 
         QPushButton nextButton = new QPushButton(this);
         nextButton.setText("Смотреть матч");
@@ -102,31 +122,31 @@ public class GameWorldDialog extends QDialog {
         nextFastButton.setText("Симулировать матч");
         nextFastButton.clicked.connect(this, "onNextMatchFastButtonClicked()");
 
+        QHBoxLayout bottomButtonsLayout = new QHBoxLayout();
+        bottomButtonsLayout.addWidget(showEloRatingButton);
+        bottomButtonsLayout.addSpacerItem(new QSpacerItem(10, 10, QSizePolicy.Policy.Expanding));
+        bottomButtonsLayout.addWidget(nextButton);
+        bottomButtonsLayout.addWidget(nextFastButton);
+
         previousMatchLabel = new QLabel(this);
         previousMatchLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);
 
         nextMatchLabel = new QLabel(this);
         nextMatchLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);
 
-        QLayout matchSimulationButtonLayout = new QHBoxLayout();
-        matchSimulationButtonLayout.addWidget(nextButton);
-        matchSimulationButtonLayout.addWidget(nextFastButton);
+        QHBoxLayout matchLabelsLayout = new QHBoxLayout();
+        matchLabelsLayout.addWidget(previousMatchLabel);
+        matchLabelsLayout.addWidget(nextMatchLabel);
 
         QVBoxLayout leftLayout = new QVBoxLayout();
         leftLayout.setSpacing(5);
-        leftLayout.addItem(competitionSelectorLayout);
-        leftLayout.addWidget(gameWorldLogTextEdit);
+        leftLayout.addWidget(tabWidget);
+        leftLayout.addItem(matchLabelsLayout);
         leftLayout.addItem(bottomButtonsLayout);
-
-        QVBoxLayout rightLayout = new QVBoxLayout();
-        rightLayout.addWidget(previousMatchLabel);
-        rightLayout.addWidget(nextMatchLabel);
-        rightLayout.addItem(matchSimulationButtonLayout);
 
         QLayout mainLayout = new QHBoxLayout();
         mainLayout.setContentsMargins(new QMargins(2, 2, 2, 2));
         mainLayout.addItem(leftLayout);
-        mainLayout.addItem(rightLayout);
 
         QMenu toolsMenu = new QMenu("Инструменты");
         QAction showMatchConfigurationDialogAction = toolsMenu.addAction("Сыграть матч");

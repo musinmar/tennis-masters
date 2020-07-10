@@ -5,6 +5,7 @@ import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.GroupStageResult;
 import tm.lib.domain.competition.standard.PlayoffStage;
 import tm.lib.domain.competition.standard.PlayoffStageConfiguration;
+import tm.lib.domain.competition.standard.PlayoffSubStage;
 import tm.lib.domain.core.Knight;
 
 import java.util.List;
@@ -14,21 +15,16 @@ import static tm.lib.domain.competition.standard.PlayoffUtils.drawPlayersInPairs
 
 public class ChampionsLeagueCompetition extends MultiStageCompetition {
 
-    private final PlayoffStage firstQualifyingStage;
-    private final PlayoffStage secondQualifyingStage;
+    private final PlayoffSubStage firstQualifyingStage;
+    private final PlayoffSubStage secondQualifyingStage;
     private final GroupStage groupStage;
     private final PlayoffStage playoffStage;
 
     public ChampionsLeagueCompetition() {
         super("Лига Чемпионов");
 
-        PlayoffStageConfiguration firstQualifyingRoundConfiguration = new PlayoffStageConfiguration();
-        firstQualifyingRoundConfiguration.setRounds(1);
-        firstQualifyingStage = new PlayoffStage("Первый квалификационный раунд", 6, firstQualifyingRoundConfiguration);
-
-        PlayoffStageConfiguration secondQualifyingRoundConfiguration = new PlayoffStageConfiguration();
-        secondQualifyingRoundConfiguration.setRounds(1);
-        secondQualifyingStage = new PlayoffStage("Второй квалификационный раунд", 8, secondQualifyingRoundConfiguration);
+        firstQualifyingStage = new PlayoffSubStage("Первый квалификационный раунд", 6);
+        secondQualifyingStage = new PlayoffSubStage("Второй квалификационный раунд", 8);
 
         groupStage = new GroupStage("Групповой раунд", 8);
         groupStage.registerOnFinishedCallback(this::onGroupStageFinished);
@@ -45,11 +41,11 @@ public class ChampionsLeagueCompetition extends MultiStageCompetition {
         ));
     }
 
-    public PlayoffStage getFirstQualifyingStage() {
+    public PlayoffSubStage getFirstQualifyingStage() {
         return firstQualifyingStage;
     }
 
-    public PlayoffStage getSecondQualifyingStage() {
+    public PlayoffSubStage getSecondQualifyingStage() {
         return secondQualifyingStage;
     }
 

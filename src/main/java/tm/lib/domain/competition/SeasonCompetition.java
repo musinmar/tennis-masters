@@ -39,7 +39,6 @@ public class SeasonCompetition extends MultiStageCompetition {
             List<Knight> nationKnights = players.stream().filter(p -> p.getNation() == nation).collect(toList());
             GroupSubStage nationalCup = new GroupSubStage("Кубок " + nation.getNameGenitive(), nationKnights.size());
             nationalCup.setActualParticipants(nationKnights);
-            nationalCup.setStartingDate(nation.ordinal() * 8);
             nationalCups.put(nation, nationalCup);
             tournaments.add(nationalCup);
         }
@@ -56,16 +55,6 @@ public class SeasonCompetition extends MultiStageCompetition {
 
         worldCupCompetition = new WorldCupCompetition();
 
-        championsLeague.getFirstQualifyingStage().setStartingDateAfter(nationalCups.get(OBERON_22));
-        federationsCup.getFirstQualifyingStage().setStartingDateAfter(championsLeague.getFirstQualifyingStage());
-        championsLeague.getSecondQualifyingStage().setStartingDateAfter(federationsCup.getFirstQualifyingStage());
-        federationsCup.getSecondQualifyingStage().setStartingDateAfter(championsLeague.getSecondQualifyingStage());
-        federationsCup.getGroupStage().setStartingDateAfter(federationsCup.getSecondQualifyingStage());
-        championsLeague.getGroupStage().setStartingDateAfter(federationsCup.getGroupStage());
-        federationsCup.getPlayoffStage().setStartingDateAfter(championsLeague.getGroupStage());
-        championsLeague.getPlayoffStage().setStartingDateAfter(federationsCup.getPlayoffStage());
-        worldCupCompetition.setStartingDateAfter(championsLeague.getPlayoffStage());
-
         tournaments.addAll(asList(
                 federationsCup,
                 championsLeague,
@@ -81,6 +70,22 @@ public class SeasonCompetition extends MultiStageCompetition {
 
     @Override
     public void setStartingDate(int date) {
+        for (Nation nation : Nation.values()) {
+            GroupSubStage nationalCup = nationalCups.get(nation);
+            nationalCup.setStartingDate(date + nation.ordinal() * 8);
+        }
+
+        championsLeague.getFirstQualifyingStage().setStartingDateAfter(nationalCups.get(OBERON_22));
+        federationsCup.getFirstQualifyingStage().setStartingDateAfter(championsLeague.getFirstQualifyingStage());
+        championsLeague.getSecondQualifyingStage().setStartingDateAfter(federationsCup.getFirstQualifyingStage());
+        federationsCup.getSecondQualifyingStage().setStartingDateAfter(championsLeague.getSecondQualifyingStage());
+        federationsCup.getGroupStage().setStartingDateAfter(federationsCup.getSecondQualifyingStage());
+        championsLeague.getGroupStage().setStartingDateAfter(federationsCup.getGroupStage());
+        federationsCup.getPlayoffSemifinals().setStartingDateAfter(championsLeague.getGroupStage());
+        championsLeague.getPlayoffSemifinals().setStartingDateAfter(federationsCup.getPlayoffSemifinals());
+        federationsCup.getPlayoffFinal().setStartingDateAfter(championsLeague.getPlayoffSemifinals());
+        championsLeague.getPlayoffFinal().setStartingDateAfter(federationsCup.getPlayoffFinal());
+        worldCupCompetition.setStartingDateAfter(championsLeague.getPlayoffFinal());
     }
 
     private void initCLFirstQualifyingStage() {

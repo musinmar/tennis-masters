@@ -57,6 +57,14 @@ public class FederationCupCompetition extends MultiStageCompetition {
         return playoffStage;
     }
 
+    public PlayoffSubStage getPlayoffSemifinals() {
+        return (PlayoffSubStage) playoffStage.getStages().get(0);
+    }
+
+    public PlayoffSubStage getPlayoffFinal() {
+        return (PlayoffSubStage) playoffStage.getStages().get(1);
+    }
+
     private void onGroupStageFinished() {
         GroupStageResult groupResults = groupStage.getResults();
         List<Knight> playoffParticipants = drawPlayersInPairsFromGroupResults(groupResults);

@@ -33,10 +33,14 @@ public class GameWorld {
     public GameWorld() {
         init();
         eloRating = new EloRating(players);
+
         nationRating = new NationRating();
         nationRating.initDefault();
         nationRating.calculateRankingsAndPrint();
-        seasons.add(new SeasonCompetition( "Сезон " + (year + 1), this, getPlayers()));
+
+        SeasonCompetition season = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers());
+        season.setStartingDate(0);
+        seasons.add(season);
     }
 
     public GameWorldLogger getLogger() {

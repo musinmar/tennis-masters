@@ -1,12 +1,10 @@
 package tm.ui.qt;
 
-import com.trolltech.qt.core.QLocale;
 import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.gui.QDialog;
 import com.trolltech.qt.gui.QHBoxLayout;
 import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QSpacerItem;
-import com.trolltech.qt.gui.QStyledItemDelegate;
 import com.trolltech.qt.gui.QTreeWidget;
 import com.trolltech.qt.gui.QTreeWidgetItem;
 import com.trolltech.qt.gui.QVBoxLayout;
@@ -40,15 +38,7 @@ public class EloRatingDialog extends QDialog {
         eloRatingTreeWidget.setColumnWidth(2, 100);
         eloRatingTreeWidget.setColumnWidth(3, 100);
         eloRatingTreeWidget.setIndentation(0);
-        eloRatingTreeWidget.setItemDelegate(new QStyledItemDelegate() {
-            @Override
-            public String displayText(Object value, QLocale locale) {
-                if (value instanceof Double) {
-                    return String.format("%.2f", value);
-                }
-                return super.displayText(value, locale);
-            }
-        });
+        eloRatingTreeWidget.setItemDelegate(new CustomItemDelegate());
 
         QPushButton closeButton = new QPushButton(this);
         closeButton.setText("Закрыть");
@@ -86,4 +76,5 @@ public class EloRatingDialog extends QDialog {
         eloRatingTreeWidget.sortByColumn(2, Qt.SortOrder.DescendingOrder);
         eloRatingTreeWidget.setSortingEnabled(true);
     }
+
 }

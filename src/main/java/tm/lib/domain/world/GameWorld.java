@@ -31,12 +31,7 @@ public class GameWorld {
     private Competition latestCompetition;
 
     public GameWorld() {
-        init();
-        eloRating = new EloRating(players);
-
-        nationRating = new NationRating();
-        nationRating.initDefault();
-        nationRating.calculateRankingsAndPrint();
+        initNewGame();
 
         SeasonCompetition season = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers());
         season.setStartingDate(0);
@@ -71,22 +66,32 @@ public class GameWorld {
         return nationRating;
     }
 
-    private void init() {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    private void initNewGame() {
+        year = 0;
+        players = loadDefaultPlayers();
+        eloRating = new EloRating(players);
 
+        nationRating = new NationRating();
+        nationRating.initDefault();
+        nationRating.calculateRankingsAndPrint();
+    }
+
+    private static List<Knight> loadDefaultPlayers() {
         try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document document = db.parse("players.xml");
             NodeList playerNodes = document.getElementsByTagName("player");
+            List<Knight> knights = new ArrayList<>();
             for (int i = 0; i < playerNodes.getLength(); ++i) {
                 Element playerElement = (Element) playerNodes.item(i);
                 Knight knight = new Knight();
                 knight.init(playerElement);
-                players.add(knight);
+                knights.add(knight);
             }
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
+            return knights;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

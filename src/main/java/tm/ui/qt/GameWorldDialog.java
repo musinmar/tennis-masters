@@ -40,6 +40,7 @@ public class GameWorldDialog extends QDialog {
     private QLabel nextMatchLabel;
     private QLabel previousMatchLabel;
     private QPlainTextEdit seasonLogTextEdit;
+    private NationRatingWidget nationRatingWidget;
 
     public GameWorldDialog(GameWorld gameWorld, QWidget parent) {
         super(parent);
@@ -109,9 +110,12 @@ public class GameWorldDialog extends QDialog {
         QWidget logWidget = new QWidget(this);
         logWidget.setLayout(logWidgetLayout);
 
+        nationRatingWidget = new NationRatingWidget(this, gameWorld.getNationRating());
+
         QTabWidget tabWidget = new QTabWidget(this);
         tabWidget.addTab(seasonLogTextEdit, "Лог");
         tabWidget.addTab(seasonBrowserWidget, "Турниры");
+        tabWidget.addTab(nationRatingWidget, "Рейтинг наций");
 
         QPushButton showEloRatingButton = new QPushButton(this);
         showEloRatingButton.setText("Рейтинг");

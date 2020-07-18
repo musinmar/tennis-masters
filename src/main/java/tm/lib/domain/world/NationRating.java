@@ -10,10 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingDouble;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 public class NationRating {
     private static final int SEASON_COUNT = 5;
@@ -23,8 +21,8 @@ public class NationRating {
     private Map<Nation, MutableDouble> seasonPoints = new HashMap<>();
     private Map<Knight, Double> playerSeasonPoints = new HashMap<>();
 
-    private static class PointHistoryItem {
-        double[] seasons = new double[SEASON_COUNT];
+    public static class PointHistoryItem {
+        public double[] seasons = new double[SEASON_COUNT];
 
         PointHistoryItem(double defaultPoints) {
             for (int i = 0; i < SEASON_COUNT; i++) {
@@ -51,8 +49,37 @@ public class NationRating {
         }
     }
 
+    public PointHistoryItem getPointHistory(Nation nation) {
+        return pointHistory.get(nation);
+    }
+
+    public Double getCurrentSeasonPoints(Nation nation) {
+        return seasonPoints.get(nation).toDouble();
+    }
+
+    public Double getTotalPoints(Nation nation) {
+        double historySum = Arrays.stream(pointHistory.get(nation).seasons).sum();
+        int nationRanking = getNationRanking(nation);
+        double currentSeasonValue = getCurrentSeasonPoints(nation) / getCountCoefficient(nationRanking);
+        return historySum + currentSeasonValue;
+    }
+
+    public int getNationRanking(Nation nation) {
+        return ranking.indexOf(nation);
+    }
+
     public Nation getRankedNation(int rank) {
         return ranking.get(rank);
+    }
+
+    public int getCountCoefficient(int ranking) {
+        if (ranking >= 0 && ranking < 3) {
+            return 5;
+        } else if (ranking < 5) {
+            return 4;
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void initDefault() {

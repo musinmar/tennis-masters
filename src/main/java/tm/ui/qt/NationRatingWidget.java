@@ -24,7 +24,7 @@ public class NationRatingWidget extends QWidget {
         super(parent);
         this.nationRating = nationRating;
         initUi();
-        repopulateTreeWidget();
+        repopulateNationRatingWidget();
     }
 
     private void initUi() {
@@ -36,11 +36,11 @@ public class NationRatingWidget extends QWidget {
         setLayout(nationRatingWidgetLayout);
     }
 
-    private void repopulateTreeWidget() {
+    public void repopulateNationRatingWidget() {
         nationRatingTreeWidget.clear();
         nationRatingTreeWidget.setIndentation(0);
         nationRatingTreeWidget.setColumnCount(8);
-        nationRatingTreeWidget.setHeaderLabels(asList("#", "Нация", "Текущий сезон", "-1", "-2", "-3", "-4", "-5", "Сумма"));
+        nationRatingTreeWidget.setHeaderLabels(asList("#", "Нация", "Текущий сезон", "0", "-1", "-2", "-3", "-4", "-5", "Сумма"));
         nationRatingTreeWidget.header().setStretchLastSection(false);
         nationRatingTreeWidget.setColumnWidth(0, 20);
         nationRatingTreeWidget.setColumnWidth(1, 100);
@@ -51,6 +51,7 @@ public class NationRatingWidget extends QWidget {
         nationRatingTreeWidget.setColumnWidth(6, 50);
         nationRatingTreeWidget.setColumnWidth(7, 50);
         nationRatingTreeWidget.setColumnWidth(8, 50);
+        nationRatingTreeWidget.setColumnWidth(9, 50);
         nationRatingTreeWidget.setItemDelegate(new CustomItemDelegate());
 
         for (Nation nation : Nation.values()) {
@@ -58,11 +59,12 @@ public class NationRatingWidget extends QWidget {
             item.setData(0, DisplayRole, nationRating.getNationRanking(nation) + 1);
             item.setText(1, nation.getName());
             setDoubleData(item, 2, nationRating.getCurrentSeasonPoints(nation));
+            setDoubleData(item, 3, nationRating.getCurrentSeasonValue(nation));
             NationRating.PointHistoryItem pointHistory = nationRating.getPointHistory(nation);
             for (int i = 0; i < pointHistory.seasons.length; i++) {
-                setDoubleData(item, 3 + i, pointHistory.seasons[i]);
+                setDoubleData(item, 4 + i, pointHistory.seasons[i]);
             }
-            setDoubleData(item, 8, nationRating.getTotalPoints(nation));
+            setDoubleData(item, 9, nationRating.getTotalPoints(nation));
             nationRatingTreeWidget.addTopLevelItem(item);
         }
 

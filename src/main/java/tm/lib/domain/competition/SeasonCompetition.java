@@ -68,6 +68,14 @@ public class SeasonCompetition extends MultiStageCompetition {
         return gameWorld;
     }
 
+    public ChampionsLeagueCompetition getChampionsLeague() {
+        return championsLeague;
+    }
+
+    public FederationCupCompetition getFederationsCup() {
+        return federationsCup;
+    }
+
     @Override
     public void setStartingDate(int date) {
         for (Nation nation : Nation.values()) {

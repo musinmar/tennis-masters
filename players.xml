@@ -17,16 +17,16 @@
   <player name="Фил Кукки" nation="Галилео" country="Альдорум" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
   <player name="Джек Риччи" nation="Галилео" country="Северный Альянс" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
   <player name="Паола Фоззи" nation="Галилео" country="Северный Альянс" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Чен Флетчер" nation="Оберон-22" country="Альдорум" spe="60" acc="50" dex="70" end="60" pow="40" rng="30" acu="100" skl="70" cun="50" rsk="70"/>
-  <player name="Таня Джоко" nation="Оберон-22" country="Альдорум" spe="70" acc="60" dex="90" end="30" pow="40" rng="40" acu="60" skl="60" cun="100" rsk="50"/>
-  <player name="Боб Дроу" nation="Оберон-22" country="Альдорум" spe="10" acc="20" dex="20" end="80" pow="60" rng="60" acu="40" skl="70" cun="40" rsk="50"/>
-  <player name="Джеф Ринго" nation="Оберон-22" country="Альдорум" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Клод Гош" nation="Оберон-22" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Мэри Куллидж" nation="Оберон-22" country="Альдорум" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Лео Ленг" nation="Камелеопард" country="Коньюкция" spe="30" acc="40" dex="20" end="50" pow="100" rng="70" acu="60" skl="70" cun="20" rsk="50"/>
-  <player name="Мэй Клапс" nation="Камелеопард" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Пат Кент" nation="Камелеопард" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Микки Шуф" nation="Камелеопард" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Дино Ненси" nation="Камелеопард" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
-  <player name="Джо Гугги" nation="Камелеопард" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Чен Флетчер" nation="Камелеопард" country="Альдорум" spe="60" acc="50" dex="70" end="60" pow="40" rng="30" acu="100" skl="70" cun="50" rsk="70"/>
+  <player name="Таня Джоко" nation="Камелеопард" country="Альдорум" spe="70" acc="60" dex="90" end="30" pow="40" rng="40" acu="60" skl="60" cun="100" rsk="50"/>
+  <player name="Боб Дроу" nation="Камелеопард" country="Альдорум" spe="10" acc="20" dex="20" end="80" pow="60" rng="60" acu="40" skl="70" cun="40" rsk="50"/>
+  <player name="Джеф Ринго" nation="Камелеопард" country="Альдорум" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Клод Гош" nation="Камелеопард" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Мэри Куллидж" nation="Камелеопард" country="Альдорум" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Лео Ленг" nation="Оберон-22" country="Коньюкция" spe="30" acc="40" dex="20" end="50" pow="100" rng="70" acu="60" skl="70" cun="20" rsk="50"/>
+  <player name="Мэй Клапс" nation="Оберон-22" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Пат Кент" nation="Оберон-22" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Микки Шуф" nation="Оберон-22" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Дино Ненси" nation="Оберон-22" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
+  <player name="Джо Гугги" nation="Оберон-22" country="Коньюкция" spe="50" acc="50" dex="50" end="50" pow="50" rng="50" acu="50" skl="50" cun="50" rsk="50"/>
 </players>

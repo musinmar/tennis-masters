@@ -254,6 +254,7 @@ public class GameWorldDialog extends QDialog {
         updateLogText();
         updatePreviousMatchLabel(match);
         updateNextMatchLabel();
+        nationRatingWidget.repopulateNationRatingWidget();
     }
 
     private void updateLogText() {

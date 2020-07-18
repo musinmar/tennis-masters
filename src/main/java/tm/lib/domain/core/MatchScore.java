@@ -43,6 +43,11 @@ public class MatchScore {
         return scoreBySets.v1 > scoreBySets.v2;
     }
 
+    public boolean isSecondPlayerWinner() {
+        BasicScore scoreBySets = getScoreBySets();
+        return scoreBySets.v1 < scoreBySets.v2;
+    }
+
     public boolean isDraw() {
         BasicScore scoreBySets = getScoreBySets();
         return scoreBySets.v1 == scoreBySets.v2;

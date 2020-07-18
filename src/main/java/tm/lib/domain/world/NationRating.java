@@ -57,11 +57,13 @@ public class NationRating {
         return seasonPoints.get(nation).toDouble();
     }
 
+    public Double getCurrentSeasonValue(Nation nation) {
+        return getCurrentSeasonPoints(nation) / getCountCoefficient(getNationRanking(nation));
+    }
+
     public Double getTotalPoints(Nation nation) {
         double historySum = Arrays.stream(pointHistory.get(nation).seasons).sum();
-        int nationRanking = getNationRanking(nation);
-        double currentSeasonValue = getCurrentSeasonPoints(nation) / getCountCoefficient(nationRanking);
-        return historySum + currentSeasonValue;
+        return historySum + getCurrentSeasonValue(nation);
     }
 
     public int getNationRanking(Nation nation) {
@@ -158,23 +160,20 @@ public class NationRating {
         }
     }
 
-    public void updateRatings(Knight p1, Knight p2, BasicScore r, int points) {
+    public void updateRatings(Knight k1, Knight k2, BasicScore r, int points) {
         if (r.v1 > r.v2) {
-            addSeasonPoints(p1, points);
+            addSeasonPoints(k1, points);
         } else if (r.v2 > r.v1) {
-            addSeasonPoints(p2, points);
+            addSeasonPoints(k2, points);
         } else {
-            addSeasonPoints(p1, points / 2.0);
-            addSeasonPoints(p2, points / 2.0);
+            addSeasonPoints(k1, points / 2.0);
+            addSeasonPoints(k2, points / 2.0);
         }
     }
 
-    private void addSeasonPoints(Knight p, double points) {
-        if (points == 0) {
-            return;
-        }
-        playerSeasonPoints.put(p, playerSeasonPoints.computeIfAbsent(p, player -> 0.) + points);
-        addSeasonPoints(p.getNation(), points);
+    private void addSeasonPoints(Knight knight, double points) {
+        playerSeasonPoints.put(knight, playerSeasonPoints.computeIfAbsent(knight, player -> 0.) + points);
+        addSeasonPoints(knight.getNation(), points);
     }
 
     private void addSeasonPoints(Nation nation, double points) {

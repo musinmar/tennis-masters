@@ -1,5 +1,6 @@
 package tm.lib.domain.world;
 
+import com.google.common.collect.ImmutableMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -14,6 +15,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static tm.lib.domain.world.GameWorldLogger.NoopLogger;
 
@@ -29,6 +31,7 @@ public class GameWorld {
     private int year = 0;
 
     private Competition latestCompetition;
+    private Map<Competition, Integer> competitionPointValues;
 
     public GameWorld() {
         initNewGame();
@@ -36,6 +39,8 @@ public class GameWorld {
         SeasonCompetition season = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers());
         season.setStartingDate(0);
         seasons.add(season);
+
+        initCompetitionPointValues();
     }
 
     public GameWorldLogger getLogger() {
@@ -95,6 +100,20 @@ public class GameWorld {
         }
     }
 
+    private void initCompetitionPointValues() {
+        SeasonCompetition s = getCurrentSeason();
+        competitionPointValues = ImmutableMap.<Competition, Integer>builder()
+                .put(s.getChampionsLeague().getFirstQualifyingStage(), 2)
+                .put(s.getFederationsCup().getFirstQualifyingStage(), 1)
+                .put(s.getChampionsLeague().getSecondQualifyingStage(), 2)
+                .put(s.getFederationsCup().getSecondQualifyingStage(), 1)
+                .put(s.getFederationsCup().getGroupStage(), 2)
+                .put(s.getChampionsLeague().getGroupStage(), 4)
+                .put(s.getFederationsCup().getPlayoffStage(), 2)
+                .put(s.getChampionsLeague().getPlayoffStage(), 4)
+                .build();
+    }
+
     public void processMatch(MatchEvent match, MatchScore score) {
         if (match.getCompetition() != latestCompetition) {
             logger.println();
@@ -105,6 +124,7 @@ public class GameWorld {
 
         match.getCompetition().processMatchResult(match, score);
         getEloRating().updateRatings(match.getHomePlayer().getPlayer(), match.getAwayPlayer().getPlayer(), score.getScoreBySets());
+        updateNationRating(match, score);
 
         logger.println(match.toString());
 
@@ -119,5 +139,24 @@ public class GameWorld {
                 logger.println(groupSubStage.printGroupResultsToString());
             }
         }
+    }
+
+    private void updateNationRating(MatchEvent match, MatchScore score) {
+        Integer points = getCompetitionPoints(match.getCompetition());
+        if (points != null) {
+            nationRating.updateRatings(
+                    match.getHomePlayer().getPlayer(),
+                    match.getAwayPlayer().getPlayer(),
+                    score.getScoreBySets(),
+                    points);
+        }
+    }
+
+    private Integer getCompetitionPoints(Competition competition) {
+        Integer points = competitionPointValues.get(competition);
+        if (points == null) {
+            points = competitionPointValues.get(competition.getParent());
+        }
+        return points;
     }
 }

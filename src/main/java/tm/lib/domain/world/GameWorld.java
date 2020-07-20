@@ -1,6 +1,7 @@
 package tm.lib.domain.world;
 
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.Validate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -13,13 +14,25 @@ import tm.lib.domain.core.MatchScore;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static tm.lib.domain.world.GameWorldLogger.NoopLogger;
 
 public class GameWorld {
+    private static final String FOLDER = "season";
+    //    private static final String FILE_NAME_SEASON_JSON = "season.json";
+//    private static final String FILE_NAME_RATING = "rating";
+    private static final String FILE_NAME_RATING_CHANGE = "rating change";
+//    private static final String FILE_NAME_STATS = "stats";
+
     private GameWorldLogger logger = NoopLogger;
 
     private List<SeasonCompetition> seasons = new ArrayList<SeasonCompetition>();
@@ -32,6 +45,8 @@ public class GameWorld {
 
     private Competition latestCompetition;
     private Map<Competition, Integer> competitionPointValues;
+
+    private boolean isSeasonFinished = false;
 
     public GameWorld() {
         initNewGame();
@@ -69,6 +84,10 @@ public class GameWorld {
 
     public NationRating getNationRating() {
         return nationRating;
+    }
+
+    public boolean isSeasonFinished() {
+        return isSeasonFinished;
     }
 
     private void initNewGame() {
@@ -158,5 +177,49 @@ public class GameWorld {
             points = competitionPointValues.get(competition.getParent());
         }
         return points;
+    }
+
+    public void finishSeason() {
+        Validate.isTrue(!isSeasonFinished);
+
+        saveToFile(makeFilename(FILE_NAME_RATING_CHANGE, true, true),
+                writer -> getEloRating().print(writer, true));
+
+        year += 1;
+        getNationRating().advanceYear();
+
+        logger.println();
+        getNationRating().printPointHistory(logger);
+        logger.println("Season finished");
+
+        isSeasonFinished = true;
+    }
+
+    private String makeFilename(String s, boolean withYear, boolean txtExtension) {
+        Path folderPath = Paths.get(FOLDER);
+        if (!Files.exists(folderPath)) {
+            try {
+                Files.createDirectory(folderPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        String ret = s;
+        if (withYear) {
+            ret += " " + (year + 1);
+        }
+        if (txtExtension) {
+            ret += ".txt";
+        }
+        return folderPath.resolve(ret).toAbsolutePath().toString();
+    }
+
+    private void saveToFile(String filename, Consumer<PrintWriter> writerConsumer) {
+        try (PrintWriter writer = new PrintWriter(filename)) {
+            writerConsumer.accept(writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

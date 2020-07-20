@@ -106,19 +106,19 @@ public class NationRating {
 //        return nationRating;
 //    }
 
-//    public void printPointHistory() {
-//        println("Federations table");
-//        println();
-//        int index = 0;
-//        for (Nation nation : Nation.values()) {
-//            PointHistoryItem pointHistoryItem = pointHistory.get(nation);
-//            print(String.format("%d) %-11s", index + 1, nation.getName()));
-//            Arrays.stream(pointHistoryItem.seasons).forEach(d -> print(String.format("%7.2f", d)));
-//            println();
-//            ++index;
-//        }
-//        println();
-//    }
+    public void printPointHistory(GameWorldLogger logger) {
+        logger.println("Рейтинг наций");
+        logger.println();
+        int index = 0;
+        for (Nation nation : Nation.values()) {
+            PointHistoryItem pointHistoryItem = pointHistory.get(nation);
+            logger.print(String.format("%d) %-11s", index + 1, nation.getName()));
+            Arrays.stream(pointHistoryItem.seasons).forEach(d -> logger.print(String.format("%7.2f", d)));
+            logger.println();
+            ++index;
+        }
+        logger.println();
+    }
 
     public void calculateRankingsAndPrint() {
         double[] sums = Arrays.stream(Nation.values())

@@ -16,17 +16,21 @@ import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QSizePolicy;
 import com.trolltech.qt.gui.QSpacerItem;
 import com.trolltech.qt.gui.QTabWidget;
+import com.trolltech.qt.gui.QTextCursor;
 import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QWidget;
 import tm.lib.domain.competition.SeasonCompetition;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.base.MultiStageCompetition;
+import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.GameWorld;
 import tm.lib.domain.world.GameWorldLogger;
 import tm.lib.engine.StrategyProvider;
 import tm.ui.qt.simulation.SimulationHelper;
+
+import java.util.function.BiFunction;
 
 public class GameWorldDialog extends QDialog {
 
@@ -235,17 +239,22 @@ public class GameWorldDialog extends QDialog {
     }
 
     private void onNextMatchButtonClicked() {
-        MatchEvent match = gameWorld.getCurrentSeason().getNextMatch();
-        //StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(neuralNetworkTeacher.getBestFoundPerceptron()), new StandardStrategy());
-        MatchScore score = SimulationHelper.showMatch(match.createMatchSpec(), StrategyProvider.standard(), this);
-        applyMatchResult(match, score);
+        runWithSimulationRunner((match, strategyProvider) -> SimulationHelper.showMatch(match, strategyProvider, this));
     }
 
     private void onNextMatchFastButtonClicked() {
+        runWithSimulationRunner(SimulationHelper::simulateMatch);
+    }
+
+    private void runWithSimulationRunner(BiFunction<Match, StrategyProvider, MatchScore> simulationRunner) {
         MatchEvent match = gameWorld.getCurrentSeason().getNextMatch();
-        //StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(neuralNetworkTeacher.getBestFoundPerceptron()), new StandardStrategy());
-        MatchScore score = SimulationHelper.simulateMatch(match.createMatchSpec(), StrategyProvider.standard());
-        applyMatchResult(match, score);
+        if (match != null) {
+            //StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(neuralNetworkTeacher.getBestFoundPerceptron()), new StandardStrategy());
+            MatchScore score = simulationRunner.apply(match.createMatchSpec(), StrategyProvider.standard());
+            applyMatchResult(match, score);
+        } else if (!gameWorld.isSeasonFinished()) {
+            gameWorld.finishSeason();
+        }
     }
 
     private void applyMatchResult(MatchEvent match, MatchScore score) {
@@ -376,7 +385,8 @@ public class GameWorldDialog extends QDialog {
         GameWorldLogger logger = new GameWorldLogger() {
             @Override
             public void print(String str) {
-                throw new UnsupportedOperationException();
+                seasonLogTextEdit.moveCursor(QTextCursor.MoveOperation.End);
+                seasonLogTextEdit.insertPlainText(str);
             }
 
             @Override

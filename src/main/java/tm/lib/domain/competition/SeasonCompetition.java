@@ -57,8 +57,9 @@ public class SeasonCompetition extends MultiStageCompetition {
 
         tournaments.addAll(asList(
                 federationsCup,
-                championsLeague,
-                worldCupCompetition
+                championsLeague
+//                ,
+//                worldCupCompetition
         ));
 
         initStages(tournaments);

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static java.util.stream.Collectors.toList;
 import static tm.lib.domain.world.WorldLogger.NoopLogger;
 
 public class World {
@@ -49,20 +50,36 @@ public class World {
 
     private boolean isSeasonFinished = false;
 
-    public World() {
-        initNewGame();
-
-        SeasonCompetition season = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers());
-        season.setStartingDate(0);
-        seasons.add(season);
-
-        initCompetitionPointValues();
+    private World() {
     }
 
-    public World(WorldDto worldDto) {
-        initNewGame();
+    public static World createNewWorld() {
+        World world = new World();
+        world.initNewGame();
+        world.initCompetitions();
+        return world;
+    }
 
-        year = worldDto.getYear();
+    public static World fromDto(WorldDto dto) {
+        World world = new World();
+
+        world.year = dto.getYear();
+        world.players = dto.getKnights().stream().map(Knight::fromDto).collect(toList());
+        world.eloRating = EloRating.fromDto(dto.getEloRating(), world.players);
+
+        world.initCompetitions();
+
+        return world;
+    }
+
+    public WorldDto toDto() {
+        WorldDto dto = new WorldDto();
+
+        dto.setYear(year);
+        dto.setKnights(players.stream().map(Knight::toDto).collect(toList()));
+        dto.setEloRating(eloRating.toDto());
+
+        return dto;
     }
 
     public WorldLogger getLogger() {
@@ -97,11 +114,6 @@ public class World {
         return isSeasonFinished;
     }
 
-    public WorldDto toDto() {
-        WorldDto dto = new WorldDto();
-        dto.setYear(year);
-        return dto;
-    }
 
     private void initNewGame() {
         year = 0;
@@ -111,6 +123,14 @@ public class World {
         nationRating = new NationRating();
         nationRating.initDefault();
         nationRating.calculateRankingsAndPrint();
+    }
+
+    private void initCompetitions() {
+        SeasonCompetition season = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers());
+        season.setStartingDate(0);
+        seasons.add(season);
+
+        initCompetitionPointValues();
     }
 
     private static List<Knight> loadDefaultPlayers() {
@@ -123,7 +143,7 @@ public class World {
             for (int i = 0; i < playerNodes.getLength(); ++i) {
                 Element playerElement = (Element) playerNodes.item(i);
                 Knight knight = new Knight();
-                knight.init(playerElement);
+                knight.init(i, playerElement);
                 knight.setRandomSkills();
                 knights.add(knight);
             }

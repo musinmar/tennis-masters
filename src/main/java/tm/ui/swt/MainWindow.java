@@ -15,7 +15,7 @@ public class MainWindow {
     public World world;
 
     public MainWindow(Display parent) {
-        world = new World();
+        world = World.createNewWorld();
 
         shell = new Shell(parent);
         RowLayout layout = new RowLayout(SWT.VERTICAL);

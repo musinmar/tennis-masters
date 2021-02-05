@@ -23,7 +23,7 @@ public class PersistenceManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return new World(worldDto);
+        return World.fromDto(worldDto);
     }
 
     public static void saveWorld(World world) {

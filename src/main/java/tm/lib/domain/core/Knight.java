@@ -1,8 +1,11 @@
 package tm.lib.domain.core;
 
 import org.w3c.dom.Element;
+import tm.lib.domain.core.dto.KnightDto;
 
 public class Knight {
+    private int id;
+
     private String name;
     private String surname;
 
@@ -21,6 +24,8 @@ public class Knight {
     private double dexterity;
 
     public Knight() {
+        id = -1;
+
         name = "Nil_name";
         surname = "Nil_surname";
         nation = Nation.ALMAGEST;
@@ -36,6 +41,42 @@ public class Knight {
         risk = 50;
         endurance = 50;
         dexterity = 50;
+    }
+
+    public static Knight fromDto(KnightDto dto) {
+        Knight knight = new Knight();
+        knight.id = dto.getId();
+        knight.speed = dto.getSpeed();
+        knight.acceleration = dto.getAcceleration();
+        knight.hitPower = dto.getHitPower();
+        knight.shotRange = dto.getShotRange();
+        knight.accuracy = dto.getAccuracy();
+        knight.cunning = dto.getCunning();
+        knight.skill = dto.getSkill();
+        knight.risk = dto.getRisk();
+        knight.endurance = dto.getEndurance();
+        knight.dexterity = dto.getDexterity();
+        return knight;
+    }
+
+    public KnightDto toDto() {
+        KnightDto dto = new KnightDto();
+        dto.setId(id);
+        dto.setName(name);
+        dto.setSurname(surname);
+        dto.setNation(nation);
+        dto.setCountry(country);
+        dto.setSpeed(speed);
+        dto.setAcceleration(acceleration);
+        dto.setHitPower(hitPower);
+        dto.setShotRange(shotRange);
+        dto.setAccuracy(accuracy);
+        dto.setCunning(cunning);
+        dto.setSkill(skill);
+        dto.setRisk(risk);
+        dto.setEndurance(endurance);
+        dto.setDexterity(dexterity);
+        return dto;
     }
 
     public String getFullName() {
@@ -211,6 +252,10 @@ public class Knight {
         dexterity = r.nextDouble() * 100;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
@@ -267,9 +312,10 @@ public class Knight {
         return dexterity;
     }
 
-    public void init(Element playerElement) {
+    public void init(int id, Element playerElement) {
         String fullName = playerElement.getAttribute("name");
         int spaceIndex = fullName.indexOf(' ');
+        this.id = id;
         name = fullName.substring(0, spaceIndex);
         surname = fullName.substring(spaceIndex + 1);
 

@@ -2,6 +2,7 @@ package tm.lib.domain.world;
 
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.Knight;
+import tm.lib.domain.world.dto.EloRatingDto;
 
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -33,23 +34,23 @@ public class EloRating {
         ratings = players.stream().collect(toMap(identity(), p -> new Rating(AVERAGE_RATING)));
     }
 
-//    public EloRatingDto toDto() {
-//        EloRatingDto eloRatingDto = new EloRatingDto();
-//        List<EloRatingDto.ItemDto> itemDtos = ratings.entrySet().stream()
-//                .map(e -> new EloRatingDto.ItemDto(e.getKey().getId(), e.getValue().value))
-//                .collect(toList());
-//        eloRatingDto.setItems(itemDtos);
-//        return eloRatingDto;
-//    }
-//
-//    public static EloRating fromDto(EloRatingDto eloRatingDto, List<Knight> Persons) {
-//        EloRating eloRating = new EloRating(Persons);
-//        eloRating.ratings = eloRatingDto.getItems().stream()
-//                .collect(toMap(item -> Persons.get(item.getPersonId()), item -> new Rating(item.getPoints())));
-//        eloRating.normalize();
-//        eloRating.savePointsAsLastYearPoints();
-//        return eloRating;
-//    }
+    public EloRatingDto toDto() {
+        EloRatingDto eloRatingDto = new EloRatingDto();
+        List<EloRatingDto.ItemDto> itemDtos = ratings.entrySet().stream()
+                .map(e -> new EloRatingDto.ItemDto(e.getKey().getId(), e.getValue().value))
+                .collect(toList());
+        eloRatingDto.setItems(itemDtos);
+        return eloRatingDto;
+    }
+
+    public static EloRating fromDto(EloRatingDto eloRatingDto, List<Knight> knights) {
+        EloRating eloRating = new EloRating(knights);
+        eloRating.ratings = eloRatingDto.getItems().stream()
+                .collect(toMap(item -> knights.get(item.getPlayerId()), item -> new Rating(item.getPoints())));
+        eloRating.normalize();
+        eloRating.savePointsAsLastYearPoints();
+        return eloRating;
+    }
 
     private void normalize() {
         Collection<Rating> allRatings = ratings.values();

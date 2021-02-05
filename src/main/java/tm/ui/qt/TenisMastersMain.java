@@ -9,7 +9,7 @@ public class TenisMastersMain {
         QApplication.initialize(args);
         //MainWindow mainWindow = new MainWindow();
         //mainWindow.show();
-        GameWorldDialog gameWorldDialog = new GameWorldDialog(new World(), null);
+        GameWorldDialog gameWorldDialog = new GameWorldDialog(World.createNewWorld(), null);
         gameWorldDialog.show();
         QApplication.execStatic();
         QApplication.shutdown();

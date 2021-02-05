@@ -1,8 +1,14 @@
 package tm.lib.domain.world.dto;
 
+import tm.lib.domain.core.dto.KnightDto;
+
+import java.util.List;
+
 public class WorldDto {
 
     private int year;
+    private List<KnightDto> knights;
+    private EloRatingDto eloRating;
 
     public int getYear() {
         return year;
@@ -10,5 +16,21 @@ public class WorldDto {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public List<KnightDto> getKnights() {
+        return knights;
+    }
+
+    public void setKnights(List<KnightDto> knights) {
+        this.knights = knights;
+    }
+
+    public EloRatingDto getEloRating() {
+        return eloRating;
+    }
+
+    public void setEloRating(EloRatingDto eloRating) {
+        this.eloRating = eloRating;
     }
 }

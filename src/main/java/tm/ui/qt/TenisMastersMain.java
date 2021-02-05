@@ -1,7 +1,7 @@
 package tm.ui.qt;
 
 import com.trolltech.qt.gui.QApplication;
-import tm.lib.domain.world.GameWorld;
+import tm.lib.domain.world.World;
 
 public class TenisMastersMain {
 
@@ -9,7 +9,7 @@ public class TenisMastersMain {
         QApplication.initialize(args);
         //MainWindow mainWindow = new MainWindow();
         //mainWindow.show();
-        GameWorldDialog gameWorldDialog = new GameWorldDialog(new GameWorld(), null);
+        GameWorldDialog gameWorldDialog = new GameWorldDialog(new World(), null);
         gameWorldDialog.show();
         QApplication.execStatic();
         QApplication.shutdown();

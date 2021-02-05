@@ -11,6 +11,7 @@ import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.standard.GroupSubStage;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
+import tm.lib.domain.world.dto.WorldDto;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,16 +25,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static tm.lib.domain.world.GameWorldLogger.NoopLogger;
+import static tm.lib.domain.world.WorldLogger.NoopLogger;
 
-public class GameWorld {
+public class World {
     private static final String FOLDER = "season";
     //    private static final String FILE_NAME_SEASON_JSON = "season.json";
 //    private static final String FILE_NAME_RATING = "rating";
     private static final String FILE_NAME_RATING_CHANGE = "rating change";
 //    private static final String FILE_NAME_STATS = "stats";
 
-    private GameWorldLogger logger = NoopLogger;
+    private WorldLogger logger = NoopLogger;
 
     private List<SeasonCompetition> seasons = new ArrayList<SeasonCompetition>();
     private List<Knight> players = new ArrayList<Knight>();
@@ -48,7 +49,7 @@ public class GameWorld {
 
     private boolean isSeasonFinished = false;
 
-    public GameWorld() {
+    public World() {
         initNewGame();
 
         SeasonCompetition season = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers());
@@ -58,11 +59,17 @@ public class GameWorld {
         initCompetitionPointValues();
     }
 
-    public GameWorldLogger getLogger() {
+    public World(WorldDto worldDto) {
+        initNewGame();
+
+        year = worldDto.getYear();
+    }
+
+    public WorldLogger getLogger() {
         return logger;
     }
 
-    public void setLogger(GameWorldLogger logger) {
+    public void setLogger(WorldLogger logger) {
         this.logger = logger;
     }
 
@@ -90,6 +97,12 @@ public class GameWorld {
         return isSeasonFinished;
     }
 
+    public WorldDto toDto() {
+        WorldDto dto = new WorldDto();
+        dto.setYear(year);
+        return dto;
+    }
+
     private void initNewGame() {
         year = 0;
         players = loadDefaultPlayers();
@@ -111,6 +124,7 @@ public class GameWorld {
                 Element playerElement = (Element) playerNodes.item(i);
                 Knight knight = new Knight();
                 knight.init(playerElement);
+                knight.setRandomSkills();
                 knights.add(knight);
             }
             return knights;

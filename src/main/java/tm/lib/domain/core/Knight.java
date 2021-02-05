@@ -197,6 +197,20 @@ public class Knight {
         return a;
     }
 
+    public void setRandomSkills() {
+        java.util.Random r = new java.util.Random(System.currentTimeMillis());
+        speed = r.nextDouble() * 100;
+        acceleration = r.nextDouble() * 100;
+        hitPower = r.nextDouble() * 100;
+        shotRange = r.nextDouble() * 100;
+        accuracy = r.nextDouble() * 100;
+        cunning = r.nextDouble() * 100;
+        skill = r.nextDouble() * 100;
+        risk = r.nextDouble() * 100;
+        endurance = r.nextDouble() * 100;
+        dexterity = r.nextDouble() * 100;
+    }
+
     public String getName() {
         return name;
     }

@@ -25,7 +25,7 @@ import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Stadium;
-import tm.lib.domain.world.GameWorld;
+import tm.lib.domain.world.World;
 import tm.lib.engine.Strategy;
 import tm.lib.engine.StrategyProvider;
 import tm.lib.engine.strategies.NeuralNetworkStrategy;
@@ -42,7 +42,7 @@ import static tm.ui.qt.simulation.WidgetsHelper.fillPlayerComboBox;
 
 public class MatchConfigurationDialog extends QDialog {
 
-    private GameWorld gameWorld;
+    private World world;
     private PlayerSelector homePlayerSelector;
     private PlayerSelector awayPlayerSelector;
     private QTextEdit resultTextEdit;
@@ -57,9 +57,9 @@ public class MatchConfigurationDialog extends QDialog {
         QPushButton selectNetworkButton;
     }
 
-    public MatchConfigurationDialog(GameWorld gameWorld, QWidget parent) {
+    public MatchConfigurationDialog(World world, QWidget parent) {
         super(parent);
-        this.gameWorld = gameWorld;
+        this.world = world;
         setupUi();
     }
 
@@ -91,7 +91,7 @@ public class MatchConfigurationDialog extends QDialog {
 
         QLabel playerLabel = new QLabel("Игрок:", this);
         playerSelector.playerComboBox = new QComboBox(this);
-        fillPlayerComboBox(playerSelector.playerComboBox, gameWorld);
+        fillPlayerComboBox(playerSelector.playerComboBox, world);
         QLabel networkLabel = new QLabel("Сеть:", this);
         playerSelector.annPathEdit = new QLineEdit(this);
         playerSelector.selectNetworkButton = new QPushButton(this);

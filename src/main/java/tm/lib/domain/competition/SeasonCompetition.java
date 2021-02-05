@@ -6,7 +6,7 @@ import tm.lib.domain.competition.standard.GroupSubStage;
 import tm.lib.domain.competition.standard.PlayoffSubStageResult;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Nation;
-import tm.lib.domain.world.GameWorld;
+import tm.lib.domain.world.World;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,17 +21,17 @@ import static tm.lib.domain.core.Nation.OBERON_22;
 
 public class SeasonCompetition extends MultiStageCompetition {
 
-    private final GameWorld gameWorld;
+    private final World world;
 
     private final Map<Nation, GroupSubStage> nationalCups = new HashMap<>();
     private final ChampionsLeagueCompetition championsLeague;
     private final FederationCupCompetition federationsCup;
     private final WorldCupCompetition worldCupCompetition;
 
-    public SeasonCompetition(String name, GameWorld gameWorld, List<Knight> players) {
+    public SeasonCompetition(String name, World world, List<Knight> players) {
         super(name);
 
-        this.gameWorld = gameWorld;
+        this.world = world;
 
         List<Competition> tournaments = new ArrayList<>();
 
@@ -65,8 +65,8 @@ public class SeasonCompetition extends MultiStageCompetition {
         initStages(tournaments);
     }
 
-    public GameWorld getGameWorld() {
-        return gameWorld;
+    public World getGameWorld() {
+        return world;
     }
 
     public ChampionsLeagueCompetition getChampionsLeague() {
@@ -170,7 +170,7 @@ public class SeasonCompetition extends MultiStageCompetition {
 
     private List<List<Knight>> makeCLGroups(List<Knight> knights) {
         List<Knight> sortedKnights = new ArrayList<>(knights);
-        gameWorld.getEloRating().sortPersonsByRating(sortedKnights);
+        world.getEloRating().sortPersonsByRating(sortedKnights);
         List<Knight> top = new ArrayList<>(sortedKnights.subList(0, 4));
         List<Knight> bottom = new ArrayList<>(sortedKnights.subList(4, 8));
         top = drawPlayersInPairs(top, false);
@@ -190,12 +190,12 @@ public class SeasonCompetition extends MultiStageCompetition {
     }
 
     private Knight get_player_from(int rank, int pos) {
-        Nation nation = gameWorld.getNationRating().getRankedNation(rank - 1);
+        Nation nation = world.getNationRating().getRankedNation(rank - 1);
         return nationalCups.get(nation).getResults().get(pos - 1);
     }
 
     private void onCLPlayoffFinished() {
-        List<Knight> worldCupParticipants = gameWorld.getEloRating().getPersonsByRating();
+        List<Knight> worldCupParticipants = world.getEloRating().getPersonsByRating();
         worldCupCompetition.setActualParticipants(worldCupParticipants);
     }
 }

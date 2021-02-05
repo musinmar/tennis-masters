@@ -18,7 +18,7 @@ import com.trolltech.qt.gui.QWidget;
 import org.neuroph.core.Layer;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.world.GameWorld;
+import tm.lib.domain.world.World;
 import tm.ui.qt.simulation.NeuralNetworkTeacher;
 
 import java.util.List;
@@ -31,23 +31,23 @@ import static tm.ui.qt.simulation.WidgetsHelper.fillPlayerComboBox;
 
 public class TeachNeuralNetworkDialog extends QDialog {
 
-    private GameWorld gameWorld;
+    private World world;
     private QComboBox playerComboBox;
     private QSpinBox iterationCountSpinBox;
     private QLineEdit outputDirectoryEdit;
     private QLabel teachingStatusLabel;
     private QLineEdit templatePerceptronPathEdit;
 
-    public TeachNeuralNetworkDialog(GameWorld gameWorld, QWidget parent) {
+    public TeachNeuralNetworkDialog(World world, QWidget parent) {
         super(parent);
-        this.gameWorld = gameWorld;
+        this.world = world;
         setupUi();
     }
 
     private void setupUi() {
         QLabel playerLabel = new QLabel("Игрок:", this);
         playerComboBox = new QComboBox(this);
-        fillPlayerComboBox(playerComboBox, gameWorld);
+        fillPlayerComboBox(playerComboBox, world);
 
         QLabel iterationCountLabel = new QLabel("Итераций:", this);
         iterationCountSpinBox = new QSpinBox(this);

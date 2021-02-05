@@ -1,6 +1,6 @@
 package tm.lib.domain.world;
 
-public interface GameWorldLogger {
+public interface WorldLogger {
 
     void print(String str);
 
@@ -10,7 +10,7 @@ public interface GameWorldLogger {
 
     void println(String formatString, Object... args);
 
-    GameWorldLogger NoopLogger = new GameWorldLogger() {
+    WorldLogger NoopLogger = new WorldLogger() {
         @Override
         public void print(String str) {
         }

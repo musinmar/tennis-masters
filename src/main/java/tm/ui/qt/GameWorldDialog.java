@@ -25,8 +25,9 @@ import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
-import tm.lib.domain.world.GameWorld;
-import tm.lib.domain.world.GameWorldLogger;
+import tm.lib.domain.world.PersistenceManager;
+import tm.lib.domain.world.World;
+import tm.lib.domain.world.WorldLogger;
 import tm.lib.engine.StrategyProvider;
 import tm.ui.qt.simulation.SimulationHelper;
 
@@ -34,7 +35,7 @@ import java.util.function.BiFunction;
 
 public class GameWorldDialog extends QDialog {
 
-    private final GameWorld gameWorld;
+    private final World world;
 
     private QPlainTextEdit competitionBrowserTextEdit;
     private QComboBox seasonComboBox;
@@ -46,14 +47,16 @@ public class GameWorldDialog extends QDialog {
     private QPlainTextEdit seasonLogTextEdit;
     private NationRatingWidget nationRatingWidget;
 
-    public GameWorldDialog(GameWorld gameWorld, QWidget parent) {
+    public GameWorldDialog(World world, QWidget parent) {
         super(parent);
-        this.gameWorld = gameWorld;
+        this.world = world;
         setupUi();
         populateSeasonComboBox();
         updateLogText();
         updateNextMatchLabel();
         configureGameWorldLogger();
+
+        PersistenceManager.saveWorld(world);
     }
 
     private void setupUi() {
@@ -114,7 +117,7 @@ public class GameWorldDialog extends QDialog {
         QWidget logWidget = new QWidget(this);
         logWidget.setLayout(logWidgetLayout);
 
-        nationRatingWidget = new NationRatingWidget(this, gameWorld.getNationRating());
+        nationRatingWidget = new NationRatingWidget(this, world.getNationRating());
 
         QTabWidget tabWidget = new QTabWidget(this);
         tabWidget.addTab(seasonLogTextEdit, "Лог");
@@ -184,10 +187,10 @@ public class GameWorldDialog extends QDialog {
     }
 
     private void populateSeasonComboBox() {
-        for (SeasonCompetition season : gameWorld.getSeasons()) {
+        for (SeasonCompetition season : world.getSeasons()) {
             seasonComboBox.addItem(season.getName(), season);
         }
-        seasonComboBox.setCurrentIndex(seasonComboBox.findData(gameWorld.getCurrentSeason()));
+        seasonComboBox.setCurrentIndex(seasonComboBox.findData(world.getCurrentSeason()));
     }
 
     private void onSeasonComboBoxIndexChanged() {
@@ -247,19 +250,19 @@ public class GameWorldDialog extends QDialog {
     }
 
     private void runWithSimulationRunner(BiFunction<Match, StrategyProvider, MatchScore> simulationRunner) {
-        MatchEvent match = gameWorld.getCurrentSeason().getNextMatch();
+        MatchEvent match = world.getCurrentSeason().getNextMatch();
         if (match != null) {
             //StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(neuralNetworkTeacher.getBestFoundPerceptron()), new StandardStrategy());
             MatchScore score = simulationRunner.apply(match.createMatchSpec(), StrategyProvider.standard());
             applyMatchResult(match, score);
-        } else if (!gameWorld.isSeasonFinished()) {
-            gameWorld.finishSeason();
+        } else if (!world.isSeasonFinished()) {
+            world.finishSeason();
         }
     }
 
     private void applyMatchResult(MatchEvent match, MatchScore score) {
         selectCompetition(match.getCompetition());
-        gameWorld.processMatch(match, score);
+        world.processMatch(match, score);
         updateLogText();
         updatePreviousMatchLabel(match);
         updateNextMatchLabel();
@@ -353,7 +356,7 @@ public class GameWorldDialog extends QDialog {
     }
 
     private void updateNextMatchLabel() {
-        MatchEvent nextMatch = gameWorld.getCurrentSeason().getNextMatch();
+        MatchEvent nextMatch = world.getCurrentSeason().getNextMatch();
         if (nextMatch == null) {
             return;
         }
@@ -367,22 +370,22 @@ public class GameWorldDialog extends QDialog {
     }
 
     private void onShowEloRatingButtonClicked() {
-        EloRatingDialog eloRatingDialog = new EloRatingDialog(this, gameWorld.getEloRating());
+        EloRatingDialog eloRatingDialog = new EloRatingDialog(this, world.getEloRating());
         eloRatingDialog.exec();
     }
 
     private void onShowMatchConfigurationDialogActionTriggered() {
-        MatchConfigurationDialog matchConfigurationDialog = new MatchConfigurationDialog(gameWorld, this);
+        MatchConfigurationDialog matchConfigurationDialog = new MatchConfigurationDialog(world, this);
         matchConfigurationDialog.exec();
     }
 
     private void onTeachAnnDialogActionTriggered() {
-        TeachNeuralNetworkDialog teachNeuralNetworkDialog = new TeachNeuralNetworkDialog(gameWorld, this);
+        TeachNeuralNetworkDialog teachNeuralNetworkDialog = new TeachNeuralNetworkDialog(world, this);
         teachNeuralNetworkDialog.exec();
     }
 
     private void configureGameWorldLogger() {
-        GameWorldLogger logger = new GameWorldLogger() {
+        WorldLogger logger = new WorldLogger() {
             @Override
             public void print(String str) {
                 seasonLogTextEdit.moveCursor(QTextCursor.MoveOperation.End);
@@ -404,6 +407,6 @@ public class GameWorldDialog extends QDialog {
                 seasonLogTextEdit.appendPlainText(String.format(formatString, args));
             }
         };
-        gameWorld.setLogger(logger);
+        world.setLogger(logger);
     }
 }

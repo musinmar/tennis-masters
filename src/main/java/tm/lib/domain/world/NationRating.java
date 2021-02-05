@@ -106,7 +106,7 @@ public class NationRating {
 //        return nationRating;
 //    }
 
-    public void printPointHistory(GameWorldLogger logger) {
+    public void printPointHistory(WorldLogger logger) {
         logger.println("Рейтинг наций");
         logger.println();
         int index = 0;

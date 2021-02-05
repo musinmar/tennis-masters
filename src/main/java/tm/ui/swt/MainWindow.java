@@ -8,14 +8,14 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import tm.lib.domain.world.GameWorld;
+import tm.lib.domain.world.World;
 
 public class MainWindow {
     public Shell shell;
-    public GameWorld world;
+    public World world;
 
     public MainWindow(Display parent) {
-        world = new GameWorld();
+        world = new World();
 
         shell = new Shell(parent);
         RowLayout layout = new RowLayout(SWT.VERTICAL);

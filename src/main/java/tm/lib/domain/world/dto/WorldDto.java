@@ -9,6 +9,7 @@ public class WorldDto {
     private int year;
     private List<KnightDto> knights;
     private EloRatingDto eloRating;
+    private NationRatingDto nationRating;
 
     public int getYear() {
         return year;
@@ -32,5 +33,13 @@ public class WorldDto {
 
     public void setEloRating(EloRatingDto eloRating) {
         this.eloRating = eloRating;
+    }
+
+    public NationRatingDto getNationRating() {
+        return nationRating;
+    }
+
+    public void setNationRating(NationRatingDto nationRating) {
+        this.nationRating = nationRating;
     }
 }

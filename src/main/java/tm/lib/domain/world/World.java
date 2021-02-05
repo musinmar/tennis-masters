@@ -66,6 +66,7 @@ public class World {
         world.year = dto.getYear();
         world.players = dto.getKnights().stream().map(Knight::fromDto).collect(toList());
         world.eloRating = EloRating.fromDto(dto.getEloRating(), world.players);
+        world.nationRating = NationRating.fromDto(dto.getNationRating());
 
         world.initCompetitions();
 
@@ -78,6 +79,7 @@ public class World {
         dto.setYear(year);
         dto.setKnights(players.stream().map(Knight::toDto).collect(toList()));
         dto.setEloRating(eloRating.toDto());
+        dto.setNationRating(nationRating.toDto());
 
         return dto;
     }

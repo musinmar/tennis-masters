@@ -4,6 +4,7 @@ import org.apache.commons.lang3.mutable.MutableDouble;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Nation;
+import tm.lib.domain.world.dto.NationRatingDto;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 import static java.util.Comparator.comparingDouble;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 public class NationRating {
     private static final int SEASON_COUNT = 5;
@@ -30,17 +32,17 @@ public class NationRating {
             }
         }
 
-//        NationRatingDto.PointHistoryItemDto toDto() {
-//            NationRatingDto.PointHistoryItemDto itemDto = new NationRatingDto.PointHistoryItemDto();
-//            itemDto.setSeasons(seasons);
-//            return itemDto;
-//        }
+        NationRatingDto.PointHistoryItemDto toDto() {
+            NationRatingDto.PointHistoryItemDto itemDto = new NationRatingDto.PointHistoryItemDto();
+            itemDto.setSeasons(seasons);
+            return itemDto;
+        }
 
-//        static PointHistoryItem fromDto(NationRatingDto.PointHistoryItemDto itemDto) {
-//            PointHistoryItem item = new PointHistoryItem(0);
-//            item.seasons = Arrays.copyOf(itemDto.getSeasons(), SEASON_COUNT);
-//            return item;
-//        }
+        static PointHistoryItem fromDto(NationRatingDto.PointHistoryItemDto itemDto) {
+            PointHistoryItem item = new PointHistoryItem(0);
+            item.seasons = Arrays.copyOf(itemDto.getSeasons(), SEASON_COUNT);
+            return item;
+        }
     }
 
     public NationRating() {
@@ -92,19 +94,19 @@ public class NationRating {
         pointHistory.put(Nation.OBERON_22, new PointHistoryItem(4));
     }
 
-//    public NationRatingDto toDto() {
-//        NationRatingDto nationRatingDto = new NationRatingDto();
-//        nationRatingDto.setPointHistory(pointHistory.entrySet().stream()
-//                .collect(toMap(Map.Entry::getKey, e -> e.getValue().toDto())));
-//        return nationRatingDto;
-//    }
-//
-//    public static NationRating fromDto(NationRatingDto nationRatingDto) {
-//        NationRating nationRating = new NationRating();
-//        nationRating.pointHistory = nationRatingDto.getPointHistory().entrySet().stream()
-//                .collect(toMap(Map.Entry::getKey, e -> PointHistoryItem.fromDto(e.getValue())));
-//        return nationRating;
-//    }
+    public NationRatingDto toDto() {
+        NationRatingDto nationRatingDto = new NationRatingDto();
+        nationRatingDto.setPointHistory(pointHistory.entrySet().stream()
+                .collect(toMap(e -> e.getKey(), e -> e.getValue().toDto())));
+        return nationRatingDto;
+    }
+
+    public static NationRating fromDto(NationRatingDto nationRatingDto) {
+        NationRating nationRating = new NationRating();
+        nationRating.pointHistory = nationRatingDto.getPointHistory().entrySet().stream()
+                .collect(toMap(e -> e.getKey(), e -> PointHistoryItem.fromDto(e.getValue())));
+        return nationRating;
+    }
 
     public void printPointHistory(WorldLogger logger) {
         logger.println("Рейтинг наций");

@@ -2,9 +2,6 @@ package tm.lib.domain.world;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.Validate;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import tm.lib.domain.competition.SeasonCompetition;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MatchEvent;
@@ -13,8 +10,6 @@ import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.dto.WorldDto;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -26,6 +21,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
+import static tm.lib.domain.world.PersistenceManager.loadDefaultPlayers;
 import static tm.lib.domain.world.WorldLogger.NoopLogger;
 
 public class World {
@@ -57,6 +53,7 @@ public class World {
         World world = new World();
         world.initNewGame();
         world.initCompetitions();
+        PersistenceManager.saveDefaultPlayers(world.getPlayers());
         return world;
     }
 
@@ -133,26 +130,6 @@ public class World {
         seasons.add(season);
 
         initCompetitionPointValues();
-    }
-
-    private static List<Knight> loadDefaultPlayers() {
-        try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document document = db.parse("players.xml");
-            NodeList playerNodes = document.getElementsByTagName("player");
-            List<Knight> knights = new ArrayList<>();
-            for (int i = 0; i < playerNodes.getLength(); ++i) {
-                Element playerElement = (Element) playerNodes.item(i);
-                Knight knight = new Knight();
-                knight.init(i, playerElement);
-                knight.setRandomSkills();
-                knights.add(knight);
-            }
-            return knights;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void initCompetitionPointValues() {

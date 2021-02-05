@@ -1,6 +1,5 @@
 package tm.lib.domain.core;
 
-import org.w3c.dom.Element;
 import tm.lib.domain.core.dto.KnightDto;
 
 public class Knight {
@@ -46,6 +45,10 @@ public class Knight {
     public static Knight fromDto(KnightDto dto) {
         Knight knight = new Knight();
         knight.id = dto.getId();
+        knight.name = dto.getName();
+        knight.surname = dto.getSurname();
+        knight.nation = dto.getNation();
+        knight.country = dto.getCountry();
         knight.speed = dto.getSpeed();
         knight.acceleration = dto.getAcceleration();
         knight.hitPower = dto.getHitPower();
@@ -310,27 +313,5 @@ public class Knight {
 
     public double getDexterity() {
         return dexterity;
-    }
-
-    public void init(int id, Element playerElement) {
-        String fullName = playerElement.getAttribute("name");
-        int spaceIndex = fullName.indexOf(' ');
-        this.id = id;
-        name = fullName.substring(0, spaceIndex);
-        surname = fullName.substring(spaceIndex + 1);
-
-        nation = Nation.fromName(playerElement.getAttribute("nation"));
-        country = Country.fromString(playerElement.getAttribute("country"));
-
-        speed = Integer.parseInt(playerElement.getAttribute("spe"));
-        acceleration = Integer.parseInt(playerElement.getAttribute("acc"));
-        hitPower = Integer.parseInt(playerElement.getAttribute("pow"));
-        shotRange = Integer.parseInt(playerElement.getAttribute("rng"));
-        accuracy = Integer.parseInt(playerElement.getAttribute("acu"));
-        cunning = Integer.parseInt(playerElement.getAttribute("cun"));
-        skill = Integer.parseInt(playerElement.getAttribute("skl"));
-        risk = Integer.parseInt(playerElement.getAttribute("rsk"));
-        endurance = Integer.parseInt(playerElement.getAttribute("end"));
-        dexterity = Integer.parseInt(playerElement.getAttribute("dex"));
     }
 }

@@ -11,6 +11,8 @@ import com.trolltech.qt.gui.QLabel;
 import com.trolltech.qt.gui.QLayout;
 import com.trolltech.qt.gui.QMenu;
 import com.trolltech.qt.gui.QMenuBar;
+import com.trolltech.qt.gui.QMessageBox;
+import com.trolltech.qt.gui.QMessageBox.StandardButtons;
 import com.trolltech.qt.gui.QPlainTextEdit;
 import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QSizePolicy;
@@ -32,6 +34,10 @@ import tm.lib.engine.StrategyProvider;
 import tm.ui.qt.simulation.SimulationHelper;
 
 import java.util.function.BiFunction;
+
+import static com.trolltech.qt.gui.QMessageBox.StandardButton.Cancel;
+import static com.trolltech.qt.gui.QMessageBox.StandardButton.No;
+import static com.trolltech.qt.gui.QMessageBox.StandardButton.Yes;
 
 public class GameWorldDialog extends QDialog {
 
@@ -55,12 +61,10 @@ public class GameWorldDialog extends QDialog {
         updateLogText();
         updateNextMatchLabel();
         configureGameWorldLogger();
-
-        PersistenceManager.saveWorld(world);
     }
 
     private void setupUi() {
-        setWindowTitle("Game World");
+        setWindowTitle("Игровой мир - Сезон " + (world.getYear() + 1));
 
         QLabel seasonComboBoxLabel = new QLabel(this);
         seasonComboBoxLabel.setText("Сезон:");
@@ -257,6 +261,13 @@ public class GameWorldDialog extends QDialog {
             applyMatchResult(match, score);
         } else if (!world.isSeasonFinished()) {
             world.finishSeason();
+            PersistenceManager.saveWorld(world);
+        } else {
+            QMessageBox.StandardButton reply = QMessageBox.question(this, "Новый сезон",
+                    "Хотите начать новый сезон?", new StandardButtons(Yes, No, Cancel));
+            if (reply == Yes) {
+                startNewSeason();
+            }
         }
     }
 
@@ -408,5 +419,11 @@ public class GameWorldDialog extends QDialog {
             }
         };
         world.setLogger(logger);
+    }
+
+    private void startNewSeason() {
+        seasonLogTextEdit.clear();
+        updateNextMatchLabel();
+        nationRatingWidget.repopulateNationRatingWidget();
     }
 }

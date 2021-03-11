@@ -22,6 +22,10 @@ public class PersistenceManager {
     private static final String FILE_NAME_WORLD_JSON = "world.json";
     private static final String FILE_NAME_PLAYERS_JSON = "default_players.json";
 
+    public static boolean canLoadWorld() {
+        return new File(makeFilename(FILE_NAME_WORLD_JSON)).exists();
+    }
+
     public static World loadWorld() {
         ObjectMapper mapper = new ObjectMapper();
         WorldDto worldDto;

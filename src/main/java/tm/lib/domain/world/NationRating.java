@@ -105,6 +105,7 @@ public class NationRating {
         NationRating nationRating = new NationRating();
         nationRating.pointHistory = nationRatingDto.getPointHistory().entrySet().stream()
                 .collect(toMap(e -> e.getKey(), e -> PointHistoryItem.fromDto(e.getValue())));
+        nationRating.calculateRankingsAndPrint();
         return nationRating;
     }
 

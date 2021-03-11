@@ -113,6 +113,9 @@ public class World {
         return isSeasonFinished;
     }
 
+    public int getYear() {
+        return year;
+    }
 
     private void initNewGame() {
         year = 0;

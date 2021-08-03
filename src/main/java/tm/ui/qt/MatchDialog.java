@@ -74,8 +74,8 @@ public class MatchDialog extends QDialog {
         pitchPanelLayout.addWidget(awayPlayerInfoWidget, 2, 0, Qt.AlignmentFlag.AlignHCenter);
 
         QFrame infoWidget = new QFrame(this);
-        infoWidget.setMinimumWidth(150);
-        infoWidget.setMaximumWidth(250);
+        infoWidget.setMinimumWidth(200);
+        infoWidget.setMaximumWidth(300);
         infoWidget.setFrameShape(QFrame.Shape.Box);
         mainLayout.addWidget(infoWidget);
 

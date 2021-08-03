@@ -1,10 +1,6 @@
 package tm.ui.qt;
 
 import com.trolltech.qt.core.Qt;
-import com.trolltech.qt.gui.QDialog;
-import com.trolltech.qt.gui.QHBoxLayout;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QSpacerItem;
 import com.trolltech.qt.gui.QTreeWidget;
 import com.trolltech.qt.gui.QTreeWidgetItem;
 import com.trolltech.qt.gui.QVBoxLayout;
@@ -15,53 +11,37 @@ import tm.lib.domain.world.EloRating;
 import java.util.Arrays;
 
 import static com.trolltech.qt.core.Qt.ItemDataRole.DisplayRole;
-import static com.trolltech.qt.gui.QSizePolicy.Policy.Expanding;
 
-public class EloRatingDialog extends QDialog {
+public class EloRatingWidget extends QWidget {
 
     private EloRating eloRating;
     private QTreeWidget eloRatingTreeWidget;
 
-    public EloRatingDialog(QWidget parent, EloRating eloRating) {
+    public EloRatingWidget(QWidget parent, EloRating eloRating) {
         super(parent);
         this.eloRating = eloRating;
         initUi();
-        populateEloRatingList();
+        repopulateEloRatingList();
     }
 
     private void initUi() {
         eloRatingTreeWidget = new QTreeWidget(this);
-        eloRatingTreeWidget.setColumnCount(4);
-        eloRatingTreeWidget.setHeaderLabels(Arrays.asList("", "Игрок", "Рейтинг", "Изменение за год"));
+        eloRatingTreeWidget.setColumnCount(5);
+        eloRatingTreeWidget.setHeaderLabels(Arrays.asList("", "Игрок", "Рейтинг", "Изменение за год", ""));
         eloRatingTreeWidget.setColumnWidth(0, 25);
         eloRatingTreeWidget.setColumnWidth(1, 120);
         eloRatingTreeWidget.setColumnWidth(2, 100);
-        eloRatingTreeWidget.setColumnWidth(3, 100);
+        eloRatingTreeWidget.setColumnWidth(3, 150);
         eloRatingTreeWidget.setIndentation(0);
         eloRatingTreeWidget.setItemDelegate(new CustomItemDelegate());
 
-        QPushButton closeButton = new QPushButton(this);
-        closeButton.setText("Закрыть");
-        closeButton.clicked.connect(this, "onCloseButtonClicked()");
-
-        QHBoxLayout bottomButtonsLayout = new QHBoxLayout();
-        bottomButtonsLayout.addSpacerItem(new QSpacerItem(1, 1, Expanding, Expanding));
-        bottomButtonsLayout.addWidget(closeButton);
-
         QVBoxLayout mainLayout = new QVBoxLayout();
         mainLayout.addWidget(eloRatingTreeWidget, 100);
-        mainLayout.addItem(bottomButtonsLayout);
         setLayout(mainLayout);
-
-        setWindowTitle("Рейтинг игроков");
-        resize(400, 600);
     }
 
-    private void onCloseButtonClicked() {
-        close();
-    }
-
-    private void populateEloRatingList() {
+    public void repopulateEloRatingList() {
+        eloRatingTreeWidget.clear();
         int i = 1;
         for (Knight knight : eloRating.getPersonsByRating()) {
             QTreeWidgetItem item = new QTreeWidgetItem();

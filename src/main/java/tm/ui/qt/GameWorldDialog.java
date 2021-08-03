@@ -52,6 +52,7 @@ public class GameWorldDialog extends QDialog {
     private QLabel previousMatchLabel;
     private QPlainTextEdit seasonLogTextEdit;
     private NationRatingWidget nationRatingWidget;
+    private EloRatingWidget eloRatingWidget;
 
     public GameWorldDialog(World world, QWidget parent) {
         super(parent);
@@ -123,14 +124,13 @@ public class GameWorldDialog extends QDialog {
 
         nationRatingWidget = new NationRatingWidget(this, world.getNationRating());
 
+        eloRatingWidget = new EloRatingWidget(this, world.getEloRating());
+
         QTabWidget tabWidget = new QTabWidget(this);
         tabWidget.addTab(seasonLogTextEdit, "Лог");
         tabWidget.addTab(seasonBrowserWidget, "Турниры");
+        tabWidget.addTab(eloRatingWidget, "Рейтинг игроков");
         tabWidget.addTab(nationRatingWidget, "Рейтинг наций");
-
-        QPushButton showEloRatingButton = new QPushButton(this);
-        showEloRatingButton.setText("Рейтинг");
-        showEloRatingButton.clicked.connect(this, "onShowEloRatingButtonClicked()");
 
         QPushButton nextButton = new QPushButton(this);
         nextButton.setText("Смотреть матч");
@@ -141,7 +141,6 @@ public class GameWorldDialog extends QDialog {
         nextFastButton.clicked.connect(this, "onNextMatchFastButtonClicked()");
 
         QHBoxLayout bottomButtonsLayout = new QHBoxLayout();
-        bottomButtonsLayout.addWidget(showEloRatingButton);
         bottomButtonsLayout.addSpacerItem(new QSpacerItem(10, 10, QSizePolicy.Policy.Expanding));
         bottomButtonsLayout.addWidget(nextButton);
         bottomButtonsLayout.addWidget(nextFastButton);
@@ -277,6 +276,7 @@ public class GameWorldDialog extends QDialog {
         updateLogText();
         updatePreviousMatchLabel(match);
         updateNextMatchLabel();
+        eloRatingWidget.repopulateEloRatingList();
         nationRatingWidget.repopulateNationRatingWidget();
     }
 
@@ -380,11 +380,6 @@ public class GameWorldDialog extends QDialog {
                 match.toString());
     }
 
-    private void onShowEloRatingButtonClicked() {
-        EloRatingDialog eloRatingDialog = new EloRatingDialog(this, world.getEloRating());
-        eloRatingDialog.exec();
-    }
-
     private void onShowMatchConfigurationDialogActionTriggered() {
         MatchConfigurationDialog matchConfigurationDialog = new MatchConfigurationDialog(world, this);
         matchConfigurationDialog.exec();
@@ -425,5 +420,6 @@ public class GameWorldDialog extends QDialog {
         seasonLogTextEdit.clear();
         updateNextMatchLabel();
         nationRatingWidget.repopulateNationRatingWidget();
+        eloRatingWidget.repopulateEloRatingList();
     }
 }

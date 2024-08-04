@@ -3,6 +3,7 @@ package tm.lib.engine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tm.lib.domain.core.Knight;
+import tm.lib.domain.core.SkillSet;
 import tm.lib.domain.core.Stadium;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,22 +41,24 @@ public class StatsCalculatorTest {
     @Test
     public void testGetTotalLyingTime() {
         Knight knight = mock(Knight.class);
+        SkillSet skills = new SkillSet();
+        when(knight.getSkills()).thenReturn(skills);
         Player player = mock(Player.class);
         when(player.getKnight()).thenReturn(knight);
 
-        when(knight.getDexterity()).thenReturn(100.0);
+        skills.setDexterity(100);
         when(player.getEnergy()).thenReturn(100.0);
         assertEquals(MatchEngineConstants.MIN_LYING_TIME, statsCalculator.getTotalLyingTime(player), VectorUtils.DEFAULT_TOLERANCE);
 
-        when(knight.getDexterity()).thenReturn(100.0);
+        skills.setDexterity(100);
         when(player.getEnergy()).thenReturn(0.0);
         assertEquals(MatchEngineConstants.MIN_LYING_TIME * (1 + MatchEngineConstants.LYING_TIME_ENERGY_MODIFIER), statsCalculator.getTotalLyingTime(player), VectorUtils.DEFAULT_TOLERANCE);
 
-        when(knight.getDexterity()).thenReturn(0.0);
+        skills.setDexterity(0);
         when(player.getEnergy()).thenReturn(100.0);
         assertEquals(MatchEngineConstants.MAX_LYING_TIME, statsCalculator.getTotalLyingTime(player), VectorUtils.DEFAULT_TOLERANCE);
 
-        when(knight.getDexterity()).thenReturn(0.0);
+        skills.setDexterity(0);
         when(player.getEnergy()).thenReturn(0.0);
         assertEquals(MatchEngineConstants.MAX_LYING_TIME * (1 + MatchEngineConstants.LYING_TIME_ENERGY_MODIFIER), statsCalculator.getTotalLyingTime(player), VectorUtils.DEFAULT_TOLERANCE);
     }

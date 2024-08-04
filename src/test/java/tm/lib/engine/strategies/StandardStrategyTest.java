@@ -1,18 +1,18 @@
 package tm.lib.engine.strategies;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tm.lib.engine.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class StandardStrategyTest {
 
-    private StandardStrategy strategy = new StandardStrategy();
+    private final StandardStrategy strategy = new StandardStrategy();
 
     @Test
     public void testCalculatePlayerOptimalPosition() {

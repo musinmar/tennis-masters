@@ -1,10 +1,10 @@
 package tm.lib.engine;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tm.lib.domain.core.Knight;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 public class PitchTest {

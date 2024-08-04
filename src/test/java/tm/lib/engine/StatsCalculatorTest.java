@@ -1,24 +1,25 @@
 package tm.lib.engine;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Stadium;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class StatsCalculatorTest {
 
     private Stadium stadium;
     private StatsCalculator statsCalculator;
-    
-    @Before
+
+    @BeforeEach
     public void beforeTest() {
         stadium = mock(Stadium.class);
         statsCalculator = new StatsCalculator(stadium);
     }
-    
+
     @Test
     public void testMap() {
         assertEquals(20, StatsCalculator.map(0, 20, 30), VectorUtils.DEFAULT_TOLERANCE);

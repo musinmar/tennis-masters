@@ -1,8 +1,9 @@
 package tm.lib.engine;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 import tm.lib.domain.core.BasicScore;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchProgressTrackerTest {
 
@@ -104,12 +105,12 @@ public class MatchProgressTrackerTest {
         assertTrue(tracker.isMatchFinished());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFaultyConstruction() {
-        new MatchProgressTracker(3, false);
+        assertThrows(IllegalArgumentException.class, () -> new MatchProgressTracker(3, false));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testIllegalSetStart() {
         MatchProgressTracker tracker = new MatchProgressTracker(2, false);
 
@@ -127,25 +128,26 @@ public class MatchProgressTrackerTest {
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
 
-        tracker.startNewSet();
+        assertThrows(IllegalStateException.class, tracker::startNewSet);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testIllegalSetStart2() {
         MatchProgressTracker tracker = new MatchProgressTracker(2, false);
 
         tracker.startNewSet();
         tracker.addPoint(Side.HOME);
-        tracker.startNewSet();
+
+        assertThrows(IllegalStateException.class, tracker::startNewSet);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testIllegalAddPoint() {
         MatchProgressTracker tracker = new MatchProgressTracker(2, false);
-        tracker.addPoint(Side.HOME);
+        assertThrows(IllegalStateException.class, () -> tracker.addPoint(Side.HOME));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testIllegalAddPoint2() {
         MatchProgressTracker tracker = new MatchProgressTracker(2, false);
         tracker.startNewSet();
@@ -154,7 +156,8 @@ public class MatchProgressTrackerTest {
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
-        tracker.addPoint(Side.HOME);
+
+        assertThrows(IllegalStateException.class, () -> tracker.addPoint(Side.HOME));
     }
 
     @Test

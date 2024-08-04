@@ -190,6 +190,7 @@ public class GameWorldDialog extends QDialog {
     }
 
     private void populateSeasonComboBox() {
+        seasonComboBox.clear();
         for (SeasonCompetition season : world.getSeasons()) {
             seasonComboBox.addItem(season.getName(), season);
         }
@@ -198,12 +199,17 @@ public class GameWorldDialog extends QDialog {
 
     private void onSeasonComboBoxIndexChanged() {
         SeasonCompetition selectedSeason = (SeasonCompetition) seasonComboBox.itemData(seasonComboBox.currentIndex());
-        tournamentComboBox.clear();
-        tournamentComboBox.addItem("Все", null);
-        for (Competition competition : selectedSeason.getStages()) {
-            tournamentComboBox.addItem(competition.getName(), competition);
+        if (selectedSeason != null) {
+            tournamentComboBox.clear();
+            tournamentComboBox.addItem("Все", null);
+            for (Competition competition : selectedSeason.getStages()) {
+                tournamentComboBox.addItem(competition.getName(), competition);
+            }
+        } else {
+            tournamentComboBox.clear();
+            tournamentComboBox.setEnabled(false);
+            updateLogText();
         }
-        updateLogText();
     }
 
     private void onTournamentComboBoxIndexChanged() {
@@ -418,6 +424,8 @@ public class GameWorldDialog extends QDialog {
 
     private void startNewSeason() {
         seasonLogTextEdit.clear();
+        world.startNewSeason();
+        populateSeasonComboBox();
         updateNextMatchLabel();
         nationRatingWidget.repopulateNationRatingWidget();
         eloRatingWidget.repopulateEloRatingList();

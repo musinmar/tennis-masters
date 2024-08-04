@@ -52,7 +52,7 @@ public class World {
     public static World createNewWorld() {
         World world = new World();
         world.initNewGame();
-        world.initCompetitions();
+        world.startNewSeason();
         PersistenceManager.saveDefaultPlayers(world.getPlayers());
         return world;
     }
@@ -65,7 +65,7 @@ public class World {
         world.eloRating = EloRating.fromDto(dto.getEloRating(), world.players);
         world.nationRating = NationRating.fromDto(dto.getNationRating());
 
-        world.initCompetitions();
+        world.startNewSeason();
 
         return world;
     }
@@ -124,7 +124,12 @@ public class World {
 
         nationRating = new NationRating();
         nationRating.initDefault();
+    }
+
+    public void startNewSeason() {
         nationRating.calculateRankingsAndPrint();
+        initCompetitions();
+        isSeasonFinished = false;
     }
 
     private void initCompetitions() {
@@ -207,6 +212,8 @@ public class World {
         logger.println();
         getNationRating().printPointHistory(logger);
         logger.println("Season finished");
+
+        getEloRating().advanceYear();
 
         isSeasonFinished = true;
     }

@@ -1,5 +1,6 @@
 package tm.lib.engine.strategies;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.neuroph.core.NeuralNetwork;
@@ -127,6 +128,10 @@ public class NeuralNetworkStrategy implements Strategy {
 //
 //        Decision decision = new Decision();
 //        decision.setMoveToPosition(denormalize(perceptronOutput[0], perceptronOutput[1]));
+//            Vector2D target1 = denormalize(perceptronOutput[2], perceptronOutput[3]);\
+//            Vector2D target2 = denormalize(perceptronOutput[4], perceptronOutput[5]);
+//            Vector2D target = RandomUtils.nextInt(0, 2) == 0 ? target1 : target2;
+//            decision.setBallTargetPosition(target);
 ////        decision.setBallTargetPosition(denormalize(perceptronOutput[2], perceptronOutput[3]));
 ////        System.out.println("Inputs: " + Arrays.toString(perceptronInput));
 ////        System.out.println("Target to move: " + decision.getMoveToPosition());

@@ -26,7 +26,11 @@ public class EloRating {
 
         Rating(double rating) {
             this.value = rating;
-            this.valuePreviousYear = rating;
+            initPreviousYearValue();
+        }
+
+        void initPreviousYearValue() {
+            this.valuePreviousYear = this.value;
         }
     }
 
@@ -139,5 +143,9 @@ public class EloRating {
         double dif = rat2 - rat1;
         double e = 1 / (1 + Math.exp(dif / 400 * Math.log(10)));
         return K_FACTOR * (res - e);
+    }
+
+    public void advanceYear() {
+        ratings.values().forEach(rating -> rating.initPreviousYearValue());
     }
 }

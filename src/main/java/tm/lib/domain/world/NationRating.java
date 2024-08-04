@@ -46,6 +46,10 @@ public class NationRating {
     }
 
     public NationRating() {
+        clearSeasonPoints();
+    }
+
+    private void clearSeasonPoints() {
         for (Nation nation : Nation.values()) {
             seasonPoints.put(nation, new MutableDouble(0));
         }
@@ -105,7 +109,6 @@ public class NationRating {
         NationRating nationRating = new NationRating();
         nationRating.pointHistory = nationRatingDto.getPointHistory().entrySet().stream()
                 .collect(toMap(e -> e.getKey(), e -> PointHistoryItem.fromDto(e.getValue())));
-        nationRating.calculateRankingsAndPrint();
         return nationRating;
     }
 
@@ -152,15 +155,14 @@ public class NationRating {
 //                .forEach(e -> println("%s: %.2f", e.getKey().getPlayerName(), e.getValue()));
 //        println();
 
-        int[] countCoefficient = new int[]{5, 5, 5, 4, 4};
-        for (int i = 0; i < Nation.COUNT; i++) {
-            Nation nation = getRankedNation(i);
+        for (Nation nation : Nation.values()) {
             PointHistoryItem item = pointHistory.get(nation);
             for (int j = SEASON_COUNT - 1; j >= 1; --j) {
                 item.seasons[j] = item.seasons[j - 1];
             }
-            item.seasons[0] = seasonPoints.get(nation).doubleValue() / countCoefficient[i];
+            item.seasons[0] = getCurrentSeasonValue(nation);
         }
+        clearSeasonPoints();
     }
 
     public void updateRatings(Knight k1, Knight k2, BasicScore r, int points) {

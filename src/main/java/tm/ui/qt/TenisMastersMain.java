@@ -8,8 +8,6 @@ public class TenisMastersMain {
 
     public static void main(String[] args) {
         QApplication.initialize(args);
-        //MainWindow mainWindow = new MainWindow();
-        //mainWindow.show();
 
         World world;
         if (PersistenceManager.canLoadWorld()) {

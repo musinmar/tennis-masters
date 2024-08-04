@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.clocktower</groupId>
     <artifactId>tennis-masters</artifactId>
@@ -9,19 +10,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    
+
     <repositories>
         <repository>
             <id>central</id>
             <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>jspresso</id>
-            <url>http://repository.jspresso.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>neuroph.sourceforge.net</id>
-            <url>http://neuroph.sourceforge.net/maven2/</url>
         </repository>
     </repositories>
 
@@ -33,19 +26,12 @@
                 <version>3.7.0</version>
                 <configuration>
                     <release>14</release>
-                    <source>13</source>
-                    <target>13</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>swt</artifactId>
-            <version>4.6.1</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
@@ -54,7 +40,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>27.1-jre</version>
+            <version>33.2.1-jre</version>
         </dependency>
         <dependency>
             <groupId>com.trolltech.qt</groupId>
@@ -67,9 +53,9 @@
             <version>4.8.7</version>
         </dependency>
         <dependency>
-            <groupId>org.neuroph</groupId>
+            <groupId>com.github.neuroph</groupId>
             <artifactId>neuroph-core</artifactId>
-            <version>2.96</version>
+            <version>2.98</version>
         </dependency>
         <dependency>
             <groupId>io.jenetics</groupId>
@@ -79,12 +65,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.12.1</version>
+            <version>2.17.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>

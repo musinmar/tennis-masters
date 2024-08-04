@@ -1,13 +1,6 @@
 package tm.ui.qt.simulation;
 
-import org.jenetics.DoubleChromosome;
-import org.jenetics.DoubleGene;
-import org.jenetics.GaussianMutator;
-import org.jenetics.Genotype;
-import org.jenetics.Mutator;
-import org.jenetics.Phenotype;
-import org.jenetics.RouletteWheelSelector;
-import org.jenetics.SinglePointCrossover;
+import org.jenetics.*;
 import org.jenetics.engine.Engine;
 import org.jenetics.engine.EvolutionResult;
 import org.jenetics.engine.EvolutionStatistics;
@@ -16,8 +9,6 @@ import org.jenetics.util.Factory;
 import org.jenetics.util.RandomRegistry;
 import org.neuroph.core.Layer;
 import org.neuroph.nnet.MultiLayerPerceptron;
-import org.neuroph.nnet.learning.BackPropagation;
-import org.neuroph.nnet.learning.MomentumBackpropagation;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.Stadium;
@@ -27,11 +18,7 @@ import tm.lib.engine.StrategyProvider;
 import tm.lib.engine.strategies.NeuralNetworkStrategy;
 import tm.lib.engine.strategies.StandardStrategy;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -46,7 +33,7 @@ public class NeuralNetworkTeacher {
     private static final int POPULATION_SIZE = 128;
     private static final int OFFSPRING_MATCH_COUNT = 1;
     private static final int SELECTION_MATCH_COUNT = 10;
-//    private static final double MIN_WEIGHT = -1;
+    //    private static final double MIN_WEIGHT = -1;
 //    private static final double MAX_WEIGHT = 1;
     private static final double MIN_WEIGHT = -10;
     private static final double MAX_WEIGHT = 10;
@@ -88,9 +75,7 @@ public class NeuralNetworkTeacher {
     private void performStartingTemplateLearning() {
         System.out.println("Initial learning started");
         templatePerceptron.randomizeWeights(MIN_WEIGHT, MAX_WEIGHT);
-        BackPropagation rule = new MomentumBackpropagation();
-        rule.setMaxError(0.00001);
-        this.templatePerceptron.learn(TrainingData.createTrainingDataSet(), rule);
+        this.templatePerceptron.learn(TrainingData.createTrainingDataSet());
         System.out.println("Initial learning finished");
     }
 

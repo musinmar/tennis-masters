@@ -2,15 +2,11 @@ package tm.lib.engine.strategies;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.junit.Test;
-import tm.lib.engine.Ball;
-import tm.lib.engine.Pitch;
-import tm.lib.engine.Player;
-import tm.lib.engine.Side;
-import tm.lib.engine.VectorUtils;
+import tm.lib.engine.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

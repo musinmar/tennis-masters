@@ -4,7 +4,7 @@ import com.trolltech.qt.gui.QApplication;
 import tm.lib.domain.world.PersistenceManager;
 import tm.lib.domain.world.World;
 
-public class TenisMastersMain {
+public class TennisMastersMain {
 
     public static void main(String[] args) {
         QApplication.initialize(args);

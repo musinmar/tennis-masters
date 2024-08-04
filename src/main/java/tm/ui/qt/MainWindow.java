@@ -16,7 +16,7 @@ public class MainWindow extends QMainWindow {
     }
 
     private void setupUi() {
-        setWindowTitle("Tenis Masters");
+        setWindowTitle("Tennis Masters");
         QWidget centralWidget = new QWidget();
         setCentralWidget(centralWidget);
         QLayout layout = new QVBoxLayout(centralWidget);

@@ -88,9 +88,9 @@ public class StatsCalculator {
     }
 
     public double getActualSkillRange(Player p) {
-        double skill_range = map(p.getKnight().getSkills().getSkill(), 0, SKILL_MAX_RANGE);
-        skill_range = applyEnergyModifier(p, skill_range, SKILL_RANGE_ENERGY_MODIFIER);
-        return skill_range;
+        double intelligenceRange = map(p.getKnight().getSkills().getIntelligence(), 0, SKILL_MAX_RANGE);
+        intelligenceRange = applyEnergyModifier(p, intelligenceRange, SKILL_RANGE_ENERGY_MODIFIER);
+        return intelligenceRange;
     }
 
     public double getActualRiskMargin(Player p) {

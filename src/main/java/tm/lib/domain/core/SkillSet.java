@@ -13,7 +13,7 @@ public class SkillSet {
     private double shotRange;
     private double accuracy;
     private double cunning;
-    private double skill;
+    private double intelligence;
     private double risk;
     private double endurance;
     private double dexterity;
@@ -25,7 +25,7 @@ public class SkillSet {
         shotRange = 50;
         accuracy = 50;
         cunning = 50;
-        skill = 50;
+        intelligence = 50;
         risk = 50;
         endurance = 50;
         dexterity = 50;
@@ -39,7 +39,7 @@ public class SkillSet {
         skills.shotRange = RandomUtils.nextDouble(0, 100);
         skills.accuracy = RandomUtils.nextDouble(0, 100);
         skills.cunning = RandomUtils.nextDouble(0, 100);
-        skills.skill = RandomUtils.nextDouble(0, 100);
+        skills.intelligence = RandomUtils.nextDouble(0, 100);
         skills.risk = RandomUtils.nextDouble(0, 100);
         skills.endurance = RandomUtils.nextDouble(0, 100);
         skills.dexterity = RandomUtils.nextDouble(0, 100);

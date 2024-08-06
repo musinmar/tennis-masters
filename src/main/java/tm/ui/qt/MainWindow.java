@@ -5,7 +5,6 @@ import io.qt.widgets.QMainWindow;
 import io.qt.widgets.QPushButton;
 import io.qt.widgets.QVBoxLayout;
 import io.qt.widgets.QWidget;
-import tm.lib.domain.world.World;
 
 public class MainWindow extends QMainWindow {
 
@@ -33,7 +32,7 @@ public class MainWindow extends QMainWindow {
     }
 
     private void onNewButtonClicked() {
-        GameWorldDialog gameWorldDialog = new GameWorldDialog(World.createNewWorld(), this);
+        GameWorldDialog gameWorldDialog = new GameWorldDialog(this);
         gameWorldDialog.open();
     }
 

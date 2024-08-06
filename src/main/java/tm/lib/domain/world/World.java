@@ -53,7 +53,7 @@ public class World {
         World world = new World();
         world.initNewGame();
         world.startNewSeason();
-        PersistenceManager.saveDefaultPlayers(world.getPlayers());
+//        PersistenceManager.saveDefaultPlayers(world.getPlayers());
         return world;
     }
 
@@ -120,6 +120,8 @@ public class World {
     private void initNewGame() {
         year = 0;
         players = loadDefaultPlayers();
+        players.forEach(Knight::randomizeSkills);
+
         eloRating = new EloRating(players);
 
         nationRating = new NationRating();

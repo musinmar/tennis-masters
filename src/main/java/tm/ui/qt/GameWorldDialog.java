@@ -1,10 +1,12 @@
 package tm.ui.qt;
 
 import io.qt.core.QMargins;
+import io.qt.core.QTimer;
 import io.qt.core.Qt;
 import io.qt.gui.QAction;
 import io.qt.gui.QFont;
 import io.qt.gui.QTextCursor;
+import io.qt.widgets.QApplication;
 import io.qt.widgets.QComboBox;
 import io.qt.widgets.QDialog;
 import io.qt.widgets.QHBoxLayout;
@@ -41,7 +43,8 @@ import static io.qt.widgets.QMessageBox.StandardButton.Yes;
 
 public class GameWorldDialog extends QDialog {
 
-    private final World world;
+    public static final String WORLD_INITIALIZATION_FAILURE_ERROR_TITLE = "World initialization failure";
+    private World world;
 
     private QPlainTextEdit competitionBrowserTextEdit;
     private QComboBox seasonComboBox;
@@ -54,18 +57,14 @@ public class GameWorldDialog extends QDialog {
     private NationRatingWidget nationRatingWidget;
     private EloRatingWidget eloRatingWidget;
 
-    public GameWorldDialog(World world, QWidget parent) {
+    public GameWorldDialog(QWidget parent) {
         super(parent);
-        this.world = world;
         setupUi();
-        populateSeasonComboBox();
-        updateLogText();
-        updateNextMatchLabel();
-        configureGameWorldLogger();
+        QTimer.singleShot(0, this::initializeWorld);
     }
 
     private void setupUi() {
-        setWindowTitle("Игровой мир - Сезон " + (world.getYear() + 1));
+        setWindowTitle("Игровой мир");
 
         QLabel seasonComboBoxLabel = new QLabel(this);
         seasonComboBoxLabel.setText("Сезон:");
@@ -122,9 +121,8 @@ public class GameWorldDialog extends QDialog {
         QWidget logWidget = new QWidget(this);
         logWidget.setLayout(logWidgetLayout);
 
-        nationRatingWidget = new NationRatingWidget(this, world.getNationRating());
-
-        eloRatingWidget = new EloRatingWidget(this, world.getEloRating());
+        nationRatingWidget = new NationRatingWidget(this);
+        eloRatingWidget = new EloRatingWidget(this);
 
         QTabWidget tabWidget = new QTabWidget(this);
         tabWidget.addTab(seasonLogTextEdit, "Лог");
@@ -187,6 +185,60 @@ public class GameWorldDialog extends QDialog {
 
         resize(1200, 600);
         move(200, 50);
+    }
+
+    private void initializeWorld() {
+        World world;
+        if (PersistenceManager.canLoadWorld()) {
+            world = loadExistingWorld();
+        } else {
+            world = createNewWorld();
+        }
+        setWorld(world);
+    }
+
+    private World loadExistingWorld() {
+        World world;
+        try {
+            world = PersistenceManager.loadWorld();
+        } catch (Exception e) {
+            StandardButtons buttons = QMessageBox.StandardButton.flags(Yes, No);
+            var result = QMessageBox.question(
+                    this,
+                    WORLD_INITIALIZATION_FAILURE_ERROR_TITLE,
+                    "Failed to load existing world, do you want to create a new one?",
+                    buttons);
+            if (result == Yes) {
+                world = createNewWorld();
+            } else {
+                QApplication.quit();
+                throw e;
+            }
+        }
+        return world;
+    }
+
+    private World createNewWorld() {
+        World world;
+        try {
+            world = World.createNewWorld();
+        } catch (Exception e) {
+            QMessageBox.critical(this, WORLD_INITIALIZATION_FAILURE_ERROR_TITLE, "Failed to initialize new world");
+            QApplication.quit();
+            throw e;
+        }
+        return world;
+    }
+
+    private void setWorld(World world) {
+        this.world = world;
+        setWindowTitle("Игровой мир - Сезон " + (world.getYear() + 1));
+        nationRatingWidget.setNationRating(world.getNationRating());
+        eloRatingWidget.setEloRating(world.getEloRating());
+        populateSeasonComboBox();
+        updateLogText();
+        updateNextMatchLabel();
+        configureGameWorldLogger();
     }
 
     private void populateSeasonComboBox() {

@@ -1,6 +1,7 @@
 package tm.ui.qt;
 
 import io.qt.core.Qt;
+import io.qt.core.Qt.AlignmentFlag;
 import io.qt.widgets.QTreeWidget;
 import io.qt.widgets.QTreeWidgetItem;
 import io.qt.widgets.QVBoxLayout;
@@ -17,11 +18,9 @@ public class EloRatingWidget extends QWidget {
     private EloRating eloRating;
     private QTreeWidget eloRatingTreeWidget;
 
-    public EloRatingWidget(QWidget parent, EloRating eloRating) {
+    public EloRatingWidget(QWidget parent) {
         super(parent);
-        this.eloRating = eloRating;
         initUi();
-        repopulateEloRatingList();
     }
 
     private void initUi() {
@@ -40,6 +39,11 @@ public class EloRatingWidget extends QWidget {
         setLayout(mainLayout);
     }
 
+    public void setEloRating(EloRating eloRating) {
+        this.eloRating = eloRating;
+        repopulateEloRatingList();
+    }
+
     public void repopulateEloRatingList() {
         eloRatingTreeWidget.clear();
         int i = 1;
@@ -48,9 +52,9 @@ public class EloRatingWidget extends QWidget {
             item.setData(0, DisplayRole, i++);
             item.setText(1, knight.getFullName());
             item.setData(2, DisplayRole, eloRating.getRating(knight));
-            item.setTextAlignment(2, Qt.AlignmentFlag.AlignRight.value());
+            item.setTextAlignment(2, AlignmentFlag.AlignRight.asFlags());
             item.setData(3, DisplayRole, eloRating.getRatingChange(knight));
-            item.setTextAlignment(3, Qt.AlignmentFlag.AlignRight.value());
+            item.setTextAlignment(3, AlignmentFlag.AlignRight.asFlags());
             eloRatingTreeWidget.addTopLevelItem(item);
         }
         eloRatingTreeWidget.sortByColumn(2, Qt.SortOrder.DescendingOrder);

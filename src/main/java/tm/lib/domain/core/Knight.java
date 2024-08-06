@@ -54,15 +54,7 @@ public class Knight {
         return getName().charAt(0) + ". " + getSurname();
     }
 
-    static int randomIndex = 1;
-
-    public static Knight getRandomPerson() {
-        Knight a = new Knight();
-        a.name = "Энди";
-        a.surname = "Рэндом_" + randomIndex++;
-        a.country = Country.ALDORUM;
-        a.nation = Nation.GALILEO;
-        a.skills = SkillSet.randomSkillSet();
-        return a;
+    public void randomizeSkills() {
+        skills = SkillSet.randomSkillSet();
     }
 }

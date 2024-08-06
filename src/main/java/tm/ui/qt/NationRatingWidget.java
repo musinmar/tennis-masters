@@ -16,15 +16,13 @@ import static java.util.Arrays.asList;
 
 public class NationRatingWidget extends QWidget {
 
-    private final NationRating nationRating;
+    private NationRating nationRating;
 
     private QTreeWidget nationRatingTreeWidget;
 
-    public NationRatingWidget(QWidget parent, NationRating nationRating) {
+    public NationRatingWidget(QWidget parent) {
         super(parent);
-        this.nationRating = nationRating;
         initUi();
-        repopulateNationRatingWidget();
     }
 
     private void initUi() {
@@ -34,6 +32,11 @@ public class NationRatingWidget extends QWidget {
         nationRatingWidgetLayout.addWidget(nationRatingTreeWidget);
 
         setLayout(nationRatingWidgetLayout);
+    }
+
+    public void setNationRating(NationRating nationRating) {
+        this.nationRating = nationRating;
+        repopulateNationRatingWidget();
     }
 
     public void repopulateNationRatingWidget() {
@@ -73,6 +76,6 @@ public class NationRatingWidget extends QWidget {
 
     private void setDoubleData(QTreeWidgetItem item, int column, double value) {
         item.setData(column, DisplayRole, value);
-        item.setTextAlignment(column, AlignmentFlag.flags(AlignRight, AlignVCenter).value());
+        item.setTextAlignment(column, AlignmentFlag.flags(AlignRight, AlignVCenter));
     }
 }

@@ -1,6 +1,6 @@
 package tm.ui.qt;
 
-import com.trolltech.qt.gui.QApplication;
+import io.qt.widgets.QApplication;
 import tm.lib.domain.world.PersistenceManager;
 import tm.lib.domain.world.World;
 
@@ -17,7 +17,7 @@ public class TennisMastersMain {
         }
         GameWorldDialog gameWorldDialog = new GameWorldDialog(world, null);
         gameWorldDialog.show();
-        QApplication.execStatic();
+        QApplication.exec();
         QApplication.shutdown();
     }
 }

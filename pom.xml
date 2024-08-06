@@ -59,14 +59,14 @@
             <version>33.2.1-jre</version>
         </dependency>
         <dependency>
-            <groupId>com.trolltech.qt</groupId>
+            <groupId>io.qtjambi</groupId>
             <artifactId>qtjambi</artifactId>
-            <version>4.8.7</version>
+            <version>6.7.2</version>
         </dependency>
         <dependency>
-            <groupId>com.trolltech.qt</groupId>
-            <artifactId>qtjambi-native-win64-msvc2013x64</artifactId>
-            <version>4.8.7</version>
+            <groupId>io.qtjambi</groupId>
+            <artifactId>qtjambi-native-windows-x64</artifactId>
+            <version>6.7.2</version>
         </dependency>
         <dependency>
             <groupId>com.github.neuroph</groupId>

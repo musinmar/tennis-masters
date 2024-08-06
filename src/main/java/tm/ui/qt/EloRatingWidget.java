@@ -1,16 +1,16 @@
 package tm.ui.qt;
 
-import com.trolltech.qt.core.Qt;
-import com.trolltech.qt.gui.QTreeWidget;
-import com.trolltech.qt.gui.QTreeWidgetItem;
-import com.trolltech.qt.gui.QVBoxLayout;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.core.Qt;
+import io.qt.widgets.QTreeWidget;
+import io.qt.widgets.QTreeWidgetItem;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.widgets.QWidget;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.world.EloRating;
 
 import java.util.Arrays;
 
-import static com.trolltech.qt.core.Qt.ItemDataRole.DisplayRole;
+import static io.qt.core.Qt.ItemDataRole.DisplayRole;
 
 public class EloRatingWidget extends QWidget {
 

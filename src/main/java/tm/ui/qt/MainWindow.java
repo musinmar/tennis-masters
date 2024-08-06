@@ -1,10 +1,10 @@
 package tm.ui.qt;
 
-import com.trolltech.qt.gui.QLayout;
-import com.trolltech.qt.gui.QMainWindow;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QVBoxLayout;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.widgets.QLayout;
+import io.qt.widgets.QMainWindow;
+import io.qt.widgets.QPushButton;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.widgets.QWidget;
 import tm.lib.domain.world.World;
 
 public class MainWindow extends QMainWindow {

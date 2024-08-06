@@ -1,20 +1,20 @@
 package tm.ui.qt;
 
-import com.trolltech.qt.core.QPoint;
-import com.trolltech.qt.core.QPointF;
-import com.trolltech.qt.core.QRectF;
-import com.trolltech.qt.core.QSize;
-import com.trolltech.qt.core.QSizeF;
-import com.trolltech.qt.core.Qt;
-import com.trolltech.qt.gui.QColor;
-import com.trolltech.qt.gui.QFrame;
-import com.trolltech.qt.gui.QLabel;
-import com.trolltech.qt.gui.QPaintEvent;
-import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QPen;
-import com.trolltech.qt.gui.QResizeEvent;
-import com.trolltech.qt.gui.QSizePolicy;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.core.QPoint;
+import io.qt.core.QPointF;
+import io.qt.core.QRectF;
+import io.qt.core.QSize;
+import io.qt.core.QSizeF;
+import io.qt.core.Qt;
+import io.qt.gui.QColor;
+import io.qt.gui.QPaintEvent;
+import io.qt.gui.QPainter;
+import io.qt.gui.QPen;
+import io.qt.gui.QResizeEvent;
+import io.qt.widgets.QFrame;
+import io.qt.widgets.QLabel;
+import io.qt.widgets.QSizePolicy;
+import io.qt.widgets.QWidget;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import tm.lib.engine.Ball;
 import tm.lib.engine.Pitch;
@@ -63,7 +63,7 @@ public class PitchWidget extends QFrame {
 
     private void updatePitchRect(QSize newWidgetSize) {
         QSizeF currentSize = new QSizeF(newWidgetSize.width() - 2 * HORIZONTAL_MARGIN,
-        newWidgetSize.height() - 2 * VERTICAL_MARGIN);
+                newWidgetSize.height() - 2 * VERTICAL_MARGIN);
         QSizeF realSize = new QSizeF(Pitch.WIDTH, Pitch.HEIGHT);
 
         realSize.scale(currentSize, Qt.AspectRatioMode.KeepAspectRatio);

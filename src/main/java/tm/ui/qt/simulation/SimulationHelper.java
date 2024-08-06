@@ -1,12 +1,10 @@
 package tm.ui.qt.simulation;
 
-import com.trolltech.qt.gui.QWidget;
+import io.qt.widgets.QWidget;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.StrategyProvider;
-import tm.lib.engine.strategies.NeuralNetworkStrategy;
-import tm.lib.engine.strategies.StandardStrategy;
 import tm.ui.qt.MatchDialog;
 
 public class SimulationHelper {

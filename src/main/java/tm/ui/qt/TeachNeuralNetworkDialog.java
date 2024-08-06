@@ -1,20 +1,20 @@
 package tm.ui.qt;
 
-import com.trolltech.qt.core.QDir;
-import com.trolltech.qt.gui.QComboBox;
-import com.trolltech.qt.gui.QDialog;
-import com.trolltech.qt.gui.QDialogButtonBox;
-import com.trolltech.qt.gui.QFileDialog;
-import com.trolltech.qt.gui.QGridLayout;
-import com.trolltech.qt.gui.QGroupBox;
-import com.trolltech.qt.gui.QHBoxLayout;
-import com.trolltech.qt.gui.QLabel;
-import com.trolltech.qt.gui.QLineEdit;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QSpacerItem;
-import com.trolltech.qt.gui.QSpinBox;
-import com.trolltech.qt.gui.QVBoxLayout;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.core.QDir;
+import io.qt.widgets.QComboBox;
+import io.qt.widgets.QDialog;
+import io.qt.widgets.QDialogButtonBox;
+import io.qt.widgets.QFileDialog;
+import io.qt.widgets.QGridLayout;
+import io.qt.widgets.QGroupBox;
+import io.qt.widgets.QHBoxLayout;
+import io.qt.widgets.QLabel;
+import io.qt.widgets.QLineEdit;
+import io.qt.widgets.QPushButton;
+import io.qt.widgets.QSpacerItem;
+import io.qt.widgets.QSpinBox;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.widgets.QWidget;
 import org.neuroph.core.Layer;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import tm.lib.domain.core.Knight;
@@ -23,8 +23,8 @@ import tm.ui.qt.simulation.NeuralNetworkTeacher;
 
 import java.util.List;
 
-import static com.trolltech.qt.gui.QDialogButtonBox.ButtonRole.RejectRole;
-import static com.trolltech.qt.gui.QSizePolicy.Policy.Expanding;
+import static io.qt.widgets.QDialogButtonBox.ButtonRole.RejectRole;
+import static io.qt.widgets.QSizePolicy.Policy.Expanding;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static tm.ui.qt.simulation.WidgetsHelper.fillPlayerComboBox;
@@ -112,10 +112,10 @@ public class TeachNeuralNetworkDialog extends QDialog {
     }
 
     private void onSelectTemplatePerceptronPathButtonClicked() {
-        String selectedFileName = QFileDialog.getOpenFileName(this, "Выберите нейронную сеть", null,
-                new QFileDialog.Filter("Файлы ANN (*.ann)"));
-        if (selectedFileName != null) {
-            templatePerceptronPathEdit.setText(selectedFileName);
+        QFileDialog.Result<String> selectedFileName = QFileDialog.getOpenFileName(this, "Выберите нейронную сеть", null,
+                "Файлы ANN (*.ann)");
+        if (selectedFileName.result != null) {
+            templatePerceptronPathEdit.setText(selectedFileName.result);
         }
     }
 

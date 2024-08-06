@@ -1,7 +1,7 @@
 package tm.ui.qt;
 
-import com.trolltech.qt.core.QLocale;
-import com.trolltech.qt.gui.QStyledItemDelegate;
+import io.qt.core.QLocale;
+import io.qt.widgets.QStyledItemDelegate;
 
 class CustomItemDelegate extends QStyledItemDelegate {
     @Override

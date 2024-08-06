@@ -1,17 +1,17 @@
 package tm.ui.qt;
 
-import com.trolltech.qt.core.Qt.AlignmentFlag;
-import com.trolltech.qt.gui.QTreeWidget;
-import com.trolltech.qt.gui.QTreeWidgetItem;
-import com.trolltech.qt.gui.QVBoxLayout;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.core.Qt.AlignmentFlag;
+import io.qt.widgets.QTreeWidget;
+import io.qt.widgets.QTreeWidgetItem;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.widgets.QWidget;
 import tm.lib.domain.core.Nation;
 import tm.lib.domain.world.NationRating;
 
-import static com.trolltech.qt.core.Qt.AlignmentFlag.AlignRight;
-import static com.trolltech.qt.core.Qt.AlignmentFlag.AlignVCenter;
-import static com.trolltech.qt.core.Qt.ItemDataRole.DisplayRole;
-import static com.trolltech.qt.core.Qt.SortOrder.AscendingOrder;
+import static io.qt.core.Qt.AlignmentFlag.AlignRight;
+import static io.qt.core.Qt.AlignmentFlag.AlignVCenter;
+import static io.qt.core.Qt.ItemDataRole.DisplayRole;
+import static io.qt.core.Qt.SortOrder.AscendingOrder;
 import static java.util.Arrays.asList;
 
 public class NationRatingWidget extends QWidget {
@@ -73,6 +73,6 @@ public class NationRatingWidget extends QWidget {
 
     private void setDoubleData(QTreeWidgetItem item, int column, double value) {
         item.setData(column, DisplayRole, value);
-        item.setTextAlignment(column, AlignmentFlag.createQFlags(AlignRight, AlignVCenter).value());
+        item.setTextAlignment(column, AlignmentFlag.flags(AlignRight, AlignVCenter).value());
     }
 }

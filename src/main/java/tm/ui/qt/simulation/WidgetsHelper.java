@@ -1,6 +1,6 @@
 package tm.ui.qt.simulation;
 
-import com.trolltech.qt.gui.QComboBox;
+import io.qt.widgets.QComboBox;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.world.World;
 

@@ -1,26 +1,26 @@
 package tm.ui.qt;
 
-import com.trolltech.qt.core.QMargins;
-import com.trolltech.qt.core.Qt;
-import com.trolltech.qt.gui.QAction;
-import com.trolltech.qt.gui.QComboBox;
-import com.trolltech.qt.gui.QDialog;
-import com.trolltech.qt.gui.QFont;
-import com.trolltech.qt.gui.QHBoxLayout;
-import com.trolltech.qt.gui.QLabel;
-import com.trolltech.qt.gui.QLayout;
-import com.trolltech.qt.gui.QMenu;
-import com.trolltech.qt.gui.QMenuBar;
-import com.trolltech.qt.gui.QMessageBox;
-import com.trolltech.qt.gui.QMessageBox.StandardButtons;
-import com.trolltech.qt.gui.QPlainTextEdit;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QSizePolicy;
-import com.trolltech.qt.gui.QSpacerItem;
-import com.trolltech.qt.gui.QTabWidget;
-import com.trolltech.qt.gui.QTextCursor;
-import com.trolltech.qt.gui.QVBoxLayout;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.core.QMargins;
+import io.qt.core.Qt;
+import io.qt.gui.QAction;
+import io.qt.gui.QFont;
+import io.qt.gui.QTextCursor;
+import io.qt.widgets.QComboBox;
+import io.qt.widgets.QDialog;
+import io.qt.widgets.QHBoxLayout;
+import io.qt.widgets.QLabel;
+import io.qt.widgets.QLayout;
+import io.qt.widgets.QMenu;
+import io.qt.widgets.QMenuBar;
+import io.qt.widgets.QMessageBox;
+import io.qt.widgets.QMessageBox.StandardButtons;
+import io.qt.widgets.QPlainTextEdit;
+import io.qt.widgets.QPushButton;
+import io.qt.widgets.QSizePolicy;
+import io.qt.widgets.QSpacerItem;
+import io.qt.widgets.QTabWidget;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.widgets.QWidget;
 import tm.lib.domain.competition.SeasonCompetition;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MatchEvent;
@@ -35,9 +35,9 @@ import tm.ui.qt.simulation.SimulationHelper;
 
 import java.util.function.BiFunction;
 
-import static com.trolltech.qt.gui.QMessageBox.StandardButton.Cancel;
-import static com.trolltech.qt.gui.QMessageBox.StandardButton.No;
-import static com.trolltech.qt.gui.QMessageBox.StandardButton.Yes;
+import static io.qt.widgets.QMessageBox.StandardButton.Cancel;
+import static io.qt.widgets.QMessageBox.StandardButton.No;
+import static io.qt.widgets.QMessageBox.StandardButton.Yes;
 
 public class GameWorldDialog extends QDialog {
 

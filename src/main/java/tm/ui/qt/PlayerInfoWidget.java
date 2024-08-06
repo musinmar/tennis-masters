@@ -1,13 +1,13 @@
 package tm.ui.qt;
 
-import com.trolltech.qt.core.Qt;
-import com.trolltech.qt.gui.QFrame;
-import com.trolltech.qt.gui.QHBoxLayout;
-import com.trolltech.qt.gui.QLabel;
-import com.trolltech.qt.gui.QLayout;
-import com.trolltech.qt.gui.QProgressBar;
-import com.trolltech.qt.gui.QSizePolicy;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.core.Qt;
+import io.qt.widgets.QFrame;
+import io.qt.widgets.QHBoxLayout;
+import io.qt.widgets.QLabel;
+import io.qt.widgets.QLayout;
+import io.qt.widgets.QProgressBar;
+import io.qt.widgets.QSizePolicy;
+import io.qt.widgets.QWidget;
 import tm.lib.engine.Player;
 
 public class PlayerInfoWidget extends QFrame {

@@ -11,7 +11,7 @@
     "shotRange" : 10.0,
     "accuracy" : 10.0,
     "cunning" : 10.0,
-    "skill" : 10.0,
+    "intelligence" : 10.0,
     "risk" : 50.0,
     "endurance" : 10.0,
     "dexterity" : 10.0
@@ -29,7 +29,7 @@
     "shotRange" : 30.0,
     "accuracy" : 50.0,
     "cunning" : 40.0,
-    "skill" : 20.0,
+    "intelligence" : 20.0,
     "risk" : 90.0,
     "endurance" : 50.0,
     "dexterity" : 90.0
@@ -47,7 +47,7 @@
     "shotRange" : 40.0,
     "accuracy" : 40.0,
     "cunning" : 40.0,
-    "skill" : 40.0,
+    "intelligence" : 40.0,
     "risk" : 40.0,
     "endurance" : 40.0,
     "dexterity" : 40.0
@@ -65,7 +65,7 @@
     "shotRange" : 30.0,
     "accuracy" : 30.0,
     "cunning" : 30.0,
-    "skill" : 30.0,
+    "intelligence" : 30.0,
     "risk" : 50.0,
     "endurance" : 30.0,
     "dexterity" : 30.0
@@ -83,7 +83,7 @@
     "shotRange" : 40.0,
     "accuracy" : 40.0,
     "cunning" : 40.0,
-    "skill" : 40.0,
+    "intelligence" : 40.0,
     "risk" : 50.0,
     "endurance" : 40.0,
     "dexterity" : 40.0
@@ -101,7 +101,7 @@
     "shotRange" : 30.0,
     "accuracy" : 60.0,
     "cunning" : 20.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 40.0,
     "dexterity" : 80.0
@@ -119,7 +119,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -137,7 +137,7 @@
     "shotRange" : 80.0,
     "accuracy" : 60.0,
     "cunning" : 20.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 40.0,
     "endurance" : 100.0,
     "dexterity" : 50.0
@@ -155,7 +155,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -173,7 +173,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -191,7 +191,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -209,7 +209,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -227,7 +227,7 @@
     "shotRange" : 60.0,
     "accuracy" : 80.0,
     "cunning" : 70.0,
-    "skill" : 100.0,
+    "intelligence" : 100.0,
     "risk" : 30.0,
     "endurance" : 40.0,
     "dexterity" : 40.0
@@ -245,7 +245,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -263,7 +263,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -281,7 +281,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -299,7 +299,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -317,7 +317,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -335,7 +335,7 @@
     "shotRange" : 30.0,
     "accuracy" : 100.0,
     "cunning" : 50.0,
-    "skill" : 70.0,
+    "intelligence" : 70.0,
     "risk" : 70.0,
     "endurance" : 60.0,
     "dexterity" : 70.0
@@ -353,7 +353,7 @@
     "shotRange" : 40.0,
     "accuracy" : 60.0,
     "cunning" : 100.0,
-    "skill" : 60.0,
+    "intelligence" : 60.0,
     "risk" : 50.0,
     "endurance" : 30.0,
     "dexterity" : 90.0
@@ -371,7 +371,7 @@
     "shotRange" : 60.0,
     "accuracy" : 40.0,
     "cunning" : 40.0,
-    "skill" : 70.0,
+    "intelligence" : 70.0,
     "risk" : 50.0,
     "endurance" : 80.0,
     "dexterity" : 20.0
@@ -389,7 +389,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -407,7 +407,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -425,7 +425,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -443,7 +443,7 @@
     "shotRange" : 70.0,
     "accuracy" : 60.0,
     "cunning" : 20.0,
-    "skill" : 70.0,
+    "intelligence" : 70.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 20.0
@@ -461,7 +461,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -479,7 +479,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -497,7 +497,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -515,7 +515,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0
@@ -533,7 +533,7 @@
     "shotRange" : 50.0,
     "accuracy" : 50.0,
     "cunning" : 50.0,
-    "skill" : 50.0,
+    "intelligence" : 50.0,
     "risk" : 50.0,
     "endurance" : 50.0,
     "dexterity" : 50.0

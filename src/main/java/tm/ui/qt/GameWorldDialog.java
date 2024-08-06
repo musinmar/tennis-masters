@@ -27,6 +27,7 @@ import tm.lib.domain.competition.SeasonCompetition;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.base.MultiStageCompetition;
+import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.PersistenceManager;
@@ -35,6 +36,8 @@ import tm.lib.domain.world.WorldLogger;
 import tm.lib.engine.StrategyProvider;
 import tm.ui.qt.simulation.SimulationHelper;
 
+import java.net.URI;
+import java.util.Arrays;
 import java.util.function.BiFunction;
 
 import static io.qt.widgets.QMessageBox.StandardButton.Cancel;
@@ -44,6 +47,7 @@ import static io.qt.widgets.QMessageBox.StandardButton.Yes;
 public class GameWorldDialog extends QDialog {
 
     public static final String WORLD_INITIALIZATION_FAILURE_ERROR_TITLE = "World initialization failure";
+    public static final String PLAYERS_PATH = "players";
     private World world;
 
     private QPlainTextEdit competitionBrowserTextEdit;
@@ -143,11 +147,8 @@ public class GameWorldDialog extends QDialog {
         bottomButtonsLayout.addWidget(nextButton);
         bottomButtonsLayout.addWidget(nextFastButton);
 
-        previousMatchLabel = new QLabel(this);
-        previousMatchLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);
-
-        nextMatchLabel = new QLabel(this);
-        nextMatchLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);
+        previousMatchLabel = createMatchLabel();
+        nextMatchLabel = createMatchLabel();
 
         QHBoxLayout matchLabelsLayout = new QHBoxLayout();
         matchLabelsLayout.addWidget(previousMatchLabel);
@@ -185,6 +186,13 @@ public class GameWorldDialog extends QDialog {
 
         resize(1200, 600);
         move(200, 50);
+    }
+
+    private QLabel createMatchLabel() {
+        var nextMatchLabel1 = new QLabel(this);
+        nextMatchLabel1.setAlignment(Qt.AlignmentFlag.AlignCenter);
+        nextMatchLabel1.linkActivated.connect(this::onMatchLinkActivated);
+        return nextMatchLabel1;
     }
 
     private void initializeWorld() {
@@ -433,9 +441,36 @@ public class GameWorldDialog extends QDialog {
     }
 
     private String createMatchDescription(MatchEvent match) {
-        return String.format("<br>%s<br>%s",
+        var resultString = (match.getResult() == null) ? "" : " " + match.getResult();
+        return String.format(
+                "<html><br/>%s<br/>%s - %s%s</html>",
                 match.getCompetition().getFullName(false),
-                match.toString());
+                buildPlayerEndpoint(match.getHomePlayer().getPlayer()),
+                buildPlayerEndpoint(match.getAwayPlayer().getPlayer()),
+                resultString
+        );
+    }
+
+    private String buildPlayerEndpoint(Knight knight) {
+        if (knight == null) {
+            return "TBD";
+        } else {
+            return String.format("<a href=\"/%s/%d\">%s</a>", PLAYERS_PATH, knight.getId(), knight.getFullName());
+        }
+    }
+
+    private void onMatchLinkActivated(String reference) {
+        URI uri = URI.create(reference);
+        String path = uri.getPath();
+        String[] pathElements = path.split("/");
+        System.out.println(path);
+        System.out.println(Arrays.toString(pathElements));
+        if (PLAYERS_PATH.equals(pathElements[1])) {
+            var playerId = Integer.valueOf(pathElements[2]);
+            var player = world.getPlayers().stream().filter(p -> p.getId() == playerId).findFirst().get();
+            PlayerDialog playerDialog = new PlayerDialog(this, player);
+            playerDialog.show();
+        }
     }
 
     private void onShowMatchConfigurationDialogActionTriggered() {

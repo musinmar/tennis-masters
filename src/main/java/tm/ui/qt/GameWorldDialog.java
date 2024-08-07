@@ -136,7 +136,7 @@ public class GameWorldDialog extends QDialog {
 
         QPushButton nextButton = new QPushButton(this);
         nextButton.setText("Смотреть матч");
-        nextButton.clicked.connect(this, "onNextMatchButtonClicked()");
+        nextButton.clicked.connect(this::onNextMatchButtonClicked);
 
         QPushButton nextFastButton = new QPushButton(this);
         nextFastButton.setText("Симулировать матч");
@@ -348,7 +348,8 @@ public class GameWorldDialog extends QDialog {
 
     private void updateLogText() {
         Competition selectedCompetition = getSelectedCompetition();
-        competitionBrowserTextEdit.setPlainText(selectedCompetition.printToString());
+        String text = selectedCompetition == null ? "" : selectedCompetition.printToString();
+        competitionBrowserTextEdit.setPlainText(text);
     }
 
     private Competition getSelectedCompetition() {

@@ -33,7 +33,7 @@ public class MainWindow extends QMainWindow {
 
     private void onNewButtonClicked() {
         GameWorldDialog gameWorldDialog = new GameWorldDialog(this);
-        gameWorldDialog.open();
+        gameWorldDialog.show();
     }
 
     private void onExitButtonClicked() {

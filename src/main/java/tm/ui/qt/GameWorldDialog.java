@@ -6,23 +6,8 @@ import io.qt.core.Qt;
 import io.qt.gui.QAction;
 import io.qt.gui.QFont;
 import io.qt.gui.QTextCursor;
-import io.qt.widgets.QApplication;
-import io.qt.widgets.QComboBox;
-import io.qt.widgets.QDialog;
-import io.qt.widgets.QHBoxLayout;
-import io.qt.widgets.QLabel;
-import io.qt.widgets.QLayout;
-import io.qt.widgets.QMenu;
-import io.qt.widgets.QMenuBar;
-import io.qt.widgets.QMessageBox;
+import io.qt.widgets.*;
 import io.qt.widgets.QMessageBox.StandardButtons;
-import io.qt.widgets.QPlainTextEdit;
-import io.qt.widgets.QPushButton;
-import io.qt.widgets.QSizePolicy;
-import io.qt.widgets.QSpacerItem;
-import io.qt.widgets.QTabWidget;
-import io.qt.widgets.QVBoxLayout;
-import io.qt.widgets.QWidget;
 import tm.lib.domain.competition.SeasonCompetition;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MatchEvent;
@@ -44,7 +29,7 @@ import static io.qt.widgets.QMessageBox.StandardButton.Cancel;
 import static io.qt.widgets.QMessageBox.StandardButton.No;
 import static io.qt.widgets.QMessageBox.StandardButton.Yes;
 
-public class GameWorldDialog extends QDialog {
+public class GameWorldDialog extends QMainWindow {
 
     public static final String WORLD_INITIALIZATION_FAILURE_ERROR_TITLE = "World initialization failure";
     public static final String PLAYERS_PATH = "players";
@@ -126,12 +111,16 @@ public class GameWorldDialog extends QDialog {
         logWidget.setLayout(logWidgetLayout);
 
         nationRatingWidget = new NationRatingWidget(this);
+
         eloRatingWidget = new EloRatingWidget(this);
+        QDockWidget eloRatingDockWidget = new QDockWidget(this);
+        eloRatingDockWidget.setWindowTitle("Рейтинг игроков");
+        eloRatingDockWidget.setWidget(eloRatingWidget);
+        addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, eloRatingDockWidget);
 
         QTabWidget tabWidget = new QTabWidget(this);
         tabWidget.addTab(seasonLogTextEdit, "Лог");
         tabWidget.addTab(seasonBrowserWidget, "Турниры");
-        tabWidget.addTab(eloRatingWidget, "Рейтинг игроков");
         tabWidget.addTab(nationRatingWidget, "Рейтинг наций");
 
         QPushButton nextButton = new QPushButton(this);
@@ -160,9 +149,9 @@ public class GameWorldDialog extends QDialog {
         leftLayout.addItem(matchLabelsLayout);
         leftLayout.addItem(bottomButtonsLayout);
 
-        QLayout mainLayout = new QHBoxLayout();
-        mainLayout.setContentsMargins(new QMargins(2, 2, 2, 2));
-        mainLayout.addItem(leftLayout);
+        QWidget centralWidget = new QWidget(this);
+        centralWidget.setLayout(leftLayout);
+        setCentralWidget(centralWidget);
 
         QMenu toolsMenu = new QMenu("Инструменты");
         QAction showMatchConfigurationDialogAction = toolsMenu.addAction("Сыграть матч");
@@ -172,12 +161,7 @@ public class GameWorldDialog extends QDialog {
 
         QMenuBar menuBar = new QMenuBar(this);
         menuBar.addMenu(toolsMenu);
-
-        QVBoxLayout menuBarLayout = new QVBoxLayout(this);
-        menuBarLayout.setSpacing(3);
-        menuBarLayout.setContentsMargins(0, 0, 0, 0);
-        menuBarLayout.addWidget(menuBar);
-        menuBarLayout.addItem(mainLayout);
+        setMenuBar(menuBar);
 
         QAction simulateNextMatchAction = new QAction(this);
         simulateNextMatchAction.setShortcut("Space");

@@ -25,17 +25,18 @@ public class EloRatingWidget extends QWidget {
 
     private void initUi() {
         eloRatingTreeWidget = new QTreeWidget(this);
-        eloRatingTreeWidget.setColumnCount(5);
-        eloRatingTreeWidget.setHeaderLabels(Arrays.asList("", "Игрок", "Рейтинг", "Изменение за год", ""));
+        eloRatingTreeWidget.setColumnCount(4);
+        eloRatingTreeWidget.setHeaderLabels(Arrays.asList("", "Игрок", "Рейтинг", "Изменение за год"));
         eloRatingTreeWidget.setColumnWidth(0, 25);
-        eloRatingTreeWidget.setColumnWidth(1, 120);
-        eloRatingTreeWidget.setColumnWidth(2, 100);
-        eloRatingTreeWidget.setColumnWidth(3, 150);
+        eloRatingTreeWidget.setColumnWidth(1, 100);
+        eloRatingTreeWidget.setColumnWidth(2, 60);
+        eloRatingTreeWidget.setColumnWidth(3, 60);
         eloRatingTreeWidget.setIndentation(0);
         eloRatingTreeWidget.setItemDelegate(new CustomItemDelegate());
 
         QVBoxLayout mainLayout = new QVBoxLayout();
-        mainLayout.addWidget(eloRatingTreeWidget, 100);
+        mainLayout.addWidget(eloRatingTreeWidget);
+        mainLayout.setContentsMargins(2, 2, 2, 2);
         setLayout(mainLayout);
     }
 

@@ -7,7 +7,7 @@ public class TennisMastersMain {
     public static void main(String[] args) {
         QApplication.initialize(args);
         GameWorldDialog gameWorldDialog = new GameWorldDialog(null);
-        gameWorldDialog.show();
+        gameWorldDialog.showMaximized();
         QApplication.exec();
         QApplication.shutdown();
     }

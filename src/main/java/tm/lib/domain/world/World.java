@@ -33,7 +33,7 @@ public class World {
 
     private WorldLogger logger = NoopLogger;
 
-    private List<SeasonCompetition> seasons = new ArrayList<SeasonCompetition>();
+    private SeasonCompetition seasonCompetition;
     private List<Knight> players = new ArrayList<Knight>();
 
     private EloRating eloRating;
@@ -89,12 +89,8 @@ public class World {
         this.logger = logger;
     }
 
-    public List<SeasonCompetition> getSeasons() {
-        return seasons;
-    }
-
     public SeasonCompetition getCurrentSeason() {
-        return seasons.get(seasons.size() - 1);
+        return seasonCompetition;
     }
 
     public List<Knight> getPlayers() {
@@ -135,9 +131,8 @@ public class World {
     }
 
     private void initCompetitions() {
-        SeasonCompetition season = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers(), year);
-        season.setStartingDate(0);
-        seasons.add(season);
+        seasonCompetition = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers(), year);
+        seasonCompetition.setStartingDate(0);
 
         initCompetitionPointValues();
     }
@@ -195,11 +190,15 @@ public class World {
     }
 
     private Integer getCompetitionPoints(Competition competition) {
-        Integer points = competitionPointValues.get(competition);
-        if (points == null) {
-            points = competitionPointValues.get(competition.getParent());
+        var current = competition;
+        while (current != null) {
+            Integer points = competitionPointValues.get(competition);
+            if (points != null) {
+                return points;
+            }
+            current = current.getParent();
         }
-        return points;
+        return 0;
     }
 
     public void finishSeason() {

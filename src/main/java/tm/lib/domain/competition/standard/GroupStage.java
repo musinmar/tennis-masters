@@ -47,4 +47,13 @@ public class GroupStage extends MultiStageCompetition {
             getStages().get(i).setActualParticipants(players.get(i));
         }
     }
+
+    @Override
+    public Knight getWinner() {
+        if (getStages().size() == 1) {
+            return super.getWinner();
+        } else {
+            throw new IllegalStateException("Can not determine single winner of a multi-group group stage");
+        }
+    }
 }

@@ -30,7 +30,7 @@ public class PlayoffStage extends MultiStageCompetition {
         for (int i = 0; i < rounds; i++) {
             String subStageName = getDefaultRoundName(roundPlayerCount);
             PlayoffSubStage stage = new PlayoffSubStage(subStageName, roundPlayerCount);
-            stage.registerOnFinishedCallback(() -> onPlayoffSubStageFinished(stage));
+            stage.registerOnFinishedCallback(this::onPlayoffSubStageFinished);
             stages.add(stage);
             roundPlayerCount /= 2;
         }
@@ -58,7 +58,8 @@ public class PlayoffStage extends MultiStageCompetition {
         }
     }
 
-    private void onPlayoffSubStageFinished(PlayoffSubStage finishedStage) {
+    private void onPlayoffSubStageFinished(Competition competition) {
+        PlayoffSubStage finishedStage = (PlayoffSubStage) competition;
         PlayoffSubStage nextStage = null;
         for (int i = 0; i < getStages().size() - 1; ++i) {
             if (getStages().get(i) == finishedStage) {

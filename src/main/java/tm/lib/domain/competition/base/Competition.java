@@ -1,46 +1,42 @@
 package tm.lib.domain.competition.base;
 
+import lombok.Getter;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
+@Getter
 abstract public class Competition {
     private Competition parent;
+    private boolean isRoot;
     private final String name;
 
     private List<Participant> participants;
-    private final List<Runnable> competitionFinishedCallbacks = new LinkedList<>();
+    private final List<Consumer<Competition>> competitionFinishedCallbacks = new ArrayList<>();
 
     protected Competition(String name) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Competition getParent() {
-        return parent;
     }
 
     protected void setParent(Competition parent) {
         this.parent = parent;
     }
 
-    public List<Participant> getParticipants() {
-        return participants;
+    public void setIsRoot(boolean isRoot) {
+        this.isRoot = isRoot;
     }
 
     public void setParticipants(List<Participant> participants) {
         this.participants = participants;
     }
 
-    public void registerOnFinishedCallback(Runnable callback) {
+    public void registerOnFinishedCallback(Consumer<Competition> callback) {
         competitionFinishedCallbacks.add(callback);
     }
 
@@ -88,13 +84,15 @@ abstract public class Competition {
 
     abstract public int getLastDate();
 
+    abstract public Knight getWinner();
+
     private void runOnFinishedCallbacks() {
-        for (Runnable callback : competitionFinishedCallbacks) {
-            callback.run();
+        for (var callback : competitionFinishedCallbacks) {
+            callback.accept(this);
         }
     }
 
-    protected void checkIfCompetitionFinished() {
+    protected void checkIfCompetitionFinished(Competition competition) {
         if (getNextMatch() == null) {
             runOnFinishedCallbacks();
         }
@@ -118,5 +116,13 @@ abstract public class Competition {
 
     public boolean isFinished() {
         return getNextMatch() == null;
+    }
+
+    public Competition getRootCompetition() {
+        if (isRoot) {
+            return this;
+        } else {
+            return parent.getRootCompetition();
+        }
     }
 }

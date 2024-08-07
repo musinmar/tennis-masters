@@ -1,16 +1,15 @@
 package tm.ui.qt;
 
 import io.qt.Nullable;
-import io.qt.widgets.QDialog;
-import io.qt.widgets.QDialogButtonBox;
-import io.qt.widgets.QGridLayout;
-import io.qt.widgets.QGroupBox;
-import io.qt.widgets.QLabel;
-import io.qt.widgets.QLineEdit;
-import io.qt.widgets.QProgressBar;
-import io.qt.widgets.QVBoxLayout;
-import io.qt.widgets.QWidget;
+import io.qt.widgets.*;
 import tm.lib.domain.core.Knight;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 public class PlayerDialog extends QDialog {
 
@@ -30,6 +29,7 @@ public class PlayerDialog extends QDialog {
     private QProgressBar riskBar;
     private QProgressBar enduranceBar;
     private QProgressBar dexterityBar;
+    private QTreeWidget trophyTreeWidget;
 
     public PlayerDialog(@Nullable QWidget parent, Knight player) {
         super(parent);
@@ -110,6 +110,18 @@ public class PlayerDialog extends QDialog {
         skillsGroupBox.setTitle("Характеристики");
         skillsGroupBox.setLayout(skillsLayout);
 
+        trophyTreeWidget = new QTreeWidget(this);
+        trophyTreeWidget.setColumnCount(2);
+        trophyTreeWidget.setHeaderLabels(List.of("Турнир", "Количество"));
+        trophyTreeWidget.setColumnWidth(0, 150);
+
+        QVBoxLayout trophyLayout = new QVBoxLayout();
+        trophyLayout.addWidget(trophyTreeWidget);
+
+        QGroupBox trophyGroupBox = new QGroupBox(this);
+        trophyGroupBox.setTitle("Трофеи");
+        trophyGroupBox.setLayout(trophyLayout);
+
         QDialogButtonBox buttonBox = new QDialogButtonBox(this);
         buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Close.asFlags());
         buttonBox.clicked.connect(this::accept);
@@ -117,6 +129,7 @@ public class PlayerDialog extends QDialog {
         QVBoxLayout mainLayout = new QVBoxLayout(this);
         mainLayout.addWidget(mainInfoGroupBox);
         mainLayout.addWidget(skillsGroupBox);
+        mainLayout.addWidget(trophyGroupBox);
         mainLayout.addWidget(buttonBox);
         setLayout(mainLayout);
 
@@ -168,5 +181,19 @@ public class PlayerDialog extends QDialog {
         riskBar.setValue((int) player.getSkills().getRisk());
         enduranceBar.setValue((int) player.getSkills().getEndurance());
         dexterityBar.setValue((int) player.getSkills().getDexterity());
+
+        var groupedTrophies = player.getTrophies().stream()
+                .collect(groupingBy(Knight.Trophy::getCompetitionName, counting()));
+        var sortedEntries = groupedTrophies.entrySet().stream()
+                .sorted(Comparator.comparing(Map.Entry::getKey))
+                .toList();
+        sortedEntries.forEach(entry -> {
+            QTreeWidgetItem item = new QTreeWidgetItem();
+            item.setText(0, entry.getKey());
+            item.setText(1, entry.getValue().toString());
+            trophyTreeWidget.addTopLevelItem(item);
+        });
+
+
     }
 }

@@ -1,7 +1,10 @@
 package tm.lib.domain.core;
 
-import lombok.Getter;
+import lombok.*;
 import tm.lib.domain.core.dto.KnightDto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class Knight {
@@ -14,6 +17,17 @@ public class Knight {
     private Country country;
 
     private SkillSet skills;
+
+    private List<Trophy> trophies = new ArrayList<>();
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Trophy {
+        private int year;
+        private String competitionName;
+    }
 
     public Knight() {
         id = -1;
@@ -32,6 +46,7 @@ public class Knight {
         knight.nation = dto.getNation();
         knight.country = dto.getCountry();
         knight.skills = dto.getSkills();
+        knight.trophies = dto.getTrophies() != null ? dto.getTrophies() : knight.trophies;
         return knight;
     }
 
@@ -43,6 +58,7 @@ public class Knight {
         dto.setNation(nation);
         dto.setCountry(country);
         dto.setSkills(skills);
+        dto.setTrophies(trophies);
         return dto;
     }
 
@@ -56,5 +72,9 @@ public class Knight {
 
     public void randomizeSkills() {
         skills = SkillSet.randomSkillSet();
+    }
+
+    public void addTrophy(int year, String competitionName) {
+        trophies.add(new Trophy(year, competitionName));
     }
 }

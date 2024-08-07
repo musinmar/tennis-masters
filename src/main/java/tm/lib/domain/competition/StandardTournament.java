@@ -1,5 +1,6 @@
 package tm.lib.domain.competition;
 
+import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.GroupStageResult;
@@ -33,7 +34,7 @@ public class StandardTournament extends MultiStageCompetition {
         playoffStage.setStartingDate(date + 4);
     }
 
-    private void onGroupStageFinished() {
+    private void onGroupStageFinished(Competition competition) {
         GroupStageResult groupResults = groupStage.getResults();
         List<Knight> playoffParticipants = drawPlayersInPairsFromGroupResults(groupResults);
         playoffStage.setActualParticipants(playoffParticipants);

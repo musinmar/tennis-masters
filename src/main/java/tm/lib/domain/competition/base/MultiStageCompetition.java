@@ -1,6 +1,7 @@
 package tm.lib.domain.competition.base;
 
 import com.google.common.collect.ImmutableList;
+import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 
 import java.io.PrintStream;
@@ -108,6 +109,15 @@ abstract public class MultiStageCompetition extends Competition {
 
     @Override
     public int getLastDate() {
-        return getStages().get(getStages().size() - 1).getLastDate();
+        return getLastStage().getLastDate();
+    }
+
+    @Override
+    public Knight getWinner() {
+        return getLastStage().getWinner();
+    }
+
+    private Competition getLastStage() {
+        return getStages().getLast();
     }
 }

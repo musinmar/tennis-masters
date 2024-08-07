@@ -1,5 +1,6 @@
 package tm.lib.domain.competition;
 
+import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.competition.base.Participant;
 import tm.lib.domain.competition.standard.GroupStage;
@@ -30,6 +31,7 @@ public class WorldCupCompetition extends MultiStageCompetition {
 
     public WorldCupCompetition() {
         super("Чемпионат Мира");
+        setIsRoot(true);
 
         firstQualifyingStageGroupRound = new GroupStage("Первый квалификационный раунд", 8);
         firstQualifyingStageGroupRound.registerOnFinishedCallback(this::onFirstQualifyingStageFinished);
@@ -67,20 +69,20 @@ public class WorldCupCompetition extends MultiStageCompetition {
         groupRoundParticipants = newArrayList(players.subList(0, 8));
     }
 
-    private void onFirstQualifyingStageFinished() {
+    private void onFirstQualifyingStageFinished(Competition competition) {
         GroupStageResult results = firstQualifyingStageGroupRound.getResults();
         List<Knight> playoffParticipants = drawPlayersInPairsFromGroupResults(results);
         firstQualifyingStagePlayoff.setActualParticipants(playoffParticipants);
     }
 
-    private void onFirstQualifyingStagePlayoffFinished() {
+    private void onFirstQualifyingStagePlayoffFinished(Competition competition) {
         List<Knight> winners = firstQualifyingStagePlayoff.getLastRoundResults().getWinners();
         secondQualifyingStageParticipants.addAll(winners);
         List<List<Knight>> groups = performPotBasedDraw(secondQualifyingStageParticipants);
         secondQualifyingStage.setActualParticipantsByGroups(groups);
     }
 
-    private void onSecondQualifyingStageFinished() {
+    private void onSecondQualifyingStageFinished(Competition competition) {
         GroupStageResult results = secondQualifyingStage.getResults();
         for (int i = 0; i < 2; ++i) {
             for (int j = 0; j < 4; j++) {
@@ -91,7 +93,7 @@ public class WorldCupCompetition extends MultiStageCompetition {
         groupStage.setActualParticipantsByGroups(groups);
     }
 
-    private void onGroupStageFinished() {
+    private void onGroupStageFinished(Competition competition) {
         GroupStageResult groupResults = groupStage.getResults();
         List<Knight> playoffParticipants = drawPlayersInPairsFromGroupResults(groupResults);
         playoffStage.setActualParticipants(playoffParticipants);

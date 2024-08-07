@@ -1,5 +1,6 @@
 package tm.lib.domain.competition;
 
+import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.GroupStageResult;
@@ -22,6 +23,7 @@ public class ChampionsLeagueCompetition extends MultiStageCompetition {
 
     public ChampionsLeagueCompetition() {
         super("Лига Чемпионов");
+        setIsRoot(true);
 
         firstQualifyingStage = new PlayoffSubStage("Первый квалификационный раунд", 6);
         secondQualifyingStage = new PlayoffSubStage("Второй квалификационный раунд", 8);
@@ -65,7 +67,7 @@ public class ChampionsLeagueCompetition extends MultiStageCompetition {
         return (PlayoffSubStage) playoffStage.getStages().get(1);
     }
 
-    private void onGroupStageFinished() {
+    private void onGroupStageFinished(Competition competition) {
         GroupStageResult groupResults = groupStage.getResults();
         List<Knight> playoffParticipants = drawPlayersInPairsFromGroupResults(groupResults);
         playoffStage.setActualParticipants(playoffParticipants);

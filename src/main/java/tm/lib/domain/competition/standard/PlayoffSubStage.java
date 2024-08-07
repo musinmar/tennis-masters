@@ -62,4 +62,14 @@ public class PlayoffSubStage extends SimpleCompetition {
         }
         return new PlayoffSubStageResult(winners, losers);
     }
+
+    @Override
+    public Knight getWinner() {
+        List<Knight> winners = getResults().getWinners();
+        if (winners.size() == 1) {
+            return winners.getFirst();
+        } else {
+            throw new IllegalStateException("Can't determine single winner of multi-pair play-off stage");
+        }
+    }
 }

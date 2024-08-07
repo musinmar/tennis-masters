@@ -1,5 +1,6 @@
 package tm.lib.domain.competition;
 
+import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.PlayoffStage;
@@ -30,7 +31,7 @@ public class SimpleFourTournament extends MultiStageCompetition {
         playoffStage.setStartingDate(date + 4);
     }
 
-    private void onGroupStageFinished() {
+    private void onGroupStageFinished(Competition competition) {
         playoffStage.setActualParticipants(groupStage.getResults().getGroupResults().get(0));
     }
 }

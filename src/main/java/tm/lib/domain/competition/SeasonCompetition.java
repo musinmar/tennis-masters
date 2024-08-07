@@ -23,6 +23,7 @@ public class SeasonCompetition extends MultiStageCompetition {
     private final ChampionsLeagueCompetition championsLeague;
     private final FederationCupCompetition federationsCup;
     private final WorldCupCompetition worldCupCompetition;
+    private final int year;
 
     public SeasonCompetition(String name, World world, List<Knight> players, int year) {
         super(name);
@@ -34,6 +35,7 @@ public class SeasonCompetition extends MultiStageCompetition {
         for (Nation nation : Nation.values()) {
             List<Knight> nationKnights = players.stream().filter(p -> p.getNation() == nation).collect(toList());
             GroupSubStage nationalCup = new GroupSubStage("Кубок " + nation.getNameGenitive(), nationKnights.size());
+            nationalCup.setIsRoot(true);
             nationalCup.setActualParticipants(nationKnights);
             nationalCups.put(nation, nationalCup);
             tournaments.add(nationalCup);
@@ -55,10 +57,12 @@ public class SeasonCompetition extends MultiStageCompetition {
         ));
 
         worldCupCompetition = new WorldCupCompetition();
-        if (year % 4 == 0) {
+        this.year = year;
+        if (this.year % 4 == 0) {
             tournaments.add(worldCupCompetition);
         }
 
+        tournaments.forEach(t -> t.registerOnFinishedCallback(this::onChildCompetitionFinished));
         initStages(tournaments);
     }
 
@@ -94,7 +98,7 @@ public class SeasonCompetition extends MultiStageCompetition {
         worldCupCompetition.setStartingDateAfter(championsLeague.getPlayoffFinal());
     }
 
-    private void initCLFirstQualifyingStage() {
+    private void initCLFirstQualifyingStage(Competition competition) {
         List<Knight> clQualifyingRound1 = new ArrayList<>(asList(
                 get_player_from(1, 4),
                 get_player_from(3, 3),
@@ -107,7 +111,7 @@ public class SeasonCompetition extends MultiStageCompetition {
         championsLeague.getFirstQualifyingStage().setActualParticipants(clQualifyingRound1);
     }
 
-    private void onCLFirstQualifyingStageFinished() {
+    private void onCLFirstQualifyingStageFinished(Competition competition) {
         List<Knight> clQualifyingRound2 = new ArrayList<>(asList(
                 get_player_from(1, 3),
                 get_player_from(2, 2),
@@ -128,7 +132,7 @@ public class SeasonCompetition extends MultiStageCompetition {
         federationsCup.getFirstQualifyingStage().setActualParticipants(fcQualifyingRound1);
     }
 
-    private void onCLSecondQualifyingStageFinished() {
+    private void onCLSecondQualifyingStageFinished(Competition competition) {
         List<Knight> clGroupRound = new ArrayList<>(asList(
                 get_player_from(1, 1),
                 get_player_from(1, 2),
@@ -153,7 +157,7 @@ public class SeasonCompetition extends MultiStageCompetition {
         federationsCup.getSecondQualifyingStage().setActualParticipants(fcQualifyingRound2);
     }
 
-    private void initFCGroupStage() {
+    private void initFCGroupStage(Competition competition) {
         List<Knight> fcGroupRound = new ArrayList<>(asList(
                 get_player_from(2, 4),
                 get_player_from(3, 4),
@@ -191,8 +195,12 @@ public class SeasonCompetition extends MultiStageCompetition {
         return nationalCups.get(nation).getResults().get(pos - 1);
     }
 
-    private void onCLPlayoffFinished() {
+    private void onCLPlayoffFinished(Competition competition) {
         List<Knight> worldCupParticipants = world.getEloRating().getPersonsByRating();
         worldCupCompetition.setActualParticipants(worldCupParticipants);
+    }
+
+    private void onChildCompetitionFinished(Competition competition) {
+        competition.getWinner().addTrophy(year, competition.getName());
     }
 }

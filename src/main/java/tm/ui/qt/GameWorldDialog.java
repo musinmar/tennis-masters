@@ -23,6 +23,7 @@ import tm.ui.qt.simulation.SimulationHelper;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiFunction;
 
 import static io.qt.widgets.QMessageBox.StandardButton.Cancel;
@@ -235,7 +236,7 @@ public class GameWorldDialog extends QMainWindow {
 
     private void populateSeasonComboBox() {
         seasonComboBox.clear();
-        for (SeasonCompetition season : world.getSeasons()) {
+        for (SeasonCompetition season : List.of(world.getCurrentSeason())) {
             seasonComboBox.addItem(season.getName(), season);
         }
         seasonComboBox.setCurrentIndex(seasonComboBox.findData(world.getCurrentSeason()));

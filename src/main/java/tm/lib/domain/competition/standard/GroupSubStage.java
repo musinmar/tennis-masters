@@ -174,4 +174,9 @@ public class GroupSubStage extends SimpleCompetition {
         int roundSize = getParticipants().size() / 2;
         return ind % roundSize == 0;
     }
+
+    @Override
+    public Knight getWinner() {
+        return getResults().getFirst();
+    }
 }

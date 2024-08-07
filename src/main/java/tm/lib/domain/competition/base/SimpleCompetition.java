@@ -50,7 +50,7 @@ abstract public class SimpleCompetition extends Competition {
         match.setResult(score);
         doProcessMatchResult(match, score);
         ++nextMatchIndex;
-        checkIfCompetitionFinished();
+        checkIfCompetitionFinished(this);
     }
 
     protected void doProcessMatchResult(MatchEvent match, MatchScore score) {

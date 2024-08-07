@@ -135,7 +135,7 @@ public class World {
     }
 
     private void initCompetitions() {
-        SeasonCompetition season = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers());
+        SeasonCompetition season = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers(), year);
         season.setStartingDate(0);
         seasons.add(season);
 

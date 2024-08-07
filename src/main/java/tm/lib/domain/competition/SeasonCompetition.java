@@ -8,11 +8,7 @@ import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Nation;
 import tm.lib.domain.world.World;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -28,7 +24,7 @@ public class SeasonCompetition extends MultiStageCompetition {
     private final FederationCupCompetition federationsCup;
     private final WorldCupCompetition worldCupCompetition;
 
-    public SeasonCompetition(String name, World world, List<Knight> players) {
+    public SeasonCompetition(String name, World world, List<Knight> players, int year) {
         super(name);
 
         this.world = world;
@@ -53,14 +49,15 @@ public class SeasonCompetition extends MultiStageCompetition {
         federationsCup = new FederationCupCompetition();
         federationsCup.getSecondQualifyingStage().registerOnFinishedCallback(this::initFCGroupStage);
 
-        worldCupCompetition = new WorldCupCompetition();
-
         tournaments.addAll(asList(
                 federationsCup,
                 championsLeague
-//                ,
-//                worldCupCompetition
         ));
+
+        worldCupCompetition = new WorldCupCompetition();
+        if (year % 4 == 0) {
+            tournaments.add(worldCupCompetition);
+        }
 
         initStages(tournaments);
     }

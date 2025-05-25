@@ -6,6 +6,7 @@ import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.PlayoffStage;
 import tm.lib.domain.core.Knight;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,7 +20,9 @@ public class SimpleFourTournament extends MultiStageCompetition {
         //setParticipants(Participant.createNewList(players));
 
         groupStage = new GroupStage("Групповой этап", 4);
-        groupStage.setActualParticipants(players);
+        List<List<Knight>> participantsByGroup = new ArrayList<>();
+        participantsByGroup.add(players);
+        groupStage.setActualParticipantsByGroups(participantsByGroup);
         groupStage.registerOnFinishedCallback(this::onGroupStageFinished);
         playoffStage = new PlayoffStage("Плей-офф", 4);
         initStages(Arrays.asList(groupStage, playoffStage));

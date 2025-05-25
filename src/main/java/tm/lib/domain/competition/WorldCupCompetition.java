@@ -27,7 +27,7 @@ public class WorldCupCompetition extends MultiStageCompetition {
     private final PlayoffStage playoffStage;
 
     private List<Knight> secondQualifyingStageParticipants;
-    private ArrayList<Knight> groupRoundParticipants;
+    private List<Knight> groupRoundParticipants;
 
     public WorldCupCompetition() {
         super("Чемпионат Мира");
@@ -39,7 +39,7 @@ public class WorldCupCompetition extends MultiStageCompetition {
         PlayoffStageConfiguration firstQualifyingRoundPlayoffConfiguration = new PlayoffStageConfiguration();
         firstQualifyingRoundPlayoffConfiguration.setRounds(1);
         firstQualifyingStagePlayoff = new PlayoffStage("Плей-офф первого квалификационного раунда", 4, firstQualifyingRoundPlayoffConfiguration);
-        List<Participant> firstQualifyingStagePlayoffParticipants = firstQualifyingStagePlayoff.getParticipants();
+        List<Participant> firstQualifyingStagePlayoffParticipants = firstQualifyingStagePlayoff.getPlayoffSubStages().getFirst().getParticipants();
         firstQualifyingStagePlayoffParticipants.get(0).setId("A1");
         firstQualifyingStagePlayoffParticipants.get(1).setId("B2");
         firstQualifyingStagePlayoffParticipants.get(2).setId("B1");
@@ -62,7 +62,6 @@ public class WorldCupCompetition extends MultiStageCompetition {
                 playoffStage));
     }
 
-    @Override
     public void setActualParticipants(List<Knight> players) {
         firstQualifyingStageGroupRound.setActualParticipants(players.subList(22, 30));
         secondQualifyingStageParticipants = newArrayList(players.subList(8, 22));

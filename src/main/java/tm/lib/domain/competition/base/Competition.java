@@ -17,7 +17,6 @@ abstract public class Competition {
     private boolean isRoot;
     private final String name;
 
-    private List<Participant> participants;
     private final List<Consumer<Competition>> competitionFinishedCallbacks = new ArrayList<>();
 
     protected Competition(String name) {
@@ -32,22 +31,8 @@ abstract public class Competition {
         this.isRoot = isRoot;
     }
 
-    public void setParticipants(List<Participant> participants) {
-        this.participants = participants;
-    }
-
     public void registerOnFinishedCallback(Consumer<Competition> callback) {
         competitionFinishedCallbacks.add(callback);
-    }
-
-    public void setActualParticipants(List<Knight> players) {
-        setActualParticipants(0, players);
-    }
-
-    public void setActualParticipants(int fromIndex, List<Knight> players) {
-        for (int i = 0; i < players.size(); i++) {
-            participants.get(fromIndex + i).setPlayer(players.get(i));
-        }
     }
 
     public void print(PrintStream stream) {

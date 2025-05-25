@@ -40,7 +40,5 @@ public class Participant {
         return player == null ? id : player.getFullName();
     }
 
-    public static List<Participant> createNewList(String stageParticipantId, int count) {
-        return IntStream.range(0, count).mapToObj(i -> new Participant(stageParticipantId + (i + 1))).toList();
-    }
+
 }

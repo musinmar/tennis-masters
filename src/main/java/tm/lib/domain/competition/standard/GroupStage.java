@@ -1,8 +1,8 @@
 package tm.lib.domain.competition.standard;
 
+import org.apache.commons.collections4.ListUtils;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
-import tm.lib.domain.competition.base.Participant;
 import tm.lib.domain.core.Knight;
 
 import java.util.ArrayList;
@@ -21,11 +21,6 @@ public class GroupStage extends MultiStageCompetition {
             groups.add(group);
         }
         initStages(groups);
-
-        List<Participant> participants = groups.stream()
-                .flatMap(group -> group.getParticipants().stream())
-                .collect(Collectors.toList());
-        setParticipants(participants);
     }
 
     public GroupStageResult getResults() {
@@ -42,9 +37,21 @@ public class GroupStage extends MultiStageCompetition {
     }
 
     public void setActualParticipantsByGroups(List<List<Knight>> players) {
-        for (int i = 0; i < getStages().size(); i++) {
-            getStages().get(i).setActualParticipants(players.get(i));
+        var groups = getGroupSubStages();
+        for (int i = 0; i < groups.size(); i++) {
+            groups.get(i).setActualParticipants(players.get(i));
         }
+    }
+
+    public void setActualParticipants(List<Knight> players) {
+        int groupSize = getGroupSubStages().getFirst().getParticipants().size();
+        var grouped = ListUtils.partition(players, groupSize);
+        setActualParticipantsByGroups(grouped);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<GroupSubStage> getGroupSubStages() {
+        return (List<GroupSubStage>) (List<?>) getStages();
     }
 
     @Override

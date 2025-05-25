@@ -12,9 +12,7 @@ import java.util.List;
 public class PlayoffSubStage extends SimpleCompetition {
 
     public PlayoffSubStage(String name, int playerCount) {
-        super(name);
-        var stageId = getStageParticipantId(playerCount);
-        setParticipants(Participant.createNewList(stageId, playerCount));
+        super(name, createParticipants(getStageParticipantId(playerCount), playerCount));
 
         List<MatchEvent> matches = new ArrayList<>(playerCount / 2);
         for (int i = 0; i < playerCount / 2; i++) {

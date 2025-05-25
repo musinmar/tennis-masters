@@ -35,7 +35,6 @@ public class PlayoffStage extends MultiStageCompetition {
             roundPlayerCount /= 2;
         }
         initStages(stages);
-        setParticipants(stages.get(0).getParticipants());
     }
 
     private String getDefaultRoundName(int playerCount) {
@@ -72,9 +71,13 @@ public class PlayoffStage extends MultiStageCompetition {
         }
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+    public List<PlayoffSubStage> getPlayoffSubStages() {
+        return (List<PlayoffSubStage>) (List<?>) getStages();
+    }
+
     public void setActualParticipants(List<Knight> players) {
-        getStages().get(0).setActualParticipants(players);
+        getPlayoffSubStages().get(0).setActualParticipants(players);
     }
 
     public PlayoffSubStageResult getLastRoundResults() {

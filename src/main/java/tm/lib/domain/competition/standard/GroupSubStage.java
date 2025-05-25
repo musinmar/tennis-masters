@@ -22,8 +22,7 @@ public class GroupSubStage extends SimpleCompetition {
     private final List<GroupResult> groupResults;
 
     public GroupSubStage(String name, String stageParticipantId, int playerCount) {
-        super(name);
-        setParticipants(Participant.createNewList(stageParticipantId, playerCount));
+        super(name, createParticipants(stageParticipantId, playerCount));
 
         List<MatchEvent> matches = createSchedule(getParticipants());
         setMatches(matches);

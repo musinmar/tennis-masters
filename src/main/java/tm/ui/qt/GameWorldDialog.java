@@ -431,8 +431,8 @@ public class GameWorldDialog extends QMainWindow {
         return String.format(
                 "<html><br/>%s<br/>%s - %s%s</html>",
                 match.getCompetition().getFullName(false),
-                buildPlayerEndpoint(match.getHomePlayer().getPlayer()),
-                buildPlayerEndpoint(match.getAwayPlayer().getPlayer()),
+                buildPlayerEndpoint(match.getHomePlayer().getPlayerOrFail()),
+                buildPlayerEndpoint(match.getAwayPlayer().getPlayerOrFail()),
                 resultString
         );
     }

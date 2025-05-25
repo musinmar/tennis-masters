@@ -79,8 +79,8 @@ public class MatchEvent {
 
     public Match createMatchSpec() {
         Match match = new Match();
-        match.setHomePlayer(homePlayer.getPlayer());
-        match.setAwayPlayer(awayPlayer.getPlayer());
+        match.setHomePlayer(homePlayer.getPlayerOrFail());
+        match.setAwayPlayer(awayPlayer.getPlayerOrFail());
         match.setSets(sets);
         match.setPlayoff(playoff);
         match.setVenue(venue);

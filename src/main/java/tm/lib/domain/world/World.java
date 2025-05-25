@@ -160,7 +160,7 @@ public class World {
         latestCompetition = match.getCompetition();
 
         match.getCompetition().processMatchResult(match, score);
-        getEloRating().updateRatings(match.getHomePlayer().getPlayer(), match.getAwayPlayer().getPlayer(), score.getScoreBySets());
+        getEloRating().updateRatings(match.getHomePlayer().getPlayerOrFail(), match.getAwayPlayer().getPlayerOrFail(), score.getScoreBySets());
         updateNationRating(match, score);
 
         logger.println(match.toString());
@@ -182,8 +182,8 @@ public class World {
         Integer points = getCompetitionPoints(match.getCompetition());
         if (points != null) {
             nationRating.updateRatings(
-                    match.getHomePlayer().getPlayer(),
-                    match.getAwayPlayer().getPlayer(),
+                    match.getHomePlayer().getPlayerOrFail(),
+                    match.getAwayPlayer().getPlayerOrFail(),
                     score.getScoreBySets(),
                     points);
         }

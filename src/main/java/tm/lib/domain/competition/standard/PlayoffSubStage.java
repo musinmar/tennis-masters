@@ -46,11 +46,11 @@ public class PlayoffSubStage extends SimpleCompetition {
             if (m.getResult() != null) {
                 BasicScore s = m.getResult().getScoreBySets();
                 if (s.v1 > s.v2) {
-                    winners.add(m.getHomePlayer().getPlayer());
-                    losers.add(m.getAwayPlayer().getPlayer());
+                    winners.add(m.getHomePlayer().getPlayerOrFail());
+                    losers.add(m.getAwayPlayer().getPlayerOrFail());
                 } else {
-                    winners.add(m.getAwayPlayer().getPlayer());
-                    losers.add(m.getHomePlayer().getPlayer());
+                    winners.add(m.getAwayPlayer().getPlayerOrFail());
+                    losers.add(m.getHomePlayer().getPlayerOrFail());
                 }
             }
         }

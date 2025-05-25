@@ -122,7 +122,7 @@ public class GroupSubStage extends SimpleCompetition {
 
     public List<Knight> getResults() {
         return groupResults.stream()
-                .map(groupResult -> groupResult.getParticipant().getPlayer())
+                .map(groupResult -> groupResult.getParticipant().getPlayerOrFail())
                 .collect(toList());
     }
 

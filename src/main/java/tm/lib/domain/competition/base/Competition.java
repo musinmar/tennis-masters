@@ -40,12 +40,6 @@ abstract public class Competition {
         competitionFinishedCallbacks.add(callback);
     }
 
-    public void setParticipantPrefix(String prefix) {
-        for (int i = 0; i < participants.size(); i++) {
-            participants.get(i).setId(prefix + (i + 1));
-        }
-    }
-
     public void setActualParticipants(List<Knight> players) {
         setActualParticipants(0, players);
     }

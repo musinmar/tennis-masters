@@ -34,7 +34,7 @@ public class SeasonCompetition extends MultiStageCompetition {
 
         for (Nation nation : Nation.values()) {
             List<Knight> nationKnights = players.stream().filter(p -> p.getNation() == nation).collect(toList());
-            GroupSubStage nationalCup = new GroupSubStage("Кубок " + nation.getNameGenitive(), nationKnights.size());
+            GroupSubStage nationalCup = new GroupSubStage("Кубок " + nation.getNameGenitive(), "ID", nationKnights.size());
             nationalCup.setIsRoot(true);
             nationalCup.setActualParticipants(nationKnights);
             nationalCups.put(nation, nationalCup);

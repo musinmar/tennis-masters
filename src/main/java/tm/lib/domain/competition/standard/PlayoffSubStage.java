@@ -10,10 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayoffSubStage extends SimpleCompetition {
+
     public PlayoffSubStage(String name, int playerCount) {
         super(name);
-        setParticipants(Participant.createNewList(playerCount));
-        setDefaultParticipantIds(playerCount);
+        var stageId = getStageParticipantId(playerCount);
+        setParticipants(Participant.createNewList(stageId, playerCount));
 
         List<MatchEvent> matches = new ArrayList<>(playerCount / 2);
         for (int i = 0; i < playerCount / 2; i++) {
@@ -23,18 +24,13 @@ public class PlayoffSubStage extends SimpleCompetition {
         setMatches(matches);
     }
 
-    private void setDefaultParticipantIds(int playerCount) {
-        switch (playerCount) {
-            case 2:
-                setParticipantPrefix("F");
-                break;
-            case 4:
-                setParticipantPrefix("SF");
-                break;
-            case 8:
-                setParticipantPrefix("QF");
-                break;
-        }
+    private static String getStageParticipantId(int playerCount) {
+        return switch (playerCount) {
+            case 2 -> "F";
+            case 4 -> "SF";
+            case 8 -> "QF";
+            default -> Participant.DEFAULT_STAGE_PARTICIPANT_ID;
+        };
     }
 
     @Override

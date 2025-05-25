@@ -13,22 +13,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.reverseOrder;
+import static java.util.stream.Collectors.toList;
 
 public class GroupSubStage extends SimpleCompetition {
 
-    private List<GroupResult> groupResults;
+    private final List<GroupResult> groupResults;
 
-    public GroupSubStage(String name, int playerCount) {
+    public GroupSubStage(String name, String stageParticipantId, int playerCount) {
         super(name);
-        setParticipants(Participant.createNewList(playerCount));
+        setParticipants(Participant.createNewList(stageParticipantId, playerCount));
 
         List<MatchEvent> matches = createSchedule(getParticipants());
         setMatches(matches);
 
-        initGroupResults(getParticipants());
+        groupResults = initGroupResults(getParticipants());
     }
 
     private List<MatchEvent> createSchedule(List<Participant> participants) {
@@ -37,13 +37,13 @@ public class GroupSubStage extends SimpleCompetition {
         if (size == 4) {
             return createScheduleFor6(ps);
         } else if (size % 2 == 0) {
-            return createScheduleForEven(size, ps);
+            return createScheduleForEvenPlayerCount(size, ps);
         } else {
             throw new IllegalArgumentException("Can't create group schedule for " + size + " players");
         }
     }
 
-    private List<MatchEvent> createScheduleForEven(int count, List<Participant> ps) {
+    private List<MatchEvent> createScheduleForEvenPlayerCount(int count, List<Participant> ps) {
         List<MatchEvent> matchEvents = new ArrayList<>();
 
         int[] buf = new int[count];
@@ -86,11 +86,8 @@ public class GroupSubStage extends SimpleCompetition {
         );
     }
 
-    private void initGroupResults(List<Participant> participants) {
-        groupResults = new ArrayList<>();
-        for (int i = 0; i < participants.size(); ++i) {
-            groupResults.add(new GroupResult(participants.get(i)));
-        }
+    private static List<GroupResult> initGroupResults(List<Participant> participants) {
+        return participants.stream().map(GroupResult::new).collect(toList());
     }
 
     @Override
@@ -127,7 +124,7 @@ public class GroupSubStage extends SimpleCompetition {
     public List<Knight> getResults() {
         return groupResults.stream()
                 .map(groupResult -> groupResult.getParticipant().getPlayer())
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @Override

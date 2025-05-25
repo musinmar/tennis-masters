@@ -2,10 +2,12 @@ package tm.lib.domain.competition.base;
 
 import tm.lib.domain.core.Knight;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class Participant {
+    public static final String DEFAULT_STAGE_PARTICIPANT_ID = "ID";
+
     private String id;
     private Knight player;
 
@@ -38,19 +40,7 @@ public class Participant {
         return player == null ? id : player.getFullName();
     }
 
-    public static List<Participant> createNewList(int count) {
-        ArrayList<Participant> participants = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            participants.add(new Participant("ID" + (i + 1)));
-        }
-        return participants;
-    }
-
-    public static List<Participant> createNewList(List<Knight> players) {
-        ArrayList<Participant> participants = new ArrayList<>();
-        for (int i = 0; i < players.size(); i++) {
-            participants.add(new Participant("ID" + (i + 1), players.get(i)));
-        }
-        return participants;
+    public static List<Participant> createNewList(String stageParticipantId, int count) {
+        return IntStream.range(0, count).mapToObj(i -> new Participant(stageParticipantId + (i + 1))).toList();
     }
 }

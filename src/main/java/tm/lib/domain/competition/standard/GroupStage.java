@@ -16,9 +16,8 @@ public class GroupStage extends MultiStageCompetition {
         int groupCount = playerCount / 4;
         List<Competition> groups = new ArrayList<>();
         for (int i = 0; i < groupCount; ++i) {
-            char groupId = (char) ('A' + i);
-            GroupSubStage group = new GroupSubStage("Группа " + groupId, 4);
-            group.setParticipantPrefix(groupId + "");
+            String groupId = String.valueOf((char) ('A' + i));
+            GroupSubStage group = new GroupSubStage("Группа " + groupId, groupId, 4);
             groups.add(group);
         }
         initStages(groups);

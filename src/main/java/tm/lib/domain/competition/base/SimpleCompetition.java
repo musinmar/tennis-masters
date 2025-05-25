@@ -5,20 +5,19 @@ import tm.lib.domain.core.MatchScore;
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 abstract public class SimpleCompetition extends Competition {
 
-    private List<Participant> participants;
+    private final List<Participant> participants;
     private List<MatchEvent> matches;
-    private int nextMatchIndex;
+    private int nextMatchIndex = 0;
 
     protected SimpleCompetition(String name, List<Participant> participants) {
         super(name);
         this.participants = participants;
-        nextMatchIndex = 0;
     }
-
 
     protected int getNextMatchIndex() {
         return nextMatchIndex;
@@ -28,11 +27,11 @@ abstract public class SimpleCompetition extends Competition {
         return participants;
     }
 
-    public static List<Participant> createParticipants(String stageParticipantId, int count) {
+    protected static List<Participant> createParticipants(String stageParticipantId, int count) {
         return IntStream.range(0, count).mapToObj(i -> new Participant(stageParticipantId + (i + 1))).toList();
     }
 
-    public void setActualParticipants(int fromIndex, List<Knight> players) {
+    private void setActualParticipants(int fromIndex, List<Knight> players) {
         for (int i = 0; i < players.size(); i++) {
             participants.get(fromIndex + i).setPlayer(players.get(i));
         }
@@ -51,11 +50,11 @@ abstract public class SimpleCompetition extends Competition {
     }
 
     @Override
-    public MatchEvent getNextMatch() {
+    public Optional<MatchEvent> getNextMatch() {
         if (nextMatchIndex < matches.size()) {
-            return matches.get(nextMatchIndex);
+            return Optional.of(matches.get(nextMatchIndex));
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -70,7 +69,7 @@ abstract public class SimpleCompetition extends Competition {
 
     @Override
      public final void processMatchResult(MatchEvent match, MatchScore score) {
-        assert match == getNextMatch();
+        assert getNextMatch().equals(Optional.of(match));
         match.setResult(score);
         doProcessMatchResult(match, score);
         ++nextMatchIndex;

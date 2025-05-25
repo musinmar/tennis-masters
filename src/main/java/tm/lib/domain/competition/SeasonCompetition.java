@@ -2,6 +2,7 @@ package tm.lib.domain.competition;
 
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
+import tm.lib.domain.competition.base.Participant;
 import tm.lib.domain.competition.standard.GroupSubStage;
 import tm.lib.domain.competition.standard.PlayoffSubStageResult;
 import tm.lib.domain.core.Knight;
@@ -34,7 +35,9 @@ public class SeasonCompetition extends MultiStageCompetition {
 
         for (Nation nation : Nation.values()) {
             List<Knight> nationKnights = players.stream().filter(p -> p.getNation() == nation).collect(toList());
-            GroupSubStage nationalCup = new GroupSubStage("Кубок " + nation.getNameGenitive(), "ID", nationKnights.size());
+            GroupSubStage nationalCup = new GroupSubStage("Кубок " + nation.getNameGenitive(),
+                    Participant.DEFAULT_STAGE_PARTICIPANT_ID,
+                    nationKnights.size());
             nationalCup.setIsRoot(true);
             nationalCup.setActualParticipants(nationKnights);
             nationalCups.put(nation, nationalCup);

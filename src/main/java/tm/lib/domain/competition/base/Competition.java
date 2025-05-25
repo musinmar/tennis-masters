@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 @Getter
@@ -47,7 +48,7 @@ abstract public class Competition {
         return outputStream.toString();
     }
 
-    abstract public MatchEvent getNextMatch();
+    abstract public Optional<MatchEvent> getNextMatch();
 
     abstract public List<MatchEvent> getAllMatches();
 
@@ -72,7 +73,7 @@ abstract public class Competition {
     }
 
     protected void checkIfCompetitionFinished(Competition competition) {
-        if (getNextMatch() == null) {
+        if (getNextMatch().isEmpty()) {
             runOnFinishedCallbacks();
         }
     }
@@ -94,7 +95,7 @@ abstract public class Competition {
     }
 
     public boolean isFinished() {
-        return getNextMatch() == null;
+        return getNextMatch().isEmpty();
     }
 
     public Competition getRootCompetition() {

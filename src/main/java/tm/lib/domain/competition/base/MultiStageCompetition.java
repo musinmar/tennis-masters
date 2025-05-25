@@ -6,9 +6,11 @@ import tm.lib.domain.core.MatchScore;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Optional;
 
 abstract public class MultiStageCompetition extends Competition {
     private List<Competition> stages;
@@ -29,15 +31,9 @@ abstract public class MultiStageCompetition extends Competition {
     }
 
     @Override
-    public MatchEvent getNextMatch() {
-        MatchEvent nextMatch = null;
-        for (Competition stage : getStages()) {
-            MatchEvent stageNextMatch = stage.getNextMatch();
-            if (nextMatch == null || (stageNextMatch != null && stageNextMatch.getDate() < nextMatch.getDate())) {
-                nextMatch = stageNextMatch;
-            }
-        }
-        return nextMatch;
+    public Optional<MatchEvent> getNextMatch() {
+        return getStages().stream().flatMap(c -> c.getNextMatch().stream())
+                .min(Comparator.comparingInt(MatchEvent::getDate));
     }
 
     @Override

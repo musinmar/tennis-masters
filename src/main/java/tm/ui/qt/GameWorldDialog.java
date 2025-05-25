@@ -24,6 +24,7 @@ import tm.ui.qt.simulation.SimulationHelper;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 import static io.qt.widgets.QMessageBox.StandardButton.Cancel;
@@ -304,9 +305,10 @@ public class GameWorldDialog extends QMainWindow {
     }
 
     private void runWithSimulationRunner(BiFunction<Match, StrategyProvider, MatchScore> simulationRunner) {
-        MatchEvent match = world.getCurrentSeason().getNextMatch();
-        if (match != null) {
+        Optional<MatchEvent> maybeMatch = world.getCurrentSeason().getNextMatch();
+        if (maybeMatch.isPresent()) {
             //StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(neuralNetworkTeacher.getBestFoundPerceptron()), new StandardStrategy());
+            MatchEvent match = maybeMatch.get();
             MatchScore score = simulationRunner.apply(match.createMatchSpec(), StrategyProvider.standard());
             applyMatchResult(match, score);
         } else if (!world.isSeasonFinished()) {
@@ -419,11 +421,11 @@ public class GameWorldDialog extends QMainWindow {
     }
 
     private void updateNextMatchLabel() {
-        MatchEvent nextMatch = world.getCurrentSeason().getNextMatch();
-        if (nextMatch == null) {
+        var nextMatch = world.getCurrentSeason().getNextMatch();
+        if (nextMatch.isEmpty()) {
             return;
         }
-        nextMatchLabel.setText("Следующий матч:" + createMatchDescription(nextMatch));
+        nextMatchLabel.setText("Следующий матч:" + createMatchDescription(nextMatch.get()));
     }
 
     private String createMatchDescription(MatchEvent match) {

@@ -244,7 +244,7 @@ public class GameWorldDialog extends QMainWindow {
     }
 
     private void onSeasonComboBoxIndexChanged() {
-        SeasonCompetition selectedSeason = (SeasonCompetition) seasonComboBox.itemData(seasonComboBox.currentIndex());
+        MultiStageCompetition selectedSeason = (MultiStageCompetition) seasonComboBox.itemData(seasonComboBox.currentIndex());
         if (selectedSeason != null) {
             tournamentComboBox.clear();
             tournamentComboBox.addItem("Все", null);
@@ -364,7 +364,7 @@ public class GameWorldDialog extends QMainWindow {
             }
         }
 
-        return (SeasonCompetition) seasonComboBox.itemData(seasonComboBox.currentIndex());
+        return (MultiStageCompetition) seasonComboBox.itemData(seasonComboBox.currentIndex());
     }
 
     private void selectCompetition(Competition competition) {

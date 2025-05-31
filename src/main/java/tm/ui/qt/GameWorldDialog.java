@@ -1,14 +1,27 @@
 package tm.ui.qt;
 
-import io.qt.core.QMargins;
 import io.qt.core.QTimer;
 import io.qt.core.Qt;
 import io.qt.gui.QAction;
 import io.qt.gui.QFont;
 import io.qt.gui.QTextCursor;
-import io.qt.widgets.*;
+import io.qt.widgets.QApplication;
+import io.qt.widgets.QComboBox;
+import io.qt.widgets.QDockWidget;
+import io.qt.widgets.QHBoxLayout;
+import io.qt.widgets.QLabel;
+import io.qt.widgets.QMainWindow;
+import io.qt.widgets.QMenu;
+import io.qt.widgets.QMenuBar;
+import io.qt.widgets.QMessageBox;
 import io.qt.widgets.QMessageBox.StandardButtons;
-import tm.lib.domain.competition.SeasonCompetition;
+import io.qt.widgets.QPlainTextEdit;
+import io.qt.widgets.QPushButton;
+import io.qt.widgets.QSizePolicy;
+import io.qt.widgets.QSpacerItem;
+import io.qt.widgets.QTabWidget;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.widgets.QWidget;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.base.MultiStageCompetition;
@@ -433,18 +446,16 @@ public class GameWorldDialog extends QMainWindow {
         return String.format(
                 "<html><br/>%s<br/>%s - %s%s</html>",
                 match.getCompetition().getFullName(false),
-                buildPlayerEndpoint(match.getHomePlayer().getPlayerOrFail()),
-                buildPlayerEndpoint(match.getAwayPlayer().getPlayerOrFail()),
+                buildPlayerEndpoint(match.getHomePlayer().getPlayer()),
+                buildPlayerEndpoint(match.getAwayPlayer().getPlayer()),
                 resultString
         );
     }
 
-    private String buildPlayerEndpoint(Knight knight) {
-        if (knight == null) {
-            return "TBD";
-        } else {
-            return String.format("<a href=\"/%s/%d\">%s</a>", PLAYERS_PATH, knight.getId(), knight.getFullName());
-        }
+    private String buildPlayerEndpoint(Optional<Knight> maybeKnight) {
+        return maybeKnight.map(knight ->
+                String.format("<a href=\"/%s/%d\">%s</a>", PLAYERS_PATH, knight.getId(), knight.getFullName())
+        ).orElse("TBD");
     }
 
     private void onMatchLinkActivated(String reference) {

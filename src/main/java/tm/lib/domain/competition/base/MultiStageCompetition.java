@@ -15,8 +15,8 @@ import java.util.Optional;
 abstract public class MultiStageCompetition extends Competition {
     private List<Competition> stages;
 
-    protected MultiStageCompetition(String name) {
-        super(name);
+    protected MultiStageCompetition(String id, String name) {
+        super(id, name);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class World {
 
     private WorldLogger logger = NoopLogger;
 
-    private SeasonCompetition seasonCompetition;
+    private Competition seasonCompetition;
     private List<Knight> players = new ArrayList<Knight>();
 
     private EloRating eloRating;
@@ -89,7 +89,7 @@ public class World {
         this.logger = logger;
     }
 
-    public SeasonCompetition getCurrentSeason() {
+    public Competition getCurrentSeason() {
         return seasonCompetition;
     }
 
@@ -138,7 +138,7 @@ public class World {
     }
 
     private void initCompetitionPointValues() {
-        SeasonCompetition s = getCurrentSeason();
+        Competition s = getCurrentSeason();
         competitionPointValues = ImmutableMap.<Competition, Integer>builder()
                 .put(s.getChampionsLeague().getFirstQualifyingStage(), 2)
                 .put(s.getFederationsCup().getFirstQualifyingStage(), 1)

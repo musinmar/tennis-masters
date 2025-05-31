@@ -14,8 +14,8 @@ abstract public class SimpleCompetition extends Competition {
     private List<MatchEvent> matches;
     private int nextMatchIndex = 0;
 
-    protected SimpleCompetition(String name, List<Participant> participants) {
-        super(name);
+    protected SimpleCompetition(String id, String name, List<Participant> participants) {
+        super(id, name);
         this.participants = participants;
     }
 

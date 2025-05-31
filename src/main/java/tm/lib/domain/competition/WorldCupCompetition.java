@@ -30,15 +30,15 @@ public class WorldCupCompetition extends MultiStageCompetition {
     private List<Knight> groupRoundParticipants;
 
     public WorldCupCompetition() {
-        super("Чемпионат Мира");
+        super("WC", "Чемпионат Мира");
         setIsRoot(true);
 
-        firstQualifyingStageGroupRound = new GroupStage("Первый квалификационный раунд", 8);
+        firstQualifyingStageGroupRound = new GroupStage("FQRG", "Первый квалификационный раунд", 8);
         firstQualifyingStageGroupRound.registerOnFinishedCallback(this::onFirstQualifyingStageFinished);
 
         PlayoffStageConfiguration firstQualifyingRoundPlayoffConfiguration = new PlayoffStageConfiguration();
         firstQualifyingRoundPlayoffConfiguration.setRounds(1);
-        firstQualifyingStagePlayoff = new PlayoffStage("Плей-офф первого квалификационного раунда", 4, firstQualifyingRoundPlayoffConfiguration);
+        firstQualifyingStagePlayoff = new PlayoffStage("FQRPO", "Плей-офф первого квалификационного раунда", 4, firstQualifyingRoundPlayoffConfiguration);
         List<Participant> firstQualifyingStagePlayoffParticipants = firstQualifyingStagePlayoff.getPlayoffSubStages().getFirst().getParticipants();
         firstQualifyingStagePlayoffParticipants.get(0).setId("A1");
         firstQualifyingStagePlayoffParticipants.get(1).setId("B2");
@@ -46,13 +46,13 @@ public class WorldCupCompetition extends MultiStageCompetition {
         firstQualifyingStagePlayoffParticipants.get(3).setId("A2");
         firstQualifyingStagePlayoff.registerOnFinishedCallback(this::onFirstQualifyingStagePlayoffFinished);
 
-        secondQualifyingStage = new GroupStage("Второй квалификационный раунд", 16);
+        secondQualifyingStage = new GroupStage("SQRG", "Второй квалификационный раунд", 16);
         secondQualifyingStage.registerOnFinishedCallback(this::onSecondQualifyingStageFinished);
 
-        groupStage = new GroupStage("Групповой раунд", 16);
+        groupStage = new GroupStage("GS", "Групповой раунд", 16);
         groupStage.registerOnFinishedCallback(this::onGroupStageFinished);
 
-        playoffStage = new PlayoffStage("Плей-офф", 8);
+        playoffStage = new PlayoffStage("PO", "Плей-офф", 8);
 
         initStages(Arrays.asList(
                 firstQualifyingStageGroupRound,

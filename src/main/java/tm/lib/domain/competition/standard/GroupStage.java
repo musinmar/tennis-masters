@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GroupStage extends MultiStageCompetition {
-    public GroupStage(String name, int playerCount) {
-        super(name);
+    public GroupStage(String id, String name, int playerCount) {
+        super(id, name);
 
         int groupCount = playerCount / 4;
         List<Competition> groups = new ArrayList<>();
         for (int i = 0; i < groupCount; ++i) {
             String groupId = String.valueOf((char) ('A' + i));
-            GroupSubStage group = new GroupSubStage("Группа " + groupId, groupId, 4);
+            GroupSubStage group = new GroupSubStage(groupId, "Группа " + groupId, 4);
             groups.add(group);
         }
         initStages(groups);

@@ -16,14 +16,14 @@ public class StandardTournament extends MultiStageCompetition {
     private final GroupStage groupStage;
     private final PlayoffStage playoffStage;
 
-    public StandardTournament(List<Knight> players, int index) {
-        super("Стандартный турнир " + index);
+    public StandardTournament(String id, List<Knight> players, int index) {
+        super(id, "Стандартный турнир " + index);
 
-        groupStage = new GroupStage("Групповой этап", 8);
+        groupStage = new GroupStage("GS", "Групповой этап", 8);
         groupStage.setActualParticipants(players);
         groupStage.registerOnFinishedCallback(this::onGroupStageFinished);
 
-        playoffStage = new PlayoffStage("Плей-офф", 4);
+        playoffStage = new PlayoffStage("PO", "Плей-офф", 4);
 
         initStages(Arrays.asList(groupStage, playoffStage));
     }

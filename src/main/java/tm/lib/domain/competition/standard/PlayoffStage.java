@@ -9,12 +9,12 @@ import java.util.List;
 
 public class PlayoffStage extends MultiStageCompetition {
 
-    public PlayoffStage(String name, int playerCount) {
-        this(name, playerCount, new PlayoffStageConfiguration());
+    public PlayoffStage(String id, String name, int playerCount) {
+        this(id, name, playerCount, new PlayoffStageConfiguration());
     }
 
-    public PlayoffStage(String name, int playerCount, PlayoffStageConfiguration configuration) {
-        super(name);
+    public PlayoffStage(String id, String name, int playerCount, PlayoffStageConfiguration configuration) {
+        super(id, name);
 
         int rounds = configuration.getRounds();
         if (rounds == 0) {
@@ -29,7 +29,7 @@ public class PlayoffStage extends MultiStageCompetition {
         int roundPlayerCount = playerCount;
         for (int i = 0; i < rounds; i++) {
             String subStageName = getDefaultRoundName(roundPlayerCount);
-            PlayoffSubStage stage = new PlayoffSubStage(subStageName, roundPlayerCount);
+            PlayoffSubStage stage = new PlayoffSubStage("POS" + (i + 1), subStageName, roundPlayerCount);
             stage.registerOnFinishedCallback(this::onPlayoffSubStageFinished);
             stages.add(stage);
             roundPlayerCount /= 2;

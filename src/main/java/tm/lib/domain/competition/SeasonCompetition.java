@@ -27,7 +27,7 @@ public class SeasonCompetition extends MultiStageCompetition {
     private final int year;
 
     public SeasonCompetition(String name, World world, List<Knight> players, int year) {
-        super(name);
+        super("SEASON", name);
 
         this.world = world;
 
@@ -35,8 +35,8 @@ public class SeasonCompetition extends MultiStageCompetition {
 
         for (Nation nation : Nation.values()) {
             List<Knight> nationKnights = players.stream().filter(p -> p.getNation() == nation).collect(toList());
-            GroupSubStage nationalCup = new GroupSubStage("Кубок " + nation.getNameGenitive(),
-                    Participant.DEFAULT_STAGE_PARTICIPANT_ID,
+            GroupSubStage nationalCup = new GroupSubStage(nation.name().substring(0, 1),
+                    "Кубок " + nation.getNameGenitive(),
                     nationKnights.size());
             nationalCup.setIsRoot(true);
             nationalCup.setActualParticipants(nationKnights);

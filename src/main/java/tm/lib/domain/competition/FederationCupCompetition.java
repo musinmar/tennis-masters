@@ -22,18 +22,18 @@ public class FederationCupCompetition extends MultiStageCompetition {
     private final PlayoffStage playoffStage;
 
     public FederationCupCompetition() {
-        super("Кубок Федераций");
+        super("FC", "Кубок Федераций");
         setIsRoot(true);
 
-        firstQualifyingStage = new PlayoffSubStage("Первый квалификационный раунд", 4);
-        secondQualifyingStage = new PlayoffSubStage("Второй квалификационный раунд", 10);
+        firstQualifyingStage = new PlayoffSubStage("FQR", "Первый квалификационный раунд", 4);
+        secondQualifyingStage = new PlayoffSubStage("SQR", "Второй квалификационный раунд", 10);
 
-        groupStage = new GroupStage("Групповой раунд", 8);
+        groupStage = new GroupStage("GS", "Групповой раунд", 8);
         groupStage.registerOnFinishedCallback(this::onGroupStageFinished);
 
         PlayoffStageConfiguration playoffStageConfiguration = new PlayoffStageConfiguration();
         playoffStageConfiguration.setRounds(2);
-        playoffStage = new PlayoffStage("Плей-офф", 4, playoffStageConfiguration);
+        playoffStage = new PlayoffStage("PO", "Плей-офф", 4, playoffStageConfiguration);
 
         initStages(asList(
                 firstQualifyingStage,

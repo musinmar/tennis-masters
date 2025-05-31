@@ -237,7 +237,7 @@ public class GameWorldDialog extends QMainWindow {
 
     private void populateSeasonComboBox() {
         seasonComboBox.clear();
-        for (SeasonCompetition season : List.of(world.getCurrentSeason())) {
+        for (Competition season : List.of(world.getCurrentSeason())) {
             seasonComboBox.addItem(season.getName(), season);
         }
         seasonComboBox.setCurrentIndex(seasonComboBox.findData(world.getCurrentSeason()));

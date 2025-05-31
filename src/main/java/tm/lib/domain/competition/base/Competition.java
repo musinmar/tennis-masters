@@ -16,11 +16,13 @@ import java.util.function.Consumer;
 abstract public class Competition {
     private Competition parent;
     private boolean isRoot;
+    private final String id;
     private final String name;
 
     private final List<Consumer<Competition>> competitionFinishedCallbacks = new ArrayList<>();
 
-    protected Competition(String name) {
+    protected Competition(String id, String name) {
+        this.id = id;
         this.name = name;
     }
 

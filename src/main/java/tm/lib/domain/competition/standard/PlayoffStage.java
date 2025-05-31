@@ -10,23 +10,23 @@ import java.util.List;
 public class PlayoffStage extends MultiStageCompetition {
 
     public PlayoffStage(String id, String name, int playerCount) {
-        this(id, name, playerCount, new PlayoffStageConfiguration());
+        this(id, name, PlayoffStageConfiguration.builder().playerCount(playerCount).build());
     }
 
-    public PlayoffStage(String id, String name, int playerCount, PlayoffStageConfiguration configuration) {
+    public PlayoffStage(String id, String name, PlayoffStageConfiguration configuration) {
         super(id, name);
 
         int rounds = configuration.getRounds();
         if (rounds == 0) {
-            if (playerCount == 4) {
+            if (configuration.getPlayerCount() == 4) {
                 rounds = 2;
-            } else if (playerCount == 8) {
+            } else if (configuration.getPlayerCount() == 8) {
                 rounds = 3;
             }
         }
 
         List<Competition> stages = new ArrayList<>();
-        int roundPlayerCount = playerCount;
+        int roundPlayerCount = configuration.getPlayerCount();
         for (int i = 0; i < rounds; i++) {
             String subStageName = getDefaultRoundName(roundPlayerCount);
             PlayoffSubStage stage = new PlayoffSubStage("POS" + (i + 1), subStageName, roundPlayerCount);
@@ -34,7 +34,7 @@ public class PlayoffStage extends MultiStageCompetition {
             stages.add(stage);
             roundPlayerCount /= 2;
         }
-        initStages(stages);
+        setStages(stages);
     }
 
     private String getDefaultRoundName(int playerCount) {

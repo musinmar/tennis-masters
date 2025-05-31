@@ -19,13 +19,13 @@ public class StandardTournament extends MultiStageCompetition {
     public StandardTournament(String id, List<Knight> players, int index) {
         super(id, "Стандартный турнир " + index);
 
-        groupStage = new GroupStage("GS", "Групповой этап", 8);
+        groupStage = new GroupStage("GS", "Групповой этап", 2, 4);
         groupStage.setActualParticipants(players);
         groupStage.registerOnFinishedCallback(this::onGroupStageFinished);
 
         playoffStage = new PlayoffStage("PO", "Плей-офф", 4);
 
-        initStages(Arrays.asList(groupStage, playoffStage));
+        setStages(Arrays.asList(groupStage, playoffStage));
     }
 
     @Override

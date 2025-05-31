@@ -19,13 +19,13 @@ public class SimpleFourTournament extends MultiStageCompetition {
         super("TEST", "Тестовый турнир");
         //setParticipants(Participant.createNewList(players));
 
-        groupStage = new GroupStage("GS", "Групповой этап", 4);
+        groupStage = new GroupStage("GS", "Групповой этап", 1, 4);
         List<List<Knight>> participantsByGroup = new ArrayList<>();
         participantsByGroup.add(players);
         groupStage.setActualParticipantsByGroups(participantsByGroup);
         groupStage.registerOnFinishedCallback(this::onGroupStageFinished);
         playoffStage = new PlayoffStage("PO", "Плей-офф", 4);
-        initStages(Arrays.asList(groupStage, playoffStage));
+        setStages(Arrays.asList(groupStage, playoffStage));
     }
 
     @Override

@@ -12,11 +12,17 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
 
-abstract public class MultiStageCompetition extends Competition {
+public class MultiStageCompetition extends Competition {
     private List<Competition> stages;
 
     protected MultiStageCompetition(String id, String name) {
         super(id, name);
+    }
+
+    public void setStages(List<Competition> stages) {
+        this.stages = ImmutableList.copyOf(stages);
+        stages.forEach(stage -> stage.registerOnFinishedCallback(this::checkIfCompetitionFinished));
+        stages.forEach(stage -> stage.setParent(this));
     }
 
     @Override
@@ -72,12 +78,6 @@ abstract public class MultiStageCompetition extends Competition {
 
     public List<Competition> getStages() {
         return stages;
-    }
-
-    protected void initStages(List<Competition> stages) {
-        this.stages = ImmutableList.copyOf(stages);
-        stages.forEach(stage -> stage.registerOnFinishedCallback(this::checkIfCompetitionFinished));
-        stages.forEach(stage -> stage.setParent(this));
     }
 
     @Override

@@ -66,7 +66,7 @@ public class SeasonCompetition extends MultiStageCompetition {
         }
 
         tournaments.forEach(t -> t.registerOnFinishedCallback(this::onChildCompetitionFinished));
-        initStages(tournaments);
+        setStages(tournaments);
     }
 
     public World getGameWorld() {

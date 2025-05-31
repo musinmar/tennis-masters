@@ -3,7 +3,9 @@ package tm.lib.domain.world;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.Validate;
 import tm.lib.domain.competition.SeasonCompetition;
+import tm.lib.domain.competition.StandardSeasonBuilder;
 import tm.lib.domain.competition.base.Competition;
+import tm.lib.domain.competition.base.CompetitionBuilder;
 import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.standard.GroupSubStage;
 import tm.lib.domain.core.Knight;
@@ -21,6 +23,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
+import static tm.lib.domain.competition.StandardSeasonBuilder.buildSeasonCompetitionDefinition;
+import static tm.lib.domain.competition.base.CompetitionBuilder.buildCompetition;
 import static tm.lib.domain.world.PersistenceManager.loadDefaultPlayers;
 import static tm.lib.domain.world.WorldLogger.NoopLogger;
 
@@ -131,7 +135,9 @@ public class World {
     }
 
     private void initCompetitions() {
-        seasonCompetition = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers(), year);
+//        seasonCompetition = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers(), year);
+//        seasonCompetition.setStartingDate(0);
+        seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition());
         seasonCompetition.setStartingDate(0);
 
         initCompetitionPointValues();
@@ -140,14 +146,14 @@ public class World {
     private void initCompetitionPointValues() {
         Competition s = getCurrentSeason();
         competitionPointValues = ImmutableMap.<Competition, Integer>builder()
-                .put(s.getChampionsLeague().getFirstQualifyingStage(), 2)
-                .put(s.getFederationsCup().getFirstQualifyingStage(), 1)
-                .put(s.getChampionsLeague().getSecondQualifyingStage(), 2)
-                .put(s.getFederationsCup().getSecondQualifyingStage(), 1)
-                .put(s.getFederationsCup().getGroupStage(), 2)
-                .put(s.getChampionsLeague().getGroupStage(), 4)
-                .put(s.getFederationsCup().getPlayoffStage(), 2)
-                .put(s.getChampionsLeague().getPlayoffStage(), 4)
+//                .put(s.getChampionsLeague().getFirstQualifyingStage(), 2)
+//                .put(s.getFederationsCup().getFirstQualifyingStage(), 1)
+//                .put(s.getChampionsLeague().getSecondQualifyingStage(), 2)
+//                .put(s.getFederationsCup().getSecondQualifyingStage(), 1)
+//                .put(s.getFederationsCup().getGroupStage(), 2)
+//                .put(s.getChampionsLeague().getGroupStage(), 4)
+//                .put(s.getFederationsCup().getPlayoffStage(), 2)
+//                .put(s.getChampionsLeague().getPlayoffStage(), 4)
                 .build();
     }
 

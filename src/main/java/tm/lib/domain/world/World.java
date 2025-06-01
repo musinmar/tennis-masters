@@ -21,11 +21,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static java.util.Collections.shuffle;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static tm.lib.domain.competition.StandardSeasonBuilder.buildSeasonCompetitionDefinition;
@@ -307,14 +307,35 @@ public class World {
     private void processTrigger(CompetitionTrigger trigger) {
         switch (trigger.getTrigger().getSeedingRule()) {
             case SeedingRules.RandomSelection _ -> processRandomSelectionTrigger(trigger.getCompetition());
+            case SeedingRules.GroupStageToPlayOff groupStageToPlayOff ->
+                    processGroupStageToPlayOffTrigger(trigger.getCompetition(), groupStageToPlayOff);
             default -> throw new IllegalArgumentException("Unknown seeding trigger rule: " +
                     trigger.getTrigger().getSeedingRule());
         }
     }
 
+    private void processGroupStageToPlayOffTrigger(Competition competition, SeedingRules.GroupStageToPlayOff groupStageToPlayOff) {
+        var source = resolveCompetitionPath(groupStageToPlayOff.getGroupStagePath(), competition);
+        if (!(source instanceof GroupStage groupStage)) {
+            var message = String.format("Path %s is not pointing to a group stage",
+                    groupStageToPlayOff.getGroupStagePath());
+            throw new IllegalArgumentException(message);
+        } else if (!(competition instanceof PlayoffStage playOff)) {
+            var message = String.format("Competition %s is not a play-off stage", competition.getId());
+            throw new IllegalArgumentException(message);
+        } else {
+            var playersFromEachGroup = playOff.getParticipantCount() / groupStage.getGroupCount();
+            var selected = groupStage.getResults().getGroupResults().stream()
+                    .flatMap(g -> g.stream().limit(playersFromEachGroup))
+                    .collect(toList());
+            shuffle(selected);
+            playOff.setActualParticipants(selected);
+        }
+    }
+
     private void processRandomSelectionTrigger(Competition competition) {
         var playerPool = new ArrayList<>(this.players);
-        Collections.shuffle(playerPool);
+        shuffle(playerPool);
         switch (competition) {
             case GroupStage groupStage -> {
                 var selected = playerPool.subList(0, groupStage.getParticipantCount());

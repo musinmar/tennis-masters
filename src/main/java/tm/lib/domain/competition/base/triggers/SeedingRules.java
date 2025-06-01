@@ -16,6 +16,13 @@ public class SeedingRules {
     @Getter
     @Setter
     @AllArgsConstructor
+    public static class GroupStageToPlayOff implements SeedingRule {
+        private String groupStagePath;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
     public class AllFromNationSeedingRule implements SeedingRule {
         private Nation nation;
     }

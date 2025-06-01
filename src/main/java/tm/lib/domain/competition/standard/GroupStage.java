@@ -1,5 +1,6 @@
 package tm.lib.domain.competition.standard;
 
+import lombok.Getter;
 import org.apache.commons.collections4.ListUtils;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
@@ -9,9 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
 public class GroupStage extends MultiStageCompetition {
-    private int groupCount;
-    private int playersPerGroup;
+    private final int groupCount;
+    private final int playersPerGroup;
 
     public GroupStage(String id, String name, int groupCount, int playersPerGroup) {
         super(id, name);

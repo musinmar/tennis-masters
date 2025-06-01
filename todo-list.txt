@@ -1,0 +1,9 @@
+Dynamic competitions
+Saving game state at any moment
+
+Titles
+Series play-offs
+
+Persistent game state with full game history
+
+Game replays

@@ -1,6 +1,7 @@
 package tm.lib.domain.competition.base;
 
 import lombok.Getter;
+import tm.lib.domain.competition.base.triggers.SeedingTrigger;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 
@@ -18,6 +19,7 @@ abstract public class Competition {
     private boolean isRoot;
     private final String id;
     private final String name;
+    private Optional<SeedingTrigger> seedingTrigger = Optional.empty();
 
     private final List<Consumer<Competition>> competitionFinishedCallbacks = new ArrayList<>();
 
@@ -106,5 +108,15 @@ abstract public class Competition {
         } else {
             return parent.getRootCompetition();
         }
+    }
+
+    public void setSeedingTrigger(Optional<SeedingTrigger> seedingTrigger) {
+        this.seedingTrigger = seedingTrigger;
+    }
+
+    public List<CompetitionTrigger> getAllTriggers() {
+        return seedingTrigger.stream()
+                .map(trigger -> new CompetitionTrigger(this, trigger))
+                .toList();
     }
 }

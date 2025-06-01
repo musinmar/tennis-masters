@@ -2,12 +2,14 @@ package tm.lib.domain.world;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.Validate;
-import tm.lib.domain.competition.SeasonCompetition;
-import tm.lib.domain.competition.StandardSeasonBuilder;
 import tm.lib.domain.competition.base.Competition;
-import tm.lib.domain.competition.base.CompetitionBuilder;
+import tm.lib.domain.competition.base.CompetitionTrigger;
 import tm.lib.domain.competition.base.MatchEvent;
+import tm.lib.domain.competition.base.triggers.SeasonStartTriggerTime;
+import tm.lib.domain.competition.base.triggers.SeedingRules;
+import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.GroupSubStage;
+import tm.lib.domain.competition.standard.PlayoffStage;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.dto.WorldDto;
@@ -18,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -38,6 +41,8 @@ public class World {
     private WorldLogger logger = NoopLogger;
 
     private Competition seasonCompetition;
+    private List<CompetitionTrigger> triggers = new ArrayList<>();
+
     private List<Knight> players = new ArrayList<Knight>();
 
     private EloRating eloRating;
@@ -132,6 +137,7 @@ public class World {
         nationRating.calculateRankingsAndPrint();
         initCompetitions();
         isSeasonFinished = false;
+        processStartOfSeasonTriggers();
     }
 
     private void initCompetitions() {
@@ -139,7 +145,7 @@ public class World {
 //        seasonCompetition.setStartingDate(0);
         seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition());
         seasonCompetition.setStartingDate(0);
-
+        triggers = seasonCompetition.getAllTriggers();
         initCompetitionPointValues();
     }
 
@@ -250,6 +256,39 @@ public class World {
             writerConsumer.accept(writer);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void processStartOfSeasonTriggers() {
+        triggers.stream()
+                .filter(t -> t.getTrigger().getTriggerTime() instanceof SeasonStartTriggerTime)
+                .forEach(this::processTrigger);
+    }
+
+    private void processTrigger(CompetitionTrigger trigger) {
+        switch (trigger.getTrigger().getSeedingRule()) {
+            case SeedingRules.RandomSelection _ -> processRandomSelectionTrigger(trigger.getCompetition());
+            default -> throw new IllegalArgumentException("Unknown seeding trigger rule: " +
+                    trigger.getTrigger().getSeedingRule());
+        }
+    }
+
+    private void processRandomSelectionTrigger(Competition competition) {
+        var playerPool = new ArrayList<>(this.players);
+        Collections.shuffle(playerPool);
+        switch (competition) {
+            case GroupStage groupStage -> {
+                var selected = playerPool.subList(0, groupStage.getParticipantCount());
+                groupStage.setActualParticipants(selected);
+            }
+            case PlayoffStage playoffStage -> {
+                var selected = playerPool.subList(0, playoffStage.getParticipantCount());
+                playoffStage.setActualParticipants(selected);
+            }
+            default -> {
+                var message = "Random selection trigger does not support competition type: " + competition.getClass();
+                throw new IllegalArgumentException(message);
+            }
         }
     }
 }

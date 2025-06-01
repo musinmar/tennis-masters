@@ -10,8 +10,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GroupStage extends MultiStageCompetition {
+    private int groupCount;
+    private int playersPerGroup;
+
     public GroupStage(String id, String name, int groupCount, int playersPerGroup) {
         super(id, name);
+        this.groupCount = groupCount;
+        this.playersPerGroup = playersPerGroup;
 
         List<Competition> groups = new ArrayList<>();
         for (int i = 0; i < groupCount; ++i) {
@@ -20,6 +25,10 @@ public class GroupStage extends MultiStageCompetition {
             groups.add(group);
         }
         setStages(groups);
+    }
+
+    public int getParticipantCount() {
+        return groupCount * playersPerGroup;
     }
 
     private static List<Competition> buildGroups(int groupCount, int playersInGroup) {
@@ -71,4 +80,5 @@ public class GroupStage extends MultiStageCompetition {
             throw new IllegalStateException("Can not determine single winner of a multi-group group stage");
         }
     }
+
 }

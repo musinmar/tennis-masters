@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayoffStage extends MultiStageCompetition {
+    private PlayoffStageConfiguration configuration;
 
     public PlayoffStage(String id, String name, int playerCount) {
         this(id, name, PlayoffStageConfiguration.builder().playerCount(playerCount).build());
@@ -15,19 +16,11 @@ public class PlayoffStage extends MultiStageCompetition {
 
     public PlayoffStage(String id, String name, PlayoffStageConfiguration configuration) {
         super(id, name);
-
-        int rounds = configuration.getRounds();
-        if (rounds == 0) {
-            if (configuration.getPlayerCount() == 4) {
-                rounds = 2;
-            } else if (configuration.getPlayerCount() == 8) {
-                rounds = 3;
-            }
-        }
+        this.configuration = configuration;
 
         List<Competition> stages = new ArrayList<>();
         int roundPlayerCount = configuration.getPlayerCount();
-        for (int i = 0; i < rounds; i++) {
+        for (int i = 0; i < configuration.getRounds(); i++) {
             String subStageName = getDefaultRoundName(roundPlayerCount);
             PlayoffSubStage stage = new PlayoffSubStage("POS" + (i + 1), subStageName, roundPlayerCount);
             stage.registerOnFinishedCallback(this::onPlayoffSubStageFinished);
@@ -35,6 +28,10 @@ public class PlayoffStage extends MultiStageCompetition {
             roundPlayerCount /= 2;
         }
         setStages(stages);
+    }
+
+    public int getParticipantCount() {
+        return configuration.getPlayerCount();
     }
 
     private String getDefaultRoundName(int playerCount) {

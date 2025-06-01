@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class MultiStageCompetition extends Competition {
     private List<Competition> stages;
@@ -115,5 +116,14 @@ public class MultiStageCompetition extends Competition {
 
     private Competition getLastStage() {
         return getStages().getLast();
+    }
+
+    @Override
+    public List<CompetitionTrigger> getAllTriggers() {
+        var triggers = stages.stream().flatMap(stage -> stage.getAllTriggers().stream())
+                .collect(Collectors.toList());
+        getSeedingTrigger().map(trigger -> new CompetitionTrigger(this, trigger))
+                .ifPresent(triggers::add);
+        return triggers;
     }
 }

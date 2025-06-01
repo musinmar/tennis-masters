@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class SeedingTrigger {
-
     private TriggerTime triggerTime;
-
+    private SeedingRule seedingRule;
 }

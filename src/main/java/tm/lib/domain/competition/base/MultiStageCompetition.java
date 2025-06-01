@@ -27,6 +27,12 @@ public class MultiStageCompetition extends Competition {
     }
 
     @Override
+    public Competition getChild(String id) {
+        return stages.stream().filter(s -> s.getId().equals(id)).findAny()
+                .orElseGet(() -> super.getChild(id));
+    }
+
+    @Override
     public void print(PrintStream stream) {
         super.print(stream);
         for (int i = 0; i < stages.size(); ++i) {

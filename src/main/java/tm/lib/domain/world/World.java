@@ -1,12 +1,13 @@
 package tm.lib.domain.world;
 
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.CompetitionTrigger;
 import tm.lib.domain.competition.base.MatchEvent;
-import tm.lib.domain.competition.base.triggers.SeasonStartTriggerTime;
 import tm.lib.domain.competition.base.triggers.SeedingRules;
+import tm.lib.domain.competition.base.triggers.TriggerTimes;
 import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.GroupSubStage;
 import tm.lib.domain.competition.standard.PlayoffStage;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static tm.lib.domain.competition.StandardSeasonBuilder.buildSeasonCompetitionDefinition;
 import static tm.lib.domain.competition.base.CompetitionBuilder.buildCompetition;
@@ -41,7 +43,8 @@ public class World {
     private WorldLogger logger = NoopLogger;
 
     private Competition seasonCompetition;
-    private List<CompetitionTrigger> triggers = new ArrayList<>();
+    private List<CompetitionTrigger> seasonStartTriggers;
+    private Map<Competition, List<CompetitionTrigger>> onCompetitionEndTriggers;
 
     private List<Knight> players = new ArrayList<Knight>();
 
@@ -145,8 +148,31 @@ public class World {
 //        seasonCompetition.setStartingDate(0);
         seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition());
         seasonCompetition.setStartingDate(0);
-        triggers = seasonCompetition.getAllTriggers();
+        var allTriggers = seasonCompetition.getAllTriggers();
+        this.seasonStartTriggers = allTriggers.stream()
+                .filter(t -> t.getTrigger().getTriggerTime() instanceof TriggerTimes.SeasonStartTriggerTime)
+                .toList();
+        this.onCompetitionEndTriggers = allTriggers.stream()
+                .filter(t -> t.getTrigger().getTriggerTime() instanceof TriggerTimes.CompetitionEndedTriggerTime)
+                .collect(groupingBy((CompetitionTrigger t) -> {
+                    var competitionEnd = (TriggerTimes.CompetitionEndedTriggerTime) t.getTrigger().getTriggerTime();
+                    var path = competitionEnd.getCompetitionPath();
+                    return resolveCompetitionPath(path, t.getCompetition());
+                }, toList()));
         initCompetitionPointValues();
+    }
+
+    private Competition resolveCompetitionPath(String path, Competition from) {
+        var elements = StringUtils.split(path, '/');
+        var cur = from;
+        for (var el : elements) {
+            if ("..".equals(el)) {
+                cur = cur.getParent();
+            } else {
+                cur = cur.getChild(el);
+            }
+        }
+        return cur;
     }
 
     private void initCompetitionPointValues() {
@@ -172,6 +198,7 @@ public class World {
         latestCompetition = match.getCompetition();
 
         match.getCompetition().processMatchResult(match, score);
+        processOnCompetitionEndTriggers(match.getCompetition());
         getEloRating().updateRatings(match.getHomePlayer().getPlayerOrFail(), match.getAwayPlayer().getPlayerOrFail(), score.getScoreBySets());
         updateNationRating(match, score);
 
@@ -260,9 +287,21 @@ public class World {
     }
 
     private void processStartOfSeasonTriggers() {
-        triggers.stream()
-                .filter(t -> t.getTrigger().getTriggerTime() instanceof SeasonStartTriggerTime)
-                .forEach(this::processTrigger);
+        seasonStartTriggers.forEach(this::processTrigger);
+    }
+
+    private void processOnCompetitionEndTriggers(Competition competition) {
+        var cur = competition;
+        while (cur != null) {
+            if (!cur.isFinished()) {
+                break;
+            }
+            var triggers = onCompetitionEndTriggers.get(cur);
+            if (triggers != null) {
+                triggers.forEach(this::processTrigger);
+            }
+            cur = cur.getParent();
+        }
     }
 
     private void processTrigger(CompetitionTrigger trigger) {

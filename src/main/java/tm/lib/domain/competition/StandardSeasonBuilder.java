@@ -4,9 +4,9 @@ import tm.lib.domain.competition.base.CompetitionDefinitions.CompetitionDefiniti
 import tm.lib.domain.competition.base.CompetitionDefinitions.GroupStageDefinition;
 import tm.lib.domain.competition.base.CompetitionDefinitions.MultiStageCompetitionDefinition;
 import tm.lib.domain.competition.base.CompetitionDefinitions.PlayoffStageDefinition;
-import tm.lib.domain.competition.base.triggers.SeasonStartTriggerTime;
 import tm.lib.domain.competition.base.triggers.SeedingRules.RandomSelection;
 import tm.lib.domain.competition.base.triggers.SeedingTrigger;
+import tm.lib.domain.competition.base.triggers.TriggerTimes;
 import tm.lib.domain.competition.standard.PlayoffStageConfiguration;
 
 import java.util.Arrays;
@@ -25,11 +25,14 @@ public class StandardSeasonBuilder {
                 "Групповой этап",
                 2,
                 4,
-                Optional.of(new SeedingTrigger(new SeasonStartTriggerTime(), new RandomSelection())));
+                Optional.of(new SeedingTrigger(new TriggerTimes.SeasonStartTriggerTime(), new RandomSelection())));
+        var playoffSeedingTrigger = new SeedingTrigger(
+                new TriggerTimes.CompetitionEndedTriggerTime("../GS"),
+                new RandomSelection());
         var playOffStage = new PlayoffStageDefinition("PO",
                 "Плэй-офф",
                 PlayoffStageConfiguration.builder().playerCount(4).build(),
-                Optional.empty());
+                Optional.of(playoffSeedingTrigger));
         return new MultiStageCompetitionDefinition("SC",
                 "Стандартный турнир",
                 Arrays.asList(groupStage, playOffStage),

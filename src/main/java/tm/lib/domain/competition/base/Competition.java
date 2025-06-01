@@ -32,6 +32,10 @@ abstract public class Competition {
         this.parent = parent;
     }
 
+    public Competition getChild(String id) {
+        throw new IllegalArgumentException("Competition " + getId() + " does not have child " + id);
+    }
+
     public void setIsRoot(boolean isRoot) {
         this.isRoot = isRoot;
     }

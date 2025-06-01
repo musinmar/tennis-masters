@@ -24,7 +24,7 @@ public class StandardSeasonBuilder {
     public static CompetitionDefinition buildStandardCompetition() {
         var groupStage = new GroupStageDefinition("GS",
                 "Групповой этап",
-                2,
+                4,
                 4,
                 Optional.of(new SeedingTrigger(new TriggerTimes.SeasonStartTriggerTime(), new RandomSelection())));
         var groupStagePath = "../GS";
@@ -33,7 +33,7 @@ public class StandardSeasonBuilder {
                 new SeedingRules.GroupStageToPlayOff(groupStagePath));
         var playOffStage = new PlayoffStageDefinition("PO",
                 "Плэй-офф",
-                PlayoffStageConfiguration.builder().playerCount(4).build(),
+                PlayoffStageConfiguration.builder().playerCount(8).build(),
                 Optional.of(playoffSeedingTrigger));
         return new MultiStageCompetitionDefinition("SC",
                 "Стандартный турнир",

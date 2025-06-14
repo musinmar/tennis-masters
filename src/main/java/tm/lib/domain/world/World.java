@@ -1,18 +1,10 @@
 package tm.lib.domain.world;
 
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import tm.lib.domain.competition.base.Competition;
-import tm.lib.domain.competition.base.CompetitionTrigger;
 import tm.lib.domain.competition.base.MatchEvent;
-import tm.lib.domain.competition.base.triggers.SeedingRules;
-import tm.lib.domain.competition.base.triggers.TriggerTimes;
-import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.GroupSubStage;
-import tm.lib.domain.competition.standard.PlayOffStage;
-import tm.lib.domain.competition.standard.PlayOffSubStage;
-import tm.lib.domain.competition.standard.PlayOffUtils;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.dto.WorldDto;
@@ -27,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static java.util.Collections.shuffle;
-import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static tm.lib.domain.competition.StandardSeasonBuilder.buildSeasonCompetitionDefinition;
 import static tm.lib.domain.competition.base.CompetitionBuilder.buildCompetition;
@@ -45,13 +35,12 @@ public class World {
     private WorldLogger logger = NoopLogger;
 
     private Competition seasonCompetition;
-    private List<CompetitionTrigger> seasonStartTriggers;
-    private Map<Competition, List<CompetitionTrigger>> onCompetitionEndTriggers;
 
     private List<Knight> players = new ArrayList<Knight>();
-
     private EloRating eloRating;
     private NationRating nationRating;
+
+    private WorldTriggerProcessor triggerProcessor;
 
     private int year = 0;
 
@@ -142,7 +131,7 @@ public class World {
         nationRating.calculateRankingsAndPrint();
         initCompetitions();
         isSeasonFinished = false;
-        processStartOfSeasonTriggers();
+        triggerProcessor.processStartOfSeasonTriggers();
     }
 
     private void initCompetitions() {
@@ -150,31 +139,8 @@ public class World {
 //        seasonCompetition.setStartingDate(0);
         seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition());
         seasonCompetition.setStartingDate(0);
-        var allTriggers = seasonCompetition.getAllTriggers();
-        this.seasonStartTriggers = allTriggers.stream()
-                .filter(t -> t.getTrigger().getTriggerTime() instanceof TriggerTimes.SeasonStartTriggerTime)
-                .toList();
-        this.onCompetitionEndTriggers = allTriggers.stream()
-                .filter(t -> t.getTrigger().getTriggerTime() instanceof TriggerTimes.CompetitionEndedTriggerTime)
-                .collect(groupingBy((CompetitionTrigger t) -> {
-                    var competitionEnd = (TriggerTimes.CompetitionEndedTriggerTime) t.getTrigger().getTriggerTime();
-                    var path = competitionEnd.getCompetitionPath();
-                    return resolveCompetitionPath(path, t.getCompetition());
-                }, toList()));
+        triggerProcessor = new WorldTriggerProcessor(getPlayers(), seasonCompetition);
         initCompetitionPointValues();
-    }
-
-    private Competition resolveCompetitionPath(String path, Competition from) {
-        var elements = StringUtils.split(path, '/');
-        var cur = from;
-        for (var el : elements) {
-            if ("..".equals(el)) {
-                cur = cur.getParent();
-            } else {
-                cur = cur.getChild(el);
-            }
-        }
-        return cur;
     }
 
     private void initCompetitionPointValues() {
@@ -200,7 +166,7 @@ public class World {
         latestCompetition = match.getCompetition();
 
         match.getCompetition().processMatchResult(match, score);
-        processOnCompetitionEndTriggers(match.getCompetition());
+        triggerProcessor.processOnCompetitionEndTriggers(match.getCompetition());
         getEloRating().updateRatings(match.getHomePlayer().getPlayerOrFail(), match.getAwayPlayer().getPlayerOrFail(), score.getScoreBySets());
         updateNationRating(match, score);
 
@@ -285,96 +251,6 @@ public class World {
             writerConsumer.accept(writer);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private void processStartOfSeasonTriggers() {
-        seasonStartTriggers.forEach(this::processTrigger);
-    }
-
-    private void processOnCompetitionEndTriggers(Competition competition) {
-        var cur = competition;
-        while (cur != null) {
-            if (!cur.isFinished()) {
-                break;
-            }
-            var triggers = onCompetitionEndTriggers.get(cur);
-            if (triggers != null) {
-                triggers.forEach(this::processTrigger);
-            }
-            cur = cur.getParent();
-        }
-    }
-
-    private void processTrigger(CompetitionTrigger trigger) {
-        switch (trigger.getTrigger().getSeedingRule()) {
-            case SeedingRules.AllFromNationSeedingRule rule ->
-                    processAllFromNationSeedingRule(trigger.getCompetition(), rule);
-            case SeedingRules.RandomSelection _ -> processRandomSelectionTrigger(trigger.getCompetition());
-            case SeedingRules.GroupStageToPlayOff groupStageToPlayOff ->
-                    processGroupStageToPlayOffTrigger(trigger.getCompetition(), groupStageToPlayOff);
-            case SeedingRules.PlayOffToPlayOff playOffToPlayOff ->
-                    processPlayOffToPlayOffTrigger(trigger.getCompetition(), playOffToPlayOff);
-            default -> throw new IllegalArgumentException("Unknown seeding trigger rule: " +
-                    trigger.getTrigger().getSeedingRule());
-        }
-    }
-
-    private void processAllFromNationSeedingRule(Competition competition, SeedingRules.AllFromNationSeedingRule rule) {
-        var nationPlayers = getPlayers().stream().filter(p -> p.getNation() == rule.getNation()).toList();
-        if (!(competition instanceof GroupStage groupStage)) {
-            var message = String.format("Competition %s is not a group stage competition", competition.getName());
-            throw new IllegalArgumentException(message);
-        } else {
-            groupStage.setActualParticipants(nationPlayers);
-        }
-    }
-
-    private void processPlayOffToPlayOffTrigger(Competition competition, SeedingRules.PlayOffToPlayOff playOffToPlayOff) {
-        var source = resolveCompetitionPath(playOffToPlayOff.getPlayOffSubStagePath(), competition);
-        if (!(source instanceof PlayOffSubStage sourceStage)) {
-            var message = String.format("Path %s is not pointing to a play-off sub stage",
-                    playOffToPlayOff.getPlayOffSubStagePath());
-            throw new IllegalArgumentException(message);
-        } else if (!(competition instanceof PlayOffSubStage targetStage)) {
-            var message = String.format("Competition %s is not a play-off stage", competition.getId());
-            throw new IllegalArgumentException(message);
-        } else {
-            targetStage.setActualParticipants(sourceStage.getResults().getWinners());
-        }
-    }
-
-    private void processGroupStageToPlayOffTrigger(Competition competition, SeedingRules.GroupStageToPlayOff groupStageToPlayOff) {
-        var source = resolveCompetitionPath(groupStageToPlayOff.getGroupStagePath(), competition);
-        if (!(source instanceof GroupStage groupStage)) {
-            var message = String.format("Path %s is not pointing to a group stage",
-                    groupStageToPlayOff.getGroupStagePath());
-            throw new IllegalArgumentException(message);
-        } else if (!(competition instanceof PlayOffStage playOff)) {
-            var message = String.format("Competition %s is not a play-off stage", competition.getId());
-            throw new IllegalArgumentException(message);
-        } else {
-            var pairs = PlayOffUtils.drawPlayersInPairsFromGroupResults(groupStage.getResults());
-            playOff.setActualParticipants(pairs);
-        }
-    }
-
-    private void processRandomSelectionTrigger(Competition competition) {
-        var playerPool = new ArrayList<>(this.players);
-        shuffle(playerPool);
-        switch (competition) {
-            case GroupStage groupStage -> {
-                var selected = playerPool.subList(0, groupStage.getParticipantCount());
-                groupStage.setActualParticipants(selected);
-            }
-            case PlayOffStage playOffStage -> {
-                var selected = playerPool.subList(0, playOffStage.getParticipantCount());
-                playOffStage.setActualParticipants(selected);
-            }
-            default -> {
-                var message = "Random selection trigger does not support competition type: " + competition.getClass();
-                throw new IllegalArgumentException(message);
-            }
         }
     }
 }

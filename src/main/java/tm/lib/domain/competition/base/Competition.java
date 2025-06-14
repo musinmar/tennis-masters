@@ -1,6 +1,7 @@
 package tm.lib.domain.competition.base;
 
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import tm.lib.domain.competition.base.triggers.SeedingTrigger;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
@@ -122,5 +123,18 @@ abstract public class Competition {
         return seedingTrigger.stream()
                 .map(trigger -> new CompetitionTrigger(this, trigger))
                 .toList();
+    }
+
+    public Competition resolveCompetitionPath(String path) {
+        var elements = StringUtils.split(path, '/');
+        var cur = this;
+        for (var el : elements) {
+            if ("..".equals(el)) {
+                cur = cur.getParent();
+            } else {
+                cur = cur.getChild(el);
+            }
+        }
+        return cur;
     }
 }

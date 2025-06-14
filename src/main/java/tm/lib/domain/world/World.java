@@ -308,13 +308,25 @@ public class World {
 
     private void processTrigger(CompetitionTrigger trigger) {
         switch (trigger.getTrigger().getSeedingRule()) {
+            case SeedingRules.AllFromNationSeedingRule rule ->
+                    processAllFromNationSeedingRule(trigger.getCompetition(), rule);
             case SeedingRules.RandomSelection _ -> processRandomSelectionTrigger(trigger.getCompetition());
             case SeedingRules.GroupStageToPlayOff groupStageToPlayOff ->
                     processGroupStageToPlayOffTrigger(trigger.getCompetition(), groupStageToPlayOff);
             case SeedingRules.PlayOffToPlayOff playOffToPlayOff ->
-                processPlayOffToPlayOffTrigger(trigger.getCompetition(), playOffToPlayOff);
+                    processPlayOffToPlayOffTrigger(trigger.getCompetition(), playOffToPlayOff);
             default -> throw new IllegalArgumentException("Unknown seeding trigger rule: " +
                     trigger.getTrigger().getSeedingRule());
+        }
+    }
+
+    private void processAllFromNationSeedingRule(Competition competition, SeedingRules.AllFromNationSeedingRule rule) {
+        var nationPlayers = getPlayers().stream().filter(p -> p.getNation() == rule.getNation()).toList();
+        if (!(competition instanceof GroupStage groupStage)) {
+            var message = String.format("Competition %s is not a group stage competition", competition.getName());
+            throw new IllegalArgumentException(message);
+        } else {
+            groupStage.setActualParticipants(nationPlayers);
         }
     }
 

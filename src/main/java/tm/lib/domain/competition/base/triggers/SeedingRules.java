@@ -30,7 +30,7 @@ public class SeedingRules {
     @Getter
     @Setter
     @AllArgsConstructor
-    public class AllFromNationSeedingRule implements SeedingRule {
+    public static class AllFromNationSeedingRule implements SeedingRule {
         private Nation nation;
     }
 

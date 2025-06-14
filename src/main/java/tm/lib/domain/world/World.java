@@ -10,9 +10,9 @@ import tm.lib.domain.competition.base.triggers.SeedingRules;
 import tm.lib.domain.competition.base.triggers.TriggerTimes;
 import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.GroupSubStage;
-import tm.lib.domain.competition.standard.PlayoffStage;
-import tm.lib.domain.competition.standard.PlayoffSubStage;
-import tm.lib.domain.competition.standard.PlayoffUtils;
+import tm.lib.domain.competition.standard.PlayOffStage;
+import tm.lib.domain.competition.standard.PlayOffSubStage;
+import tm.lib.domain.competition.standard.PlayOffUtils;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.dto.WorldDto;
@@ -320,11 +320,11 @@ public class World {
 
     private void processPlayOffToPlayOffTrigger(Competition competition, SeedingRules.PlayOffToPlayOff playOffToPlayOff) {
         var source = resolveCompetitionPath(playOffToPlayOff.getPlayOffSubStagePath(), competition);
-        if (!(source instanceof PlayoffSubStage sourceStage)) {
+        if (!(source instanceof PlayOffSubStage sourceStage)) {
             var message = String.format("Path %s is not pointing to a play-off sub stage",
                     playOffToPlayOff.getPlayOffSubStagePath());
             throw new IllegalArgumentException(message);
-        } else if (!(competition instanceof PlayoffSubStage targetStage)) {
+        } else if (!(competition instanceof PlayOffSubStage targetStage)) {
             var message = String.format("Competition %s is not a play-off stage", competition.getId());
             throw new IllegalArgumentException(message);
         } else {
@@ -338,11 +338,11 @@ public class World {
             var message = String.format("Path %s is not pointing to a group stage",
                     groupStageToPlayOff.getGroupStagePath());
             throw new IllegalArgumentException(message);
-        } else if (!(competition instanceof PlayoffStage playOff)) {
+        } else if (!(competition instanceof PlayOffStage playOff)) {
             var message = String.format("Competition %s is not a play-off stage", competition.getId());
             throw new IllegalArgumentException(message);
         } else {
-            var pairs = PlayoffUtils.drawPlayersInPairsFromGroupResults(groupStage.getResults());
+            var pairs = PlayOffUtils.drawPlayersInPairsFromGroupResults(groupStage.getResults());
             playOff.setActualParticipants(pairs);
         }
     }
@@ -355,9 +355,9 @@ public class World {
                 var selected = playerPool.subList(0, groupStage.getParticipantCount());
                 groupStage.setActualParticipants(selected);
             }
-            case PlayoffStage playoffStage -> {
-                var selected = playerPool.subList(0, playoffStage.getParticipantCount());
-                playoffStage.setActualParticipants(selected);
+            case PlayOffStage playOffStage -> {
+                var selected = playerPool.subList(0, playOffStage.getParticipantCount());
+                playOffStage.setActualParticipants(selected);
             }
             default -> {
                 var message = "Random selection trigger does not support competition type: " + competition.getClass();

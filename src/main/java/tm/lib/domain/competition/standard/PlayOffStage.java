@@ -11,14 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class PlayoffStage extends MultiStageCompetition {
-    private PlayoffStageConfiguration configuration;
+public class PlayOffStage extends MultiStageCompetition {
+    private PlayOffStageConfiguration configuration;
 
-    public PlayoffStage(String id, String name, int playerCount) {
-        this(id, name, PlayoffStageConfiguration.builder().playerCount(playerCount).build());
+    public PlayOffStage(String id, String name, int playerCount) {
+        this(id, name, PlayOffStageConfiguration.builder().playerCount(playerCount).build());
     }
 
-    public PlayoffStage(String id, String name, PlayoffStageConfiguration configuration) {
+    public PlayOffStage(String id, String name, PlayOffStageConfiguration configuration) {
         super(id, name);
         this.configuration = configuration;
 
@@ -27,7 +27,7 @@ public class PlayoffStage extends MultiStageCompetition {
         for (int i = 0; i < configuration.getRounds(); i++) {
             String subStageName = getDefaultRoundName(roundPlayerCount);
             var stageId = "POS" + (i + 1);
-            PlayoffSubStage stage = new PlayoffSubStage(stageId, subStageName, roundPlayerCount);
+            PlayOffSubStage stage = new PlayOffSubStage(stageId, subStageName, roundPlayerCount);
             if (i > 0) {
                 var previousStageId = "POS" + i;
                 var seedingTrigger = new SeedingTrigger(
@@ -66,12 +66,12 @@ public class PlayoffStage extends MultiStageCompetition {
         }
     }
 
-    private void onPlayoffSubStageFinished(Competition competition) {
-        PlayoffSubStage finishedStage = (PlayoffSubStage) competition;
-        PlayoffSubStage nextStage = null;
+    private void onPlayOffSubStageFinished(Competition competition) {
+        PlayOffSubStage finishedStage = (PlayOffSubStage) competition;
+        PlayOffSubStage nextStage = null;
         for (int i = 0; i < getStages().size() - 1; ++i) {
             if (getStages().get(i) == finishedStage) {
-                nextStage = (PlayoffSubStage) getStages().get(i + 1);
+                nextStage = (PlayOffSubStage) getStages().get(i + 1);
                 break;
             }
         }
@@ -81,16 +81,16 @@ public class PlayoffStage extends MultiStageCompetition {
     }
 
     @SuppressWarnings("unchecked")
-    public List<PlayoffSubStage> getPlayoffSubStages() {
-        return (List<PlayoffSubStage>) (List<?>) getStages();
+    public List<PlayOffSubStage> getPlayoffSubStages() {
+        return (List<PlayOffSubStage>) (List<?>) getStages();
     }
 
     public void setActualParticipants(List<Knight> players) {
         getPlayoffSubStages().get(0).setActualParticipants(players);
     }
 
-    public PlayoffSubStageResult getLastRoundResults() {
-        PlayoffSubStage lastRound = (PlayoffSubStage) getStages().get(getStages().size() - 1);
+    public PlayOffSubStageResult getLastRoundResults() {
+        PlayOffSubStage lastRound = (PlayOffSubStage) getStages().get(getStages().size() - 1);
         return lastRound.getResults();
     }
 }

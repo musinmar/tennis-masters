@@ -187,7 +187,7 @@ public class MatchConfigurationDialog extends QDialog {
         match.setHomePlayer(((Knight) homePlayerSelector.playerComboBox.itemData(homePlayerSelector.playerComboBox.currentIndex())));
         match.setAwayPlayer(((Knight) awayPlayerSelector.playerComboBox.itemData(awayPlayerSelector.playerComboBox.currentIndex())));
         match.setSets(setCountSpinBox.value());
-        match.setPlayoff(false);
+        match.setPlayOff(false);
         match.setVenue(Stadium.standard());
         return match;
     }

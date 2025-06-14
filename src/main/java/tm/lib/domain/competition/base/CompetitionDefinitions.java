@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import tm.lib.domain.competition.base.triggers.SeedingTrigger;
-import tm.lib.domain.competition.standard.PlayoffStageConfiguration;
+import tm.lib.domain.competition.standard.PlayOffStageConfiguration;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,10 +33,10 @@ public class CompetitionDefinitions {
     @Getter
     @Setter
     @AllArgsConstructor
-    public static class PlayoffStageDefinition implements CompetitionDefinition {
+    public static class PlayOffStageDefinition implements CompetitionDefinition {
         private String id;
         private String name;
-        private PlayoffStageConfiguration playoffStageConfiguration;
+        private PlayOffStageConfiguration playOffStageConfiguration;
         private Optional<SeedingTrigger> seedingTrigger;
     }
 

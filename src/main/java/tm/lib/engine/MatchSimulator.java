@@ -50,7 +50,7 @@ public class MatchSimulator {
     public MatchSimulator(Match match, StrategyProvider strategyProvider) {
         this.match = match;
         matchEngine = new MatchEngine(match, strategyProvider);
-        matchProgressTracker = new MatchProgressTracker(match.getSets(), match.isPlayoff());
+        matchProgressTracker = new MatchProgressTracker(match.getSets(), match.isPlayOff());
         matchProgressTracker.startNewSet();
     }
 

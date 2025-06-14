@@ -4,11 +4,11 @@ import tm.lib.domain.core.Knight;
 
 import java.util.List;
 
-public class PlayoffSubStageResult {
+public class PlayOffSubStageResult {
     private final List<Knight> winners;
     private final List<Knight> losers;
 
-    public PlayoffSubStageResult(List<Knight> winners, List<Knight> losers) {
+    public PlayOffSubStageResult(List<Knight> winners, List<Knight> losers) {
         this.winners = winners;
         this.losers = losers;
     }

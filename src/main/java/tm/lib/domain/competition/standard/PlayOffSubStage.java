@@ -9,9 +9,9 @@ import tm.lib.domain.core.Knight;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayoffSubStage extends SimpleCompetition {
+public class PlayOffSubStage extends SimpleCompetition {
 
-    public PlayoffSubStage(String id, String name, int playerCount) {
+    public PlayOffSubStage(String id, String name, int playerCount) {
         super(id, name, createParticipants(getStageParticipantId(playerCount), playerCount));
 
         List<MatchEvent> matches = new ArrayList<>(playerCount / 2);
@@ -38,7 +38,7 @@ public class PlayoffSubStage extends SimpleCompetition {
         }
     }
 
-    public PlayoffSubStageResult getResults() {
+    public PlayOffSubStageResult getResults() {
         List<Knight> winners = new ArrayList<>();
         List<Knight> losers = new ArrayList<>();
         for (int i = 0; i < getAllMatches().size(); i++) {
@@ -54,7 +54,7 @@ public class PlayoffSubStage extends SimpleCompetition {
                 }
             }
         }
-        return new PlayoffSubStageResult(winners, losers);
+        return new PlayOffSubStageResult(winners, losers);
     }
 
     @Override

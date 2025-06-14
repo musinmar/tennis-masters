@@ -3,12 +3,12 @@ package tm.lib.domain.competition;
 import tm.lib.domain.competition.base.CompetitionDefinitions.CompetitionDefinition;
 import tm.lib.domain.competition.base.CompetitionDefinitions.GroupStageDefinition;
 import tm.lib.domain.competition.base.CompetitionDefinitions.MultiStageCompetitionDefinition;
-import tm.lib.domain.competition.base.CompetitionDefinitions.PlayoffStageDefinition;
+import tm.lib.domain.competition.base.CompetitionDefinitions.PlayOffStageDefinition;
 import tm.lib.domain.competition.base.triggers.SeedingRules;
 import tm.lib.domain.competition.base.triggers.SeedingRules.RandomSelection;
 import tm.lib.domain.competition.base.triggers.SeedingTrigger;
 import tm.lib.domain.competition.base.triggers.TriggerTimes;
-import tm.lib.domain.competition.standard.PlayoffStageConfiguration;
+import tm.lib.domain.competition.standard.PlayOffStageConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,13 +28,13 @@ public class StandardSeasonBuilder {
                 4,
                 Optional.of(new SeedingTrigger(new TriggerTimes.SeasonStartTriggerTime(), new RandomSelection())));
         var groupStagePath = "../GS";
-        var playoffSeedingTrigger = new SeedingTrigger(
+        var playOffSeedingTrigger = new SeedingTrigger(
                 new TriggerTimes.CompetitionEndedTriggerTime(groupStagePath),
                 new SeedingRules.GroupStageToPlayOff(groupStagePath));
-        var playOffStage = new PlayoffStageDefinition("PO",
+        var playOffStage = new PlayOffStageDefinition("PO",
                 "Плэй-офф",
-                PlayoffStageConfiguration.builder().playerCount(8).build(),
-                Optional.of(playoffSeedingTrigger));
+                PlayOffStageConfiguration.builder().playerCount(8).build(),
+                Optional.of(playOffSeedingTrigger));
         return new MultiStageCompetitionDefinition("SC",
                 "Стандартный турнир",
                 Arrays.asList(groupStage, playOffStage),

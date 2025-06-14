@@ -7,11 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class PlayoffStageConfiguration {
+public class PlayOffStageConfiguration {
     private int playerCount;
     private int rounds;
 
-    public PlayoffStageConfiguration(int playerCount, int rounds) {
+    public PlayOffStageConfiguration(int playerCount, int rounds) {
         this.playerCount = playerCount;
         if (rounds == 0) {
             if (playerCount == 4) {

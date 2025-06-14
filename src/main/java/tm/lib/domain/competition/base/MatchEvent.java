@@ -10,14 +10,14 @@ public class MatchEvent {
     private final Participant homePlayer;
     private final Participant awayPlayer;
     private int sets;
-    private boolean playoff;
+    private boolean playOff;
     private Stadium venue = Stadium.standard();
     private MatchScore result;
 
     public MatchEvent(Competition parent, Participant p1, Participant p2, int sets, boolean isPlayoff) {
         this(parent, p1, p2);
         this.sets = sets;
-        playoff = isPlayoff;
+        playOff = isPlayoff;
     }
 
     public MatchEvent(Competition parent, Participant p1, Participant p2) {
@@ -25,7 +25,7 @@ public class MatchEvent {
         homePlayer = p1;
         awayPlayer = p2;
         sets = 2;
-        playoff = false;
+        playOff = false;
         result = null;
     }
 
@@ -53,8 +53,8 @@ public class MatchEvent {
         return sets;
     }
 
-    public boolean isPlayoff() {
-        return playoff;
+    public boolean isPlayOff() {
+        return playOff;
     }
 
     public Stadium getVenue() {
@@ -82,7 +82,7 @@ public class MatchEvent {
         match.setHomePlayer(homePlayer.getPlayerOrFail());
         match.setAwayPlayer(awayPlayer.getPlayerOrFail());
         match.setSets(sets);
-        match.setPlayoff(playoff);
+        match.setPlayOff(playOff);
         match.setVenue(venue);
         return match;
     }

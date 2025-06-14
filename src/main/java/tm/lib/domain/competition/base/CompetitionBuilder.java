@@ -3,9 +3,9 @@ package tm.lib.domain.competition.base;
 import tm.lib.domain.competition.base.CompetitionDefinitions.CompetitionDefinition;
 import tm.lib.domain.competition.base.CompetitionDefinitions.GroupStageDefinition;
 import tm.lib.domain.competition.base.CompetitionDefinitions.MultiStageCompetitionDefinition;
-import tm.lib.domain.competition.base.CompetitionDefinitions.PlayoffStageDefinition;
+import tm.lib.domain.competition.base.CompetitionDefinitions.PlayOffStageDefinition;
 import tm.lib.domain.competition.standard.GroupStage;
-import tm.lib.domain.competition.standard.PlayoffStage;
+import tm.lib.domain.competition.standard.PlayOffStage;
 
 public class CompetitionBuilder {
     public static Competition buildCompetition(CompetitionDefinition definition) {
@@ -18,12 +18,12 @@ public class CompetitionBuilder {
                 groupStage.setSeedingTrigger(groupStageDefinition.getSeedingTrigger());
                 return groupStage;
             }
-            case PlayoffStageDefinition playoffStageDefinition -> {
-                var playoffStage = new PlayoffStage(playoffStageDefinition.getId(),
-                        playoffStageDefinition.getName(),
-                        playoffStageDefinition.getPlayoffStageConfiguration());
-                playoffStage.setSeedingTrigger(playoffStageDefinition.getSeedingTrigger());
-                return playoffStage;
+            case PlayOffStageDefinition playOffStageDefinition -> {
+                var playOffStage = new PlayOffStage(playOffStageDefinition.getId(),
+                        playOffStageDefinition.getName(),
+                        playOffStageDefinition.getPlayOffStageConfiguration());
+                playOffStage.setSeedingTrigger(playOffStageDefinition.getSeedingTrigger());
+                return playOffStage;
             }
             case MultiStageCompetitionDefinition multiStageCompetitionDefinition -> {
                 var multiStageCompetition = new MultiStageCompetition(multiStageCompetitionDefinition.getId(),

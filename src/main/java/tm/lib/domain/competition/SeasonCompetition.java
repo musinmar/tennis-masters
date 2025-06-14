@@ -2,9 +2,8 @@ package tm.lib.domain.competition;
 
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
-import tm.lib.domain.competition.base.Participant;
 import tm.lib.domain.competition.standard.GroupSubStage;
-import tm.lib.domain.competition.standard.PlayoffSubStageResult;
+import tm.lib.domain.competition.standard.PlayOffSubStageResult;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Nation;
 import tm.lib.domain.world.World;
@@ -13,7 +12,7 @@ import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static tm.lib.domain.competition.standard.PlayoffUtils.drawPlayersInPairs;
+import static tm.lib.domain.competition.standard.PlayOffUtils.drawPlayersInPairs;
 import static tm.lib.domain.core.Nation.OBERON_22;
 
 public class SeasonCompetition extends MultiStageCompetition {
@@ -49,7 +48,7 @@ public class SeasonCompetition extends MultiStageCompetition {
         championsLeague = new ChampionsLeagueCompetition();
         championsLeague.getFirstQualifyingStage().registerOnFinishedCallback(this::onCLFirstQualifyingStageFinished);
         championsLeague.getSecondQualifyingStage().registerOnFinishedCallback(this::onCLSecondQualifyingStageFinished);
-        championsLeague.getPlayoffStage().registerOnFinishedCallback(this::onCLPlayoffFinished);
+        championsLeague.getPlayOffStage().registerOnFinishedCallback(this::onCLPlayoffFinished);
 
         federationsCup = new FederationCupCompetition();
         federationsCup.getSecondQualifyingStage().registerOnFinishedCallback(this::initFCGroupStage);
@@ -122,7 +121,7 @@ public class SeasonCompetition extends MultiStageCompetition {
                 get_player_from(3, 2),
                 get_player_from(4, 1)));
 
-        PlayoffSubStageResult results = championsLeague.getFirstQualifyingStage().getResults();
+        PlayOffSubStageResult results = championsLeague.getFirstQualifyingStage().getResults();
         clQualifyingRound2.addAll(results.getWinners());
         clQualifyingRound2 = drawPlayersInPairs(clQualifyingRound2, true);
         championsLeague.getSecondQualifyingStage().setActualParticipants(clQualifyingRound2);
@@ -142,7 +141,7 @@ public class SeasonCompetition extends MultiStageCompetition {
                 get_player_from(2, 1),
                 get_player_from(3, 1)));
 
-        PlayoffSubStageResult clSecondQualifyingStageResults = championsLeague.getSecondQualifyingStage().getResults();
+        PlayOffSubStageResult clSecondQualifyingStageResults = championsLeague.getSecondQualifyingStage().getResults();
         clGroupRound.addAll(clSecondQualifyingStageResults.getWinners());
         List<List<Knight>> groups = makeCLGroups(clGroupRound);
         championsLeague.getGroupStage().setActualParticipantsByGroups(groups);
@@ -153,7 +152,7 @@ public class SeasonCompetition extends MultiStageCompetition {
                 get_player_from(4, 4),
                 get_player_from(5, 4)));
 
-        PlayoffSubStageResult fcFirstQualifyingStageResults = federationsCup.getFirstQualifyingStage().getResults();
+        PlayOffSubStageResult fcFirstQualifyingStageResults = federationsCup.getFirstQualifyingStage().getResults();
         fcQualifyingRound2.addAll(clSecondQualifyingStageResults.getLosers());
         fcQualifyingRound2.addAll(fcFirstQualifyingStageResults.getWinners());
         fcQualifyingRound2 = drawPlayersInPairs(fcQualifyingRound2, true);
@@ -166,7 +165,7 @@ public class SeasonCompetition extends MultiStageCompetition {
                 get_player_from(3, 4),
                 get_player_from(5, 3)));
 
-        PlayoffSubStageResult results = federationsCup.getSecondQualifyingStage().getResults();
+        PlayOffSubStageResult results = federationsCup.getSecondQualifyingStage().getResults();
         fcGroupRound.addAll(results.getWinners());
         List<List<Knight>> groups = makeCLGroups(fcGroupRound);
         federationsCup.getGroupStage().setActualParticipantsByGroups(groups);

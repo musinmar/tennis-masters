@@ -3,7 +3,7 @@ package tm.lib.domain.competition;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.competition.standard.GroupStage;
-import tm.lib.domain.competition.standard.PlayoffStage;
+import tm.lib.domain.competition.standard.PlayOffStage;
 import tm.lib.domain.core.Knight;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
 public class SimpleFourTournament extends MultiStageCompetition {
 
     private final GroupStage groupStage;
-    private final PlayoffStage playoffStage;
+    private final PlayOffStage playOffStage;
 
     public SimpleFourTournament(List<Knight> players) {
         super("TEST", "Тестовый турнир");
@@ -24,17 +24,17 @@ public class SimpleFourTournament extends MultiStageCompetition {
         participantsByGroup.add(players);
         groupStage.setActualParticipantsByGroups(participantsByGroup);
         groupStage.registerOnFinishedCallback(this::onGroupStageFinished);
-        playoffStage = new PlayoffStage("PO", "Плей-офф", 4);
-        setStages(Arrays.asList(groupStage, playoffStage));
+        playOffStage = new PlayOffStage("PO", "Плей-офф", 4);
+        setStages(Arrays.asList(groupStage, playOffStage));
     }
 
     @Override
     public void setStartingDate(int date) {
         groupStage.setStartingDate(date);
-        playoffStage.setStartingDate(date + 4);
+        playOffStage.setStartingDate(date + 4);
     }
 
     private void onGroupStageFinished(Competition competition) {
-        playoffStage.setActualParticipants(groupStage.getResults().getGroupResults().get(0));
+        playOffStage.setActualParticipants(groupStage.getResults().getGroupResults().get(0));
     }
 }

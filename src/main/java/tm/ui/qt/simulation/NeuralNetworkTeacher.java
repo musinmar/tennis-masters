@@ -153,7 +153,7 @@ public class NeuralNetworkTeacher {
         match.setHomePlayer(knight);
         match.setAwayPlayer(knight);
         match.setSets(2);
-        match.setPlayoff(false);
+        match.setPlayOff(false);
         match.setVenue(Stadium.standard());
 
         int winCount = 0;
@@ -253,7 +253,7 @@ public class NeuralNetworkTeacher {
         match.setHomePlayer(knight);
         match.setAwayPlayer(knight);
         match.setSets(2);
-        match.setPlayoff(false);
+        match.setPlayOff(false);
         match.setVenue(Stadium.standard());
 
         int winCount = 0;

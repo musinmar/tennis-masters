@@ -5,8 +5,8 @@ import tm.lib.domain.competition.base.MultiStageCompetition;
 import tm.lib.domain.competition.base.Participant;
 import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.GroupStageResult;
-import tm.lib.domain.competition.standard.PlayoffStage;
-import tm.lib.domain.competition.standard.PlayoffStageConfiguration;
+import tm.lib.domain.competition.standard.PlayOffStage;
+import tm.lib.domain.competition.standard.PlayOffStageConfiguration;
 import tm.lib.domain.core.Knight;
 
 import java.util.ArrayList;
@@ -16,15 +16,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static tm.lib.domain.competition.standard.PlayoffUtils.drawPlayersInPairsFromGroupResults;
+import static tm.lib.domain.competition.standard.PlayOffUtils.drawPlayersInPairsFromGroupResults;
 
 public class WorldCupCompetition extends MultiStageCompetition {
 
     private final GroupStage firstQualifyingStageGroupRound;
-    private final PlayoffStage firstQualifyingStagePlayoff;
+    private final PlayOffStage firstQualifyingStagePlayoff;
     private final GroupStage secondQualifyingStage;
     private final GroupStage groupStage;
-    private final PlayoffStage playoffStage;
+    private final PlayOffStage playOffStage;
 
     private List<Knight> secondQualifyingStageParticipants;
     private List<Knight> groupRoundParticipants;
@@ -36,9 +36,9 @@ public class WorldCupCompetition extends MultiStageCompetition {
         firstQualifyingStageGroupRound = new GroupStage("FQRG", "Первый квалификационный раунд", 2, 4);
         firstQualifyingStageGroupRound.registerOnFinishedCallback(this::onFirstQualifyingStageFinished);
 
-        PlayoffStageConfiguration firstQualifyingRoundPlayoffConfiguration =
-                PlayoffStageConfiguration.builder().playerCount(4).rounds(1).build();
-        firstQualifyingStagePlayoff = new PlayoffStage("FQRPO", "Плей-офф первого квалификационного раунда", firstQualifyingRoundPlayoffConfiguration);
+        PlayOffStageConfiguration firstQualifyingRoundPlayoffConfiguration =
+                PlayOffStageConfiguration.builder().playerCount(4).rounds(1).build();
+        firstQualifyingStagePlayoff = new PlayOffStage("FQRPO", "Плей-офф первого квалификационного раунда", firstQualifyingRoundPlayoffConfiguration);
         List<Participant> firstQualifyingStagePlayoffParticipants = firstQualifyingStagePlayoff.getPlayoffSubStages().getFirst().getParticipants();
         firstQualifyingStagePlayoffParticipants.get(0).setId("A1");
         firstQualifyingStagePlayoffParticipants.get(1).setId("B2");
@@ -52,14 +52,14 @@ public class WorldCupCompetition extends MultiStageCompetition {
         groupStage = new GroupStage("GS", "Групповой раунд", 4, 4);
         groupStage.registerOnFinishedCallback(this::onGroupStageFinished);
 
-        playoffStage = new PlayoffStage("PO", "Плей-офф", 8);
+        playOffStage = new PlayOffStage("PO", "Плей-офф", 8);
 
         setStages(Arrays.asList(
                 firstQualifyingStageGroupRound,
                 firstQualifyingStagePlayoff,
                 secondQualifyingStage,
                 groupStage,
-                playoffStage));
+                playOffStage));
     }
 
     public void setActualParticipants(List<Knight> players) {
@@ -95,7 +95,7 @@ public class WorldCupCompetition extends MultiStageCompetition {
     private void onGroupStageFinished(Competition competition) {
         GroupStageResult groupResults = groupStage.getResults();
         List<Knight> playoffParticipants = drawPlayersInPairsFromGroupResults(groupResults);
-        playoffStage.setActualParticipants(playoffParticipants);
+        playOffStage.setActualParticipants(playoffParticipants);
     }
 
     private static List<List<Knight>> performPotBasedDraw(List<Knight> players) {

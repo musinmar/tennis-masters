@@ -4,7 +4,7 @@ public class Match {
     private Knight homePlayer;
     private Knight awayPlayer;
     private int sets;
-    private boolean isPlayoff;
+    private boolean isPlayOff;
     private Stadium venue;
 
     public Knight getHomePlayer() {
@@ -31,12 +31,12 @@ public class Match {
         this.sets = sets;
     }
 
-    public boolean isPlayoff() {
-        return isPlayoff;
+    public boolean isPlayOff() {
+        return isPlayOff;
     }
 
-    public void setPlayoff(boolean playoff) {
-        isPlayoff = playoff;
+    public void setPlayOff(boolean playOff) {
+        isPlayOff = playOff;
     }
 
     public Stadium getVenue() {

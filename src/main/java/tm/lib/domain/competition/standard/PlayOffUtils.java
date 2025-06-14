@@ -8,7 +8,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.shuffle;
 
-public class PlayoffUtils {
+public class PlayOffUtils {
 
     public static List<Knight> drawPlayersInPairs(List<Knight> knights, boolean checkNoSameNationPairs) {
         ArrayList<Knight> knightsToShuffle = new ArrayList<>(knights);

@@ -5,6 +5,8 @@ import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Stadium;
 
 public class MatchEvent {
+    private static boolean PRINT_DATE = true;
+
     private int date;
     private final Competition competition;
     private final Participant homePlayer;
@@ -70,7 +72,8 @@ public class MatchEvent {
         String resultString = getResult() == null ? "" : " " + getResult().toString();
         String firstPlayerName = getHomePlayer() == null ? "TBD" : getHomePlayer().getFullNameOrId();
         String secondPlayerName = getAwayPlayer() == null ? "TBD" : getAwayPlayer().getFullNameOrId();
-        return firstPlayerName + " - " + secondPlayerName + resultString;
+        String date = PRINT_DATE ? "(" + getDate() + ") " : "";
+        return date + firstPlayerName + " - " + secondPlayerName + resultString;
     }
 
     public void setResult(MatchScore result) {

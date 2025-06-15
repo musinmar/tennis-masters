@@ -25,6 +25,7 @@ public class CompetitionDefinitions {
     public static class GroupStageDefinition implements CompetitionDefinition {
         private String id;
         private String name;
+        private int startDate;
         private int groupCount;
         private int playersPerGroup;
         private Optional<SeedingTrigger> seedingTrigger;
@@ -36,6 +37,7 @@ public class CompetitionDefinitions {
     public static class PlayOffStageDefinition implements CompetitionDefinition {
         private String id;
         private String name;
+        private int startDate;
         private PlayOffStageConfiguration playOffStageConfiguration;
         private Optional<SeedingTrigger> seedingTrigger;
     }

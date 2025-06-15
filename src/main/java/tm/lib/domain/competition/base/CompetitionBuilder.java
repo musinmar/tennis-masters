@@ -15,6 +15,7 @@ public class CompetitionBuilder {
                         groupStageDefinition.getName(),
                         groupStageDefinition.getGroupCount(),
                         groupStageDefinition.getPlayersPerGroup());
+                groupStage.setStartingDate(groupStageDefinition.getStartDate());
                 groupStage.setSeedingTrigger(groupStageDefinition.getSeedingTrigger());
                 return groupStage;
             }
@@ -22,6 +23,7 @@ public class CompetitionBuilder {
                 var playOffStage = new PlayOffStage(playOffStageDefinition.getId(),
                         playOffStageDefinition.getName(),
                         playOffStageDefinition.getPlayOffStageConfiguration());
+                playOffStage.setStartingDate(playOffStageDefinition.getStartDate());
                 playOffStage.setSeedingTrigger(playOffStageDefinition.getSeedingTrigger());
                 return playOffStage;
             }

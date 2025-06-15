@@ -4,22 +4,38 @@ import tm.lib.domain.competition.base.CompetitionDefinitions.CompetitionDefiniti
 import tm.lib.domain.competition.base.CompetitionDefinitions.GroupStageDefinition;
 import tm.lib.domain.competition.base.CompetitionDefinitions.MultiStageCompetitionDefinition;
 import tm.lib.domain.competition.base.CompetitionDefinitions.PlayOffStageDefinition;
-import tm.lib.domain.competition.base.triggers.SeedingRules;
 import tm.lib.domain.competition.base.triggers.SeedingRules.AllFromNationSeedingRule;
+import tm.lib.domain.competition.base.triggers.SeedingRules.BasedOnNationalRankingSeedingRule;
+import tm.lib.domain.competition.base.triggers.SeedingRules.BasedOnNationalRankingSeedingRule.PreviousRound;
+import tm.lib.domain.competition.base.triggers.SeedingRules.GroupStageToPlayOff;
 import tm.lib.domain.competition.base.triggers.SeedingRules.RandomSelection;
 import tm.lib.domain.competition.base.triggers.SeedingTrigger;
-import tm.lib.domain.competition.base.triggers.TriggerTimes;
+import tm.lib.domain.competition.base.triggers.TriggerTimes.CompetitionEndedTriggerTime;
 import tm.lib.domain.competition.base.triggers.TriggerTimes.SeasonStartTriggerTime;
 import tm.lib.domain.competition.standard.PlayOffStageConfiguration;
 import tm.lib.domain.core.Nation;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
+import static tm.lib.domain.competition.base.Competition.PARENT;
+import static tm.lib.domain.competition.base.Competition.buildPath;
+import static tm.lib.domain.competition.base.triggers.SeedingRules.BasedOnNationalRankingSeedingRule.buildParticipants;
+
 public class StandardSeasonBuilder {
+    public static final String FIRST_QUALIFYING_ROUND_ID = "FQR";
+    public static final String SECOND_QUALIFYING_ROUND_ID = "SQR";
+    public static final String GROUP_STAGE_ID = "GS";
+    public static final String PLAY_OFF_ID = "PO";
+    public static final String CHAMPIONS_LEAGUE_ID = "CL";
 
     public static CompetitionDefinition buildSeasonCompetitionDefinition() {
-        var competitions = Arrays.stream(Nation.values()).map(StandardSeasonBuilder::buildNationalCup).toList();
+        var nationalCups = Arrays.stream(Nation.values()).map(StandardSeasonBuilder::buildNationalCup).toList();
+        var competitions = new ArrayList<>(nationalCups);
+        competitions.add(buildChampionsLeague());
         return new MultiStageCompetitionDefinition("SEASON", "Сезон", competitions, Optional.empty());
     }
 
@@ -30,17 +46,82 @@ public class StandardSeasonBuilder {
                 1, 6, Optional.of(nationSeeding));
     }
 
+    public static CompetitionDefinition buildChampionsLeague() {
+        var lastNationalCupPath = buildPath(PARENT, PARENT, Nation.values()[Nation.values().length - 1].name());
+        var firstQualifyingStageSeedingTrigger = new SeedingTrigger(
+                new CompetitionEndedTriggerTime(lastNationalCupPath),
+                new BasedOnNationalRankingSeedingRule(emptyList(), buildParticipants(
+                        1, 4,
+                        3, 3,
+                        4, 2,
+                        4, 3,
+                        5, 1,
+                        5, 2
+                )));
+        var firstQualifyingStageConfiguration = PlayOffStageConfiguration.builder().playerCount(6).rounds(1).build();
+        var firstQualifyingStage = new PlayOffStageDefinition(FIRST_QUALIFYING_ROUND_ID, "Первый квалификационный раунд",
+                firstQualifyingStageConfiguration, Optional.of(firstQualifyingStageSeedingTrigger));
+
+        var secondQualifyingStageSeedingTrigger = new SeedingTrigger(
+                new CompetitionEndedTriggerTime(buildPath(PARENT, FIRST_QUALIFYING_ROUND_ID)),
+                new BasedOnNationalRankingSeedingRule(
+                        List.of(
+                                new PreviousRound(buildPath(PARENT, FIRST_QUALIFYING_ROUND_ID), true)
+                        ),
+                        buildParticipants(
+                                1, 3,
+                                2, 2,
+                                2, 3,
+                                3, 2,
+                                4, 1
+                        )
+                )
+        );
+        var secondQualifyingStageConfiguration = PlayOffStageConfiguration.builder().playerCount(8).rounds(1).build();
+        var secondQualifyingStage = new PlayOffStageDefinition(SECOND_QUALIFYING_ROUND_ID, "Второй квалификационный раунд",
+                secondQualifyingStageConfiguration, Optional.of(secondQualifyingStageSeedingTrigger));
+
+        var groupStageSeedingTrigger = new SeedingTrigger(
+                new CompetitionEndedTriggerTime(buildPath(PARENT, SECOND_QUALIFYING_ROUND_ID)),
+                new BasedOnNationalRankingSeedingRule(
+                        List.of(
+                                new PreviousRound(buildPath(PARENT, SECOND_QUALIFYING_ROUND_ID), true)
+                        ),
+                        buildParticipants(
+                                1, 1,
+                                1, 2,
+                                2, 1,
+                                3, 1
+                        )
+                )
+        );
+        var groupStage = new GroupStageDefinition(GROUP_STAGE_ID, "Групповой раунд",
+                2, 4, Optional.of(groupStageSeedingTrigger));
+
+        var playOffSeedingTrigger = new SeedingTrigger(
+                new CompetitionEndedTriggerTime(buildPath(PARENT, GROUP_STAGE_ID)),
+                new GroupStageToPlayOff(buildPath(PARENT, GROUP_STAGE_ID)));
+        var playOffStageConfiguration = PlayOffStageConfiguration.builder().playerCount(4).build();
+        var playOffStage = new PlayOffStageDefinition(PLAY_OFF_ID, "Плей-офф",
+                playOffStageConfiguration, Optional.of(playOffSeedingTrigger));
+
+        var stages = List.of(firstQualifyingStage, secondQualifyingStage, groupStage, playOffStage);
+
+        return new MultiStageCompetitionDefinition(CHAMPIONS_LEAGUE_ID, "Лига Чемпионов",
+                stages, Optional.empty());
+    }
+
     public static CompetitionDefinition buildStandardCompetition() {
-        var groupStage = new GroupStageDefinition("GS",
+        var groupStage = new GroupStageDefinition(GROUP_STAGE_ID,
                 "Групповой этап",
                 4,
                 4,
                 Optional.of(new SeedingTrigger(new SeasonStartTriggerTime(), new RandomSelection())));
-        var groupStagePath = "../GS";
+        var groupStagePath = buildPath(PARENT, GROUP_STAGE_ID);
         var playOffSeedingTrigger = new SeedingTrigger(
-                new TriggerTimes.CompetitionEndedTriggerTime(groupStagePath),
-                new SeedingRules.GroupStageToPlayOff(groupStagePath));
-        var playOffStage = new PlayOffStageDefinition("PO",
+                new CompetitionEndedTriggerTime(groupStagePath),
+                new GroupStageToPlayOff(groupStagePath));
+        var playOffStage = new PlayOffStageDefinition(PLAY_OFF_ID,
                 "Плэй-офф",
                 PlayOffStageConfiguration.builder().playerCount(8).build(),
                 Optional.of(playOffSeedingTrigger));

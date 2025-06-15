@@ -3,29 +3,43 @@ package tm.lib.domain.world;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.CompetitionTrigger;
 import tm.lib.domain.competition.base.triggers.SeedingRules;
+import tm.lib.domain.competition.base.triggers.SeedingRules.BasedOnNationalRankingSeedingRule;
 import tm.lib.domain.competition.base.triggers.TriggerTimes;
 import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.PlayOffStage;
 import tm.lib.domain.competition.standard.PlayOffSubStage;
 import tm.lib.domain.competition.standard.PlayOffUtils;
 import tm.lib.domain.core.Knight;
+import tm.lib.domain.core.Nation;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.shuffle;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+import static tm.lib.domain.competition.standard.PlayOffUtils.drawPlayersInPairs;
 
 public class WorldTriggerProcessor {
 
     private final List<Knight> players;
-    private final List<CompetitionTrigger> seasonStartTriggers;
+    private final NationRating nationRating;
+    private final EloRating eloRating;
+    private final Competition rootCompetition;
     private final Map<Competition, List<CompetitionTrigger>> onCompetitionEndTriggers;
+    private final List<CompetitionTrigger> seasonStartTriggers;
 
-    public WorldTriggerProcessor(List<Knight> players, Competition rootCompetition) {
+    public WorldTriggerProcessor(List<Knight> players,
+                                 NationRating nationRating,
+                                 EloRating eloRating,
+                                 Competition rootCompetition) {
         this.players = players;
+        this.nationRating = nationRating;
+        this.eloRating = eloRating;
+        this.rootCompetition = rootCompetition;
+
         var allTriggers = rootCompetition.getAllTriggers();
         this.seasonStartTriggers = allTriggers.stream()
                 .filter(t -> t.getTrigger().getTriggerTime() instanceof TriggerTimes.SeasonStartTriggerTime)
@@ -70,6 +84,7 @@ public class WorldTriggerProcessor {
                     processGroupStageToPlayOffTrigger(trigger.getCompetition(), groupStageToPlayOff);
             case SeedingRules.PlayOffToPlayOff playOffToPlayOff ->
                     processPlayOffToPlayOffTrigger(trigger.getCompetition(), playOffToPlayOff);
+            case BasedOnNationalRankingSeedingRule rule -> process(rule, trigger.getCompetition());
             default -> throw new IllegalArgumentException("Unknown seeding trigger rule: " +
                     trigger.getTrigger().getSeedingRule());
         }
@@ -131,5 +146,64 @@ public class WorldTriggerProcessor {
                 throw new IllegalArgumentException(message);
             }
         }
+    }
+
+    private void process(BasedOnNationalRankingSeedingRule rule, Competition competition) {
+        var participants = new ArrayList<Knight>();
+        for (var nationalRankingParticipant : rule.getNationalRankingParticipants()) {
+            participants.add(getPlayerByRanks(
+                    nationalRankingParticipant.getNationRank(),
+                    nationalRankingParticipant.getPlayerRankInNation())
+            );
+        }
+        for (var previousRound : rule.getPreviousRounds()) {
+            var previousCompetition = competition.resolveCompetitionPath(previousRound.getPath());
+            if (!(previousCompetition instanceof PlayOffStage playOffStage)) {
+                throw new IllegalArgumentException("Can't assign winners or losers from competition type: " +
+                        previousCompetition.getClass());
+            } else {
+                var results = playOffStage.getLastRoundResults();
+                var toAdd = previousRound.isWinners() ? results.getWinners() : results.getLosers();
+                participants.addAll(toAdd);
+            }
+        }
+
+        if (competition instanceof PlayOffStage playOffStage) {
+            var shuffled = PlayOffUtils.drawPlayersInPairs(participants, true);
+            playOffStage.setActualParticipants(shuffled);
+        } else if (competition instanceof GroupStage groupStage) {
+            var seeded = makeSeededGroupsTwoByFour(participants);
+            groupStage.setActualParticipantsByGroups(seeded);
+        } else {
+            var message = "Can't assign participants based on rankings for competition type " + competition.getClass();
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    private Knight getPlayerByRanks(int nationRank, int playerRank) {
+        Nation nation = nationRating.getRankedNation(nationRank - 1);
+        var nationCup = (GroupStage) rootCompetition.getChild(nation.name().toUpperCase());
+        return nationCup.getResults().getGroupPosition(0, playerRank - 1);
+    }
+
+    private List<List<Knight>> makeSeededGroupsTwoByFour(List<Knight> knights) {
+        List<Knight> sortedKnights = new ArrayList<>(knights);
+        eloRating.sortPersonsByRating(sortedKnights);
+        List<Knight> top = new ArrayList<>(sortedKnights.subList(0, 4));
+        List<Knight> bottom = new ArrayList<>(sortedKnights.subList(4, 8));
+        top = drawPlayersInPairs(top, false);
+        bottom = drawPlayersInPairs(bottom, false);
+        return asList(
+                asList(
+                        top.get(0),
+                        top.get(1),
+                        bottom.get(0),
+                        bottom.get(1)),
+                asList(
+                        top.get(2),
+                        top.get(3),
+                        bottom.get(2),
+                        bottom.get(3)
+                ));
     }
 }

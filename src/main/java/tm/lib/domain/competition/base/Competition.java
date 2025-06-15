@@ -16,6 +16,9 @@ import java.util.function.Consumer;
 
 @Getter
 abstract public class Competition {
+    public static String PARENT = "..";
+    public static String PATH_SEPARATOR = "/";
+
     private Competition parent;
     private boolean isRoot;
     private final String id;
@@ -126,7 +129,7 @@ abstract public class Competition {
     }
 
     public Competition resolveCompetitionPath(String path) {
-        var elements = StringUtils.split(path, '/');
+        var elements = StringUtils.split(path, PATH_SEPARATOR);
         var cur = this;
         for (var el : elements) {
             if ("..".equals(el)) {
@@ -136,5 +139,9 @@ abstract public class Competition {
             }
         }
         return cur;
+    }
+
+    public static String buildPath(String... sections) {
+        return StringUtils.join(sections, PATH_SEPARATOR);
     }
 }

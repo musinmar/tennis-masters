@@ -139,7 +139,7 @@ public class World {
 //        seasonCompetition.setStartingDate(0);
         seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition());
         seasonCompetition.setStartingDate(0);
-        triggerProcessor = new WorldTriggerProcessor(getPlayers(), seasonCompetition);
+        triggerProcessor = new WorldTriggerProcessor(getPlayers(), nationRating, eloRating, seasonCompetition);
         initCompetitionPointValues();
     }
 

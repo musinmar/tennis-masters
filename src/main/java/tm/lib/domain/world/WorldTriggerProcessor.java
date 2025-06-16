@@ -4,8 +4,11 @@ import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.CompetitionTrigger;
 import tm.lib.domain.competition.base.triggers.SeedingRules;
 import tm.lib.domain.competition.base.triggers.SeedingRules.BasedOnNationalRankingSeedingRule;
+import tm.lib.domain.competition.base.triggers.SeedingRules.PreAssignFromEloRankings;
+import tm.lib.domain.competition.base.triggers.SeedingRules.WorldCupRoundSeeding;
 import tm.lib.domain.competition.base.triggers.TriggerTimes;
 import tm.lib.domain.competition.standard.GroupStage;
+import tm.lib.domain.competition.standard.GroupStageUtils;
 import tm.lib.domain.competition.standard.PlayOffStage;
 import tm.lib.domain.competition.standard.PlayOffSubStage;
 import tm.lib.domain.competition.standard.PlayOffUtils;
@@ -16,11 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.shuffle;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static tm.lib.domain.competition.standard.PlayOffUtils.drawPlayersInPairs;
+import static tm.lib.domain.competition.standard.GroupStageUtils.makeSeededGroupsTwoByFour;
 
 public class WorldTriggerProcessor {
 
@@ -85,6 +87,8 @@ public class WorldTriggerProcessor {
             case SeedingRules.PlayOffToPlayOff playOffToPlayOff ->
                     processPlayOffToPlayOffTrigger(trigger.getCompetition(), playOffToPlayOff);
             case BasedOnNationalRankingSeedingRule rule -> process(rule, trigger.getCompetition());
+            case PreAssignFromEloRankings rule -> process(rule, trigger.getCompetition());
+            case WorldCupRoundSeeding rule -> process(rule, trigger.getCompetition());
             default -> throw new IllegalArgumentException("Unknown seeding trigger rule: " +
                     trigger.getTrigger().getSeedingRule());
         }
@@ -172,7 +176,7 @@ public class WorldTriggerProcessor {
             var shuffled = PlayOffUtils.drawPlayersInPairs(participants, true);
             playOffStage.setActualParticipants(shuffled);
         } else if (competition instanceof GroupStage groupStage) {
-            var seeded = makeSeededGroupsTwoByFour(participants);
+            var seeded = makeSeededGroupsTwoByFour(participants, eloRating);
             groupStage.setActualParticipantsByGroups(seeded);
         } else {
             var message = "Can't assign participants based on rankings for competition type " + competition.getClass();
@@ -186,24 +190,33 @@ public class WorldTriggerProcessor {
         return nationCup.getResults().getGroupPosition(0, playerRank - 1);
     }
 
-    private List<List<Knight>> makeSeededGroupsTwoByFour(List<Knight> knights) {
-        List<Knight> sortedKnights = new ArrayList<>(knights);
-        eloRating.sortPersonsByRating(sortedKnights);
-        List<Knight> top = new ArrayList<>(sortedKnights.subList(0, 4));
-        List<Knight> bottom = new ArrayList<>(sortedKnights.subList(4, 8));
-        top = drawPlayersInPairs(top, false);
-        bottom = drawPlayersInPairs(bottom, false);
-        return asList(
-                asList(
-                        top.get(0),
-                        top.get(1),
-                        bottom.get(0),
-                        bottom.get(1)),
-                asList(
-                        top.get(2),
-                        top.get(3),
-                        bottom.get(2),
-                        bottom.get(3)
-                ));
+    private void process(PreAssignFromEloRankings rule, Competition competition) {
+        var playersByRating = eloRating.getPersonsByRating();
+        competition.assignParticipants(playersByRating.subList(rule.getFromEloRank(), rule.getToEloRank()));
+    }
+
+    private void process(WorldCupRoundSeeding rule, Competition competition) {
+        var participants = new ArrayList<>(competition.getAssignedParticipants());
+        if (!(competition instanceof GroupStage groupStage)) {
+            throw new IllegalArgumentException("Can't seed World Cup round for competition type "
+                    + competition.getClass());
+        } else {
+            rule.getPreviousRoundPath().ifPresent(path -> {
+                var previousRound = competition.resolveCompetitionPath(path);
+                if (previousRound instanceof PlayOffStage previousPlayOffStage) {
+                    participants.addAll(previousPlayOffStage.getLastRoundResults().getWinners());
+                } else if (previousRound instanceof GroupStage previousGroupStage) {
+                    var winners = previousGroupStage.getResults().getGroupResults().stream()
+                            .flatMap(group -> group.stream().limit(2))
+                            .toList();
+                    participants.addAll(winners);
+                } else {
+                    throw new IllegalArgumentException("Unknown previous round type: " + previousRound.getClass());
+                }
+            });
+
+            var seeded = GroupStageUtils.performPotBasedDraw(participants);
+            groupStage.setActualParticipantsByGroups(seeded);
+        }
     }
 }

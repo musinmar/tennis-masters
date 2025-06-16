@@ -16,7 +16,7 @@ public class CompetitionDefinitions {
 
         String getName();
 
-        Optional<SeedingTrigger> getSeedingTrigger();
+        List<SeedingTrigger> getSeedingTriggers();
     }
 
     @Getter
@@ -28,7 +28,7 @@ public class CompetitionDefinitions {
         private int startDate;
         private int groupCount;
         private int playersPerGroup;
-        private Optional<SeedingTrigger> seedingTrigger;
+        private List<SeedingTrigger> seedingTriggers;
     }
 
     @Getter
@@ -39,7 +39,7 @@ public class CompetitionDefinitions {
         private String name;
         private int startDate;
         private PlayOffStageConfiguration playOffStageConfiguration;
-        private Optional<SeedingTrigger> seedingTrigger;
+        private List<SeedingTrigger> seedingTriggers;
     }
 
     @Getter
@@ -49,6 +49,6 @@ public class CompetitionDefinitions {
         private String id;
         private String name;
         private List<CompetitionDefinition> stages;
-        private Optional<SeedingTrigger> seedingTrigger;
+        private List<SeedingTrigger> seedingTriggers;
     }
 }

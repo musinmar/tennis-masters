@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static java.util.Collections.emptyList;
+
 @Getter
 abstract public class Competition {
     public static String PARENT = "..";
@@ -23,7 +25,8 @@ abstract public class Competition {
     private boolean isRoot;
     private final String id;
     private final String name;
-    private Optional<SeedingTrigger> seedingTrigger = Optional.empty();
+    private List<SeedingTrigger> seedingTriggers = emptyList();
+    private List<Knight> assignedParticipants = new ArrayList<>();
 
     private final List<Consumer<Competition>> competitionFinishedCallbacks = new ArrayList<>();
 
@@ -118,12 +121,12 @@ abstract public class Competition {
         }
     }
 
-    public void setSeedingTrigger(Optional<SeedingTrigger> seedingTrigger) {
-        this.seedingTrigger = seedingTrigger;
+    public void setSeedingTriggers(List<SeedingTrigger> seedingTriggers) {
+        this.seedingTriggers = seedingTriggers;
     }
 
     public List<CompetitionTrigger> getAllTriggers() {
-        return seedingTrigger.stream()
+        return seedingTriggers.stream()
                 .map(trigger -> new CompetitionTrigger(this, trigger))
                 .toList();
     }
@@ -143,5 +146,9 @@ abstract public class Competition {
 
     public static String buildPath(String... sections) {
         return StringUtils.join(sections, PATH_SEPARATOR);
+    }
+
+    public void assignParticipants(List<Knight> players) {
+        assignedParticipants.addAll(players);
     }
 }

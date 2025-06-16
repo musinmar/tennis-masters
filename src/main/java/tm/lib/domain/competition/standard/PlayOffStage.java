@@ -33,7 +33,7 @@ public class PlayOffStage extends MultiStageCompetition {
                 var seedingTrigger = new SeedingTrigger(
                         new TriggerTimes.CompetitionEndedTriggerTime("../" + previousStageId),
                         new SeedingRules.PlayOffToPlayOff("../" + previousStageId));
-                stage.setSeedingTrigger(Optional.of(seedingTrigger));
+                stage.setSeedingTriggers(List.of(seedingTrigger));
             }
 //            stage.registerOnFinishedCallback(this::onPlayoffSubStageFinished);
             stages.add(stage);

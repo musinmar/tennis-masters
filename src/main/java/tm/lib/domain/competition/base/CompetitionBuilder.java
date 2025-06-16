@@ -16,7 +16,7 @@ public class CompetitionBuilder {
                         groupStageDefinition.getGroupCount(),
                         groupStageDefinition.getPlayersPerGroup());
                 groupStage.setStartingDate(groupStageDefinition.getStartDate());
-                groupStage.setSeedingTrigger(groupStageDefinition.getSeedingTrigger());
+                groupStage.setSeedingTriggers(groupStageDefinition.getSeedingTriggers());
                 return groupStage;
             }
             case PlayOffStageDefinition playOffStageDefinition -> {
@@ -24,7 +24,7 @@ public class CompetitionBuilder {
                         playOffStageDefinition.getName(),
                         playOffStageDefinition.getPlayOffStageConfiguration());
                 playOffStage.setStartingDate(playOffStageDefinition.getStartDate());
-                playOffStage.setSeedingTrigger(playOffStageDefinition.getSeedingTrigger());
+                playOffStage.setSeedingTriggers(playOffStageDefinition.getSeedingTriggers());
                 return playOffStage;
             }
             case MultiStageCompetitionDefinition multiStageCompetitionDefinition -> {

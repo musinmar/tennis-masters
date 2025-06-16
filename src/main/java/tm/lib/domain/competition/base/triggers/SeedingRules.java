@@ -6,6 +6,7 @@ import tm.lib.domain.core.Nation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class SeedingRules {
 
@@ -59,6 +60,19 @@ public class SeedingRules {
 
         private List<PreviousRound> previousRounds;
         private List<NationalRankingParticipant> nationalRankingParticipants;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class PreAssignFromEloRankings implements SeedingRule {
+        private int fromEloRank;
+        private int toEloRank;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class WorldCupRoundSeeding implements SeedingRule {
+        private Optional<String> previousRoundPath;
     }
 
 }

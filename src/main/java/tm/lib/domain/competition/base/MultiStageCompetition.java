@@ -128,8 +128,8 @@ public class MultiStageCompetition extends Competition {
     public List<CompetitionTrigger> getAllTriggers() {
         var triggers = stages.stream().flatMap(stage -> stage.getAllTriggers().stream())
                 .collect(Collectors.toList());
-        getSeedingTrigger().map(trigger -> new CompetitionTrigger(this, trigger))
-                .ifPresent(triggers::add);
+        getSeedingTriggers().stream().map(trigger -> new CompetitionTrigger(this, trigger))
+                .forEach(triggers::add);
         return triggers;
     }
 }

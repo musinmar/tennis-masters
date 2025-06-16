@@ -9,13 +9,11 @@ import tm.lib.domain.competition.standard.PlayOffStage;
 import tm.lib.domain.competition.standard.PlayOffStageConfiguration;
 import tm.lib.domain.core.Knight;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static tm.lib.domain.competition.standard.GroupStageUtils.performPotBasedDraw;
 import static tm.lib.domain.competition.standard.PlayOffUtils.drawPlayersInPairsFromGroupResults;
 
 public class WorldCupCompetition extends MultiStageCompetition {
@@ -96,25 +94,5 @@ public class WorldCupCompetition extends MultiStageCompetition {
         GroupStageResult groupResults = groupStage.getResults();
         List<Knight> playoffParticipants = drawPlayersInPairsFromGroupResults(groupResults);
         playOffStage.setActualParticipants(playoffParticipants);
-    }
-
-    private static List<List<Knight>> performPotBasedDraw(List<Knight> players) {
-        List<List<Knight>> pots = new ArrayList<>();
-        for (int i = 0; i < 4; ++i) {
-            pots.add(new ArrayList<>());
-        }
-        for (int i = 0; i < players.size(); i++) {
-            pots.get(i / 4).add(players.get(i));
-        }
-        for (int i = 0; i < 4; ++i) {
-            Collections.shuffle(pots.get(i));
-        }
-        List<List<Knight>> groups = new ArrayList<>();
-        for (int i = 0; i < 4; ++i) {
-            final int groupIndex = i;
-            List<Knight> group = pots.stream().map(pot -> pot.get(groupIndex)).collect(Collectors.toList());
-            groups.add(group);
-        }
-        return groups;
     }
 }

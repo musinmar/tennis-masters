@@ -1,5 +1,6 @@
 package tm.lib.domain.competition;
 
+import com.google.common.collect.ImmutableMap;
 import tm.lib.domain.competition.base.CompetitionDefinitions.CompetitionDefinition;
 import tm.lib.domain.competition.base.CompetitionDefinitions.GroupStageDefinition;
 import tm.lib.domain.competition.base.CompetitionDefinitions.MultiStageCompetitionDefinition;
@@ -21,6 +22,7 @@ import tm.lib.domain.core.Nation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
@@ -63,6 +65,19 @@ public class StandardSeasonBuilder {
         competitions.add(buildChampionsLeague());
         competitions.add(buildWorldCup());
         return newMultiStageCompetition("SEASON", "Сезон", competitions);
+    }
+
+    public static Map<String, Integer> buildCompetitionPoints() {
+        return ImmutableMap.<String, Integer>builder()
+                .put(buildPath(CHAMPIONS_LEAGUE_ID, FIRST_QUALIFYING_ROUND_ID), 2)
+                .put(buildPath(FEDERATIONS_CUP_ID, FIRST_QUALIFYING_ROUND_ID), 1)
+                .put(buildPath(CHAMPIONS_LEAGUE_ID, SECOND_QUALIFYING_ROUND_ID), 2)
+                .put(buildPath(FEDERATIONS_CUP_ID, SECOND_QUALIFYING_ROUND_ID), 1)
+                .put(buildPath(FEDERATIONS_CUP_ID, GROUP_STAGE_ID), 2)
+                .put(buildPath(CHAMPIONS_LEAGUE_ID, GROUP_STAGE_ID), 4)
+                .put(buildPath(FEDERATIONS_CUP_ID, PLAY_OFF_ID), 2)
+                .put(buildPath(CHAMPIONS_LEAGUE_ID, PLAY_OFF_ID), 4)
+                .build();
     }
 
     public static CompetitionDefinition buildNationalCup(Nation nation) {

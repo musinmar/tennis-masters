@@ -1,7 +1,7 @@
 package tm.lib.domain.world;
 
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.Validate;
+import tm.lib.domain.competition.StandardSeasonBuilder;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MatchEvent;
 import tm.lib.domain.competition.standard.GroupSubStage;
@@ -15,10 +15,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toList;
 import static tm.lib.domain.competition.StandardSeasonBuilder.buildSeasonCompetitionDefinition;
 import static tm.lib.domain.competition.base.CompetitionBuilder.buildCompetition;
@@ -138,23 +140,16 @@ public class World {
 //        seasonCompetition = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers(), year);
 //        seasonCompetition.setStartingDate(0);
         seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition(), year);
-//        seasonCompetition.setStartingDate(0);
         triggerProcessor = new WorldTriggerProcessor(getPlayers(), nationRating, eloRating, seasonCompetition);
         initCompetitionPointValues();
     }
 
     private void initCompetitionPointValues() {
-        Competition s = getCurrentSeason();
-        competitionPointValues = ImmutableMap.<Competition, Integer>builder()
-//                .put(s.getChampionsLeague().getFirstQualifyingStage(), 2)
-//                .put(s.getFederationsCup().getFirstQualifyingStage(), 1)
-//                .put(s.getChampionsLeague().getSecondQualifyingStage(), 2)
-//                .put(s.getFederationsCup().getSecondQualifyingStage(), 1)
-//                .put(s.getFederationsCup().getGroupStage(), 2)
-//                .put(s.getChampionsLeague().getGroupStage(), 4)
-//                .put(s.getFederationsCup().getPlayoffStage(), 2)
-//                .put(s.getChampionsLeague().getPlayoffStage(), 4)
-                .build();
+        Competition season = getCurrentSeason();
+        var pointsByCompetition = new HashMap<Competition, Integer>();
+        var pointsByPath = StandardSeasonBuilder.buildCompetitionPoints();
+        pointsByPath.forEach((path, value) -> pointsByCompetition.put(season.resolveCompetitionPath(path), value));
+        competitionPointValues = unmodifiableMap(pointsByCompetition);
     }
 
     public void processMatch(MatchEvent match, MatchScore score) {
@@ -199,7 +194,7 @@ public class World {
     private Integer getCompetitionPoints(Competition competition) {
         var current = competition;
         while (current != null) {
-            Integer points = competitionPointValues.get(competition);
+            Integer points = competitionPointValues.get(current);
             if (points != null) {
                 return points;
             }

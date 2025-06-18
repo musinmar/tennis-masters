@@ -20,6 +20,8 @@ public class CompetitionDefinitions {
         String getName();
 
         List<SeedingTrigger> getSeedingTriggers();
+
+        CompetitionSchedule getSchedule();
     }
 
     @Getter
@@ -31,7 +33,8 @@ public class CompetitionDefinitions {
         private int startDate;
         private int groupCount;
         private int playersPerGroup;
-        private List<SeedingTrigger> seedingTriggers;
+        private List<SeedingTrigger> seedingTriggers = emptyList();
+        private CompetitionSchedule schedule = EVERY_YEAR;
     }
 
     @Getter

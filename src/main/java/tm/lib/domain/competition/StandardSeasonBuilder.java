@@ -88,9 +88,9 @@ public class StandardSeasonBuilder {
         var firstQualifyingStageConfiguration = PlayOffStageConfiguration.builder().playerCount(6).rounds(1).build();
         var firstQualifyingStage = newPlayOffStage(FIRST_QUALIFYING_ROUND_ID,
                 "Первый квалификационный раунд",
-                firstQualifyingStageConfiguration);
-        firstQualifyingStage.setStartDate(CHAMPIONS_LEAGUE_FQS_START_DATE);
-        firstQualifyingStage.setSeedingTriggers(List.of(firstQualifyingStageSeedingTrigger));
+                CHAMPIONS_LEAGUE_FQS_START_DATE,
+                firstQualifyingStageConfiguration,
+                List.of(firstQualifyingStageSeedingTrigger));
 
         var secondQualifyingStageSeedingTrigger = new SeedingTrigger(
                 new CompetitionEndedTriggerTime(buildPath(PARENT, FIRST_QUALIFYING_ROUND_ID)),
@@ -110,9 +110,9 @@ public class StandardSeasonBuilder {
         var secondQualifyingStageConfiguration = PlayOffStageConfiguration.builder().playerCount(8).rounds(1).build();
         var secondQualifyingStage = newPlayOffStage(SECOND_QUALIFYING_ROUND_ID,
                 "Второй квалификационный раунд",
-                secondQualifyingStageConfiguration);
-        secondQualifyingStage.setStartDate(CHAMPIONS_LEAGUE_SQS_START_DATE);
-        secondQualifyingStage.setSeedingTriggers(List.of(secondQualifyingStageSeedingTrigger));
+                CHAMPIONS_LEAGUE_SQS_START_DATE,
+                secondQualifyingStageConfiguration,
+                List.of(secondQualifyingStageSeedingTrigger));
 
         var groupStageSeedingTrigger = new SeedingTrigger(
                 new CompetitionEndedTriggerTime(buildPath(PARENT, SECOND_QUALIFYING_ROUND_ID)),
@@ -137,9 +137,9 @@ public class StandardSeasonBuilder {
                 new GroupStageToPlayOff(buildPath(PARENT, GROUP_STAGE_ID)));
         var playOffStageConfiguration = PlayOffStageConfiguration.builder().playerCount(4).build();
         var playOffStage = newPlayOffStage(PLAY_OFF_ID, "Плей-офф",
-                playOffStageConfiguration);
-        playOffStage.setStartDate(CHAMPIONS_LEAGUE_PLAY_OFF_START_DATE);
-        playOffStage.setSeedingTriggers(List.of(playOffSeedingTrigger));
+                CHAMPIONS_LEAGUE_PLAY_OFF_START_DATE,
+                playOffStageConfiguration,
+                List.of(playOffSeedingTrigger));
 
         var stages = List.of(firstQualifyingStage, secondQualifyingStage, groupStage, playOffStage);
 
@@ -160,9 +160,9 @@ public class StandardSeasonBuilder {
         var firstQualifyingStageConfiguration = PlayOffStageConfiguration.builder().playerCount(4).rounds(1).build();
         var firstQualifyingStage = newPlayOffStage(FIRST_QUALIFYING_ROUND_ID,
                 "Первый квалификационный раунд",
-                firstQualifyingStageConfiguration);
-        firstQualifyingStage.setStartDate(FEDERATIONS_CUP_FQS_START_DATE);
-        firstQualifyingStage.setSeedingTriggers(List.of(firstQualifyingStageSeedingTrigger));
+                FEDERATIONS_CUP_FQS_START_DATE,
+                firstQualifyingStageConfiguration,
+                List.of(firstQualifyingStageSeedingTrigger));
 
         var secondCLQualifyingRoundPath = buildPath(PARENT, PARENT, CHAMPIONS_LEAGUE_ID, SECOND_QUALIFYING_ROUND_ID);
         var secondQualifyingStageSeedingTrigger = new SeedingTrigger(
@@ -183,9 +183,9 @@ public class StandardSeasonBuilder {
         var secondQualifyingStageConfiguration = PlayOffStageConfiguration.builder().playerCount(10).rounds(1).build();
         var secondQualifyingStage = newPlayOffStage(SECOND_QUALIFYING_ROUND_ID,
                 "Второй квалификационный раунд",
-                secondQualifyingStageConfiguration);
-        secondQualifyingStage.setStartDate(FEDERATIONS_CUP_SQS_START_DATE);
-        secondQualifyingStage.setSeedingTriggers(List.of(secondQualifyingStageSeedingTrigger));
+                FEDERATIONS_CUP_SQS_START_DATE,
+                secondQualifyingStageConfiguration,
+                List.of(secondQualifyingStageSeedingTrigger));
 
         var groupStageSeedingTrigger = new SeedingTrigger(
                 new CompetitionEndedTriggerTime(buildPath(PARENT, SECOND_QUALIFYING_ROUND_ID)),
@@ -209,9 +209,9 @@ public class StandardSeasonBuilder {
                 new GroupStageToPlayOff(buildPath(PARENT, GROUP_STAGE_ID)));
         var playOffStageConfiguration = PlayOffStageConfiguration.builder().playerCount(4).build();
         var playOffStage = newPlayOffStage(PLAY_OFF_ID, "Плей-офф",
-                playOffStageConfiguration);
-        playOffStage.setStartDate(FEDERATIONS_CUP_PLAY_OFF_START_DATE);
-        playOffStage.setSeedingTriggers(List.of(playOffSeedingTrigger));
+                FEDERATIONS_CUP_PLAY_OFF_START_DATE,
+                playOffStageConfiguration,
+                List.of(playOffSeedingTrigger));
 
         var stages = List.of(firstQualifyingStage, secondQualifyingStage, groupStage, playOffStage);
 
@@ -238,9 +238,9 @@ public class StandardSeasonBuilder {
                 new GroupStageToPlayOff(fqrPath));
         var firstQualifyingRoundPlayOffStage = newPlayOffStage(WORLD_CUP_FIRST_QUALIFYING_ROUND_PLAY_OFF_ID,
                 "Плей-офф первого квалификационного раунда",
-                PlayOffStageConfiguration.builder().playerCount(4).rounds(1).build());
-        firstQualifyingRoundPlayOffStage.setStartDate(WORLD_CUP_FQR_PLAY_OFF_STAGE_START_DATE);
-        firstQualifyingRoundPlayOffStage.setSeedingTriggers(List.of(firstQualifyingStagePlayOffSeedingTrigger));
+                WORLD_CUP_FQR_PLAY_OFF_STAGE_START_DATE,
+                PlayOffStageConfiguration.builder().playerCount(4).rounds(1).build(),
+                List.of(firstQualifyingStagePlayOffSeedingTrigger));
 
         var secondQualifyingStageEloTrigger = new SeedingTrigger(
                 championsLeagueTriggerTime,
@@ -272,9 +272,9 @@ public class StandardSeasonBuilder {
                 new GroupStageToPlayOff(groupStagePath));
         var playOffStage = newPlayOffStage(PLAY_OFF_ID,
                 "Плэй-офф",
-                PlayOffStageConfiguration.builder().playerCount(8).build());
-        playOffStage.setStartDate(WORLD_CUP_PLAY_OFF_START_DATE);
-        playOffStage.setSeedingTriggers(List.of(playOffSeedingTrigger));
+                WORLD_CUP_PLAY_OFF_START_DATE,
+                PlayOffStageConfiguration.builder().playerCount(8).build(),
+                List.of(playOffSeedingTrigger));
 
         var stages = List.of(firstQualifyingStageGroupRound,
                 firstQualifyingRoundPlayOffStage,
@@ -299,9 +299,9 @@ public class StandardSeasonBuilder {
                 new GroupStageToPlayOff(groupStagePath));
         var playOffStage = newPlayOffStage(PLAY_OFF_ID,
                 "Плэй-офф",
-                PlayOffStageConfiguration.builder().playerCount(8).build());
-        playOffStage.setStartDate(10);
-        playOffStage.setSeedingTriggers(List.of(playOffSeedingTrigger));
+                10,
+                PlayOffStageConfiguration.builder().playerCount(8).build(),
+                List.of(playOffSeedingTrigger));
         return newMultiStageCompetition("SC",
                 "Стандартный турнир",
                 Arrays.asList(groupStage, playOffStage));
@@ -325,11 +325,15 @@ public class StandardSeasonBuilder {
 
     private static PlayOffStageDefinition newPlayOffStage(String id,
                                                           String name,
-                                                          PlayOffStageConfiguration configuration) {
+                                                          int startDate,
+                                                          PlayOffStageConfiguration configuration,
+                                                          List<SeedingTrigger> seedingTriggers) {
         var definition = new PlayOffStageDefinition();
         definition.setId(id);
         definition.setName(name);
+        definition.setStartDate(startDate);
         definition.setPlayOffStageConfiguration(configuration);
+        definition.setSeedingTriggers(seedingTriggers);
         return definition;
     }
 

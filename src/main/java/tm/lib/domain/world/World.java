@@ -137,7 +137,7 @@ public class World {
     private void initCompetitions() {
 //        seasonCompetition = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers(), year);
 //        seasonCompetition.setStartingDate(0);
-        seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition());
+        seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition(), year);
 //        seasonCompetition.setStartingDate(0);
         triggerProcessor = new WorldTriggerProcessor(getPlayers(), nationRating, eloRating, seasonCompetition);
         initCompetitionPointValues();

@@ -5,7 +5,7 @@ import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Stadium;
 
 public class MatchEvent {
-    private static boolean PRINT_DATE = true;
+    private static final boolean PRINT_DATE = true;
 
     private int date;
     private final Competition competition;

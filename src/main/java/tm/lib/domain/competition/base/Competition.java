@@ -1,6 +1,5 @@
 package tm.lib.domain.competition.base;
 
-import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import tm.lib.domain.competition.base.events.CompetitionEvent;
 import tm.lib.domain.core.Knight;
@@ -9,87 +8,59 @@ import tm.lib.domain.core.MatchScore;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static java.util.Collections.emptyList;
+public interface Competition {
+    String PATH_SEPARATOR = "/";
+    String PARENT = "..";
+    String SELF = "self";
 
-@Getter
-abstract public class Competition {
-    public static String PATH_SEPARATOR = "/";
-    public static String PARENT = "..";
-    public static String SELF = "self";
+    String getId();
 
-    private Competition parent;
-    private final String id;
-    private final String name;
-    private List<CompetitionEvent> events = emptyList();
-    private List<Knight> assignedParticipants = new ArrayList<>();
+    String getName();
 
-    private final List<Consumer<Competition>> competitionFinishedCallbacks = new ArrayList<>();
+    Competition getParent();
 
-    protected Competition(String id, String name) {
-        this.id = id;
-        this.name = name;
+    Competition getChild(String id);
+
+    int getStartingDate();
+
+    void setStartingDate(int date);
+
+    int getLastDate();
+
+    void assignParticipants(List<Knight> players);
+
+    List<Knight> getAssignedParticipants();
+
+    Optional<MatchEvent> getNextMatch();
+
+    List<MatchEvent> getAllMatches();
+
+    void processMatchResult(MatchEvent match, MatchScore score);
+
+    default boolean isFinished() {
+        return getNextMatch().isEmpty();
     }
 
-    protected void setParent(Competition parent) {
-        this.parent = parent;
-    }
+    void setEvents(List<CompetitionEvent> events);
 
-    public Competition getChild(String id) {
-        throw new IllegalArgumentException("Competition " + getId() + " does not have child " + id);
-    }
+    List<CompetitionEvent> getAllEvents();
 
-    public void registerOnFinishedCallback(Consumer<Competition> callback) {
-        competitionFinishedCallbacks.add(callback);
-    }
+    Knight getWinner();
 
-    public void print(PrintStream stream) {
-        stream.println(getName());
-        stream.println();
-    }
+    void print(PrintStream stream);
 
-    public String printToString() {
+    default String printToString() {
         OutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
         print(printStream);
         return outputStream.toString();
     }
 
-    abstract public Optional<MatchEvent> getNextMatch();
-
-    abstract public List<MatchEvent> getAllMatches();
-
-    abstract public void processMatchResult(MatchEvent match, MatchScore score);
-
-    abstract public int getStartingDate();
-
-    abstract public void setStartingDate(int date);
-
-    public void setStartingDateAfter(Competition other) {
-        setStartingDate(other.getLastDate() + 2);
-    }
-
-    abstract public int getLastDate();
-
-    abstract public Knight getWinner();
-
-    private void runOnFinishedCallbacks() {
-        for (var callback : competitionFinishedCallbacks) {
-            callback.accept(this);
-        }
-    }
-
-    protected void checkIfCompetitionFinished(Competition competition) {
-        if (getNextMatch().isEmpty()) {
-            runOnFinishedCallbacks();
-        }
-    }
-
-    public String getFullName(boolean includeSeason) {
+    default String getFullName(boolean includeSeason) {
         String name = getName();
         Competition parent = getParent();
         while (true) {
@@ -105,21 +76,9 @@ abstract public class Competition {
         return name;
     }
 
-    public boolean isFinished() {
-        return getNextMatch().isEmpty();
-    }
-
-    public void setEvents(List<CompetitionEvent> events) {
-        this.events = events;
-    }
-
-    public List<CompetitionEvent> getAllEvents() {
-        return getEvents();
-    }
-
-    public Competition resolveCompetitionPath(String path) {
+    default Competition resolveCompetitionPath(String path) {
         var elements = StringUtils.split(path, PATH_SEPARATOR);
-        var cur = this;
+        Competition cur = this;
         for (var el : elements) {
             if (SELF.equals(el)) {
                 return cur;
@@ -132,11 +91,12 @@ abstract public class Competition {
         return cur;
     }
 
-    public static String buildPath(String... sections) {
+    static String buildPath(String... sections) {
         return StringUtils.join(sections, PATH_SEPARATOR);
     }
 
-    public void assignParticipants(List<Knight> players) {
-        assignedParticipants.addAll(players);
-    }
+    // TODO: Remove
+
+    void setParent(Competition parent);
+    void registerOnFinishedCallback(Consumer<Competition> callback);
 }

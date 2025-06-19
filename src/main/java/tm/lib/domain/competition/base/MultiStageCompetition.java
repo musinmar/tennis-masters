@@ -14,7 +14,7 @@ import java.util.ListIterator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MultiStageCompetition extends Competition {
+public class MultiStageCompetition extends AbstractCompetition {
     private List<Competition> stages;
 
     protected MultiStageCompetition(String id, String name) {
@@ -101,7 +101,7 @@ public class MultiStageCompetition extends Competition {
     @Override
     public void setStartingDate(int date) {
         Competition previousStage = null;
-        for (Competition stage : getStages()) {
+        for (var stage : getStages()) {
             if (previousStage == null) {
                 stage.setStartingDate(date);
             } else {

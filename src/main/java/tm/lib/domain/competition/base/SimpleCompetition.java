@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-abstract public class SimpleCompetition extends Competition {
+abstract public class SimpleCompetition extends AbstractCompetition {
 
     private final List<Participant> participants;
     private List<MatchEvent> matches;

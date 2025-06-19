@@ -36,7 +36,7 @@ public class WorldEventProcessor {
     private final List<CompetitionEvent> onSeasonStartEvents;
 
     public WorldEventProcessor(int year,
-                                List<Knight> players,
+                               List<Knight> players,
                                NationRating nationRating,
                                EloRating eloRating,
                                Competition rootCompetition) {

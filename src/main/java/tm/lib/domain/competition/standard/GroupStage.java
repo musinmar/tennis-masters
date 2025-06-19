@@ -51,7 +51,7 @@ public class GroupStage extends MultiStageCompetition {
 
     @Override
     public void setStartingDate(int date) {
-        for (Competition stage : getStages()) {
+        for (var stage : getStages()) {
             stage.setStartingDate(date);
         }
     }

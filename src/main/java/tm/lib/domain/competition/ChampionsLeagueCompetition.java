@@ -23,7 +23,6 @@ public class ChampionsLeagueCompetition extends MultiStageCompetition {
 
     public ChampionsLeagueCompetition() {
         super("CL", "Лига Чемпионов");
-        setIsRoot(true);
 
         firstQualifyingStage = new PlayOffSubStage("FQR", "Первый квалификационный раунд", 6);
         secondQualifyingStage = new PlayOffSubStage("SQR", "Второй квалификационный раунд", 8);

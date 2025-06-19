@@ -2,14 +2,13 @@ package tm.lib.domain.competition.standard;
 
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
-import tm.lib.domain.competition.base.triggers.SeedingRules;
-import tm.lib.domain.competition.base.triggers.SeedingTrigger;
-import tm.lib.domain.competition.base.triggers.TriggerTimes;
+import tm.lib.domain.competition.base.triggers.Actions;
+import tm.lib.domain.competition.base.triggers.CompetitionEvent;
+import tm.lib.domain.competition.base.triggers.Triggers;
 import tm.lib.domain.core.Knight;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class PlayOffStage extends MultiStageCompetition {
     private PlayOffStageConfiguration configuration;
@@ -30,10 +29,10 @@ public class PlayOffStage extends MultiStageCompetition {
             PlayOffSubStage stage = new PlayOffSubStage(stageId, subStageName, roundPlayerCount);
             if (i > 0) {
                 var previousStageId = "POS" + i;
-                var seedingTrigger = new SeedingTrigger(
-                        new TriggerTimes.CompetitionEndedTriggerTime("../" + previousStageId),
-                        new SeedingRules.PlayOffToPlayOff("../" + previousStageId));
-                stage.setSeedingTriggers(List.of(seedingTrigger));
+                var seedingEvent = new CompetitionEvent(
+                        new Triggers.OnCompetitionEnd("../" + previousStageId),
+                        new Actions.SeedPlayOffToPlayOff("../" + previousStageId));
+                stage.setEvents(List.of(seedingEvent));
             }
 //            stage.registerOnFinishedCallback(this::onPlayoffSubStageFinished);
             stages.add(stage);

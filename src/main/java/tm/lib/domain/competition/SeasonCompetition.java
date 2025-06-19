@@ -37,7 +37,6 @@ public class SeasonCompetition extends MultiStageCompetition {
             GroupSubStage nationalCup = new GroupSubStage(nation.name().substring(0, 1),
                     "Кубок " + nation.getNameGenitive(),
                     nationKnights.size());
-            nationalCup.setIsRoot(true);
             nationalCup.setActualParticipants(nationKnights);
             nationalCups.put(nation, nationalCup);
             tournaments.add(nationalCup);

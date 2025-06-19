@@ -125,10 +125,10 @@ public class MultiStageCompetition extends Competition {
     }
 
     @Override
-    public List<CompetitionTrigger> getAllTriggers() {
-        var triggers = stages.stream().flatMap(stage -> stage.getAllTriggers().stream())
+    public List<CompetitionTrigger> getAllEvents() {
+        var triggers = stages.stream().flatMap(stage -> stage.getAllEvents().stream())
                 .collect(Collectors.toList());
-        getSeedingTriggers().stream().map(trigger -> new CompetitionTrigger(this, trigger))
+        getEvents().stream().map(trigger -> new CompetitionTrigger(this, trigger))
                 .forEach(triggers::add);
         return triggers;
     }

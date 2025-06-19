@@ -23,7 +23,6 @@ public class FederationCupCompetition extends MultiStageCompetition {
 
     public FederationCupCompetition() {
         super("FC", "Кубок Федераций");
-        setIsRoot(true);
 
         firstQualifyingStage = new PlayOffSubStage("FQR", "Первый квалификационный раунд", 4);
         secondQualifyingStage = new PlayOffSubStage("SQR", "Второй квалификационный раунд", 10);

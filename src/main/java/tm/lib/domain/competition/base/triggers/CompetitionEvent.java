@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class SeedingTrigger {
-    private TriggerTime triggerTime;
-    private SeedingRule seedingRule;
+public class CompetitionEvent {
+    private Trigger trigger;
+    private Action action;
 }

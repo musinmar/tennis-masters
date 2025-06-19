@@ -1,10 +1,9 @@
 package tm.lib.domain.competition.base;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import tm.lib.domain.competition.base.triggers.SeedingTrigger;
+import tm.lib.domain.competition.base.triggers.CompetitionEvent;
 import tm.lib.domain.competition.standard.PlayOffStageConfiguration;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class CompetitionDefinitions {
 
         String getName();
 
-        List<SeedingTrigger> getSeedingTriggers();
+        List<CompetitionEvent> getEvents();
 
         CompetitionSchedule getSchedule();
     }
@@ -33,7 +32,7 @@ public class CompetitionDefinitions {
         private int startDate;
         private int groupCount;
         private int playersPerGroup;
-        private List<SeedingTrigger> seedingTriggers = emptyList();
+        private List<CompetitionEvent> events = emptyList();
         private CompetitionSchedule schedule = EVERY_YEAR;
     }
 
@@ -45,7 +44,7 @@ public class CompetitionDefinitions {
         private String name;
         private int startDate;
         private PlayOffStageConfiguration playOffStageConfiguration;
-        private List<SeedingTrigger> seedingTriggers = emptyList();
+        private List<CompetitionEvent> events = emptyList();
         private CompetitionSchedule schedule = EVERY_YEAR;
     }
 
@@ -56,7 +55,7 @@ public class CompetitionDefinitions {
         private String id;
         private String name;
         private List<CompetitionDefinition> stages;
-        private List<SeedingTrigger> seedingTriggers = emptyList();
+        private List<CompetitionEvent> events = emptyList();
         private CompetitionSchedule schedule = EVERY_YEAR;
     }
 }

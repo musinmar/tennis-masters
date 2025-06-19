@@ -8,34 +8,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class SeedingRules {
+public class Actions {
 
     @Getter
     @AllArgsConstructor
-    public static class RandomSelection implements SeedingRule {
+    public static class SeedRandomPlayers implements Action {
     }
 
     @Getter
     @AllArgsConstructor
-    public static class GroupStageToPlayOff implements SeedingRule {
+    public static class SeedGroupStageToPlayOff implements Action {
         private String groupStagePath;
     }
 
     @Getter
     @AllArgsConstructor
-    public static class PlayOffToPlayOff implements SeedingRule {
+    public static class SeedPlayOffToPlayOff implements Action {
         private String playOffSubStagePath;
     }
 
     @Getter
     @AllArgsConstructor
-    public static class AllFromNationSeedingRule implements SeedingRule {
+    public static class SeedAllFromNationRule implements Action {
         private Nation nation;
     }
 
     @Getter
     @AllArgsConstructor
-    public static class BasedOnNationalRankingSeedingRule implements SeedingRule {
+    public static class SeedBasedOnNationalRankingRule implements Action {
         @Getter
         @AllArgsConstructor
         public static class PreviousRound {
@@ -45,33 +45,33 @@ public class SeedingRules {
 
         @Getter
         @AllArgsConstructor
-        public static class NationalRankingParticipant {
+        public static class SeedNationalRankingParticipant {
             private int nationRank;
             private int playerRankInNation;
         }
 
-        public static List<NationalRankingParticipant> buildParticipants(Integer... ranks) {
-            var result = new ArrayList<NationalRankingParticipant>();
+        public static List<SeedNationalRankingParticipant> buildParticipants(Integer... ranks) {
+            var result = new ArrayList<SeedNationalRankingParticipant>();
             for (int i = 0; i < ranks.length; i += 2) {
-                result.add(new NationalRankingParticipant(ranks[i], ranks[i + 1]));
+                result.add(new SeedNationalRankingParticipant(ranks[i], ranks[i + 1]));
             }
             return result;
         }
 
         private List<PreviousRound> previousRounds;
-        private List<NationalRankingParticipant> nationalRankingParticipants;
+        private List<SeedNationalRankingParticipant> seedNationalRankingParticipants;
     }
 
     @Getter
     @AllArgsConstructor
-    public static class PreAssignFromEloRankings implements SeedingRule {
+    public static class AddAssignedParticipantsFromEloRankings implements Action {
         private int fromEloRank;
         private int toEloRank;
     }
 
     @Getter
     @AllArgsConstructor
-    public static class WorldCupRoundSeeding implements SeedingRule {
+    public static class SeedWorldCupRound implements Action {
         private Optional<String> previousRoundPath;
     }
 

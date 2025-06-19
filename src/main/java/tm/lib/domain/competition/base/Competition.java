@@ -2,7 +2,7 @@ package tm.lib.domain.competition.base;
 
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
-import tm.lib.domain.competition.base.triggers.SeedingTrigger;
+import tm.lib.domain.competition.base.triggers.CompetitionEvent;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 
@@ -22,10 +22,9 @@ abstract public class Competition {
     public static String PATH_SEPARATOR = "/";
 
     private Competition parent;
-    private boolean isRoot;
     private final String id;
     private final String name;
-    private List<SeedingTrigger> seedingTriggers = emptyList();
+    private List<CompetitionEvent> events = emptyList();
     private List<Knight> assignedParticipants = new ArrayList<>();
 
     private final List<Consumer<Competition>> competitionFinishedCallbacks = new ArrayList<>();
@@ -41,10 +40,6 @@ abstract public class Competition {
 
     public Competition getChild(String id) {
         throw new IllegalArgumentException("Competition " + getId() + " does not have child " + id);
-    }
-
-    public void setIsRoot(boolean isRoot) {
-        this.isRoot = isRoot;
     }
 
     public void registerOnFinishedCallback(Consumer<Competition> callback) {
@@ -113,21 +108,13 @@ abstract public class Competition {
         return getNextMatch().isEmpty();
     }
 
-    public Competition getRootCompetition() {
-        if (isRoot) {
-            return this;
-        } else {
-            return parent.getRootCompetition();
-        }
+    public void setEvents(List<CompetitionEvent> events) {
+        this.events = events;
     }
 
-    public void setSeedingTriggers(List<SeedingTrigger> seedingTriggers) {
-        this.seedingTriggers = seedingTriggers;
-    }
-
-    public List<CompetitionTrigger> getAllTriggers() {
-        return seedingTriggers.stream()
-                .map(trigger -> new CompetitionTrigger(this, trigger))
+    public List<CompetitionTrigger> getAllEvents() {
+        return events.stream()
+                .map(event -> new CompetitionTrigger(this, event))
                 .toList();
     }
 

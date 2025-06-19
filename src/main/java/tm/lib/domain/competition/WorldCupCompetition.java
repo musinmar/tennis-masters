@@ -29,7 +29,6 @@ public class WorldCupCompetition extends MultiStageCompetition {
 
     public WorldCupCompetition() {
         super("WC", "Чемпионат Мира");
-        setIsRoot(true);
 
         firstQualifyingStageGroupRound = new GroupStage("FQRG", "Первый квалификационный раунд", 2, 4);
         firstQualifyingStageGroupRound.registerOnFinishedCallback(this::onFirstQualifyingStageFinished);

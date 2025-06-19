@@ -42,7 +42,7 @@ public class World {
     private EloRating eloRating;
     private NationRating nationRating;
 
-    private WorldTriggerProcessor triggerProcessor;
+    private WorldEventProcessor eventProcessor;
 
     private int year = 0;
 
@@ -133,14 +133,14 @@ public class World {
         nationRating.calculateRankingsAndPrint();
         initCompetitions();
         isSeasonFinished = false;
-        triggerProcessor.processStartOfSeasonTriggers();
+        eventProcessor.processOnSeasonStartEvents();
     }
 
     private void initCompetitions() {
 //        seasonCompetition = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers(), year);
 //        seasonCompetition.setStartingDate(0);
         seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition(), year);
-        triggerProcessor = new WorldTriggerProcessor(getPlayers(), nationRating, eloRating, seasonCompetition);
+        eventProcessor = new WorldEventProcessor(getPlayers(), nationRating, eloRating, seasonCompetition);
         initCompetitionPointValues();
     }
 
@@ -161,7 +161,7 @@ public class World {
         latestCompetition = match.getCompetition();
 
         match.getCompetition().processMatchResult(match, score);
-        triggerProcessor.processOnCompetitionEndTriggers(match.getCompetition());
+        eventProcessor.processOnCompetitionEndEvents(match.getCompetition());
         getEloRating().updateRatings(match.getHomePlayer().getPlayerOrFail(), match.getAwayPlayer().getPlayerOrFail(), score.getScoreBySets());
         updateNationRating(match, score);
 

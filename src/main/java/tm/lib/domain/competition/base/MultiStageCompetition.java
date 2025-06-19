@@ -1,6 +1,7 @@
 package tm.lib.domain.competition.base;
 
 import com.google.common.collect.ImmutableList;
+import tm.lib.domain.competition.base.events.CompetitionEvent;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 
@@ -125,11 +126,10 @@ public class MultiStageCompetition extends Competition {
     }
 
     @Override
-    public List<CompetitionTrigger> getAllEvents() {
-        var triggers = stages.stream().flatMap(stage -> stage.getAllEvents().stream())
+    public List<CompetitionEvent> getAllEvents() {
+        var events = stages.stream().flatMap(stage -> stage.getAllEvents().stream())
                 .collect(Collectors.toList());
-        getEvents().stream().map(trigger -> new CompetitionTrigger(this, trigger))
-                .forEach(triggers::add);
-        return triggers;
+        events.addAll(getEvents());
+        return events;
     }
 }

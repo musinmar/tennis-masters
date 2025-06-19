@@ -1,12 +1,12 @@
 package tm.lib.domain.world;
 
 import tm.lib.domain.competition.base.Competition;
-import tm.lib.domain.competition.base.CompetitionTrigger;
-import tm.lib.domain.competition.base.triggers.Actions;
-import tm.lib.domain.competition.base.triggers.Actions.SeedBasedOnNationalRankingRule;
-import tm.lib.domain.competition.base.triggers.Actions.AddAssignedParticipantsFromEloRankings;
-import tm.lib.domain.competition.base.triggers.Actions.SeedWorldCupRound;
-import tm.lib.domain.competition.base.triggers.Triggers;
+import tm.lib.domain.competition.base.events.Actions;
+import tm.lib.domain.competition.base.events.Actions.AddAssignedParticipantsFromEloRankings;
+import tm.lib.domain.competition.base.events.Actions.SeedBasedOnNationalRankingRule;
+import tm.lib.domain.competition.base.events.Actions.SeedWorldCupRound;
+import tm.lib.domain.competition.base.events.CompetitionEvent;
+import tm.lib.domain.competition.base.events.Triggers;
 import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.GroupStageUtils;
 import tm.lib.domain.competition.standard.PlayOffStage;
@@ -24,32 +24,32 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static tm.lib.domain.competition.standard.GroupStageUtils.makeSeededGroupsTwoByFour;
 
-public class WorldTriggerProcessor {
+public class WorldEventProcessor {
 
     private final List<Knight> players;
     private final NationRating nationRating;
     private final EloRating eloRating;
     private final Competition rootCompetition;
-    private final Map<Competition, List<CompetitionTrigger>> onCompetitionEndTriggers;
-    private final List<CompetitionTrigger> seasonStartTriggers;
+    private final Map<Competition, List<CompetitionEvent>> onCompetitionEndEvents;
+    private final List<CompetitionEvent> onSeasonStartEvents;
 
-    public WorldTriggerProcessor(List<Knight> players,
-                                 NationRating nationRating,
-                                 EloRating eloRating,
-                                 Competition rootCompetition) {
+    public WorldEventProcessor(List<Knight> players,
+                               NationRating nationRating,
+                               EloRating eloRating,
+                               Competition rootCompetition) {
         this.players = players;
         this.nationRating = nationRating;
         this.eloRating = eloRating;
         this.rootCompetition = rootCompetition;
 
-        var allTriggers = rootCompetition.getAllEvents();
-        this.seasonStartTriggers = allTriggers.stream()
-                .filter(t -> t.getEvent().getTrigger() instanceof Triggers.OnSeasonStart)
+        var allEvents = rootCompetition.getAllEvents();
+        this.onSeasonStartEvents = allEvents.stream()
+                .filter(t -> t.getTrigger() instanceof Triggers.OnSeasonStart)
                 .toList();
-        this.onCompetitionEndTriggers = allTriggers.stream()
-                .filter(t -> t.getEvent().getTrigger() instanceof Triggers.OnCompetitionEnd)
-                .collect(groupingBy((CompetitionTrigger t) -> {
-                    var competitionEnd = (Triggers.OnCompetitionEnd) t.getEvent().getTrigger();
+        this.onCompetitionEndEvents = allEvents.stream()
+                .filter(t -> t.getTrigger() instanceof Triggers.OnCompetitionEnd)
+                .collect(groupingBy((CompetitionEvent t) -> {
+                    var competitionEnd = (Triggers.OnCompetitionEnd) t.getTrigger();
                     var path = competitionEnd.getCompetitionPath();
                     return t.getCompetition().resolveCompetitionPath(path);
                 }, toList()));
@@ -59,38 +59,37 @@ public class WorldTriggerProcessor {
         return players;
     }
 
-    void processStartOfSeasonTriggers() {
-        seasonStartTriggers.forEach(this::processTrigger);
+    void processOnSeasonStartEvents() {
+        onSeasonStartEvents.forEach(this::processEvent);
     }
 
-    void processOnCompetitionEndTriggers(Competition competition) {
+    void processOnCompetitionEndEvents(Competition competition) {
         var cur = competition;
         while (cur != null) {
             if (!cur.isFinished()) {
                 break;
             }
-            var triggers = onCompetitionEndTriggers.get(cur);
-            if (triggers != null) {
-                triggers.forEach(this::processTrigger);
+            var events = onCompetitionEndEvents.get(cur);
+            if (events != null) {
+                events.forEach(this::processEvent);
             }
             cur = cur.getParent();
         }
     }
 
-    private void processTrigger(CompetitionTrigger trigger) {
-        switch (trigger.getEvent().getAction()) {
-            case Actions.SeedAllFromNationRule rule ->
-                    processAllFromNationSeedingRule(trigger.getCompetition(), rule);
-            case Actions.SeedRandomPlayers _ -> processRandomSelectionTrigger(trigger.getCompetition());
+    private void processEvent(CompetitionEvent event) {
+        switch (event.getAction()) {
+            case Actions.SeedAllFromNationRule rule -> processAllFromNationSeedingRule(event.getCompetition(), rule);
+            case Actions.SeedRandomPlayers _ -> processRandomSelectionTrigger(event.getCompetition());
             case Actions.SeedGroupStageToPlayOff seedGroupStageToPlayOff ->
-                    processGroupStageToPlayOffTrigger(trigger.getCompetition(), seedGroupStageToPlayOff);
+                    processGroupStageToPlayOffTrigger(event.getCompetition(), seedGroupStageToPlayOff);
             case Actions.SeedPlayOffToPlayOff seedPlayOffToPlayOff ->
-                    processPlayOffToPlayOffTrigger(trigger.getCompetition(), seedPlayOffToPlayOff);
-            case SeedBasedOnNationalRankingRule rule -> process(rule, trigger.getCompetition());
-            case AddAssignedParticipantsFromEloRankings rule -> process(rule, trigger.getCompetition());
-            case SeedWorldCupRound rule -> process(rule, trigger.getCompetition());
-            default -> throw new IllegalArgumentException("Unknown seeding trigger rule: " +
-                    trigger.getEvent().getAction());
+                    processPlayOffToPlayOffTrigger(event.getCompetition(), seedPlayOffToPlayOff);
+            case SeedBasedOnNationalRankingRule rule -> process(rule, event.getCompetition());
+            case AddAssignedParticipantsFromEloRankings rule -> process(rule, event.getCompetition());
+            case SeedWorldCupRound rule -> process(rule, event.getCompetition());
+            default -> throw new IllegalArgumentException("Unknown event: " +
+                    event.getAction());
         }
     }
 
@@ -146,7 +145,7 @@ public class WorldTriggerProcessor {
                 playOffStage.setActualParticipants(selected);
             }
             default -> {
-                var message = "Random selection trigger does not support competition type: " + competition.getClass();
+                var message = "Random selection event does not support competition type: " + competition.getClass();
                 throw new IllegalArgumentException(message);
             }
         }

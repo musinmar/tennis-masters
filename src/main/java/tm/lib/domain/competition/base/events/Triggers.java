@@ -1,4 +1,4 @@
-package tm.lib.domain.competition.base.triggers;
+package tm.lib.domain.competition.base.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -4,6 +4,7 @@ import tm.lib.domain.competition.base.CompetitionDefinitions.CompetitionDefiniti
 import tm.lib.domain.competition.base.CompetitionDefinitions.GroupStageDefinition;
 import tm.lib.domain.competition.base.CompetitionDefinitions.MultiStageCompetitionDefinition;
 import tm.lib.domain.competition.base.CompetitionDefinitions.PlayOffStageDefinition;
+import tm.lib.domain.competition.base.events.CompetitionEvent;
 import tm.lib.domain.competition.standard.GroupStage;
 import tm.lib.domain.competition.standard.PlayOffStage;
 
@@ -15,7 +16,13 @@ public class CompetitionBuilder {
         if (checkSchedule(schedule, year)) {
             return null;
         } else {
-            return buildTypedCompetition(definition, year);
+            var competition = buildTypedCompetition(definition, year);
+            var events = definition.getEvents().stream()
+                    .map(event ->
+                            new CompetitionEvent(competition, event.getTrigger(), event.getAction())
+                    ).toList();
+            competition.setEvents(events);
+            return competition;
         }
     }
 
@@ -32,7 +39,6 @@ public class CompetitionBuilder {
                         groupStageDefinition.getGroupCount(),
                         groupStageDefinition.getPlayersPerGroup());
                 groupStage.setStartingDate(groupStageDefinition.getStartDate());
-                groupStage.setEvents(groupStageDefinition.getEvents());
                 return groupStage;
             }
             case PlayOffStageDefinition playOffStageDefinition -> {
@@ -40,7 +46,6 @@ public class CompetitionBuilder {
                         playOffStageDefinition.getName(),
                         playOffStageDefinition.getPlayOffStageConfiguration());
                 playOffStage.setStartingDate(playOffStageDefinition.getStartDate());
-                playOffStage.setEvents(playOffStageDefinition.getEvents());
                 return playOffStage;
             }
             case MultiStageCompetitionDefinition multiStageCompetitionDefinition -> {

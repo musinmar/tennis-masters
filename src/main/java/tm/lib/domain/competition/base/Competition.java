@@ -2,7 +2,7 @@ package tm.lib.domain.competition.base;
 
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
-import tm.lib.domain.competition.base.triggers.CompetitionEvent;
+import tm.lib.domain.competition.base.events.CompetitionEvent;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 
@@ -112,10 +112,8 @@ abstract public class Competition {
         this.events = events;
     }
 
-    public List<CompetitionTrigger> getAllEvents() {
-        return events.stream()
-                .map(event -> new CompetitionTrigger(this, event))
-                .toList();
+    public List<CompetitionEvent> getAllEvents() {
+        return getEvents();
     }
 
     public Competition resolveCompetitionPath(String path) {

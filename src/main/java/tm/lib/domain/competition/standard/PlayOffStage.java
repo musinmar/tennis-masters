@@ -2,9 +2,9 @@ package tm.lib.domain.competition.standard;
 
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.MultiStageCompetition;
-import tm.lib.domain.competition.base.triggers.Actions;
-import tm.lib.domain.competition.base.triggers.CompetitionEvent;
-import tm.lib.domain.competition.base.triggers.Triggers;
+import tm.lib.domain.competition.base.events.Actions;
+import tm.lib.domain.competition.base.events.CompetitionEvent;
+import tm.lib.domain.competition.base.events.Triggers;
 import tm.lib.domain.core.Knight;
 
 import java.util.ArrayList;
@@ -30,6 +30,7 @@ public class PlayOffStage extends MultiStageCompetition {
             if (i > 0) {
                 var previousStageId = "POS" + i;
                 var seedingEvent = new CompetitionEvent(
+                        stage,
                         new Triggers.OnCompetitionEnd("../" + previousStageId),
                         new Actions.SeedPlayOffToPlayOff("../" + previousStageId));
                 stage.setEvents(List.of(seedingEvent));

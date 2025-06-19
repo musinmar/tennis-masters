@@ -140,7 +140,7 @@ public class World {
 //        seasonCompetition = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers(), year);
 //        seasonCompetition.setStartingDate(0);
         seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition(), year);
-        eventProcessor = new WorldEventProcessor(getPlayers(), nationRating, eloRating, seasonCompetition);
+        eventProcessor = new WorldEventProcessor(year, getPlayers(), nationRating, eloRating, seasonCompetition);
         initCompetitionPointValues();
     }
 

@@ -75,4 +75,7 @@ public class Actions {
         private Optional<String> previousRoundPath;
     }
 
+    public static class GiveTrophy implements Action {
+    }
+
 }

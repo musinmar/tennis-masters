@@ -3,6 +3,7 @@ package tm.lib.domain.world;
 import tm.lib.domain.competition.base.Competition;
 import tm.lib.domain.competition.base.events.Actions;
 import tm.lib.domain.competition.base.events.Actions.AddAssignedParticipantsFromEloRankings;
+import tm.lib.domain.competition.base.events.Actions.GiveTrophy;
 import tm.lib.domain.competition.base.events.Actions.SeedBasedOnNationalRankingRule;
 import tm.lib.domain.competition.base.events.Actions.SeedWorldCupRound;
 import tm.lib.domain.competition.base.events.CompetitionEvent;
@@ -26,6 +27,7 @@ import static tm.lib.domain.competition.standard.GroupStageUtils.makeSeededGroup
 
 public class WorldEventProcessor {
 
+    private final int year;
     private final List<Knight> players;
     private final NationRating nationRating;
     private final EloRating eloRating;
@@ -33,10 +35,12 @@ public class WorldEventProcessor {
     private final Map<Competition, List<CompetitionEvent>> onCompetitionEndEvents;
     private final List<CompetitionEvent> onSeasonStartEvents;
 
-    public WorldEventProcessor(List<Knight> players,
+    public WorldEventProcessor(int year,
+                                List<Knight> players,
                                NationRating nationRating,
                                EloRating eloRating,
                                Competition rootCompetition) {
+        this.year = year;
         this.players = players;
         this.nationRating = nationRating;
         this.eloRating = eloRating;
@@ -88,6 +92,7 @@ public class WorldEventProcessor {
             case SeedBasedOnNationalRankingRule rule -> process(rule, event.getCompetition());
             case AddAssignedParticipantsFromEloRankings rule -> process(rule, event.getCompetition());
             case SeedWorldCupRound rule -> process(rule, event.getCompetition());
+            case GiveTrophy action -> processGiveTrophy(event.getCompetition());
             default -> throw new IllegalArgumentException("Unknown event: " +
                     event.getAction());
         }
@@ -217,5 +222,9 @@ public class WorldEventProcessor {
             var seeded = GroupStageUtils.performPotBasedDraw(participants);
             groupStage.setActualParticipantsByGroups(seeded);
         }
+    }
+
+    private void processGiveTrophy(Competition competition) {
+        competition.getWinner().addTrophy(year, competition.getName());
     }
 }

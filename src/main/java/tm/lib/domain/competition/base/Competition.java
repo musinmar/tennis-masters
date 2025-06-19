@@ -18,8 +18,9 @@ import static java.util.Collections.emptyList;
 
 @Getter
 abstract public class Competition {
-    public static String PARENT = "..";
     public static String PATH_SEPARATOR = "/";
+    public static String PARENT = "..";
+    public static String SELF = "self";
 
     private Competition parent;
     private final String id;
@@ -120,7 +121,9 @@ abstract public class Competition {
         var elements = StringUtils.split(path, PATH_SEPARATOR);
         var cur = this;
         for (var el : elements) {
-            if ("..".equals(el)) {
+            if (SELF.equals(el)) {
+                return cur;
+            } else if (PARENT.equals(el)) {
                 cur = cur.getParent();
             } else {
                 cur = cur.getChild(el);

@@ -8,6 +8,7 @@ import tm.lib.domain.competition.base.CompetitionDefinitions.MultiStageCompetiti
 import tm.lib.domain.competition.base.CompetitionDefinitions.PlayOffStageDefinition;
 import tm.lib.domain.competition.base.CompetitionSchedule;
 import tm.lib.domain.competition.base.events.Actions.AddAssignedParticipantsFromEloRankings;
+import tm.lib.domain.competition.base.events.Actions.GiveTrophy;
 import tm.lib.domain.competition.base.events.Actions.SeedAllFromNationRule;
 import tm.lib.domain.competition.base.events.Actions.SeedBasedOnNationalRankingRule;
 import tm.lib.domain.competition.base.events.Actions.SeedBasedOnNationalRankingRule.PreviousRound;
@@ -27,6 +28,7 @@ import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static tm.lib.domain.competition.base.Competition.PARENT;
+import static tm.lib.domain.competition.base.Competition.SELF;
 import static tm.lib.domain.competition.base.Competition.buildPath;
 import static tm.lib.domain.competition.base.events.Actions.SeedBasedOnNationalRankingRule.buildParticipants;
 
@@ -57,6 +59,10 @@ public class StandardSeasonBuilder {
     public static final int WORLD_CUP_GROUP_STAGE_START_DATE = 58;
     public static final int WORLD_CUP_PLAY_OFF_START_DATE = 62;
 
+    private static final CompetitionEventDefinition GIVE_TROPHY = new CompetitionEventDefinition(
+            new OnCompetitionEnd(SELF),
+            new GiveTrophy()
+    );
 
     public static CompetitionDefinition buildSeasonCompetitionDefinition() {
         var nationalCups = Arrays.stream(Nation.values()).map(StandardSeasonBuilder::buildNationalCup).toList();
@@ -84,8 +90,8 @@ public class StandardSeasonBuilder {
         var nationSeeding = new CompetitionEventDefinition(new OnSeasonStart(),
                 new SeedAllFromNationRule(nation));
         var startDate = NATIONAL_CUPS_START_DATE + nation.ordinal() * NATIONAL_CUPS_DATE_OFFSET;
-        return newGroupStage(nation.name().toUpperCase(), "Кубок " + nation.getName(), startDate,
-                1, 6, List.of(nationSeeding));
+        return newGroupStage(nation.name().toUpperCase(), "Кубок " + nation.getNameGenitive(), startDate,
+                1, 6, List.of(nationSeeding, GIVE_TROPHY));
     }
 
     public static CompetitionDefinition buildChampionsLeague() {
@@ -158,7 +164,9 @@ public class StandardSeasonBuilder {
 
         var stages = List.of(firstQualifyingStage, secondQualifyingStage, groupStage, playOffStage);
 
-        return newMultiStageCompetition(CHAMPIONS_LEAGUE_ID, "Лига Чемпионов", stages);
+        var championsLeague = newMultiStageCompetition(CHAMPIONS_LEAGUE_ID, "Лига Чемпионов", stages);
+        championsLeague.setEvents(List.of(GIVE_TROPHY));
+        return championsLeague;
     }
 
     public static CompetitionDefinition buildFederationsCup() {
@@ -230,7 +238,9 @@ public class StandardSeasonBuilder {
 
         var stages = List.of(firstQualifyingStage, secondQualifyingStage, groupStage, playOffStage);
 
-        return newMultiStageCompetition(FEDERATIONS_CUP_ID, "Кубок Федераций", stages);
+        var federationsCup = newMultiStageCompetition(FEDERATIONS_CUP_ID, "Кубок Федераций", stages);
+        federationsCup.setEvents(List.of(GIVE_TROPHY));
+        return federationsCup;
     }
 
     public static CompetitionDefinition buildWorldCup() {
@@ -297,6 +307,7 @@ public class StandardSeasonBuilder {
                 groupStage,
                 playOffStage);
         var worldCup = newMultiStageCompetition(WORLD_CUP_ID, "Чемпионат Мира", stages);
+        worldCup.setEvents(List.of(GIVE_TROPHY));
         var schedule = new CompetitionSchedule();
         schedule.setPeriodInYears(4);
         schedule.setStartingFromYear(2);

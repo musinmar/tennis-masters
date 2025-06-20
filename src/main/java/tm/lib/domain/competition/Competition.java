@@ -18,7 +18,7 @@ public interface Competition {
 
     void setParent(Competition parent);
 
-    Competition getChild(String id);
+    Optional<Competition> getChild(String id);
 
     int getStartingDate();
 

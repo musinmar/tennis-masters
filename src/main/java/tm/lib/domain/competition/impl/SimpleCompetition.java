@@ -25,8 +25,8 @@ abstract public class SimpleCompetition extends AbstractCompetition {
     }
 
     @Override
-    public Competition getChild(String id) {
-        throw new IllegalArgumentException("Competition " + getId() + " is not a multi-stage competition");
+    public Optional<Competition> getChild(String id) {
+        return Optional.empty();
     }
 
     protected int getNextMatchIndex() {
@@ -74,14 +74,8 @@ abstract public class SimpleCompetition extends AbstractCompetition {
     }
 
     @Override
-    public final void processMatchResult(MatchEvent match, MatchScore score) {
-        assert getNextMatch().equals(Optional.of(match));
-        match.setResult(score);
-        doProcessMatchResult(match, score);
+    protected void afterMatchResultAssigned(MatchEvent match, MatchScore score) {
         ++nextMatchIndex;
-    }
-
-    protected void doProcessMatchResult(MatchEvent match, MatchScore score) {
     }
 
     @Override

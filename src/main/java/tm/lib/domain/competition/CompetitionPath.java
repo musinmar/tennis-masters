@@ -15,8 +15,13 @@ public class CompetitionPath {
                 return cur;
             } else if (PARENT.equals(el)) {
                 cur = cur.getParent();
+                if (cur == null) {
+                    throw new IllegalArgumentException("Cannot navigate to parent - already at root competition");
+                }
             } else {
-                cur = cur.getChild(el);
+                final var curId = cur.getId();
+                cur = cur.getChild(el).orElseThrow(() ->
+                        new IllegalArgumentException("Competition " + curId + " does not have child " + el));
             }
         }
         return cur;

@@ -41,36 +41,27 @@ public class GroupSubStage extends SimpleCompetition {
         }
     }
 
-    private List<MatchEvent> createScheduleForEvenPlayerCount(int count, List<Participant> ps) {
-        List<MatchEvent> matchEvents = new ArrayList<>();
+    private List<MatchEvent> createScheduleForEvenPlayerCount(int count, List<Participant> participants) {
+        List<MatchEvent> matches = new ArrayList<>();
 
-        int[] buf = new int[count];
-        for (int i = 0; i < count; ++i) {
-            buf[i] = i;
-        }
+        for (int round = 0; round < count - 1; round++) {
+            for (int match = 0; match < count / 2; match++) {
+                int home = (round + match) % (count - 1);
+                int away = (round + count - 1 - match) % (count - 1);
 
-        int halfCount = count / 2;
-        for (int i = 1; i < count; ++i) {
-            for (int j = 0; j < halfCount; ++j) {
-                matchEvents.add(new MatchEvent(this, ps.get(buf[j]), ps.get(buf[j + halfCount]), 2, false));
-            }
+                if (match == 0) {
+                    home = count - 1;
+                } else {
+                    if (home >= count - 1) home = 0;
+                    if (away >= count - 1) away = 0;
+                }
 
-            int[] buf2 = new int[count];
-            buf2[0] = buf[0];
-            buf2[1] = buf[halfCount];
-            for (int j = 2; j < halfCount; ++j) {
-                buf2[j] = buf[j - 1];
-            }
-            for (int j = halfCount; j < count - 1; j++) {
-                buf2[j] = buf[j + 1];
-            }
-            buf2[count - 1] = buf[halfCount - 1];
-            for (int j = 0; j < count; ++j) {
-                buf[j] = buf2[j];
+                matches.add(new MatchEvent(this, participants.get(home),
+                        participants.get(away), 2, false));
             }
         }
 
-        return matchEvents;
+        return matches;
     }
 
     private List<MatchEvent> createScheduleFor6(List<Participant> ps) {
@@ -135,7 +126,8 @@ public class GroupSubStage extends SimpleCompetition {
     }
 
     @Override
-    protected void doProcessMatchResult(MatchEvent match, MatchScore score) {
+    protected void afterMatchResultAssigned(MatchEvent match, MatchScore score) {
+        super.afterMatchResultAssigned(match, score);
         applyMatchResult(match);
         sortGroupResults();
     }

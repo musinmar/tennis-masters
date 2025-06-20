@@ -188,7 +188,8 @@ public class WorldEventProcessor {
 
     private Knight getPlayerByRanks(int nationRank, int playerRank) {
         Nation nation = nationRating.getRankedNation(nationRank - 1);
-        var nationCup = (GroupStage) rootCompetition.getChild(nation.name().toUpperCase());
+        var nationCup = (GroupStage) rootCompetition.getChild(nation.name().toUpperCase())
+                .orElseThrow(() -> new IllegalArgumentException("Nation cup not found for: " + nation.name()));
         return nationCup.getResults().getGroupPosition(0, playerRank - 1);
     }
 

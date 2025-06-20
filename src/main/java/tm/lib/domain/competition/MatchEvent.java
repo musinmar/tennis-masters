@@ -1,9 +1,11 @@
 package tm.lib.domain.competition;
 
+import lombok.Getter;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Stadium;
 
+@Getter
 public class MatchEvent {
     private static final boolean PRINT_DATE = true;
 
@@ -13,7 +15,7 @@ public class MatchEvent {
     private final Participant awayPlayer;
     private int sets;
     private boolean playOff;
-    private Stadium venue = Stadium.standard();
+    private final Stadium venue = Stadium.standard();
     private MatchScore result;
 
     public MatchEvent(Competition parent, Participant p1, Participant p2, int sets, boolean isPlayoff) {
@@ -31,40 +33,8 @@ public class MatchEvent {
         result = null;
     }
 
-    public int getDate() {
-        return date;
-    }
-
     public void setDate(int date) {
         this.date = date;
-    }
-
-    public Competition getCompetition() {
-        return competition;
-    }
-
-    public Participant getHomePlayer() {
-        return homePlayer;
-    }
-
-    public Participant getAwayPlayer() {
-        return awayPlayer;
-    }
-
-    public int getSets() {
-        return sets;
-    }
-
-    public boolean isPlayOff() {
-        return playOff;
-    }
-
-    public Stadium getVenue() {
-        return venue;
-    }
-
-    public MatchScore getResult() {
-        return result;
     }
 
     @Override

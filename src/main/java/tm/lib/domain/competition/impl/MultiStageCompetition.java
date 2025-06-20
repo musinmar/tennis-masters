@@ -6,7 +6,6 @@ import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.definition.actions.CompetitionEvent;
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.core.MatchScore;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -31,10 +30,8 @@ public class MultiStageCompetition extends AbstractCompetition {
     }
 
     @Override
-    public Competition getChild(String id) {
-        return stages.stream().filter(s -> s.getId().equals(id)).findAny()
-                .orElseThrow(() ->
-                        new IllegalArgumentException("Competition " + getId() + " does not have child " + id));
+    public Optional<Competition> getChild(String id) {
+        return stages.stream().filter(s -> s.getId().equals(id)).findAny();
     }
 
     @Override
@@ -80,11 +77,6 @@ public class MultiStageCompetition extends AbstractCompetition {
         }
 
         return new ArrayList<>(sortedMatches);
-    }
-
-    @Override
-    public void processMatchResult(MatchEvent match, MatchScore score) {
-        throw new UnsupportedOperationException("Competition " + getName() + " does not have any own matches");
     }
 
     @Override

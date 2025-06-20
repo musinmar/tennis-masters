@@ -1,8 +1,7 @@
-package tm.lib.domain.competition.standard;
+package tm.lib.domain.competition.impl;
 
-import tm.lib.domain.competition.base.MatchEvent;
-import tm.lib.domain.competition.base.Participant;
-import tm.lib.domain.competition.base.SimpleCompetition;
+import tm.lib.domain.competition.MatchEvent;
+import tm.lib.domain.competition.Participant;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 

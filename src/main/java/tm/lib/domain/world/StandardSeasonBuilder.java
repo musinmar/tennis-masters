@@ -1,23 +1,23 @@
-package tm.lib.domain.competition;
+package tm.lib.domain.world;
 
 import com.google.common.collect.ImmutableMap;
-import tm.lib.domain.competition.base.CompetitionDefinitions.CompetitionDefinition;
-import tm.lib.domain.competition.base.CompetitionDefinitions.CompetitionEventDefinition;
-import tm.lib.domain.competition.base.CompetitionDefinitions.GroupStageDefinition;
-import tm.lib.domain.competition.base.CompetitionDefinitions.MultiStageCompetitionDefinition;
-import tm.lib.domain.competition.base.CompetitionDefinitions.PlayOffStageDefinition;
-import tm.lib.domain.competition.base.CompetitionSchedule;
-import tm.lib.domain.competition.base.events.Actions.AddAssignedParticipantsFromEloRankings;
-import tm.lib.domain.competition.base.events.Actions.GiveTrophy;
-import tm.lib.domain.competition.base.events.Actions.SeedAllFromNationRule;
-import tm.lib.domain.competition.base.events.Actions.SeedBasedOnNationalRankingRule;
-import tm.lib.domain.competition.base.events.Actions.SeedBasedOnNationalRankingRule.PreviousRound;
-import tm.lib.domain.competition.base.events.Actions.SeedGroupStageToPlayOff;
-import tm.lib.domain.competition.base.events.Actions.SeedRandomPlayers;
-import tm.lib.domain.competition.base.events.Actions.SeedWorldCupRound;
-import tm.lib.domain.competition.base.events.Triggers.OnCompetitionEnd;
-import tm.lib.domain.competition.base.events.Triggers.OnSeasonStart;
-import tm.lib.domain.competition.standard.PlayOffStageConfiguration;
+import tm.lib.domain.competition.definition.CompetitionDefinitions.CompetitionDefinition;
+import tm.lib.domain.competition.definition.CompetitionDefinitions.CompetitionEventDefinition;
+import tm.lib.domain.competition.definition.CompetitionDefinitions.GroupStageDefinition;
+import tm.lib.domain.competition.definition.CompetitionDefinitions.MultiStageCompetitionDefinition;
+import tm.lib.domain.competition.definition.CompetitionDefinitions.PlayOffStageDefinition;
+import tm.lib.domain.competition.definition.CompetitionSchedule;
+import tm.lib.domain.competition.definition.actions.Actions.AddAssignedParticipantsFromEloRankings;
+import tm.lib.domain.competition.definition.actions.Actions.GiveTrophy;
+import tm.lib.domain.competition.definition.actions.Actions.SeedAllFromNationRule;
+import tm.lib.domain.competition.definition.actions.Actions.SeedBasedOnNationalRankingRule;
+import tm.lib.domain.competition.definition.actions.Actions.SeedBasedOnNationalRankingRule.PreviousRound;
+import tm.lib.domain.competition.definition.actions.Actions.SeedGroupStageToPlayOff;
+import tm.lib.domain.competition.definition.actions.Actions.SeedRandomPlayers;
+import tm.lib.domain.competition.definition.actions.Actions.SeedWorldCupRound;
+import tm.lib.domain.competition.definition.actions.Triggers.OnCompetitionEnd;
+import tm.lib.domain.competition.definition.actions.Triggers.OnSeasonStart;
+import tm.lib.domain.competition.impl.PlayOffStageConfiguration;
 import tm.lib.domain.core.Nation;
 
 import java.util.ArrayList;
@@ -27,10 +27,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
-import static tm.lib.domain.competition.base.CompetitionPath.PARENT;
-import static tm.lib.domain.competition.base.CompetitionPath.SELF;
-import static tm.lib.domain.competition.base.CompetitionPath.buildPath;
-import static tm.lib.domain.competition.base.events.Actions.SeedBasedOnNationalRankingRule.buildParticipants;
+import static tm.lib.domain.competition.CompetitionPath.PARENT;
+import static tm.lib.domain.competition.CompetitionPath.SELF;
+import static tm.lib.domain.competition.CompetitionPath.buildPath;
+import static tm.lib.domain.competition.definition.actions.Actions.SeedBasedOnNationalRankingRule.buildParticipants;
 
 public class StandardSeasonBuilder {
     public static final String FIRST_QUALIFYING_ROUND_ID = "FQR";

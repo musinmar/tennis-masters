@@ -1,16 +1,16 @@
 package tm.lib.domain.world;
 
-import tm.lib.domain.competition.base.Competition;
-import tm.lib.domain.competition.base.events.Actions;
-import tm.lib.domain.competition.base.events.Actions.AddAssignedParticipantsFromEloRankings;
-import tm.lib.domain.competition.base.events.Actions.GiveTrophy;
-import tm.lib.domain.competition.base.events.Actions.SeedBasedOnNationalRankingRule;
-import tm.lib.domain.competition.base.events.Actions.SeedWorldCupRound;
-import tm.lib.domain.competition.base.events.CompetitionEvent;
-import tm.lib.domain.competition.base.events.Triggers;
-import tm.lib.domain.competition.standard.GroupStage;
-import tm.lib.domain.competition.standard.PlayOffStage;
-import tm.lib.domain.competition.standard.PlayOffSubStage;
+import tm.lib.domain.competition.Competition;
+import tm.lib.domain.competition.definition.actions.Actions;
+import tm.lib.domain.competition.definition.actions.Actions.AddAssignedParticipantsFromEloRankings;
+import tm.lib.domain.competition.definition.actions.Actions.GiveTrophy;
+import tm.lib.domain.competition.definition.actions.Actions.SeedBasedOnNationalRankingRule;
+import tm.lib.domain.competition.definition.actions.Actions.SeedWorldCupRound;
+import tm.lib.domain.competition.definition.actions.CompetitionEvent;
+import tm.lib.domain.competition.definition.actions.Triggers;
+import tm.lib.domain.competition.impl.GroupStage;
+import tm.lib.domain.competition.impl.PlayOffStage;
+import tm.lib.domain.competition.impl.PlayOffSubStage;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Nation;
 

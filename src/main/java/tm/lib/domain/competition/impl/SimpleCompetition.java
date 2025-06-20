@@ -1,6 +1,9 @@
-package tm.lib.domain.competition.base;
+package tm.lib.domain.competition.impl;
 
 import lombok.Getter;
+import tm.lib.domain.competition.Competition;
+import tm.lib.domain.competition.MatchEvent;
+import tm.lib.domain.competition.Participant;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 

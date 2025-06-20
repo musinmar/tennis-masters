@@ -1,10 +1,9 @@
 package tm.lib.domain.world;
 
 import org.apache.commons.lang3.Validate;
-import tm.lib.domain.competition.StandardSeasonBuilder;
-import tm.lib.domain.competition.base.Competition;
-import tm.lib.domain.competition.base.MatchEvent;
-import tm.lib.domain.competition.standard.GroupSubStage;
+import tm.lib.domain.competition.Competition;
+import tm.lib.domain.competition.MatchEvent;
+import tm.lib.domain.competition.impl.GroupSubStage;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.dto.WorldDto;
@@ -22,8 +21,8 @@ import java.util.function.Consumer;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toList;
-import static tm.lib.domain.competition.StandardSeasonBuilder.buildSeasonCompetitionDefinition;
-import static tm.lib.domain.competition.base.CompetitionBuilder.buildCompetition;
+import static tm.lib.domain.world.StandardSeasonBuilder.buildSeasonCompetitionDefinition;
+import static tm.lib.domain.competition.CompetitionBuilder.buildCompetition;
 import static tm.lib.domain.world.PersistenceManager.loadDefaultPlayers;
 import static tm.lib.domain.world.WorldLogger.NoopLogger;
 

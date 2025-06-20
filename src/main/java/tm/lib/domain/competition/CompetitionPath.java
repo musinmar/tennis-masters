@@ -1,4 +1,4 @@
-package tm.lib.domain.competition.base;
+package tm.lib.domain.competition;
 
 import org.apache.commons.lang3.StringUtils;
 

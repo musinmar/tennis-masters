@@ -1,12 +1,14 @@
-package tm.lib.domain.competition.base;
+package tm.lib.domain.competition;
 
-import tm.lib.domain.competition.base.CompetitionDefinitions.CompetitionDefinition;
-import tm.lib.domain.competition.base.CompetitionDefinitions.GroupStageDefinition;
-import tm.lib.domain.competition.base.CompetitionDefinitions.MultiStageCompetitionDefinition;
-import tm.lib.domain.competition.base.CompetitionDefinitions.PlayOffStageDefinition;
-import tm.lib.domain.competition.base.events.CompetitionEvent;
-import tm.lib.domain.competition.standard.GroupStage;
-import tm.lib.domain.competition.standard.PlayOffStage;
+import tm.lib.domain.competition.definition.CompetitionDefinitions.CompetitionDefinition;
+import tm.lib.domain.competition.definition.CompetitionDefinitions.GroupStageDefinition;
+import tm.lib.domain.competition.definition.CompetitionDefinitions.MultiStageCompetitionDefinition;
+import tm.lib.domain.competition.definition.CompetitionDefinitions.PlayOffStageDefinition;
+import tm.lib.domain.competition.definition.CompetitionSchedule;
+import tm.lib.domain.competition.definition.actions.CompetitionEvent;
+import tm.lib.domain.competition.impl.GroupStage;
+import tm.lib.domain.competition.impl.MultiStageCompetition;
+import tm.lib.domain.competition.impl.PlayOffStage;
 
 import java.util.Objects;
 

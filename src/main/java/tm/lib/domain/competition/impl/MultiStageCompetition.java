@@ -1,8 +1,10 @@
-package tm.lib.domain.competition.base;
+package tm.lib.domain.competition.impl;
 
 import com.google.common.collect.ImmutableList;
 import lombok.Getter;
-import tm.lib.domain.competition.base.events.CompetitionEvent;
+import tm.lib.domain.competition.Competition;
+import tm.lib.domain.competition.MatchEvent;
+import tm.lib.domain.competition.definition.actions.CompetitionEvent;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
 public class MultiStageCompetition extends AbstractCompetition {
     private List<Competition> stages;
 
-    protected MultiStageCompetition(String id, String name) {
+    public MultiStageCompetition(String id, String name) {
         super(id, name);
     }
 

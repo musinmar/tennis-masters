@@ -1,4 +1,4 @@
-package tm.lib.domain.competition.standard;
+package tm.lib.domain.competition.impl;
 
 import lombok.Getter;
 import tm.lib.domain.core.Knight;

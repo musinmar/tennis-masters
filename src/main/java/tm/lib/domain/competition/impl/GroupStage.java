@@ -1,9 +1,8 @@
-package tm.lib.domain.competition.standard;
+package tm.lib.domain.competition.impl;
 
 import lombok.Getter;
 import org.apache.commons.collections4.ListUtils;
-import tm.lib.domain.competition.base.Competition;
-import tm.lib.domain.competition.base.MultiStageCompetition;
+import tm.lib.domain.competition.Competition;
 import tm.lib.domain.core.Knight;
 
 import java.util.ArrayList;

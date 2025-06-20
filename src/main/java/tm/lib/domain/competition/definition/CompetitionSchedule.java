@@ -1,4 +1,4 @@
-package tm.lib.domain.competition.base;
+package tm.lib.domain.competition.definition;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

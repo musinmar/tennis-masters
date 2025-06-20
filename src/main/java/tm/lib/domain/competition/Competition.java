@@ -1,7 +1,6 @@
-package tm.lib.domain.competition.base;
+package tm.lib.domain.competition;
 
-import org.apache.commons.lang3.StringUtils;
-import tm.lib.domain.competition.base.events.CompetitionEvent;
+import tm.lib.domain.competition.definition.actions.CompetitionEvent;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 

@@ -1,4 +1,4 @@
-package tm.lib.domain.competition.base;
+package tm.lib.domain.competition;
 
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;

@@ -1,10 +1,9 @@
-package tm.lib.domain.competition.standard;
+package tm.lib.domain.competition.impl;
 
-import tm.lib.domain.competition.base.Competition;
-import tm.lib.domain.competition.base.MultiStageCompetition;
-import tm.lib.domain.competition.base.events.Actions;
-import tm.lib.domain.competition.base.events.CompetitionEvent;
-import tm.lib.domain.competition.base.events.Triggers;
+import tm.lib.domain.competition.Competition;
+import tm.lib.domain.competition.definition.actions.Actions;
+import tm.lib.domain.competition.definition.actions.CompetitionEvent;
+import tm.lib.domain.competition.definition.actions.Triggers;
 import tm.lib.domain.core.Knight;
 
 import java.util.ArrayList;

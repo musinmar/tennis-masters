@@ -1,17 +1,17 @@
-package tm.lib.domain.competition.base;
+package tm.lib.domain.competition.definition;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import tm.lib.domain.competition.base.events.Action;
-import tm.lib.domain.competition.base.events.Trigger;
-import tm.lib.domain.competition.standard.PlayOffStageConfiguration;
+import tm.lib.domain.competition.definition.actions.Action;
+import tm.lib.domain.competition.definition.actions.Trigger;
+import tm.lib.domain.competition.impl.PlayOffStageConfiguration;
 
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static tm.lib.domain.competition.base.CompetitionSchedule.EVERY_YEAR;
+import static tm.lib.domain.competition.definition.CompetitionSchedule.EVERY_YEAR;
 
 public class CompetitionDefinitions {
 

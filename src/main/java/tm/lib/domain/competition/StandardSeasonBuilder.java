@@ -27,9 +27,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
-import static tm.lib.domain.competition.base.Competition.PARENT;
-import static tm.lib.domain.competition.base.Competition.SELF;
-import static tm.lib.domain.competition.base.Competition.buildPath;
+import static tm.lib.domain.competition.base.CompetitionPath.PARENT;
+import static tm.lib.domain.competition.base.CompetitionPath.SELF;
+import static tm.lib.domain.competition.base.CompetitionPath.buildPath;
 import static tm.lib.domain.competition.base.events.Actions.SeedBasedOnNationalRankingRule.buildParticipants;
 
 public class StandardSeasonBuilder {

@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface Competition {
-    String PATH_SEPARATOR = "/";
-    String PARENT = "..";
-    String SELF = "self";
 
     String getId();
 
@@ -78,21 +75,6 @@ public interface Competition {
     }
 
     default Competition resolveCompetitionPath(String path) {
-        var elements = StringUtils.split(path, PATH_SEPARATOR);
-        Competition cur = this;
-        for (var el : elements) {
-            if (SELF.equals(el)) {
-                return cur;
-            } else if (PARENT.equals(el)) {
-                cur = cur.getParent();
-            } else {
-                cur = cur.getChild(el);
-            }
-        }
-        return cur;
-    }
-
-    static String buildPath(String... sections) {
-        return StringUtils.join(sections, PATH_SEPARATOR);
+        return CompetitionPath.resolveCompetitionPath(this, path);
     }
 }

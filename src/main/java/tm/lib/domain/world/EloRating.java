@@ -1,8 +1,9 @@
 package tm.lib.domain.world;
 
+import lombok.Getter;
+import lombok.Setter;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.world.dto.EloRatingDto;
 
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -14,17 +15,21 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+@Getter
+@Setter
 public class EloRating {
     private static final double K_FACTOR = 20;
     private static final double AVERAGE_RATING = 500;
 
     private Map<Knight, Rating> ratings;
 
-    private static class Rating {
+    @Getter
+    @Setter
+    public static class Rating {
         private double value;
         private double valuePreviousYear;
 
-        Rating(double rating) {
+        public Rating(double rating) {
             this.value = rating;
             initPreviousYearValue();
         }
@@ -38,25 +43,8 @@ public class EloRating {
         ratings = players.stream().collect(toMap(identity(), p -> new Rating(AVERAGE_RATING)));
     }
 
-    public EloRatingDto toDto() {
-        EloRatingDto eloRatingDto = new EloRatingDto();
-        List<EloRatingDto.ItemDto> itemDtos = ratings.entrySet().stream()
-                .map(e -> new EloRatingDto.ItemDto(e.getKey().getId(), e.getValue().value))
-                .collect(toList());
-        eloRatingDto.setItems(itemDtos);
-        return eloRatingDto;
-    }
 
-    public static EloRating fromDto(EloRatingDto eloRatingDto, List<Knight> knights) {
-        EloRating eloRating = new EloRating(knights);
-        eloRating.ratings = eloRatingDto.getItems().stream()
-                .collect(toMap(item -> knights.get(item.getPlayerId()), item -> new Rating(item.getPoints())));
-        eloRating.normalize();
-        eloRating.savePointsAsLastYearPoints();
-        return eloRating;
-    }
-
-    private void normalize() {
+    public void normalize() {
         Collection<Rating> allRatings = ratings.values();
         double ratingSum = allRatings.stream().mapToDouble(i -> i.value).sum();
         double dif = ratingSum - AVERAGE_RATING * ratings.size();
@@ -121,7 +109,7 @@ public class EloRating {
         }
     }
 
-    private void savePointsAsLastYearPoints() {
+    public void savePointsAsLastYearPoints() {
         ratings.values().forEach(item -> item.valuePreviousYear = item.value);
     }
 

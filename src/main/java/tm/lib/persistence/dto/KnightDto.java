@@ -1,4 +1,4 @@
-package tm.lib.domain.core.dto;
+package tm.lib.persistence.dto;
 
 import lombok.Getter;
 import lombok.Setter;

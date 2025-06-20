@@ -29,7 +29,7 @@ import tm.lib.domain.competition.impl.MultiStageCompetition;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
-import tm.lib.domain.world.PersistenceManager;
+import tm.lib.persistence.PersistenceManager;
 import tm.lib.domain.world.World;
 import tm.lib.domain.world.WorldLogger;
 import tm.lib.engine.StrategyProvider;

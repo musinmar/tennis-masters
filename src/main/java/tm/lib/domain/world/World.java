@@ -1,12 +1,13 @@
 package tm.lib.domain.world;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.Validate;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.impl.GroupSubStage;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
-import tm.lib.domain.world.dto.WorldDto;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,11 +22,13 @@ import java.util.function.Consumer;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toList;
-import static tm.lib.domain.world.StandardSeasonBuilder.buildSeasonCompetitionDefinition;
 import static tm.lib.domain.competition.CompetitionBuilder.buildCompetition;
-import static tm.lib.domain.world.PersistenceManager.loadDefaultPlayers;
+import static tm.lib.domain.world.StandardSeasonBuilder.buildSeasonCompetitionDefinition;
 import static tm.lib.domain.world.WorldLogger.NoopLogger;
+import static tm.lib.persistence.PersistenceManager.loadDefaultPlayers;
 
+@Getter
+@Setter
 public class World {
     private static final String FOLDER = "season";
     //    private static final String FILE_NAME_SEASON_JSON = "season.json";
@@ -50,7 +53,7 @@ public class World {
 
     private boolean isSeasonFinished = false;
 
-    private World() {
+    public World() {
     }
 
     public static World createNewWorld() {
@@ -61,60 +64,9 @@ public class World {
         return world;
     }
 
-    public static World fromDto(WorldDto dto) {
-        World world = new World();
-
-        world.year = dto.getYear();
-        world.players = dto.getKnights().stream().map(Knight::fromDto).collect(toList());
-        world.eloRating = EloRating.fromDto(dto.getEloRating(), world.players);
-        world.nationRating = NationRating.fromDto(dto.getNationRating());
-
-        world.startNewSeason();
-
-        return world;
-    }
-
-    public WorldDto toDto() {
-        WorldDto dto = new WorldDto();
-
-        dto.setYear(year);
-        dto.setKnights(players.stream().map(Knight::toDto).collect(toList()));
-        dto.setEloRating(eloRating.toDto());
-        dto.setNationRating(nationRating.toDto());
-
-        return dto;
-    }
-
-    public WorldLogger getLogger() {
-        return logger;
-    }
-
-    public void setLogger(WorldLogger logger) {
-        this.logger = logger;
-    }
 
     public Competition getCurrentSeason() {
         return seasonCompetition;
-    }
-
-    public List<Knight> getPlayers() {
-        return players;
-    }
-
-    public EloRating getEloRating() {
-        return eloRating;
-    }
-
-    public NationRating getNationRating() {
-        return nationRating;
-    }
-
-    public boolean isSeasonFinished() {
-        return isSeasonFinished;
-    }
-
-    public int getYear() {
-        return year;
     }
 
     private void initNewGame() {

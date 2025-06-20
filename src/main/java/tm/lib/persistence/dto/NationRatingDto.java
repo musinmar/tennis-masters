@@ -1,4 +1,4 @@
-package tm.lib.domain.world.dto;
+package tm.lib.persistence.dto;
 
 import tm.lib.domain.core.Nation;
 

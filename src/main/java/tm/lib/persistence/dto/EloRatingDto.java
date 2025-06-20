@@ -1,4 +1,4 @@
-package tm.lib.domain.world.dto;
+package tm.lib.persistence.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

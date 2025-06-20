@@ -1,6 +1,4 @@
-package tm.lib.domain.world.dto;
-
-import tm.lib.domain.core.dto.KnightDto;
+package tm.lib.persistence.dto;
 
 import java.util.List;
 

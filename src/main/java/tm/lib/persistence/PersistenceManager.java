@@ -1,11 +1,12 @@
-package tm.lib.domain.world;
+package tm.lib.persistence;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.core.dto.KnightDto;
-import tm.lib.domain.world.dto.WorldDto;
+import tm.lib.domain.world.World;
+import tm.lib.persistence.dto.KnightDto;
+import tm.lib.persistence.dto.WorldDto;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class PersistenceManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return World.fromDto(worldDto);
+        return DtoMapper.toDomain(worldDto);
     }
 
     public static void saveWorld(World world) {
@@ -42,7 +43,7 @@ public class PersistenceManager {
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         File file = new File(makeFilename(FILE_NAME_WORLD_JSON));
         try {
-            mapper.writeValue(file, world.toDto());
+            mapper.writeValue(file, DtoMapper.toDto(world));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -57,7 +58,7 @@ public class PersistenceManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return knightDtos.stream().map(Knight::fromDto).collect(toList());
+        return knightDtos.stream().map(DtoMapper::toDomain).collect(toList());
     }
 
     public static void saveDefaultPlayers(List<Knight> knights) {
@@ -65,7 +66,7 @@ public class PersistenceManager {
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         File file = new File(FILE_NAME_PLAYERS_JSON);
         try {
-            List<KnightDto> dtos = knights.stream().map(Knight::toDto).collect(toList());
+            List<KnightDto> dtos = knights.stream().map(DtoMapper::toDto).collect(toList());
             mapper.writeValue(file, dtos);
         } catch (IOException e) {
             throw new RuntimeException(e);

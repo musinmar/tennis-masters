@@ -73,7 +73,6 @@ abstract public class SimpleCompetition extends AbstractCompetition {
         match.setResult(score);
         doProcessMatchResult(match, score);
         ++nextMatchIndex;
-        checkIfCompetitionFinished(this);
     }
 
     protected void doProcessMatchResult(MatchEvent match, MatchScore score) {

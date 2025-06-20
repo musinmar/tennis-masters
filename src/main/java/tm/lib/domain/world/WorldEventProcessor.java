@@ -9,10 +9,8 @@ import tm.lib.domain.competition.base.events.Actions.SeedWorldCupRound;
 import tm.lib.domain.competition.base.events.CompetitionEvent;
 import tm.lib.domain.competition.base.events.Triggers;
 import tm.lib.domain.competition.standard.GroupStage;
-import tm.lib.domain.competition.standard.GroupStageUtils;
 import tm.lib.domain.competition.standard.PlayOffStage;
 import tm.lib.domain.competition.standard.PlayOffSubStage;
-import tm.lib.domain.competition.standard.PlayOffUtils;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Nation;
 
@@ -23,7 +21,7 @@ import java.util.Map;
 import static java.util.Collections.shuffle;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static tm.lib.domain.competition.standard.GroupStageUtils.makeSeededGroupsTwoByFour;
+import static tm.lib.domain.world.GroupStageUtils.makeSeededGroupsTwoByFour;
 
 public class WorldEventProcessor {
 

@@ -1,5 +1,6 @@
-package tm.lib.domain.competition.standard;
+package tm.lib.domain.world;
 
+import tm.lib.domain.competition.standard.GroupStageResult;
 import tm.lib.domain.core.Knight;
 
 import java.util.ArrayList;

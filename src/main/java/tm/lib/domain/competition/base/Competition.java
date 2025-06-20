@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public interface Competition {
     String PATH_SEPARATOR = "/";
@@ -22,6 +21,8 @@ public interface Competition {
     String getName();
 
     Competition getParent();
+
+    void setParent(Competition parent);
 
     Competition getChild(String id);
 
@@ -94,9 +95,4 @@ public interface Competition {
     static String buildPath(String... sections) {
         return StringUtils.join(sections, PATH_SEPARATOR);
     }
-
-    // TODO: Remove
-
-    void setParent(Competition parent);
-    void registerOnFinishedCallback(Consumer<Competition> callback);
 }

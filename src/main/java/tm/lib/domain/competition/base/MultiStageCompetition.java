@@ -23,7 +23,6 @@ public class MultiStageCompetition extends AbstractCompetition {
 
     public void setStages(List<Competition> stages) {
         this.stages = ImmutableList.copyOf(stages);
-        stages.forEach(stage -> stage.registerOnFinishedCallback(this::checkIfCompetitionFinished));
         stages.forEach(stage -> stage.setParent(this));
     }
 

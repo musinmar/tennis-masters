@@ -1,7 +1,6 @@
-package tm.lib.domain.competition.standard;
+package tm.lib.domain.world;
 
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.world.EloRating;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
-import static tm.lib.domain.competition.standard.PlayOffUtils.drawPlayersInPairs;
+import static tm.lib.domain.world.PlayOffUtils.drawPlayersInPairs;
 
 public class GroupStageUtils {
     public static List<List<Knight>> makeSeededGroupsTwoByFour(List<Knight> knights, EloRating eloRating) {

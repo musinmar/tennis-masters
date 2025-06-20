@@ -4,8 +4,6 @@ import tm.lib.domain.competition.definition.actions.CompetitionEvent;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Optional;
@@ -45,13 +43,6 @@ public interface Competition {
     Knight getWinner();
 
     void print(PrintStream stream);
-
-    default String printToString() {
-        OutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(outputStream);
-        print(printStream);
-        return outputStream.toString();
-    }
 
     default boolean isFinished() {
         return getNextMatch().isEmpty();

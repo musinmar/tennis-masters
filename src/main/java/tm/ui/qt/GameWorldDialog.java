@@ -24,6 +24,7 @@ import io.qt.widgets.QVBoxLayout;
 import io.qt.widgets.QWidget;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.MatchEvent;
+import tm.lib.domain.competition.CompetitionPrinter;
 import tm.lib.domain.competition.impl.MultiStageCompetition;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
@@ -348,7 +349,7 @@ public class GameWorldDialog extends QMainWindow {
 
     private void updateLogText() {
         Competition selectedCompetition = getSelectedCompetition();
-        String text = selectedCompetition == null ? "" : selectedCompetition.printToString();
+        String text = selectedCompetition == null ? "" : CompetitionPrinter.printToString(selectedCompetition);
         competitionBrowserTextEdit.setPlainText(text);
     }
 

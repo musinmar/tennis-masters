@@ -25,31 +25,10 @@ abstract public class AbstractCompetition implements Competition {
         this.name = name;
     }
 
-    public Competition getChild(String id) {
-        throw new IllegalArgumentException("Competition " + getId() + " does not have child " + id);
-    }
-
     @Override
     public void print(PrintStream stream) {
         stream.println(getName());
         stream.println();
-    }
-
-    public String getFullName(boolean includeRoot) {
-        String name = "";
-        Competition current = this;
-        while (true) {
-            if (current == null) {
-                break;
-            }
-            var rootCompetition = current.getParent() == null;
-            if (rootCompetition && !includeRoot) {
-                break;
-            }
-            name = name.isEmpty() ? current.getName() : current.getName() + " - " + name;
-            current = current.getParent();
-        }
-        return name;
     }
 
     public List<CompetitionEvent> getAllEvents() {

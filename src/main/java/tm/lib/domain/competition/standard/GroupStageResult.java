@@ -1,18 +1,16 @@
 package tm.lib.domain.competition.standard;
 
+import lombok.Getter;
 import tm.lib.domain.core.Knight;
 
 import java.util.List;
 
+@Getter
 public class GroupStageResult {
     private final List<List<Knight>> groupResults;
 
     public GroupStageResult(List<List<Knight>> groupResults) {
         this.groupResults = groupResults;
-    }
-
-    public List<List<Knight>> getGroupResults() {
-        return groupResults;
     }
 
     public int getGroupCount() {

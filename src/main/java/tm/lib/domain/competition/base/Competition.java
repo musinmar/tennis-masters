@@ -39,10 +39,6 @@ public interface Competition {
 
     void processMatchResult(MatchEvent match, MatchScore score);
 
-    default boolean isFinished() {
-        return getNextMatch().isEmpty();
-    }
-
     void setEvents(List<CompetitionEvent> events);
 
     List<CompetitionEvent> getAllEvents();
@@ -58,18 +54,23 @@ public interface Competition {
         return outputStream.toString();
     }
 
-    default String getFullName(boolean includeSeason) {
-        String name = getName();
-        Competition parent = getParent();
+    default boolean isFinished() {
+        return getNextMatch().isEmpty();
+    }
+
+    default String getFullName(boolean includeRoot) {
+        String name = "";
+        Competition current = this;
         while (true) {
-            boolean isSeasonCompetition = (parent != null && parent.getParent() == null);
-            if (includeSeason || !isSeasonCompetition) {
-                name = parent.getName() + " - " + name;
-            }
-            if (isSeasonCompetition) {
+            if (current == null) {
                 break;
             }
-            parent = parent.getParent();
+            var rootCompetition = current.getParent() == null;
+            if (rootCompetition && !includeRoot) {
+                break;
+            }
+            name = name.isEmpty() ? current.getName() : current.getName() + " - " + name;
+            current = current.getParent();
         }
         return name;
     }

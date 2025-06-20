@@ -1,6 +1,7 @@
 package tm.lib.domain.competition.base;
 
 import com.google.common.collect.ImmutableList;
+import lombok.Getter;
 import tm.lib.domain.competition.base.events.CompetitionEvent;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
@@ -14,6 +15,7 @@ import java.util.ListIterator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Getter
 public class MultiStageCompetition extends AbstractCompetition {
     private List<Competition> stages;
 
@@ -29,7 +31,8 @@ public class MultiStageCompetition extends AbstractCompetition {
     @Override
     public Competition getChild(String id) {
         return stages.stream().filter(s -> s.getId().equals(id)).findAny()
-                .orElseGet(() -> super.getChild(id));
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Competition " + getId() + " does not have child " + id));
     }
 
     @Override
@@ -51,13 +54,7 @@ public class MultiStageCompetition extends AbstractCompetition {
 
     @Override
     public List<MatchEvent> getAllMatches() {
-        /*SortedSet<MatchEvent> sortedMatches = new TreeSet<MatchEvent>();
-         for (Competition stage : getStages())
-         {
-         sortedMatches.addAll(stage.getAllMatches());
-         }
-         return new ArrayList<MatchEvent>(sortedMatches);*/
-        List<MatchEvent> sortedMatches = new LinkedList<MatchEvent>();
+        List<MatchEvent> sortedMatches = new LinkedList<>();
         for (Competition stage : getStages()) {
             List<MatchEvent> stageMatches = stage.getAllMatches();
             ListIterator<MatchEvent> stageIt = stageMatches.listIterator();
@@ -80,11 +77,7 @@ public class MultiStageCompetition extends AbstractCompetition {
             }
         }
 
-        return new ArrayList<MatchEvent>(sortedMatches);
-    }
-
-    public List<Competition> getStages() {
-        return stages;
+        return new ArrayList<>(sortedMatches);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package tm.lib.domain.competition.base;
 
+import lombok.Getter;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+@Getter
 abstract public class SimpleCompetition extends AbstractCompetition {
 
     private final List<Participant> participants;
@@ -19,12 +21,13 @@ abstract public class SimpleCompetition extends AbstractCompetition {
         this.participants = participants;
     }
 
-    protected int getNextMatchIndex() {
-        return nextMatchIndex;
+    @Override
+    public Competition getChild(String id) {
+        throw new IllegalArgumentException("Competition " + getId() + " is not a multi-stage competition");
     }
 
-    public List<Participant> getParticipants() {
-        return participants;
+    protected int getNextMatchIndex() {
+        return nextMatchIndex;
     }
 
     protected static List<Participant> createParticipants(String stageParticipantId, int count) {
@@ -68,7 +71,7 @@ abstract public class SimpleCompetition extends AbstractCompetition {
     }
 
     @Override
-     public final void processMatchResult(MatchEvent match, MatchScore score) {
+    public final void processMatchResult(MatchEvent match, MatchScore score) {
         assert getNextMatch().equals(Optional.of(match));
         match.setResult(score);
         doProcessMatchResult(match, score);

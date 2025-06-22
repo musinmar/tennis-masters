@@ -9,7 +9,6 @@ import tm.lib.persistence.dto.KnightDto;
 import tm.lib.persistence.dto.NationRatingDto;
 import tm.lib.persistence.dto.WorldDto;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -61,25 +60,27 @@ public class DtoMapper {
 
     public static NationRating toDomain(NationRatingDto nationRatingDto) {
         NationRating nationRating = new NationRating();
-        nationRating.setPointHistory(nationRatingDto.getPointHistory().entrySet().stream()
+        nationRating.setPointHistoryPerNation(nationRatingDto.getPointHistory().entrySet().stream()
                 .collect(toMap(e -> e.getKey(), e -> toDomain(e.getValue()))));
+        nationRating.updateNationRanking();
+        nationRating.resetSeasonPoints();
         return nationRating;
     }
 
     public static NationRatingDto toDto(NationRating nationRating) {
         NationRatingDto nationRatingDto = new NationRatingDto();
-        nationRatingDto.setPointHistory(nationRating.getPointHistory().entrySet().stream()
+        nationRatingDto.setPointHistory(nationRating.getPointHistoryPerNation().entrySet().stream()
                 .collect(toMap(e -> e.getKey(), e -> toDto(e.getValue()))));
         return nationRatingDto;
     }
 
-    public static NationRating.PointHistoryItem toDomain(NationRatingDto.PointHistoryItemDto itemDto) {
-        NationRating.PointHistoryItem item = new NationRating.PointHistoryItem(0);
-        item.setSeasons(Arrays.copyOf(itemDto.getSeasons(), NationRating.SEASON_COUNT));
+    public static NationRating.PointHistory toDomain(NationRatingDto.PointHistoryItemDto itemDto) {
+        NationRating.PointHistory item = new NationRating.PointHistory();
+        item.setSeasons(itemDto.getSeasons());
         return item;
     }
 
-    public static NationRatingDto.PointHistoryItemDto toDto(NationRating.PointHistoryItem item) {
+    public static NationRatingDto.PointHistoryItemDto toDto(NationRating.PointHistory item) {
         NationRatingDto.PointHistoryItemDto itemDto = new NationRatingDto.PointHistoryItemDto();
         itemDto.setSeasons(item.getSeasons());
         return itemDto;
@@ -89,6 +90,7 @@ public class DtoMapper {
         World world = new World();
 
         world.setYear(dto.getYear());
+        world.setSeasonFinished(dto.isSeasonFinished());
         world.setPlayers(dto.getKnights().stream().map(DtoMapper::toDomain).collect(toList()));
         world.setEloRating(toDomain(dto.getEloRating(), world.getPlayers()));
         world.setNationRating(toDomain(dto.getNationRating()));
@@ -102,6 +104,7 @@ public class DtoMapper {
         WorldDto dto = new WorldDto();
 
         dto.setYear(world.getYear());
+        dto.setSeasonFinished(world.isSeasonFinished());
         dto.setKnights(world.getPlayers().stream().map(DtoMapper::toDto).collect(toList()));
         dto.setEloRating(toDto(world.getEloRating()));
         dto.setNationRating(toDto(world.getNationRating()));

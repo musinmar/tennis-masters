@@ -1,29 +1,20 @@
 package tm.lib.persistence.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 import tm.lib.domain.core.Nation;
 
+import java.util.List;
 import java.util.Map;
 
+@Getter
+@Setter
 public class NationRatingDto {
     private Map<Nation, PointHistoryItemDto> pointHistory;
 
+    @Getter
+    @Setter
     public static class PointHistoryItemDto {
-        private double[] seasons;
-
-        public double[] getSeasons() {
-            return seasons;
-        }
-
-        public void setSeasons(double[] seasons) {
-            this.seasons = seasons;
-        }
-    }
-
-    public Map<Nation, PointHistoryItemDto> getPointHistory() {
-        return pointHistory;
-    }
-
-    public void setPointHistory(Map<Nation, PointHistoryItemDto> pointHistory) {
-        this.pointHistory = pointHistory;
+        private List<Double> seasons;
     }
 }

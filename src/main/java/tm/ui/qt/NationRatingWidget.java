@@ -63,9 +63,9 @@ public class NationRatingWidget extends QWidget {
             item.setText(1, nation.getName());
             setDoubleData(item, 2, nationRating.getCurrentSeasonPoints(nation));
             setDoubleData(item, 3, nationRating.getCurrentSeasonValue(nation));
-            NationRating.PointHistoryItem pointHistory = nationRating.getPointHistory(nation);
-            for (int i = 0; i < pointHistory.seasons.length; i++) {
-                setDoubleData(item, 4 + i, pointHistory.seasons[i]);
+            NationRating.PointHistory pointHistory = nationRating.getPointHistoryPerNation(nation);
+            for (int i = 0; i < pointHistory.seasons.size(); i++) {
+                setDoubleData(item, 4 + i, pointHistory.seasons.get(i));
             }
             setDoubleData(item, 9, nationRating.getTotalPoints(nation));
             nationRatingTreeWidget.addTopLevelItem(item);

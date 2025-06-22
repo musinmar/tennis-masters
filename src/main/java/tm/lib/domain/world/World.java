@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static java.util.Collections.unmodifiableMap;
-import static java.util.stream.Collectors.toList;
 import static tm.lib.domain.competition.CompetitionBuilder.buildCompetition;
 import static tm.lib.domain.world.StandardSeasonBuilder.buildSeasonCompetitionDefinition;
 import static tm.lib.domain.world.WorldLogger.NoopLogger;
@@ -38,7 +37,11 @@ public class World {
 
     private WorldLogger logger = NoopLogger;
 
+    private int year = 0;
+    private boolean isSeasonFinished = false;
+
     private Competition seasonCompetition;
+    private Map<Competition, Integer> competitionPointValues;
 
     private List<Knight> players = new ArrayList<Knight>();
     private EloRating eloRating;
@@ -46,12 +49,8 @@ public class World {
 
     private WorldEventProcessor eventProcessor;
 
-    private int year = 0;
-
     private Competition latestCompetition;
-    private Map<Competition, Integer> competitionPointValues;
 
-    private boolean isSeasonFinished = false;
 
     public World() {
     }
@@ -77,20 +76,17 @@ public class World {
         eloRating = new EloRating(players);
 
         nationRating = new NationRating();
-        nationRating.initDefault();
+        nationRating.initializeDefault();
     }
 
     public void startNewSeason() {
-        nationRating.calculateRankingsAndPrint();
         initCompetitions();
         isSeasonFinished = false;
         eventProcessor.processOnSeasonStartEvents();
     }
 
     private void initCompetitions() {
-//        seasonCompetition = new SeasonCompetition("Сезон " + (year + 1), this, getPlayers(), year);
-//        seasonCompetition.setStartingDate(0);
-        seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition(), year);
+        seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition(year), year);
         eventProcessor = new WorldEventProcessor(year, getPlayers(), nationRating, eloRating, seasonCompetition);
         initCompetitionPointValues();
     }

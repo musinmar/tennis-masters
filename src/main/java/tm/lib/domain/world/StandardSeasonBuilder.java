@@ -64,13 +64,13 @@ public class StandardSeasonBuilder {
             new GiveTrophy()
     );
 
-    public static CompetitionDefinition buildSeasonCompetitionDefinition() {
+    public static CompetitionDefinition buildSeasonCompetitionDefinition(int year) {
         var nationalCups = Arrays.stream(Nation.values()).map(StandardSeasonBuilder::buildNationalCup).toList();
         var competitions = new ArrayList<>(nationalCups);
         competitions.add(buildFederationsCup());
         competitions.add(buildChampionsLeague());
         competitions.add(buildWorldCup());
-        return newMultiStageCompetition("SEASON", "Сезон", competitions);
+        return newMultiStageCompetition("SEASON", "Сезон " + (year + 1), competitions);
     }
 
     public static Map<String, Integer> buildCompetitionPoints() {

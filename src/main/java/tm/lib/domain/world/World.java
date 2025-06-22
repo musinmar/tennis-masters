@@ -80,6 +80,7 @@ public class World {
     }
 
     public void startNewSeason() {
+        nationRating.printStartOfSeasonFederationsRanking(logger);
         initCompetitions();
         isSeasonFinished = false;
         eventProcessor.processOnSeasonStartEvents();
@@ -157,11 +158,12 @@ public class World {
                 writer -> getEloRating().print(writer, true));
 
         year += 1;
+        getNationRating().printTotalPointsReceived(logger);
         getNationRating().advanceYear();
 
         logger.println();
         getNationRating().printPointHistory(logger);
-        logger.println("Season finished");
+        logger.println("Сезон завершён");
 
         getEloRating().advanceYear();
 

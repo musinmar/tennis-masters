@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.emptyList;
+import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingDouble;
 import static java.util.stream.Collectors.toList;
 
@@ -107,39 +108,47 @@ public class NationRating {
     }
 
     public void updateNationRanking() {
-        double[] sums = Arrays.stream(Nation.values())
+        double[] sums = sumPointHistory();
+        nationRanking = Arrays.stream(Nation.values())
+                .sorted(comparingDouble((Nation nation) -> sums[nation.ordinal()]).reversed())
+                .collect(toList());
+    }
+
+    private double[] sumPointHistory() {
+        return Arrays.stream(Nation.values())
                 .map(pointHistoryPerNation::get)
                 .mapToDouble(item -> {
                     return item.seasons.stream().mapToDouble(v -> v).sum();
                 })
                 .toArray();
+    }
 
-        nationRanking = Arrays.stream(Nation.values())
-                .sorted(comparingDouble((Nation nation) -> sums[nation.ordinal()]).reversed())
-                .collect(toList());
+    public void printStartOfSeasonFederationsRanking(WorldLogger logger) {
+        var sums = sumPointHistory();
+        logger.println("Рейтинг федераций в начале сезона:");
+        logger.println();
+        for (int i = 0; i < nationRanking.size(); ++i) {
+            Nation nation = nationRanking.get(i);
+            logger.println(String.format("%d) %-11s %7.2f", i + 1, nation.getName(), sums[nation.ordinal()]));
+        }
+        logger.println();
+    }
 
-//        println("Start of season federations ranking:");
-//        println();
-//        for (int i = 0; i < ranking.size(); ++i) {
-//            Nation nation = ranking.get(i);
-//            println(String.format("%d) %-11s %7.2f", i + 1, nation.getName(), sums[nation.getId()]));
-//        }
-//        readln();
+    public void printTotalPointsReceived(WorldLogger logger) {
+        double sum = nationSeasonPoints.values().stream().mapToDouble(v -> v).sum();
+        logger.println("Сумма всех полученных очков в этом сезоне: %.2f", sum);
+        playerSeasonPoints.entrySet().stream()
+                .sorted(comparing(e -> e.getKey().getId()))
+                .forEach(e -> logger.println("%s: %.2f", e.getKey().getFullName(), e.getValue()));
+        logger.println();
     }
 
     public void advanceYear() {
-//        double sum = nationSeasonPoints.values().stream().mapToDouble(MutableDouble::doubleValue).sum();
-//        println("Total points received this season: %.2f", sum);
-//        playerSeasonPoints.entrySet().stream()
-//                .sorted(comparing(e -> e.getKey().getId()))
-//                .forEach(e -> println("%s: %.2f", e.getKey().getPlayerName(), e.getValue()));
-//        println();
-
         for (Nation nation : Nation.values()) {
             PointHistory item = pointHistoryPerNation.get(nation);
             var newSeasons = new ArrayList<Double>();
             newSeasons.add(getCurrentSeasonValue(nation));
-            newSeasons.addAll(item.seasons.subList(0, SEASON_COUNT - 2));
+            newSeasons.addAll(item.seasons.subList(0, SEASON_COUNT - 1));
             var newPointHistory = new PointHistory();
             newPointHistory.setSeasons(newSeasons);
             pointHistoryPerNation.put(nation, newPointHistory);

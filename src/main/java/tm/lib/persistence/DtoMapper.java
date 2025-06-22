@@ -43,16 +43,25 @@ public class DtoMapper {
     public static EloRating toDomain(EloRatingDto eloRatingDto, List<Knight> knights) {
         EloRating eloRating = new EloRating(knights);
         eloRating.setRatings(eloRatingDto.getItems().stream()
-                .collect(toMap(item -> knights.get(item.getPlayerId()), item -> new EloRating.Rating(item.getPoints()))));
-        eloRating.normalize();
-        eloRating.savePointsAsLastYearPoints();
+                .collect(toMap(item -> knights.get(item.getPlayerId()), itemDto -> {
+                    EloRating.Item rating = new EloRating.Item();
+                    rating.setValue(itemDto.getPoints());
+                    rating.setValuePreviousYear(itemDto.getPointsPreviousYear());
+                    return rating;
+                })));
         return eloRating;
     }
 
     public static EloRatingDto toDto(EloRating eloRating) {
         EloRatingDto eloRatingDto = new EloRatingDto();
         List<EloRatingDto.ItemDto> itemDtos = eloRating.getRatings().entrySet().stream()
-                .map(e -> new EloRatingDto.ItemDto(e.getKey().getId(), e.getValue().getValue()))
+                .map(e -> {
+                    var itemDto = new EloRatingDto.ItemDto();
+                    itemDto.setPlayerId(e.getKey().getId());
+                    itemDto.setPoints(e.getValue().getValue());
+                    itemDto.setPointsPreviousYear(e.getValue().getValuePreviousYear());
+                    return itemDto;
+                })
                 .collect(toList());
         eloRatingDto.setItems(itemDtos);
         return eloRatingDto;

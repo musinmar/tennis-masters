@@ -21,31 +21,29 @@ public class EloRating {
     private static final double K_FACTOR = 20;
     private static final double AVERAGE_RATING = 500;
 
-    private Map<Knight, Rating> ratings;
+    private Map<Knight, Item> ratings;
 
     @Getter
     @Setter
-    public static class Rating {
+    public static class Item {
         private double value;
         private double valuePreviousYear;
-
-        public Rating(double rating) {
-            this.value = rating;
-            initPreviousYearValue();
-        }
-
-        void initPreviousYearValue() {
-            this.valuePreviousYear = this.value;
-        }
     }
 
     public EloRating(List<Knight> players) {
-        ratings = players.stream().collect(toMap(identity(), p -> new Rating(AVERAGE_RATING)));
+        ratings = players.stream().collect(toMap(identity(), _ -> {
+            var r = new Item();
+            r.setValue(AVERAGE_RATING);
+            return r;
+        }));
     }
 
+    public void setPreviousYearValues() {
+        ratings.values().forEach(rating -> rating.setValuePreviousYear(rating.getValue()));
+    }
 
     public void normalize() {
-        Collection<Rating> allRatings = ratings.values();
+        Collection<Item> allRatings = ratings.values();
         double ratingSum = allRatings.stream().mapToDouble(i -> i.value).sum();
         double dif = ratingSum - AVERAGE_RATING * ratings.size();
         if (Math.abs(dif) > 1) {
@@ -64,8 +62,8 @@ public class EloRating {
         double r1 = r.v1 / sum;
         double r2 = r.v2 / sum;
 
-        Rating item1 = ratings.get(p1);
-        Rating item2 = ratings.get(p2);
+        Item item1 = ratings.get(p1);
+        Item item2 = ratings.get(p2);
         double rat1 = item1.value;
         double rat2 = item2.value;
         item1.value += calculateRatingChange(rat1, rat2, r1);
@@ -77,7 +75,7 @@ public class EloRating {
     }
 
     public double getRatingChange(Knight player) {
-        Rating rating = ratings.get(player);
+        Item rating = ratings.get(player);
         return rating.value - rating.valuePreviousYear;
     }
 
@@ -94,12 +92,12 @@ public class EloRating {
 
         String formatString = "%-2d: %-" + (maxNameLength + 1) + "s %-7.2f";
 
-        List<Map.Entry<Knight, Rating>> sortedItems = ratings.entrySet().stream()
-                .sorted(comparingDouble((Map.Entry<Knight, Rating> entry) -> entry.getValue().value).reversed())
+        List<Map.Entry<Knight, Item>> sortedItems = ratings.entrySet().stream()
+                .sorted(comparingDouble((Map.Entry<Knight, Item> entry) -> entry.getValue().value).reversed())
                 .collect(toList());
 
         for (int i = 0; i < sortedItems.size(); i++) {
-            Map.Entry<Knight, Rating> entry = sortedItems.get(i);
+            Map.Entry<Knight, Item> entry = sortedItems.get(i);
             writer.print(String.format(formatString, (i + 1), entry.getKey().getFullName(), entry.getValue().value));
             if (withDifs) {
                 writer.println(String.format("   %+5.2f", entry.getValue().value - entry.getValue().valuePreviousYear));
@@ -121,7 +119,7 @@ public class EloRating {
 //        SimpleRegression simpleRegression = new SimpleRegression();
 //        simpleRegression.addData(data);
 
-        Rating item = ratings.get(player);
+        Item item = ratings.get(player);
 //        item.value = simpleRegression.predict(Knight.getLevel());
         item.value = AVERAGE_RATING;
         normalize();
@@ -131,9 +129,5 @@ public class EloRating {
         double dif = rat2 - rat1;
         double e = 1 / (1 + Math.exp(dif / 400 * Math.log(10)));
         return K_FACTOR * (res - e);
-    }
-
-    public void advanceYear() {
-        ratings.values().forEach(rating -> rating.initPreviousYearValue());
     }
 }

@@ -74,6 +74,7 @@ public class World {
         players.forEach(Knight::randomizeSkills);
 
         eloRating = new EloRating(players);
+        eloRating.setPreviousYearValues();
 
         nationRating = new NationRating();
         nationRating.initializeDefault();
@@ -165,7 +166,7 @@ public class World {
         getNationRating().printPointHistory(logger);
         logger.println("Сезон завершён");
 
-        getEloRating().advanceYear();
+        getEloRating().setPreviousYearValues();
 
         isSeasonFinished = true;
     }

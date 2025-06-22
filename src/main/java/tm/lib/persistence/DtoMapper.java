@@ -58,12 +58,14 @@ public class DtoMapper {
         return eloRatingDto;
     }
 
-    public static NationRating toDomain(NationRatingDto nationRatingDto) {
+    public static NationRating toDomain(NationRatingDto nationRatingDto, List<Knight> knights) {
         NationRating nationRating = new NationRating();
         nationRating.setPointHistoryPerNation(nationRatingDto.getPointHistory().entrySet().stream()
                 .collect(toMap(e -> e.getKey(), e -> toDomain(e.getValue()))));
-        nationRating.updateNationRanking();
-        nationRating.resetSeasonPoints();
+        nationRating.setNationRanking(nationRatingDto.getNationRanking());
+        nationRating.setNationSeasonPoints(nationRatingDto.getNationSeasonPoints());
+        nationRating.setPlayerSeasonPoints(nationRatingDto.getPlayerSeasonPoints().entrySet().stream()
+                .collect(toMap(e -> knights.get(e.getKey()), e -> e.getValue())));
         return nationRating;
     }
 
@@ -71,6 +73,10 @@ public class DtoMapper {
         NationRatingDto nationRatingDto = new NationRatingDto();
         nationRatingDto.setPointHistory(nationRating.getPointHistoryPerNation().entrySet().stream()
                 .collect(toMap(e -> e.getKey(), e -> toDto(e.getValue()))));
+        nationRatingDto.setNationRanking(nationRating.getNationRanking());
+        nationRatingDto.setNationSeasonPoints(nationRating.getNationSeasonPoints());
+        nationRatingDto.setPlayerSeasonPoints(nationRating.getPlayerSeasonPoints().entrySet().stream()
+                .collect(toMap(e -> e.getKey().getId(), e -> e.getValue())));
         return nationRatingDto;
     }
 
@@ -93,7 +99,7 @@ public class DtoMapper {
         world.setSeasonFinished(dto.isSeasonFinished());
         world.setPlayers(dto.getKnights().stream().map(DtoMapper::toDomain).collect(toList()));
         world.setEloRating(toDomain(dto.getEloRating(), world.getPlayers()));
-        world.setNationRating(toDomain(dto.getNationRating()));
+        world.setNationRating(toDomain(dto.getNationRating(), world.getPlayers()));
 
         world.startNewSeason();
 

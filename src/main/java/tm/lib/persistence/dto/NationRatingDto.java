@@ -11,6 +11,9 @@ import java.util.Map;
 @Setter
 public class NationRatingDto {
     private Map<Nation, PointHistoryItemDto> pointHistory;
+    private List<Nation> nationRanking;
+    private Map<Nation, Double> nationSeasonPoints;
+    private Map<Integer, Double> playerSeasonPoints;
 
     @Getter
     @Setter

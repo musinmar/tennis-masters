@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 
 import static java.util.Collections.unmodifiableMap;
 import static tm.lib.domain.competition.CompetitionBuilder.buildCompetition;
+import static tm.lib.domain.world.StandardSeasonBuilder.buildCompetitionPoints;
 import static tm.lib.domain.world.StandardSeasonBuilder.buildSeasonCompetitionDefinition;
 import static tm.lib.domain.world.WorldLogger.NoopLogger;
 import static tm.lib.persistence.PersistenceManager.loadDefaultPlayers;
@@ -59,10 +60,8 @@ public class World {
         World world = new World();
         world.initNewGame();
         world.startNewSeason();
-//        PersistenceManager.saveDefaultPlayers(world.getPlayers());
         return world;
     }
-
 
     public Competition getCurrentSeason() {
         return seasonCompetition;
@@ -84,19 +83,22 @@ public class World {
         nationRating.printStartOfSeasonFederationsRanking(logger);
         initCompetitions();
         isSeasonFinished = false;
+        initializeEventProcessor();
         eventProcessor.processOnSeasonStartEvents();
     }
 
     private void initCompetitions() {
         seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition(year), year);
-        eventProcessor = new WorldEventProcessor(year, getPlayers(), nationRating, eloRating, seasonCompetition);
-        initCompetitionPointValues();
+        initCompetitionPointValues(buildCompetitionPoints());
     }
 
-    private void initCompetitionPointValues() {
+    public void initializeEventProcessor() {
+        eventProcessor = new WorldEventProcessor(year, getPlayers(), nationRating, eloRating, seasonCompetition);
+    }
+
+    public void initCompetitionPointValues(Map<String, Integer> pointsByPath) {
         Competition season = getCurrentSeason();
         var pointsByCompetition = new HashMap<Competition, Integer>();
-        var pointsByPath = StandardSeasonBuilder.buildCompetitionPoints();
         pointsByPath.forEach((path, value) -> pointsByCompetition.put(season.resolveCompetitionPath(path), value));
         competitionPointValues = unmodifiableMap(pointsByCompetition);
     }
@@ -116,8 +118,7 @@ public class World {
 
         logger.println(match.toString());
 
-        if (match.getCompetition() instanceof GroupSubStage) {
-            GroupSubStage groupSubStage = (GroupSubStage) match.getCompetition();
+        if (match.getCompetition() instanceof GroupSubStage groupSubStage) {
             if (groupSubStage.doesNextMatchStartNewRound()) {
                 if (groupSubStage.isFinished()) {
                     logger.println();
@@ -131,13 +132,11 @@ public class World {
 
     private void updateNationRating(MatchEvent match, MatchScore score) {
         Integer points = getCompetitionPoints(match.getCompetition());
-        if (points != null) {
-            nationRating.updateRatings(
-                    match.getHomePlayer().getPlayerOrFail(),
-                    match.getAwayPlayer().getPlayerOrFail(),
-                    score.getScoreBySets(),
-                    points);
-        }
+        nationRating.updateRatings(
+                match.getHomePlayer().getPlayerOrFail(),
+                match.getAwayPlayer().getPlayerOrFail(),
+                score.getScoreBySets(),
+                points);
     }
 
     private Integer getCompetitionPoints(Competition competition) {
@@ -159,6 +158,7 @@ public class World {
                 writer -> getEloRating().print(writer, true));
 
         year += 1;
+        logger.println();
         getNationRating().printTotalPointsReceived(logger);
         getNationRating().advanceYear();
 

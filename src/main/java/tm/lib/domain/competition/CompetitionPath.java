@@ -2,6 +2,8 @@ package tm.lib.domain.competition;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+
 public class CompetitionPath {
     public static final String PATH_SEPARATOR = "/";
     public static final String PARENT = "..";
@@ -25,6 +27,24 @@ public class CompetitionPath {
             }
         }
         return cur;
+    }
+
+    public static String buildPathTo(Competition from, Competition to) {
+        if (from == null) {
+            throw new IllegalArgumentException("Can't build path from null");
+        }
+        if (to == null) {
+            throw new IllegalArgumentException("Can't build path to null");
+        }
+        var buffer = new ArrayList<String>();
+        while (to != from && to != null) {
+            buffer.add(to.getId());
+            to = to.getParent();
+        }
+        if (to == null) {
+            throw new IllegalArgumentException(to.getId() + " is not direct or indirect child of " + from.getId());
+        }
+        return buildPath(buffer.reversed().toArray(new String[0]));
     }
 
     public static String buildPath(String... sections) {

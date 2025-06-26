@@ -5,15 +5,26 @@ import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.Participant;
 import tm.lib.domain.competition.definition.actions.Action;
 import tm.lib.domain.competition.definition.actions.Actions;
+import tm.lib.domain.competition.definition.actions.Actions.AddAssignedParticipantsFromEloRankings;
+import tm.lib.domain.competition.definition.actions.Actions.GiveTrophy;
+import tm.lib.domain.competition.definition.actions.Actions.SeedAllFromNationRule;
+import tm.lib.domain.competition.definition.actions.Actions.SeedBasedOnNationalRankingRule;
+import tm.lib.domain.competition.definition.actions.Actions.SeedGroupStageToPlayOff;
+import tm.lib.domain.competition.definition.actions.Actions.SeedPlayOffToPlayOff;
+import tm.lib.domain.competition.definition.actions.Actions.SeedRandomPlayers;
+import tm.lib.domain.competition.definition.actions.Actions.SeedWorldCupRound;
 import tm.lib.domain.competition.definition.actions.CompetitionEvent;
 import tm.lib.domain.competition.definition.actions.Trigger;
 import tm.lib.domain.competition.definition.actions.Triggers;
+import tm.lib.domain.competition.definition.actions.Triggers.OnCompetitionEnd;
+import tm.lib.domain.competition.definition.actions.Triggers.OnSeasonStart;
 import tm.lib.domain.competition.impl.AbstractCompetition;
 import tm.lib.domain.competition.impl.GroupResult;
 import tm.lib.domain.competition.impl.GroupStage;
 import tm.lib.domain.competition.impl.GroupSubStage;
 import tm.lib.domain.competition.impl.MultiStageCompetition;
 import tm.lib.domain.competition.impl.PlayOffStage;
+import tm.lib.domain.competition.impl.PlayOffStageConfiguration;
 import tm.lib.domain.competition.impl.PlayOffSubStage;
 import tm.lib.domain.competition.impl.SimpleCompetition;
 import tm.lib.domain.core.BasicScore;
@@ -22,41 +33,44 @@ import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.EloRating;
 import tm.lib.domain.world.NationRating;
 import tm.lib.domain.world.World;
-import tm.lib.persistence.dto.competition.GroupResultDto;
-import tm.lib.persistence.dto.core.BasicScoreDto;
 import tm.lib.persistence.dto.EloRatingDto;
-import tm.lib.persistence.dto.core.KnightDto;
-import tm.lib.persistence.dto.core.MatchScoreDto;
 import tm.lib.persistence.dto.NationRatingDto;
 import tm.lib.persistence.dto.WorldDto;
 import tm.lib.persistence.dto.competition.AbstractCompetitionDto;
-import tm.lib.persistence.dto.competition.actions.ActionDto;
-import tm.lib.persistence.dto.competition.actions.AddAssignedParticipantsFromEloRankingsDto;
 import tm.lib.persistence.dto.competition.CompetitionEventDto;
-import tm.lib.persistence.dto.competition.actions.GiveTrophyDto;
+import tm.lib.persistence.dto.competition.GroupResultDto;
 import tm.lib.persistence.dto.competition.GroupStageDto;
 import tm.lib.persistence.dto.competition.GroupSubStageDto;
 import tm.lib.persistence.dto.competition.MatchEventDto;
 import tm.lib.persistence.dto.competition.MultiStageCompetitionDto;
-import tm.lib.persistence.dto.competition.actions.OnCompetitionEndDto;
-import tm.lib.persistence.dto.competition.actions.OnSeasonStartDto;
 import tm.lib.persistence.dto.competition.ParticipantDto;
+import tm.lib.persistence.dto.competition.PlayOffStageConfigurationDto;
 import tm.lib.persistence.dto.competition.PlayOffStageDto;
 import tm.lib.persistence.dto.competition.PlayOffSubStageDto;
+import tm.lib.persistence.dto.competition.SimpleCompetitionDto;
+import tm.lib.persistence.dto.competition.actions.ActionDto;
+import tm.lib.persistence.dto.competition.actions.AddAssignedParticipantsFromEloRankingsDto;
+import tm.lib.persistence.dto.competition.actions.GiveTrophyDto;
+import tm.lib.persistence.dto.competition.actions.OnCompetitionEndDto;
+import tm.lib.persistence.dto.competition.actions.OnSeasonStartDto;
 import tm.lib.persistence.dto.competition.actions.SeedAllFromNationRuleDto;
 import tm.lib.persistence.dto.competition.actions.SeedBasedOnNationalRankingRuleDto;
 import tm.lib.persistence.dto.competition.actions.SeedGroupStageToPlayOffDto;
 import tm.lib.persistence.dto.competition.actions.SeedPlayOffToPlayOffDto;
 import tm.lib.persistence.dto.competition.actions.SeedRandomPlayersDto;
 import tm.lib.persistence.dto.competition.actions.SeedWorldCupRoundDto;
-import tm.lib.persistence.dto.competition.SimpleCompetitionDto;
 import tm.lib.persistence.dto.competition.actions.TriggerDto;
+import tm.lib.persistence.dto.core.BasicScoreDto;
+import tm.lib.persistence.dto.core.KnightDto;
+import tm.lib.persistence.dto.core.MatchScoreDto;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static tm.lib.domain.competition.CompetitionPath.buildPathTo;
 
 public class DtoMapper {
 
@@ -153,8 +167,10 @@ public class DtoMapper {
         world.setPlayers(dto.getKnights().stream().map(DtoMapper::toDomain).collect(toList()));
         world.setEloRating(toDomain(dto.getEloRating(), world.getPlayers()));
         world.setNationRating(toDomain(dto.getNationRating(), world.getPlayers()));
+        world.setSeasonCompetition(toDomain(dto.getSeasonCompetition(), world.getPlayers()));
+        world.initCompetitionPointValues(dto.getCompetitionPointValues());
 
-        world.startNewSeason();
+        world.initializeEventProcessor();
 
         return world;
     }
@@ -167,7 +183,15 @@ public class DtoMapper {
         dto.setKnights(world.getPlayers().stream().map(DtoMapper::toDto).collect(toList()));
         dto.setEloRating(toDto(world.getEloRating()));
         dto.setNationRating(toDto(world.getNationRating()));
-        dto.setSeasonCompetition(toDto(world.getSeasonCompetition()));
+
+        var seasonCompetition = world.getSeasonCompetition();
+        dto.setSeasonCompetition(toDto(seasonCompetition));
+        Map<String, Integer> competitionPointValues = world.getCompetitionPointValues().entrySet().stream()
+                .collect(toMap(
+                        entry -> buildPathTo(seasonCompetition, entry.getKey()),
+                        Map.Entry::getValue
+                ));
+        dto.setCompetitionPointValues(competitionPointValues);
 
         return dto;
     }
@@ -203,15 +227,15 @@ public class DtoMapper {
                 .filter(p -> p.getId().equals(dto.getHomePlayerParticipantId()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Home player participant not found: " + dto.getHomePlayerParticipantId()));
-        
+
         Participant awayPlayer = participants.stream()
                 .filter(p -> p.getId().equals(dto.getAwayPlayerParticipantId()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Away player participant not found: " + dto.getAwayPlayerParticipantId()));
-        
+
         MatchEvent matchEvent = new MatchEvent(competition, homePlayer, awayPlayer, dto.getSets(), dto.isPlayOff());
         matchEvent.setDate(dto.getDate());
-        matchEvent.setResult(toDomain(dto.getResult()));
+        matchEvent.setResult(dto.getResult() != null ? toDomain(dto.getResult()) : null);
         return matchEvent;
     }
 
@@ -326,8 +350,8 @@ public class DtoMapper {
         List<BasicScore> sets = dto.getSets().stream()
                 .map(DtoMapper::toDomain)
                 .collect(toList());
-        BasicScore additionalTime = dto.getAdditionalTime() != null 
-                ? toDomain(dto.getAdditionalTime()) 
+        BasicScore additionalTime = dto.getAdditionalTime() != null
+                ? toDomain(dto.getAdditionalTime())
                 : null;
         return new MatchScore(sets, additionalTime);
     }
@@ -337,8 +361,8 @@ public class DtoMapper {
         dto.setSets(matchScore.getSets().stream()
                 .map(DtoMapper::toDto)
                 .collect(toList()));
-        dto.setAdditionalTime(matchScore.getAdditionalTime() != null 
-                ? toDto(matchScore.getAdditionalTime()) 
+        dto.setAdditionalTime(matchScore.getAdditionalTime() != null
+                ? toDto(matchScore.getAdditionalTime())
                 : null);
         return dto;
     }
@@ -407,5 +431,172 @@ public class DtoMapper {
         dto.setNationRank(participant.getNationRank());
         dto.setPlayerRankInNation(participant.getPlayerRankInNation());
         return dto;
+    }
+
+    public static Competition toDomain(AbstractCompetitionDto dto, List<Knight> knights) {
+        return switch (dto) {
+            case GroupStageDto groupStageDto -> toDomain(groupStageDto, knights);
+            case GroupSubStageDto groupSubStageDto -> toDomain(groupSubStageDto, knights);
+            case PlayOffStageDto playOffStageDto -> toDomain(playOffStageDto, knights);
+            case PlayOffSubStageDto playOffSubStageDto -> toDomain(playOffSubStageDto, knights);
+            case MultiStageCompetitionDto multiStageDto -> toDomain(multiStageDto, knights);
+            default -> throw new IllegalArgumentException("Unknown competition DTO type: " + dto.getClass().getName());
+        };
+    }
+
+    public static void fillMultiStageCompetitionFromDto(MultiStageCompetition multiStage,
+                                                        MultiStageCompetitionDto dto,
+                                                        List<Knight> knights) {
+        fillAbstractCompetitionFromDto(multiStage, dto, knights);
+
+        List<Competition> stages = dto.getStages().stream()
+                .map(stageDto -> {
+                    var stage = toDomain(stageDto, knights);
+                    stage.setParent(multiStage);
+                    return stage;
+                }).collect(toList());
+        multiStage.setStages(stages);
+    }
+
+    public static void fillSimpleCompetitionFromDto(SimpleCompetition competition,
+                                                    SimpleCompetitionDto dto,
+                                                    List<Knight> knights) {
+        fillAbstractCompetitionFromDto(competition, dto, knights);
+
+        List<Participant> participants = dto.getParticipants().stream()
+                .map(p -> toDomain(p, knights))
+                .collect(toList());
+        competition.setParticipants(participants);
+
+        List<MatchEvent> matches = dto.getMatches().stream()
+                .map(m -> toDomain(m, competition, participants))
+                .collect(toList());
+        competition.setMatches(matches);
+        competition.setNextMatchIndex(dto.getNextMatchIndex());
+    }
+
+    public static GroupStage toDomain(GroupStageDto dto, List<Knight> knights) {
+        GroupStage groupStage = new GroupStage();
+        fillMultiStageCompetitionFromDto(groupStage, dto, knights);
+        groupStage.setGroupCount(dto.getGroupCount());
+        groupStage.setPlayersPerGroup(dto.getPlayersPerGroup());
+        return groupStage;
+    }
+
+    public static GroupSubStage toDomain(GroupSubStageDto dto, List<Knight> knights) {
+        GroupSubStage groupSubStage = new GroupSubStage();
+        fillSimpleCompetitionFromDto(groupSubStage, dto, knights);
+
+        List<GroupResult> groupResults = dto.getGroupResults().stream()
+                .map(gr -> toDomain(gr, groupSubStage.getParticipants()))
+                .collect(toList());
+        groupSubStage.setGroupResults(groupResults);
+
+        return groupSubStage;
+    }
+
+    public static PlayOffStage toDomain(PlayOffStageDto dto, List<Knight> knights) {
+        PlayOffStage playOffStage = new PlayOffStage();
+        fillMultiStageCompetitionFromDto(playOffStage, dto, knights);
+        playOffStage.setConfiguration(toDomain(dto.getConfiguration()));
+        return playOffStage;
+    }
+
+    public static PlayOffSubStage toDomain(PlayOffSubStageDto dto, List<Knight> knights) {
+        PlayOffSubStage playOffSubStage = new PlayOffSubStage();
+        fillSimpleCompetitionFromDto(playOffSubStage, dto, knights);
+        return playOffSubStage;
+    }
+
+    public static MultiStageCompetition toDomain(MultiStageCompetitionDto dto, List<Knight> knights) {
+        MultiStageCompetition multiStage = new MultiStageCompetition(dto.getId(), dto.getName());
+        fillMultiStageCompetitionFromDto(multiStage, dto, knights);
+        return multiStage;
+    }
+
+    public static GroupResult toDomain(GroupResultDto dto, List<Participant> participants) {
+        Participant participant = participants.stream()
+                .filter(p -> p.getId().equals(dto.getParticipantId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Participant not found: " + dto.getParticipantId()));
+
+        GroupResult groupResult = new GroupResult(participant);
+        groupResult.setPoints(dto.getPoints());
+        groupResult.setMatchesPlayed(dto.getMatchesPlayed());
+        groupResult.setGamesWon(dto.getGamesWon());
+        groupResult.setGamesLost(dto.getGamesLost());
+        return groupResult;
+    }
+
+    public static PlayOffStageConfiguration toDomain(PlayOffStageConfigurationDto dto) {
+        return new PlayOffStageConfiguration(dto.getPlayerCount(), dto.getRounds());
+    }
+
+    public static CompetitionEvent toDomain(CompetitionEventDto dto, Competition competition, List<Knight> knights) {
+        Trigger trigger = toDomain(dto.getTrigger());
+        Action action = toDomain(dto.getAction(), knights);
+        return new CompetitionEvent(competition, trigger, action);
+    }
+
+    private static void fillAbstractCompetitionFromDto(AbstractCompetition competition, AbstractCompetitionDto dto, List<Knight> knights) {
+        competition.setId(dto.getId());
+        competition.setName(dto.getName());
+
+        List<CompetitionEvent> events = dto.getEvents().stream()
+                .map(eventDto -> toDomain(eventDto, competition, knights))
+                .collect(toList());
+        competition.setEvents(events);
+
+        List<Knight> assignedParticipants = dto.getAssignedParticipantIds().stream()
+                .map(id -> knights.stream()
+                        .filter(k -> k.getId() == id)
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("Knight not found: " + id)))
+                .collect(toList());
+        competition.setAssignedParticipants(assignedParticipants);
+    }
+
+    public static Trigger toDomain(TriggerDto dto) {
+        return switch (dto) {
+            case OnSeasonStartDto ignored -> new OnSeasonStart();
+            case OnCompetitionEndDto onCompetitionEndDto ->
+                    new OnCompetitionEnd(onCompetitionEndDto.getCompetitionPath());
+            default -> throw new IllegalArgumentException("Unknown trigger DTO type: " + dto.getClass().getName());
+        };
+    }
+
+    public static Action toDomain(ActionDto dto, List<Knight> knights) {
+        return switch (dto) {
+            case SeedRandomPlayersDto ignored -> new SeedRandomPlayers();
+            case SeedGroupStageToPlayOffDto seedGroupStageDto ->
+                    new SeedGroupStageToPlayOff(seedGroupStageDto.getGroupStagePath());
+            case SeedPlayOffToPlayOffDto seedPlayOffDto ->
+                    new SeedPlayOffToPlayOff(seedPlayOffDto.getPlayOffSubStagePath());
+            case SeedAllFromNationRuleDto seedAllFromNationDto ->
+                    new SeedAllFromNationRule(seedAllFromNationDto.getNation());
+            case SeedBasedOnNationalRankingRuleDto seedBasedOnNationalRankingDto -> {
+                List<SeedBasedOnNationalRankingRule.PreviousRound> previousRounds = seedBasedOnNationalRankingDto.getPreviousRounds().stream()
+                        .map(DtoMapper::toDomain)
+                        .collect(toList());
+                List<SeedBasedOnNationalRankingRule.SeedNationalRankingParticipant> seedParticipants = seedBasedOnNationalRankingDto.getSeedNationalRankingParticipants().stream()
+                        .map(DtoMapper::toDomain)
+                        .collect(toList());
+                yield new SeedBasedOnNationalRankingRule(previousRounds, seedParticipants);
+            }
+            case AddAssignedParticipantsFromEloRankingsDto addAssignedDto ->
+                    new AddAssignedParticipantsFromEloRankings(addAssignedDto.getFromEloRank(), addAssignedDto.getToEloRank());
+            case SeedWorldCupRoundDto seedWorldCupDto ->
+                    new SeedWorldCupRound(Optional.ofNullable(seedWorldCupDto.getPreviousRoundPath()));
+            case GiveTrophyDto ignored -> new GiveTrophy();
+            default -> throw new IllegalArgumentException("Unknown action DTO type: " + dto.getClass().getName());
+        };
+    }
+
+    public static SeedBasedOnNationalRankingRule.PreviousRound toDomain(SeedBasedOnNationalRankingRuleDto.PreviousRoundDto dto) {
+        return new SeedBasedOnNationalRankingRule.PreviousRound(dto.getPath(), dto.isWinners());
+    }
+
+    public static SeedBasedOnNationalRankingRule.SeedNationalRankingParticipant toDomain(SeedBasedOnNationalRankingRuleDto.SeedNationalRankingParticipantDto dto) {
+        return new SeedBasedOnNationalRankingRule.SeedNationalRankingParticipant(dto.getNationRank(), dto.getPlayerRankInNation());
     }
 }

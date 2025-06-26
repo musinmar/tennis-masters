@@ -21,6 +21,9 @@ abstract public class SimpleCompetition extends AbstractCompetition {
     private List<MatchEvent> matches;
     private int nextMatchIndex = 0;
 
+    protected SimpleCompetition() {
+    }
+
     protected SimpleCompetition(String id, String name, List<Participant> participants) {
         super(id, name);
         this.participants = participants;
@@ -65,10 +68,6 @@ abstract public class SimpleCompetition extends AbstractCompetition {
     @Override
     public List<MatchEvent> getAllMatches() {
         return matches;
-    }
-
-    protected void setMatches(List<MatchEvent> matches) {
-        this.matches = matches;
     }
 
     @Override

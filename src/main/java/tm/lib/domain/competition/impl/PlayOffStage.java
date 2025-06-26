@@ -1,5 +1,7 @@
 package tm.lib.domain.competition.impl;
 
+import lombok.Getter;
+import lombok.Setter;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.definition.actions.Actions;
 import tm.lib.domain.competition.definition.actions.CompetitionEvent;
@@ -9,11 +11,12 @@ import tm.lib.domain.core.Knight;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public class PlayOffStage extends MultiStageCompetition {
     private PlayOffStageConfiguration configuration;
 
-    public PlayOffStage(String id, String name, int playerCount) {
-        this(id, name, PlayOffStageConfiguration.builder().playerCount(playerCount).build());
+    public PlayOffStage() {
     }
 
     public PlayOffStage(String id, String name, PlayOffStageConfiguration configuration) {

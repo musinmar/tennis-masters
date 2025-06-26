@@ -24,6 +24,9 @@ public class GroupSubStage extends SimpleCompetition {
 
     private List<GroupResult> groupResults;
 
+    public GroupSubStage() {
+    }
+
     public GroupSubStage(String id, String name, int playerCount) {
         super(id, name, createParticipants(id, playerCount));
 

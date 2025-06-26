@@ -10,6 +10,9 @@ import java.util.List;
 
 public class PlayOffSubStage extends SimpleCompetition {
 
+    public PlayOffSubStage() {
+    }
+
     public PlayOffSubStage(String id, String name, int playerCount) {
         super(id, name, createParticipants(getStageParticipantId(playerCount), playerCount));
 

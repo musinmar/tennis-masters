@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 public class MultiStageCompetition extends AbstractCompetition {
     private List<Competition> stages;
 
+    public MultiStageCompetition() {
+    }
+
     public MultiStageCompetition(String id, String name) {
         super(id, name);
     }

@@ -8,6 +8,8 @@ import java.util.List;
 @Getter
 @Setter
 public class SeedBasedOnNationalRankingRuleDto extends ActionDto {
+    public static final String TYPE = "seedBasedOnNationalRankingRule";
+    
     private List<PreviousRoundDto> previousRounds;
     private List<SeedNationalRankingParticipantDto> seedNationalRankingParticipants;
 

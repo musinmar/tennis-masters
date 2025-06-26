@@ -6,4 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GiveTrophyDto extends ActionDto {
+    public static final String TYPE = "giveTrophy";
+    
 }

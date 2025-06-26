@@ -6,5 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OnCompetitionEndDto extends TriggerDto {
+    public static final String TYPE = "onCompetitionEnd";
+    
     private String competitionPath;
 }

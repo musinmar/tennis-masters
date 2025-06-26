@@ -6,6 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GroupStageDto extends MultiStageCompetitionDto {
+    public static final String TYPE = "groupStage";
+    
     private int groupCount;
     private int playersPerGroup;
 }

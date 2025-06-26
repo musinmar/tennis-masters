@@ -6,4 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OnSeasonStartDto extends TriggerDto {
+    public static final String TYPE = "onSeasonStart";
+    
 }

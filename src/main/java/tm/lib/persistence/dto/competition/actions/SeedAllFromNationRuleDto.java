@@ -7,5 +7,7 @@ import tm.lib.domain.core.Nation;
 @Getter
 @Setter
 public class SeedAllFromNationRuleDto extends ActionDto {
+    public static final String TYPE = "seedAllFromNationRule";
+    
     private Nation nation;
 }

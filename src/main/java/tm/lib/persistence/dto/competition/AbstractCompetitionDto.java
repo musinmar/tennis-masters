@@ -1,9 +1,24 @@
 package tm.lib.persistence.dto.competition;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.List;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = MultiStageCompetitionDto.class, name = MultiStageCompetitionDto.TYPE),
+        @JsonSubTypes.Type(value = GroupStageDto.class, name = GroupStageDto.TYPE),
+        @JsonSubTypes.Type(value = GroupSubStageDto.class, name = GroupSubStageDto.TYPE),
+        @JsonSubTypes.Type(value = PlayOffStageDto.class, name = PlayOffStageDto.TYPE),
+        @JsonSubTypes.Type(value = PlayOffSubStageDto.class, name = PlayOffSubStageDto.TYPE)
+})
 @Getter
 @Setter
 public abstract class AbstractCompetitionDto {

@@ -6,5 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SeedPlayOffToPlayOffDto extends ActionDto {
+    public static final String TYPE = "seedPlayOffToPlayOff";
+    
     private String playOffSubStagePath;
 }

@@ -6,4 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PlayOffSubStageDto extends SimpleCompetitionDto {
+    public static final String TYPE = "playOffSubStage";
 }

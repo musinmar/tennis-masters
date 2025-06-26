@@ -6,6 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PlayOffStageDefinitionDto extends CompetitionDefinitionDto {
+    public static final String TYPE = "playOffStageDefinition";
+    
     private int startDate;
     private PlayOffStageConfigurationDto playOffStageConfiguration;
 }

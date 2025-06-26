@@ -345,12 +345,9 @@ public class DtoMapper {
 
     public static TriggerDto toDto(Trigger trigger) {
         if (trigger instanceof Triggers.OnSeasonStart) {
-            OnSeasonStartDto dto = new OnSeasonStartDto();
-            dto.setType("OnSeasonStart");
-            return dto;
+            return new OnSeasonStartDto();
         } else if (trigger instanceof Triggers.OnCompetitionEnd onCompetitionEnd) {
             OnCompetitionEndDto dto = new OnCompetitionEndDto();
-            dto.setType("OnCompetitionEnd");
             dto.setCompetitionPath(onCompetitionEnd.getCompetitionPath());
             return dto;
         } else {
@@ -360,27 +357,21 @@ public class DtoMapper {
 
     public static ActionDto toDto(Action action) {
         if (action instanceof Actions.SeedRandomPlayers) {
-            SeedRandomPlayersDto dto = new SeedRandomPlayersDto();
-            dto.setType("SeedRandomPlayers");
-            return dto;
+            return new SeedRandomPlayersDto();
         } else if (action instanceof Actions.SeedGroupStageToPlayOff seedGroupStageToPlayOff) {
             SeedGroupStageToPlayOffDto dto = new SeedGroupStageToPlayOffDto();
-            dto.setType("SeedGroupStageToPlayOff");
             dto.setGroupStagePath(seedGroupStageToPlayOff.getGroupStagePath());
             return dto;
         } else if (action instanceof Actions.SeedPlayOffToPlayOff seedPlayOffToPlayOff) {
             SeedPlayOffToPlayOffDto dto = new SeedPlayOffToPlayOffDto();
-            dto.setType("SeedPlayOffToPlayOff");
             dto.setPlayOffSubStagePath(seedPlayOffToPlayOff.getPlayOffSubStagePath());
             return dto;
         } else if (action instanceof Actions.SeedAllFromNationRule seedAllFromNationRule) {
             SeedAllFromNationRuleDto dto = new SeedAllFromNationRuleDto();
-            dto.setType("SeedAllFromNationRule");
             dto.setNation(seedAllFromNationRule.getNation());
             return dto;
         } else if (action instanceof Actions.SeedBasedOnNationalRankingRule seedBasedOnNationalRankingRule) {
             SeedBasedOnNationalRankingRuleDto dto = new SeedBasedOnNationalRankingRuleDto();
-            dto.setType("SeedBasedOnNationalRankingRule");
             dto.setPreviousRounds(seedBasedOnNationalRankingRule.getPreviousRounds().stream()
                     .map(DtoMapper::toDto)
                     .collect(toList()));
@@ -390,19 +381,15 @@ public class DtoMapper {
             return dto;
         } else if (action instanceof Actions.AddAssignedParticipantsFromEloRankings addAssignedParticipantsFromEloRankings) {
             AddAssignedParticipantsFromEloRankingsDto dto = new AddAssignedParticipantsFromEloRankingsDto();
-            dto.setType("AddAssignedParticipantsFromEloRankings");
             dto.setFromEloRank(addAssignedParticipantsFromEloRankings.getFromEloRank());
             dto.setToEloRank(addAssignedParticipantsFromEloRankings.getToEloRank());
             return dto;
         } else if (action instanceof Actions.SeedWorldCupRound seedWorldCupRound) {
             SeedWorldCupRoundDto dto = new SeedWorldCupRoundDto();
-            dto.setType("SeedWorldCupRound");
             dto.setPreviousRoundPath(seedWorldCupRound.getPreviousRoundPath().orElse(null));
             return dto;
         } else if (action instanceof Actions.GiveTrophy) {
-            GiveTrophyDto dto = new GiveTrophyDto();
-            dto.setType("GiveTrophy");
-            return dto;
+            return new GiveTrophyDto();
         } else {
             throw new IllegalArgumentException("Unknown action type: " + action.getClass().getName());
         }

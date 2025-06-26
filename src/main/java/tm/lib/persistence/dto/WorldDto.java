@@ -3,9 +3,7 @@ package tm.lib.persistence.dto;
 import lombok.Getter;
 import lombok.Setter;
 import tm.lib.persistence.dto.competition.AbstractCompetitionDto;
-import tm.lib.persistence.dto.core.KnightDto;
 
-import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -13,7 +11,7 @@ import java.util.Map;
 public class WorldDto {
     private int year;
     private boolean isSeasonFinished;
-    private List<KnightDto> knights;
+    private KnightRepositoryDto knightRepository;
     private EloRatingDto eloRating;
     private NationRatingDto nationRating;
     private AbstractCompetitionDto seasonCompetition;

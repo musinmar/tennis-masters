@@ -31,9 +31,11 @@ import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.EloRating;
+import tm.lib.domain.world.KnightRepository;
 import tm.lib.domain.world.NationRating;
 import tm.lib.domain.world.World;
 import tm.lib.persistence.dto.EloRatingDto;
+import tm.lib.persistence.dto.KnightRepositoryDto;
 import tm.lib.persistence.dto.NationRatingDto;
 import tm.lib.persistence.dto.WorldDto;
 import tm.lib.persistence.dto.competition.AbstractCompetitionDto;
@@ -98,10 +100,10 @@ public class DtoMapper {
         return dto;
     }
 
-    public static EloRating toDomain(EloRatingDto eloRatingDto, List<Knight> knights) {
-        EloRating eloRating = new EloRating(knights);
+    public static EloRating toDomain(EloRatingDto eloRatingDto, KnightRepository knightRepository) {
+        EloRating eloRating = new EloRating(knightRepository.getAll());
         eloRating.setRatings(eloRatingDto.getItems().stream()
-                .collect(toMap(item -> knights.get(item.getPlayerId()), itemDto -> {
+                .collect(toMap(item -> knightRepository.getById(item.getPlayerId()), itemDto -> {
                     EloRating.Item rating = new EloRating.Item();
                     rating.setValue(itemDto.getPoints());
                     rating.setValuePreviousYear(itemDto.getPointsPreviousYear());
@@ -125,14 +127,16 @@ public class DtoMapper {
         return eloRatingDto;
     }
 
-    public static NationRating toDomain(NationRatingDto nationRatingDto, List<Knight> knights) {
+    public static NationRating toDomain(NationRatingDto nationRatingDto, KnightRepository knightRepository) {
         NationRating nationRating = new NationRating();
         nationRating.setPointHistoryPerNation(nationRatingDto.getPointHistory().entrySet().stream()
-                .collect(toMap(e -> e.getKey(), e -> toDomain(e.getValue()))));
+                .collect(toMap(e -> e.getKey(),
+                        e -> toDomain(e.getValue()))));
         nationRating.setNationRanking(nationRatingDto.getNationRanking());
         nationRating.setNationSeasonPoints(nationRatingDto.getNationSeasonPoints());
         nationRating.setPlayerSeasonPoints(nationRatingDto.getPlayerSeasonPoints().entrySet().stream()
-                .collect(toMap(e -> knights.get(e.getKey()), e -> e.getValue())));
+                .collect(toMap(e -> knightRepository.getById(e.getKey()),
+                        e -> e.getValue())));
         return nationRating;
     }
 
@@ -159,15 +163,27 @@ public class DtoMapper {
         return itemDto;
     }
 
+    public static KnightRepository toDomain(KnightRepositoryDto dto) {
+        KnightRepository knightRepository = new KnightRepository();
+        knightRepository.setKnights(dto.getKnights().stream().map(DtoMapper::toDomain).toList());
+        return knightRepository;
+    }
+
+    public static KnightRepositoryDto toDto(KnightRepository knightRepository) {
+        KnightRepositoryDto dto = new KnightRepositoryDto();
+        dto.setKnights(knightRepository.getAll().stream().map(DtoMapper::toDto).toList());
+        return dto;
+    }
+
     public static World toDomain(WorldDto dto) {
         World world = new World();
 
         world.setYear(dto.getYear());
         world.setSeasonFinished(dto.isSeasonFinished());
-        world.setPlayers(dto.getKnights().stream().map(DtoMapper::toDomain).collect(toList()));
-        world.setEloRating(toDomain(dto.getEloRating(), world.getPlayers()));
-        world.setNationRating(toDomain(dto.getNationRating(), world.getPlayers()));
-        world.setSeasonCompetition(toDomain(dto.getSeasonCompetition(), world.getPlayers()));
+        world.setKnightRepository(toDomain(dto.getKnightRepository()));
+        world.setEloRating(toDomain(dto.getEloRating(), world.getKnightRepository()));
+        world.setNationRating(toDomain(dto.getNationRating(), world.getKnightRepository()));
+        world.setSeasonCompetition(toDomain(dto.getSeasonCompetition(), world.getKnightRepository()));
         world.initCompetitionPointValues(dto.getCompetitionPointValues());
 
         world.initializeEventProcessor();
@@ -180,7 +196,7 @@ public class DtoMapper {
 
         dto.setYear(world.getYear());
         dto.setSeasonFinished(world.isSeasonFinished());
-        dto.setKnights(world.getPlayers().stream().map(DtoMapper::toDto).collect(toList()));
+        dto.setKnightRepository(toDto(world.getKnightRepository()));
         dto.setEloRating(toDto(world.getEloRating()));
         dto.setNationRating(toDto(world.getNationRating()));
 
@@ -196,10 +212,10 @@ public class DtoMapper {
         return dto;
     }
 
-    public static Participant toDomain(ParticipantDto dto, List<Knight> knights) {
-        Optional<Knight> player = dto.getPlayerId() != null ? knights.stream()
-                .filter(k -> k.getId() == dto.getPlayerId())
-                .findFirst() : Optional.empty();
+    public static Participant toDomain(ParticipantDto dto, KnightRepository knightRepository) {
+        Optional<Knight> player = Optional.ofNullable(
+                dto.getPlayerId() != null ? knightRepository.getById(dto.getPlayerId()) : null
+        );
         return new Participant(dto.getId(), player);
     }
 
@@ -433,25 +449,25 @@ public class DtoMapper {
         return dto;
     }
 
-    public static Competition toDomain(AbstractCompetitionDto dto, List<Knight> knights) {
+    public static Competition toDomain(AbstractCompetitionDto dto, KnightRepository knightRepository) {
         return switch (dto) {
-            case GroupStageDto groupStageDto -> toDomain(groupStageDto, knights);
-            case GroupSubStageDto groupSubStageDto -> toDomain(groupSubStageDto, knights);
-            case PlayOffStageDto playOffStageDto -> toDomain(playOffStageDto, knights);
-            case PlayOffSubStageDto playOffSubStageDto -> toDomain(playOffSubStageDto, knights);
-            case MultiStageCompetitionDto multiStageDto -> toDomain(multiStageDto, knights);
+            case GroupStageDto groupStageDto -> toDomain(groupStageDto, knightRepository);
+            case GroupSubStageDto groupSubStageDto -> toDomain(groupSubStageDto, knightRepository);
+            case PlayOffStageDto playOffStageDto -> toDomain(playOffStageDto, knightRepository);
+            case PlayOffSubStageDto playOffSubStageDto -> toDomain(playOffSubStageDto, knightRepository);
+            case MultiStageCompetitionDto multiStageDto -> toDomain(multiStageDto, knightRepository);
             default -> throw new IllegalArgumentException("Unknown competition DTO type: " + dto.getClass().getName());
         };
     }
 
     public static void fillMultiStageCompetitionFromDto(MultiStageCompetition multiStage,
                                                         MultiStageCompetitionDto dto,
-                                                        List<Knight> knights) {
-        fillAbstractCompetitionFromDto(multiStage, dto, knights);
+                                                        KnightRepository knightRepository) {
+        fillAbstractCompetitionFromDto(multiStage, dto, knightRepository);
 
         List<Competition> stages = dto.getStages().stream()
                 .map(stageDto -> {
-                    var stage = toDomain(stageDto, knights);
+                    var stage = toDomain(stageDto, knightRepository);
                     stage.setParent(multiStage);
                     return stage;
                 }).collect(toList());
@@ -460,11 +476,11 @@ public class DtoMapper {
 
     public static void fillSimpleCompetitionFromDto(SimpleCompetition competition,
                                                     SimpleCompetitionDto dto,
-                                                    List<Knight> knights) {
-        fillAbstractCompetitionFromDto(competition, dto, knights);
+                                                    KnightRepository knightRepository) {
+        fillAbstractCompetitionFromDto(competition, dto, knightRepository);
 
         List<Participant> participants = dto.getParticipants().stream()
-                .map(p -> toDomain(p, knights))
+                .map(p -> toDomain(p, knightRepository))
                 .collect(toList());
         competition.setParticipants(participants);
 
@@ -475,17 +491,17 @@ public class DtoMapper {
         competition.setNextMatchIndex(dto.getNextMatchIndex());
     }
 
-    public static GroupStage toDomain(GroupStageDto dto, List<Knight> knights) {
+    public static GroupStage toDomain(GroupStageDto dto, KnightRepository knightRepository) {
         GroupStage groupStage = new GroupStage();
-        fillMultiStageCompetitionFromDto(groupStage, dto, knights);
+        fillMultiStageCompetitionFromDto(groupStage, dto, knightRepository);
         groupStage.setGroupCount(dto.getGroupCount());
         groupStage.setPlayersPerGroup(dto.getPlayersPerGroup());
         return groupStage;
     }
 
-    public static GroupSubStage toDomain(GroupSubStageDto dto, List<Knight> knights) {
+    public static GroupSubStage toDomain(GroupSubStageDto dto, KnightRepository knightRepository) {
         GroupSubStage groupSubStage = new GroupSubStage();
-        fillSimpleCompetitionFromDto(groupSubStage, dto, knights);
+        fillSimpleCompetitionFromDto(groupSubStage, dto, knightRepository);
 
         List<GroupResult> groupResults = dto.getGroupResults().stream()
                 .map(gr -> toDomain(gr, groupSubStage.getParticipants()))
@@ -495,22 +511,22 @@ public class DtoMapper {
         return groupSubStage;
     }
 
-    public static PlayOffStage toDomain(PlayOffStageDto dto, List<Knight> knights) {
+    public static PlayOffStage toDomain(PlayOffStageDto dto, KnightRepository knightRepository) {
         PlayOffStage playOffStage = new PlayOffStage();
-        fillMultiStageCompetitionFromDto(playOffStage, dto, knights);
+        fillMultiStageCompetitionFromDto(playOffStage, dto, knightRepository);
         playOffStage.setConfiguration(toDomain(dto.getConfiguration()));
         return playOffStage;
     }
 
-    public static PlayOffSubStage toDomain(PlayOffSubStageDto dto, List<Knight> knights) {
+    public static PlayOffSubStage toDomain(PlayOffSubStageDto dto, KnightRepository knightRepository) {
         PlayOffSubStage playOffSubStage = new PlayOffSubStage();
-        fillSimpleCompetitionFromDto(playOffSubStage, dto, knights);
+        fillSimpleCompetitionFromDto(playOffSubStage, dto, knightRepository);
         return playOffSubStage;
     }
 
-    public static MultiStageCompetition toDomain(MultiStageCompetitionDto dto, List<Knight> knights) {
+    public static MultiStageCompetition toDomain(MultiStageCompetitionDto dto, KnightRepository knightRepository) {
         MultiStageCompetition multiStage = new MultiStageCompetition(dto.getId(), dto.getName());
-        fillMultiStageCompetitionFromDto(multiStage, dto, knights);
+        fillMultiStageCompetitionFromDto(multiStage, dto, knightRepository);
         return multiStage;
     }
 
@@ -532,26 +548,26 @@ public class DtoMapper {
         return new PlayOffStageConfiguration(dto.getPlayerCount(), dto.getRounds());
     }
 
-    public static CompetitionEvent toDomain(CompetitionEventDto dto, Competition competition, List<Knight> knights) {
+    public static CompetitionEvent toDomain(CompetitionEventDto dto,
+                                            Competition competition) {
         Trigger trigger = toDomain(dto.getTrigger());
-        Action action = toDomain(dto.getAction(), knights);
+        Action action = toDomain(dto.getAction());
         return new CompetitionEvent(competition, trigger, action);
     }
 
-    private static void fillAbstractCompetitionFromDto(AbstractCompetition competition, AbstractCompetitionDto dto, List<Knight> knights) {
+    private static void fillAbstractCompetitionFromDto(AbstractCompetition competition,
+                                                       AbstractCompetitionDto dto,
+                                                       KnightRepository knightRepository) {
         competition.setId(dto.getId());
         competition.setName(dto.getName());
 
         List<CompetitionEvent> events = dto.getEvents().stream()
-                .map(eventDto -> toDomain(eventDto, competition, knights))
+                .map(eventDto -> toDomain(eventDto, competition))
                 .collect(toList());
         competition.setEvents(events);
 
         List<Knight> assignedParticipants = dto.getAssignedParticipantIds().stream()
-                .map(id -> knights.stream()
-                        .filter(k -> k.getId() == id)
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("Knight not found: " + id)))
+                .map(knightRepository::getById)
                 .collect(toList());
         competition.setAssignedParticipants(assignedParticipants);
     }
@@ -565,7 +581,7 @@ public class DtoMapper {
         };
     }
 
-    public static Action toDomain(ActionDto dto, List<Knight> knights) {
+    public static Action toDomain(ActionDto dto) {
         return switch (dto) {
             case SeedRandomPlayersDto ignored -> new SeedRandomPlayers();
             case SeedGroupStageToPlayOffDto seedGroupStageDto ->

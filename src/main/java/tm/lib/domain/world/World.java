@@ -44,7 +44,7 @@ public class World {
     private Competition seasonCompetition;
     private Map<Competition, Integer> competitionPointValues;
 
-    private List<Knight> players = new ArrayList<Knight>();
+    private KnightRepository knightRepository;
     private EloRating eloRating;
     private NationRating nationRating;
 
@@ -69,10 +69,12 @@ public class World {
 
     private void initNewGame() {
         year = 0;
-        players = loadDefaultPlayers();
-        players.forEach(Knight::randomizeSkills);
+        knightRepository = new KnightRepository();
+        var knights = loadDefaultPlayers();
+        knights.forEach(Knight::randomizeSkills);
+        knightRepository.setKnights(knights);
 
-        eloRating = new EloRating(players);
+        eloRating = new EloRating(knightRepository.getAll());
         eloRating.setPreviousYearValues();
 
         nationRating = new NationRating();
@@ -93,7 +95,7 @@ public class World {
     }
 
     public void initializeEventProcessor() {
-        eventProcessor = new WorldEventProcessor(year, getPlayers(), nationRating, eloRating, seasonCompetition);
+        eventProcessor = new WorldEventProcessor(year, knightRepository, nationRating, eloRating, seasonCompetition);
     }
 
     public void initCompetitionPointValues(Map<String, Integer> pointsByPath) {

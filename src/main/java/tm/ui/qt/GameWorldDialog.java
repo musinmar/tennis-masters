@@ -23,16 +23,16 @@ import io.qt.widgets.QTabWidget;
 import io.qt.widgets.QVBoxLayout;
 import io.qt.widgets.QWidget;
 import tm.lib.domain.competition.Competition;
-import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.CompetitionPrinter;
+import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.impl.MultiStageCompetition;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
-import tm.lib.persistence.PersistenceManager;
 import tm.lib.domain.world.World;
 import tm.lib.domain.world.WorldLogger;
 import tm.lib.engine.StrategyProvider;
+import tm.lib.persistence.PersistenceManager;
 import tm.ui.qt.simulation.SimulationHelper;
 
 import java.net.URI;
@@ -74,23 +74,23 @@ public class GameWorldDialog extends QMainWindow {
         QLabel seasonComboBoxLabel = new QLabel(this);
         seasonComboBoxLabel.setText("Сезон:");
         seasonComboBox = new QComboBox(this);
-        seasonComboBox.currentIndexChanged.connect(this, "onSeasonComboBoxIndexChanged()");
+        seasonComboBox.currentIndexChanged.connect(this::onSeasonComboBoxIndexChanged);
 
         QLabel tournamentComboBoxLabel = new QLabel(this);
         tournamentComboBoxLabel.setText("Соревнование:");
         tournamentComboBox = new QComboBox(this);
-        tournamentComboBox.currentIndexChanged.connect(this, "onTournamentComboBoxIndexChanged()");
+        tournamentComboBox.currentIndexChanged.connect(this::onTournamentComboBoxIndexChanged);
 
         QLabel stageComboBoxLabel = new QLabel(this);
         stageComboBoxLabel.setText("Стадия:");
         stageComboBox = new QComboBox(this);
-        stageComboBox.currentIndexChanged.connect(this, "onStageComboBoxIndexChanged()");
+        stageComboBox.currentIndexChanged.connect(this::onStageComboBoxIndexChanged);
 
         QLabel subStageComboBoxLabel = new QLabel(this);
         subStageComboBoxLabel.setText("Группа/раунд:");
         subStageComboBox = new QComboBox(this);
         subStageComboBox.setEnabled(false);
-        subStageComboBox.currentIndexChanged.connect(this, "onSubStageComboBoxIndexChanged()");
+        subStageComboBox.currentIndexChanged.connect(this::onSubStageComboBoxIndexChanged);
 
         QHBoxLayout competitionSelectorLayout = new QHBoxLayout();
         competitionSelectorLayout.setSpacing(10);
@@ -145,7 +145,7 @@ public class GameWorldDialog extends QMainWindow {
 
         QPushButton nextFastButton = new QPushButton(this);
         nextFastButton.setText("Симулировать матч");
-        nextFastButton.clicked.connect(this, "onNextMatchFastButtonClicked()");
+        nextFastButton.clicked.connect(this::onNextMatchFastButtonClicked);
 
         QHBoxLayout bottomButtonsLayout = new QHBoxLayout();
         bottomButtonsLayout.addSpacerItem(new QSpacerItem(10, 10, QSizePolicy.Policy.Expanding));
@@ -175,9 +175,9 @@ public class GameWorldDialog extends QMainWindow {
 
         QMenu toolsMenu = new QMenu("Инструменты");
         QAction showMatchConfigurationDialogAction = toolsMenu.addAction("Сыграть матч");
-        showMatchConfigurationDialogAction.triggered.connect(this, "onShowMatchConfigurationDialogActionTriggered()");
+        showMatchConfigurationDialogAction.triggered.connect(this::onShowMatchConfigurationDialogActionTriggered);
         QAction teachAnnDialogAction = toolsMenu.addAction("Обучить сеть");
-        teachAnnDialogAction.triggered.connect(this, "onTeachAnnDialogActionTriggered()");
+        teachAnnDialogAction.triggered.connect(this::onTeachAnnDialogActionTriggered);
 
         QMenuBar menuBar = new QMenuBar(this);
         menuBar.addMenu(fileMenu);
@@ -333,7 +333,6 @@ public class GameWorldDialog extends QMainWindow {
             applyMatchResult(match, score);
         } else if (!world.isSeasonFinished()) {
             world.finishSeason();
-            PersistenceManager.saveWorld(world);
         } else {
             QMessageBox.StandardButton reply = QMessageBox.question(this, "Новый сезон",
                     "Хотите начать новый сезон?", new StandardButtons(Yes, No, Cancel));
@@ -341,6 +340,7 @@ public class GameWorldDialog extends QMainWindow {
                 startNewSeason();
             }
         }
+        PersistenceManager.saveWorld(world);
     }
 
     private void applyMatchResult(MatchEvent match, MatchScore score) {
@@ -473,7 +473,7 @@ public class GameWorldDialog extends QMainWindow {
         System.out.println(Arrays.toString(pathElements));
         if (PLAYERS_PATH.equals(pathElements[1])) {
             var playerId = Integer.valueOf(pathElements[2]);
-            var player = world.getPlayers().stream().filter(p -> p.getId() == playerId).findFirst().get();
+            var player = world.getKnightRepository().getById(playerId);
             PlayerDialog playerDialog = new PlayerDialog(this, player);
             playerDialog.show();
         }

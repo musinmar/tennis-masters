@@ -26,7 +26,7 @@ import static tm.lib.domain.world.GroupStageUtils.makeSeededGroupsTwoByFour;
 public class WorldEventProcessor {
 
     private final int year;
-    private final List<Knight> players;
+    private final KnightRepository knightRepository;
     private final NationRating nationRating;
     private final EloRating eloRating;
     private final Competition rootCompetition;
@@ -34,12 +34,12 @@ public class WorldEventProcessor {
     private final List<CompetitionEvent> onSeasonStartEvents;
 
     public WorldEventProcessor(int year,
-                               List<Knight> players,
+                               KnightRepository knightRepository,
                                NationRating nationRating,
                                EloRating eloRating,
                                Competition rootCompetition) {
         this.year = year;
-        this.players = players;
+        this.knightRepository = knightRepository;
         this.nationRating = nationRating;
         this.eloRating = eloRating;
         this.rootCompetition = rootCompetition;
@@ -55,10 +55,6 @@ public class WorldEventProcessor {
                     var path = competitionEnd.getCompetitionPath();
                     return t.getCompetition().resolveCompetitionPath(path);
                 }, toList()));
-    }
-
-    private List<Knight> getPlayers() {
-        return players;
     }
 
     void processOnSeasonStartEvents() {
@@ -97,7 +93,9 @@ public class WorldEventProcessor {
     }
 
     private void processAllFromNationSeedingRule(Competition competition, Actions.SeedAllFromNationRule rule) {
-        var nationPlayers = getPlayers().stream().filter(p -> p.getNation() == rule.getNation()).toList();
+        var nationPlayers = knightRepository.getAll().stream()
+                .filter(p -> p.getNation() == rule.getNation())
+                .toList();
         if (!(competition instanceof GroupStage groupStage)) {
             var message = String.format("Competition %s is not a group stage competition", competition.getName());
             throw new IllegalArgumentException(message);
@@ -136,7 +134,7 @@ public class WorldEventProcessor {
     }
 
     private void processRandomSelectionTrigger(Competition competition) {
-        var playerPool = new ArrayList<>(this.players);
+        var playerPool = new ArrayList<>(this.knightRepository.getAll());
         shuffle(playerPool);
         switch (competition) {
             case GroupStage groupStage -> {

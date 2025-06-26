@@ -7,7 +7,7 @@ import tm.lib.domain.world.World;
 public class WidgetsHelper {
 
     public static void fillPlayerComboBox(QComboBox comboBox, World world) {
-        for (Knight player : world.getPlayers()) {
+        for (Knight player : world.getKnightRepository().getAll()) {
             comboBox.addItem(player.getFullName(), player);
         }
         comboBox.setCurrentIndex(5);

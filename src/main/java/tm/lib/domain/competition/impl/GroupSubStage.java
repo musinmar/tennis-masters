@@ -1,5 +1,7 @@
 package tm.lib.domain.competition.impl;
 
+import lombok.Getter;
+import lombok.Setter;
 import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.Participant;
 import tm.lib.domain.core.Knight;
@@ -16,9 +18,11 @@ import java.util.List;
 import static java.util.Collections.reverseOrder;
 import static java.util.stream.Collectors.toList;
 
+@Getter
+@Setter
 public class GroupSubStage extends SimpleCompetition {
 
-    private final List<GroupResult> groupResults;
+    private List<GroupResult> groupResults;
 
     public GroupSubStage(String id, String name, int playerCount) {
         super(id, name, createParticipants(id, playerCount));

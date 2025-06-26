@@ -169,6 +169,10 @@ public class GameWorldDialog extends QMainWindow {
         centralWidget.setLayout(leftLayout);
         setCentralWidget(centralWidget);
 
+        QMenu fileMenu = new QMenu("Файл");
+        QAction saveGameAction = fileMenu.addAction("Сохранить");
+        saveGameAction.triggered.connect(this::onSaveGameActionTriggered);
+
         QMenu toolsMenu = new QMenu("Инструменты");
         QAction showMatchConfigurationDialogAction = toolsMenu.addAction("Сыграть матч");
         showMatchConfigurationDialogAction.triggered.connect(this, "onShowMatchConfigurationDialogActionTriggered()");
@@ -176,6 +180,7 @@ public class GameWorldDialog extends QMainWindow {
         teachAnnDialogAction.triggered.connect(this, "onTeachAnnDialogActionTriggered()");
 
         QMenuBar menuBar = new QMenuBar(this);
+        menuBar.addMenu(fileMenu);
         menuBar.addMenu(toolsMenu);
         setMenuBar(menuBar);
 
@@ -210,6 +215,7 @@ public class GameWorldDialog extends QMainWindow {
         try {
             world = PersistenceManager.loadWorld();
         } catch (Exception e) {
+            e.printStackTrace();
             StandardButtons buttons = QMessageBox.StandardButton.flags(Yes, No);
             var result = QMessageBox.question(
                     this,
@@ -516,5 +522,9 @@ public class GameWorldDialog extends QMainWindow {
         updateNextMatchLabel();
         nationRatingWidget.repopulateNationRatingWidget();
         eloRatingWidget.repopulateEloRatingList();
+    }
+
+    private void onSaveGameActionTriggered() {
+        PersistenceManager.saveWorld(world);
     }
 }

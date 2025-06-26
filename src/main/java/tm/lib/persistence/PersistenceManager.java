@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.world.World;
-import tm.lib.persistence.dto.KnightDto;
+import tm.lib.persistence.dto.core.KnightDto;
 import tm.lib.persistence.dto.WorldDto;
 
 import java.io.File;

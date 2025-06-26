@@ -1,5 +1,7 @@
 package tm.lib.domain.core;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.stream.Collectors;
 /**
  * Representation of a match result (score).
  */
+@Getter
 public class MatchScore {
 
     public static final int BASE_SET_LENGTH = 9;
@@ -24,14 +27,6 @@ public class MatchScore {
 
     public MatchScore(MatchScore other) {
         this(other.sets, other.additionalTime);
-    }
-
-    public List<BasicScore> getSets() {
-        return sets;
-    }
-
-    public BasicScore getAdditionalTime() {
-        return additionalTime;
     }
 
     public int getSetCount() {

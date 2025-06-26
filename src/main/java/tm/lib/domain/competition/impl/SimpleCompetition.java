@@ -1,6 +1,7 @@
 package tm.lib.domain.competition.impl;
 
 import lombok.Getter;
+import lombok.Setter;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.Participant;
@@ -13,9 +14,10 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Getter
+@Setter
 abstract public class SimpleCompetition extends AbstractCompetition {
 
-    private final List<Participant> participants;
+    private List<Participant> participants;
     private List<MatchEvent> matches;
     private int nextMatchIndex = 0;
 
@@ -27,10 +29,6 @@ abstract public class SimpleCompetition extends AbstractCompetition {
     @Override
     public Optional<Competition> getChild(String id) {
         return Optional.empty();
-    }
-
-    protected int getNextMatchIndex() {
-        return nextMatchIndex;
     }
 
     protected static List<Participant> createParticipants(String stageParticipantId, int count) {

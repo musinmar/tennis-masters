@@ -1,10 +1,14 @@
 package tm.lib.domain.competition.impl;
 
+import lombok.Getter;
+import lombok.Setter;
 import tm.lib.domain.competition.Participant;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.MatchScore;
 
-class GroupResult {
+@Getter
+@Setter
+public class GroupResult {
     private final Participant participant;
 
     private int matchesPlayed;
@@ -14,26 +18,6 @@ class GroupResult {
 
     public GroupResult(Participant participant) {
         this.participant = participant;
-    }
-
-    public Participant getParticipant() {
-        return participant;
-    }
-
-    public int getMatchesPlayed() {
-        return matchesPlayed;
-    }
-
-    public int getPoints() {
-        return points;
-    }
-
-    public int getGamesWon() {
-        return gamesWon;
-    }
-
-    public int getGamesLost() {
-        return gamesLost;
     }
 
     public void applyMatchResult(MatchScore score) {

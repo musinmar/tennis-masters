@@ -223,7 +223,7 @@ public class GameWorldDialog extends QMainWindow {
         try {
             world = PersistenceManager.loadWorld();
         } catch (Exception e) {
-            e.printStackTrace();
+            StandardMessageBoxes.showError(e, this);
             StandardButtons buttons = QMessageBox.StandardButton.flags(Yes, No);
             var result = QMessageBox.question(
                     this,

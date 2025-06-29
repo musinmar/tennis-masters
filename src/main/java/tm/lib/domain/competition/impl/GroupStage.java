@@ -26,7 +26,7 @@ public class GroupStage extends MultiStageCompetition {
         List<Competition> groups = new ArrayList<>();
         for (int i = 0; i < groupCount; ++i) {
             String groupId = String.valueOf((char) ('A' + i));
-            GroupSubStage group = new GroupSubStage(groupId, "Group " + groupId, playersPerGroup);
+            GroupCompetition group = new GroupCompetition(groupId, "Group " + groupId, playersPerGroup);
             groups.add(group);
         }
         setStages(groups);
@@ -40,7 +40,7 @@ public class GroupStage extends MultiStageCompetition {
         List<Competition> groups = new ArrayList<>();
         for (int i = 0; i < groupCount; ++i) {
             String groupId = String.valueOf((char) ('A' + i));
-            GroupSubStage group = new GroupSubStage(groupId, "Group " + groupId, playersInGroup);
+            GroupCompetition group = new GroupCompetition(groupId, "Group " + groupId, playersInGroup);
             groups.add(group);
         }
         return groups;
@@ -48,7 +48,7 @@ public class GroupStage extends MultiStageCompetition {
 
     public GroupStageResult getResults() {
         return new GroupStageResult(getStages().stream()
-                .map(stage -> ((GroupSubStage) stage).getResults())
+                .map(stage -> ((GroupCompetition) stage).getResults())
                 .collect(Collectors.toList()));
     }
 
@@ -60,21 +60,21 @@ public class GroupStage extends MultiStageCompetition {
     }
 
     public void setActualParticipantsByGroups(List<List<Knight>> players) {
-        var groups = getGroupSubStages();
+        var groups = getGroups();
         for (int i = 0; i < groups.size(); i++) {
             groups.get(i).setActualParticipants(players.get(i));
         }
     }
 
     public void setActualParticipants(List<Knight> players) {
-        int groupSize = getGroupSubStages().getFirst().getParticipants().size();
+        int groupSize = getGroups().getFirst().getParticipants().size();
         var grouped = ListUtils.partition(players, groupSize);
         setActualParticipantsByGroups(grouped);
     }
 
     @SuppressWarnings("unchecked")
-    public List<GroupSubStage> getGroupSubStages() {
-        return (List<GroupSubStage>) (List<?>) getStages();
+    public List<GroupCompetition> getGroups() {
+        return (List<GroupCompetition>) (List<?>) getStages();
     }
 
     @Override

@@ -24,7 +24,7 @@ public class Actions {
     @Getter
     @AllArgsConstructor
     public static class SeedPlayOffToPlayOff implements Action {
-        private String playOffSubStagePath;
+        private String playOffRoundPath;
     }
 
     @Getter

@@ -7,8 +7,8 @@ import java.util.List;
 
 @Getter
 @Setter
-public class GroupSubStageDto extends SimpleCompetitionDto {
-    public static final String TYPE = "groupSubStage";
+public class GroupCompetitionDto extends SimpleCompetitionDto {
+    public static final String TYPE = "group";
 
     private List<GroupResultDto> groupResults;
 }

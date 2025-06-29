@@ -20,14 +20,14 @@ import static java.util.stream.Collectors.toList;
 
 @Getter
 @Setter
-public class GroupSubStage extends SimpleCompetition {
+public class GroupCompetition extends SimpleCompetition {
 
     private List<GroupResult> groupResults;
 
-    public GroupSubStage() {
+    public GroupCompetition() {
     }
 
-    public GroupSubStage(String id, String name, int playerCount) {
+    public GroupCompetition(String id, String name, int playerCount) {
         super(id, name, createParticipants(id, playerCount));
 
         List<MatchEvent> matches = createSchedule(getParticipants());

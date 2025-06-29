@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.MatchEvent;
-import tm.lib.domain.competition.impl.GroupSubStage;
+import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.event.SeasonConclusion;
@@ -189,14 +189,14 @@ public class World {
 
         logger.println(match.toString());
 
-        if (match.getCompetition() instanceof GroupSubStage groupSubStage) {
-            if (groupSubStage.doesNextMatchStartNewRound()) {
-                if (groupSubStage.isFinished()) {
+        if (match.getCompetition() instanceof GroupCompetition groupCompetition) {
+            if (groupCompetition.doesNextMatchStartNewRound()) {
+                if (groupCompetition.isFinished()) {
                     logger.println();
                     logger.println("Final standings");
                 }
                 logger.println();
-                logger.println(groupSubStage.printGroupResultsToString());
+                logger.println(groupCompetition.printGroupResultsToString());
             }
         }
     }

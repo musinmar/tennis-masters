@@ -8,5 +8,5 @@ import lombok.Setter;
 public class SeedPlayOffToPlayOffDto extends ActionDto {
     public static final String TYPE = "seedPlayOffToPlayOff";
     
-    private String playOffSubStagePath;
+    private String playOffRoundPath;
 }

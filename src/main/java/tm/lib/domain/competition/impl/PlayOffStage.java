@@ -28,7 +28,7 @@ public class PlayOffStage extends MultiStageCompetition {
         for (int i = 0; i < configuration.getRounds(); i++) {
             String subStageName = getDefaultRoundName(roundPlayerCount);
             var stageId = "POS" + (i + 1);
-            PlayOffSubStage stage = new PlayOffSubStage(stageId, subStageName, roundPlayerCount);
+            PlayOffRound stage = new PlayOffRound(stageId, subStageName, roundPlayerCount);
             if (i > 0) {
                 var previousStageId = "POS" + i;
                 var seedingEvent = new CompetitionEvent(
@@ -37,7 +37,6 @@ public class PlayOffStage extends MultiStageCompetition {
                         new Actions.SeedPlayOffToPlayOff("../" + previousStageId));
                 stage.setEvents(List.of(seedingEvent));
             }
-//            stage.registerOnFinishedCallback(this::onPlayoffSubStageFinished);
             stages.add(stage);
             roundPlayerCount /= 2;
         }
@@ -68,31 +67,17 @@ public class PlayOffStage extends MultiStageCompetition {
         }
     }
 
-    private void onPlayOffSubStageFinished(Competition competition) {
-        PlayOffSubStage finishedStage = (PlayOffSubStage) competition;
-        PlayOffSubStage nextStage = null;
-        for (int i = 0; i < getStages().size() - 1; ++i) {
-            if (getStages().get(i) == finishedStage) {
-                nextStage = (PlayOffSubStage) getStages().get(i + 1);
-                break;
-            }
-        }
-        if (nextStage != null) {
-            nextStage.setActualParticipants(finishedStage.getResults().getWinners());
-        }
-    }
-
     @SuppressWarnings("unchecked")
-    public List<PlayOffSubStage> getPlayoffSubStages() {
-        return (List<PlayOffSubStage>) (List<?>) getStages();
+    public List<PlayOffRound> getPlayOffRounds() {
+        return (List<PlayOffRound>) (List<?>) getStages();
     }
 
     public void setActualParticipants(List<Knight> players) {
-        getPlayoffSubStages().get(0).setActualParticipants(players);
+        getPlayOffRounds().get(0).setActualParticipants(players);
     }
 
-    public PlayOffSubStageResult getLastRoundResults() {
-        PlayOffSubStage lastRound = (PlayOffSubStage) getStages().get(getStages().size() - 1);
+    public PlayOffRoundResult getLastRoundResults() {
+        PlayOffRound lastRound = (PlayOffRound) getStages().get(getStages().size() - 1);
         return lastRound.getResults();
     }
 }

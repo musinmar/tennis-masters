@@ -21,11 +21,11 @@ import tm.lib.domain.competition.definition.actions.Triggers.OnSeasonStart;
 import tm.lib.domain.competition.impl.AbstractCompetition;
 import tm.lib.domain.competition.impl.GroupResult;
 import tm.lib.domain.competition.impl.GroupStage;
-import tm.lib.domain.competition.impl.GroupSubStage;
+import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.competition.impl.MultiStageCompetition;
 import tm.lib.domain.competition.impl.PlayOffStage;
 import tm.lib.domain.competition.impl.PlayOffStageConfiguration;
-import tm.lib.domain.competition.impl.PlayOffSubStage;
+import tm.lib.domain.competition.impl.PlayOffRound;
 import tm.lib.domain.competition.impl.SimpleCompetition;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.Knight;
@@ -42,13 +42,13 @@ import tm.lib.persistence.dto.competition.AbstractCompetitionDto;
 import tm.lib.persistence.dto.competition.CompetitionEventDto;
 import tm.lib.persistence.dto.competition.GroupResultDto;
 import tm.lib.persistence.dto.competition.GroupStageDto;
-import tm.lib.persistence.dto.competition.GroupSubStageDto;
+import tm.lib.persistence.dto.competition.GroupCompetitionDto;
 import tm.lib.persistence.dto.competition.MatchEventDto;
 import tm.lib.persistence.dto.competition.MultiStageCompetitionDto;
 import tm.lib.persistence.dto.competition.ParticipantDto;
 import tm.lib.persistence.dto.competition.PlayOffStageConfigurationDto;
 import tm.lib.persistence.dto.competition.PlayOffStageDto;
-import tm.lib.persistence.dto.competition.PlayOffSubStageDto;
+import tm.lib.persistence.dto.competition.PlayOffRoundDto;
 import tm.lib.persistence.dto.competition.SimpleCompetitionDto;
 import tm.lib.persistence.dto.competition.actions.ActionDto;
 import tm.lib.persistence.dto.competition.actions.AddAssignedParticipantsFromEloRankingsDto;
@@ -258,9 +258,9 @@ public class DtoMapper {
     public static AbstractCompetitionDto toDto(Competition competition) {
         return switch (competition) {
             case GroupStage groupStage -> toDto(groupStage);
-            case GroupSubStage groupSubStage -> toDto(groupSubStage);
+            case GroupCompetition groupCompetition -> toDto(groupCompetition);
             case PlayOffStage playOffStage -> toDto(playOffStage);
-            case PlayOffSubStage playOffSubStage -> toDto(playOffSubStage);
+            case PlayOffRound playOffRound -> toDto(playOffRound);
             case MultiStageCompetition multiStageCompetition -> toDto(multiStageCompetition);
             default ->
                     throw new IllegalArgumentException("Unknown competition type: " + competition.getClass().getName());
@@ -284,8 +284,8 @@ public class DtoMapper {
         return dto;
     }
 
-    public static GroupSubStageDto toDto(GroupSubStage competition) {
-        GroupSubStageDto dto = new GroupSubStageDto();
+    public static GroupCompetitionDto toDto(GroupCompetition competition) {
+        GroupCompetitionDto dto = new GroupCompetitionDto();
         fillSimpleCompetitionDto(dto, competition);
         dto.setGroupResults(competition.getGroupResults().stream()
                 .map(DtoMapper::toDto)
@@ -313,8 +313,8 @@ public class DtoMapper {
         return dto;
     }
 
-    public static PlayOffSubStageDto toDto(PlayOffSubStage competition) {
-        PlayOffSubStageDto dto = new PlayOffSubStageDto();
+    public static PlayOffRoundDto toDto(PlayOffRound competition) {
+        PlayOffRoundDto dto = new PlayOffRoundDto();
         fillSimpleCompetitionDto(dto, competition);
         return dto;
     }
@@ -404,7 +404,7 @@ public class DtoMapper {
             return dto;
         } else if (action instanceof Actions.SeedPlayOffToPlayOff seedPlayOffToPlayOff) {
             SeedPlayOffToPlayOffDto dto = new SeedPlayOffToPlayOffDto();
-            dto.setPlayOffSubStagePath(seedPlayOffToPlayOff.getPlayOffSubStagePath());
+            dto.setPlayOffRoundPath(seedPlayOffToPlayOff.getPlayOffRoundPath());
             return dto;
         } else if (action instanceof Actions.SeedAllFromNationRule seedAllFromNationRule) {
             SeedAllFromNationRuleDto dto = new SeedAllFromNationRuleDto();
@@ -452,9 +452,9 @@ public class DtoMapper {
     public static Competition toDomain(AbstractCompetitionDto dto, KnightRepository knightRepository) {
         return switch (dto) {
             case GroupStageDto groupStageDto -> toDomain(groupStageDto, knightRepository);
-            case GroupSubStageDto groupSubStageDto -> toDomain(groupSubStageDto, knightRepository);
+            case GroupCompetitionDto groupCompetitionDto -> toDomain(groupCompetitionDto, knightRepository);
             case PlayOffStageDto playOffStageDto -> toDomain(playOffStageDto, knightRepository);
-            case PlayOffSubStageDto playOffSubStageDto -> toDomain(playOffSubStageDto, knightRepository);
+            case PlayOffRoundDto playOffRoundDto -> toDomain(playOffRoundDto, knightRepository);
             case MultiStageCompetitionDto multiStageDto -> toDomain(multiStageDto, knightRepository);
             default -> throw new IllegalArgumentException("Unknown competition DTO type: " + dto.getClass().getName());
         };
@@ -499,16 +499,16 @@ public class DtoMapper {
         return groupStage;
     }
 
-    public static GroupSubStage toDomain(GroupSubStageDto dto, KnightRepository knightRepository) {
-        GroupSubStage groupSubStage = new GroupSubStage();
-        fillSimpleCompetitionFromDto(groupSubStage, dto, knightRepository);
+    public static GroupCompetition toDomain(GroupCompetitionDto dto, KnightRepository knightRepository) {
+        GroupCompetition groupCompetition = new GroupCompetition();
+        fillSimpleCompetitionFromDto(groupCompetition, dto, knightRepository);
 
         List<GroupResult> groupResults = dto.getGroupResults().stream()
-                .map(gr -> toDomain(gr, groupSubStage.getParticipants()))
+                .map(gr -> toDomain(gr, groupCompetition.getParticipants()))
                 .collect(toList());
-        groupSubStage.setGroupResults(groupResults);
+        groupCompetition.setGroupResults(groupResults);
 
-        return groupSubStage;
+        return groupCompetition;
     }
 
     public static PlayOffStage toDomain(PlayOffStageDto dto, KnightRepository knightRepository) {
@@ -518,10 +518,10 @@ public class DtoMapper {
         return playOffStage;
     }
 
-    public static PlayOffSubStage toDomain(PlayOffSubStageDto dto, KnightRepository knightRepository) {
-        PlayOffSubStage playOffSubStage = new PlayOffSubStage();
-        fillSimpleCompetitionFromDto(playOffSubStage, dto, knightRepository);
-        return playOffSubStage;
+    public static PlayOffRound toDomain(PlayOffRoundDto dto, KnightRepository knightRepository) {
+        PlayOffRound playOffRound = new PlayOffRound();
+        fillSimpleCompetitionFromDto(playOffRound, dto, knightRepository);
+        return playOffRound;
     }
 
     public static MultiStageCompetition toDomain(MultiStageCompetitionDto dto, KnightRepository knightRepository) {
@@ -587,7 +587,7 @@ public class DtoMapper {
             case SeedGroupStageToPlayOffDto seedGroupStageDto ->
                     new SeedGroupStageToPlayOff(seedGroupStageDto.getGroupStagePath());
             case SeedPlayOffToPlayOffDto seedPlayOffDto ->
-                    new SeedPlayOffToPlayOff(seedPlayOffDto.getPlayOffSubStagePath());
+                    new SeedPlayOffToPlayOff(seedPlayOffDto.getPlayOffRoundPath());
             case SeedAllFromNationRuleDto seedAllFromNationDto ->
                     new SeedAllFromNationRule(seedAllFromNationDto.getNation());
             case SeedBasedOnNationalRankingRuleDto seedBasedOnNationalRankingDto -> {

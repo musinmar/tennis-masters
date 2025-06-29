@@ -10,7 +10,7 @@ import tm.lib.domain.competition.definition.actions.CompetitionEvent;
 import tm.lib.domain.competition.definition.actions.Triggers;
 import tm.lib.domain.competition.impl.GroupStage;
 import tm.lib.domain.competition.impl.PlayOffStage;
-import tm.lib.domain.competition.impl.PlayOffSubStage;
+import tm.lib.domain.competition.impl.PlayOffRound;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Nation;
 
@@ -105,12 +105,12 @@ public class WorldEventProcessor {
     }
 
     private void processPlayOffToPlayOffTrigger(Competition competition, Actions.SeedPlayOffToPlayOff seedPlayOffToPlayOff) {
-        var source = competition.resolveCompetitionPath(seedPlayOffToPlayOff.getPlayOffSubStagePath());
-        if (!(source instanceof PlayOffSubStage sourceStage)) {
+        var source = competition.resolveCompetitionPath(seedPlayOffToPlayOff.getPlayOffRoundPath());
+        if (!(source instanceof PlayOffRound sourceStage)) {
             var message = String.format("Path %s is not pointing to a play-off sub stage",
-                    seedPlayOffToPlayOff.getPlayOffSubStagePath());
+                    seedPlayOffToPlayOff.getPlayOffRoundPath());
             throw new IllegalArgumentException(message);
-        } else if (!(competition instanceof PlayOffSubStage targetStage)) {
+        } else if (!(competition instanceof PlayOffRound targetStage)) {
             var message = String.format("Competition %s is not a play-off stage", competition.getId());
             throw new IllegalArgumentException(message);
         } else {

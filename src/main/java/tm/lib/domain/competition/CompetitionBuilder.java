@@ -1,9 +1,9 @@
 package tm.lib.domain.competition;
 
-import tm.lib.domain.competition.definition.CompetitionDefinitions.CompetitionDefinition;
-import tm.lib.domain.competition.definition.CompetitionDefinitions.GroupStageDefinition;
-import tm.lib.domain.competition.definition.CompetitionDefinitions.MultiStageCompetitionDefinition;
-import tm.lib.domain.competition.definition.CompetitionDefinitions.PlayOffStageDefinition;
+import tm.lib.domain.competition.definition.CompetitionDefinition;
+import tm.lib.domain.competition.definition.GroupStageDefinition;
+import tm.lib.domain.competition.definition.MultiStageCompetitionDefinition;
+import tm.lib.domain.competition.definition.PlayOffStageDefinition;
 import tm.lib.domain.competition.definition.CompetitionSchedule;
 import tm.lib.domain.competition.definition.actions.CompetitionEvent;
 import tm.lib.domain.competition.impl.GroupStage;

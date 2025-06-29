@@ -2,6 +2,7 @@ package tm.lib.persistence.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import tm.lib.domain.world.WorldState;
 import tm.lib.persistence.dto.competition.AbstractCompetitionDto;
 
 import java.util.Map;
@@ -10,7 +11,7 @@ import java.util.Map;
 @Setter
 public class WorldDto {
     private int year;
-    private boolean isSeasonFinished;
+    private WorldState state;
     private KnightRepositoryDto knightRepository;
     private EloRatingDto eloRating;
     private NationRatingDto nationRating;

@@ -24,13 +24,17 @@ import io.qt.widgets.QVBoxLayout;
 import io.qt.widgets.QWidget;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.CompetitionPrinter;
-import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.impl.MultiStageCompetition;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.world.World;
 import tm.lib.domain.world.WorldLogger;
+import tm.lib.domain.world.event.SeasonConclusion;
+import tm.lib.domain.world.event.SeasonMatchEvent;
+import tm.lib.domain.world.event.SeasonStart;
+import tm.lib.domain.world.event.WorldEvent;
+import tm.lib.domain.world.event.YearProgression;
 import tm.lib.engine.StrategyProvider;
 import tm.lib.persistence.PersistenceManager;
 import tm.ui.qt.simulation.SimulationHelper;
@@ -56,8 +60,10 @@ public class GameWorldDialog extends QMainWindow {
     private QComboBox tournamentComboBox;
     private QComboBox stageComboBox;
     private QComboBox subStageComboBox;
-    private QLabel nextMatchLabel;
-    private QLabel previousMatchLabel;
+    private QLabel nextEventLabel;
+    private QLabel previousEventLabel;
+    private QPushButton nextEventButton;
+    private QPushButton nextEventFastButton;
     private QPlainTextEdit seasonLogTextEdit;
     private NationRatingWidget nationRatingWidget;
     private EloRatingWidget eloRatingWidget;
@@ -139,25 +145,24 @@ public class GameWorldDialog extends QMainWindow {
         tabWidget.addTab(seasonBrowserWidget, "Турниры");
         tabWidget.addTab(nationRatingWidget, "Рейтинг наций");
 
-        QPushButton nextButton = new QPushButton(this);
-        nextButton.setText("Смотреть матч");
-        nextButton.clicked.connect(this::onNextMatchButtonClicked);
+        nextEventButton = new QPushButton(this);
+        nextEventButton.setText("Смотреть матч");
+        nextEventButton.clicked.connect(this::onNextMatchButtonClicked);
 
-        QPushButton nextFastButton = new QPushButton(this);
-        nextFastButton.setText("Симулировать матч");
-        nextFastButton.clicked.connect(this::onNextMatchFastButtonClicked);
+        nextEventFastButton = new QPushButton(this);
+        nextEventFastButton.clicked.connect(this::onNextEventFastButtonClicked);
 
         QHBoxLayout bottomButtonsLayout = new QHBoxLayout();
         bottomButtonsLayout.addSpacerItem(new QSpacerItem(10, 10, QSizePolicy.Policy.Expanding));
-        bottomButtonsLayout.addWidget(nextButton);
-        bottomButtonsLayout.addWidget(nextFastButton);
+        bottomButtonsLayout.addWidget(nextEventButton);
+        bottomButtonsLayout.addWidget(nextEventFastButton);
 
-        previousMatchLabel = createMatchLabel();
-        nextMatchLabel = createMatchLabel();
+        previousEventLabel = createMatchLabel();
+        nextEventLabel = createMatchLabel();
 
         QHBoxLayout matchLabelsLayout = new QHBoxLayout();
-        matchLabelsLayout.addWidget(previousMatchLabel);
-        matchLabelsLayout.addWidget(nextMatchLabel);
+        matchLabelsLayout.addWidget(previousEventLabel);
+        matchLabelsLayout.addWidget(nextEventLabel);
 
         QVBoxLayout leftLayout = new QVBoxLayout();
         leftLayout.setSpacing(5);
@@ -170,6 +175,9 @@ public class GameWorldDialog extends QMainWindow {
         setCentralWidget(centralWidget);
 
         QMenu fileMenu = new QMenu("Файл");
+        QAction restartGame = fileMenu.addAction("Restart");
+        restartGame.triggered.connect(this::onRestartGameActionTriggered);
+
         QAction saveGameAction = fileMenu.addAction("Сохранить");
         saveGameAction.triggered.connect(this::onSaveGameActionTriggered);
 
@@ -186,7 +194,7 @@ public class GameWorldDialog extends QMainWindow {
 
         QAction simulateNextMatchAction = new QAction(this);
         simulateNextMatchAction.setShortcut("Space");
-        simulateNextMatchAction.triggered.connect(nextFastButton.clicked);
+        simulateNextMatchAction.triggered.connect(nextEventFastButton.clicked);
         addAction(simulateNextMatchAction);
 
         resize(1200, 600);
@@ -246,13 +254,12 @@ public class GameWorldDialog extends QMainWindow {
 
     private void setWorld(World world) {
         this.world = world;
-        setWindowTitle("Игровой мир - Сезон " + (world.getYear() + 1));
+        configureGameWorldLogger();
         nationRatingWidget.setNationRating(world.getNationRating());
         eloRatingWidget.setEloRating(world.getEloRating());
-        populateSeasonComboBox();
-        updateLogText();
-        updateNextMatchLabel();
-        configureGameWorldLogger();
+
+        updateWidgetsOnNewSeason();
+        updateWidgetsOnWorldEvent();
     }
 
     private void populateSeasonComboBox() {
@@ -320,34 +327,48 @@ public class GameWorldDialog extends QMainWindow {
         runWithSimulationRunner((match, strategyProvider) -> SimulationHelper.showMatch(match, strategyProvider, this));
     }
 
-    private void onNextMatchFastButtonClicked() {
+    private void onNextEventFastButtonClicked() {
         runWithSimulationRunner(SimulationHelper::simulateMatch);
     }
 
     private void runWithSimulationRunner(BiFunction<Match, StrategyProvider, MatchScore> simulationRunner) {
-        Optional<MatchEvent> maybeMatch = world.getCurrentSeason().getNextMatch();
-        if (maybeMatch.isPresent()) {
-            //StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(neuralNetworkTeacher.getBestFoundPerceptron()), new StandardStrategy());
-            MatchEvent match = maybeMatch.get();
-            MatchScore score = simulationRunner.apply(match.createMatchSpec(), StrategyProvider.standard());
-            applyMatchResult(match, score);
-        } else if (!world.isSeasonFinished()) {
-            world.finishSeason();
-        } else {
-            QMessageBox.StandardButton reply = QMessageBox.question(this, "Новый сезон",
-                    "Хотите начать новый сезон?", new StandardButtons(Yes, No, Cancel));
-            if (reply == Yes) {
-                startNewSeason();
+        var event = world.getNextEvent();
+        switch (event) {
+            case SeasonStart _, SeasonConclusion _ -> world.progressState();
+            case YearProgression _ -> {
+                QMessageBox.StandardButton reply = QMessageBox.question(this, "Новый сезон",
+                        "Хотите начать новый сезон?", new StandardButtons(Yes, No, Cancel));
+                if (reply == Yes) {
+                    world.progressState();
+                    updateWidgetsOnNewSeason();
+                } else {
+                    return;
+                }
             }
+            case SeasonMatchEvent seasonMatchEvent -> {
+                var match = seasonMatchEvent.getMatchEvent();
+                MatchScore score = simulationRunner.apply(match.createMatchSpec(), StrategyProvider.standard());
+                selectCompetition(match.getCompetition());
+                world.processMatch(match, score);
+            }
+            case null, default -> throw new IllegalArgumentException("Unknown world event: " + event);
         }
+
+        updatePreviousEventLabel(event);
+        updateWidgetsOnWorldEvent();
+
         PersistenceManager.saveWorld(world);
     }
 
-    private void applyMatchResult(MatchEvent match, MatchScore score) {
-        selectCompetition(match.getCompetition());
-        world.processMatch(match, score);
+    private void updateWidgetsOnNewSeason() {
+        setWindowTitle("Игровой мир - Сезон " + (world.getYear() + 1));
+        seasonLogTextEdit.clear();
+        populateSeasonComboBox();
         updateLogText();
-        updatePreviousMatchLabel(match);
+    }
+
+    private void updateWidgetsOnWorldEvent() {
+        updateLogText();
         updateNextMatchLabel();
         eloRatingWidget.repopulateEloRatingList();
         nationRatingWidget.repopulateNationRatingWidget();
@@ -436,27 +457,41 @@ public class GameWorldDialog extends QMainWindow {
         subStageComboBox.setCurrentIndex(subStageComboBox.findData(competition));
     }
 
-    private void updatePreviousMatchLabel(MatchEvent match) {
-        previousMatchLabel.setText("Последний матч:" + createMatchDescription(match));
+    private void updatePreviousEventLabel(WorldEvent event) {
+        previousEventLabel.setText(createEventDescription("Последнее событие:", event));
     }
 
     private void updateNextMatchLabel() {
-        var nextMatch = world.getCurrentSeason().getNextMatch();
-        if (nextMatch.isEmpty()) {
-            return;
+        var event = world.getNextEvent();
+        nextEventLabel.setText(createEventDescription("Следующее событие:", event));
+        if (event instanceof SeasonMatchEvent) {
+            nextEventButton.setEnabled(true);
+            nextEventFastButton.setText("Симулировать матч");
+        } else {
+            nextEventButton.setEnabled(false);
+            nextEventFastButton.setText("Дальше");
         }
-        nextMatchLabel.setText("Следующий матч:" + createMatchDescription(nextMatch.get()));
     }
 
-    private String createMatchDescription(MatchEvent match) {
-        var resultString = (match.getResult() == null) ? "" : " " + match.getResult();
-        return String.format(
-                "<html><br/>%s<br/>%s - %s%s</html>",
-                match.getCompetition().getFullName(false),
-                buildPlayerEndpoint(match.getHomePlayer().getPlayer()),
-                buildPlayerEndpoint(match.getAwayPlayer().getPlayer()),
-                resultString
-        );
+    private String createEventDescription(String description, WorldEvent event) {
+        var detailedDescription = switch (event) {
+            case SeasonStart _ -> "Season start";
+            case SeasonConclusion _ -> "Season conclusion";
+            case YearProgression _ -> "Year progression";
+            case SeasonMatchEvent seasonMatchEvent -> {
+                var match = seasonMatchEvent.getMatchEvent();
+                var resultString = (match.getResult() == null) ? "" : " " + match.getResult();
+                yield String.format("%s<br/>%s - %s%s",
+                        match.getCompetition().getFullName(false),
+                        buildPlayerEndpoint(match.getHomePlayer().getPlayer()),
+                        buildPlayerEndpoint(match.getAwayPlayer().getPlayer()),
+                        resultString
+                );
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + event);
+        };
+
+        return String.format("<html>%s<br/>%s</html>", description, detailedDescription);
     }
 
     private String buildPlayerEndpoint(Optional<Knight> maybeKnight) {
@@ -515,13 +550,8 @@ public class GameWorldDialog extends QMainWindow {
         world.setLogger(logger);
     }
 
-    private void startNewSeason() {
-        seasonLogTextEdit.clear();
-        world.startNewSeason();
-        populateSeasonComboBox();
-        updateNextMatchLabel();
-        nationRatingWidget.repopulateNationRatingWidget();
-        eloRatingWidget.repopulateEloRatingList();
+    private void onRestartGameActionTriggered() {
+        setWorld(createNewWorld());
     }
 
     private void onSaveGameActionTriggered() {

@@ -2,21 +2,23 @@ package tm.lib.domain.world;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.Validate;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.impl.GroupSubStage;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
+import tm.lib.domain.world.event.SeasonConclusion;
+import tm.lib.domain.world.event.SeasonMatchEvent;
+import tm.lib.domain.world.event.SeasonStart;
+import tm.lib.domain.world.event.WorldEvent;
+import tm.lib.domain.world.event.YearProgression;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -38,8 +40,8 @@ public class World {
 
     private WorldLogger logger = NoopLogger;
 
-    private int year = 0;
-    private boolean isSeasonFinished = false;
+    private int year;
+    private WorldState state;
 
     private Competition seasonCompetition;
     private Map<Competition, Integer> competitionPointValues;
@@ -59,7 +61,6 @@ public class World {
     public static World createNewWorld() {
         World world = new World();
         world.initNewGame();
-        world.startNewSeason();
         return world;
     }
 
@@ -68,25 +69,54 @@ public class World {
     }
 
     private void initNewGame() {
-        year = 0;
         knightRepository = new KnightRepository();
         var knights = loadDefaultPlayers();
         knights.forEach(Knight::randomizeSkills);
         knightRepository.setKnights(knights);
 
         eloRating = new EloRating(knightRepository.getAll());
-        eloRating.setPreviousYearValues();
 
         nationRating = new NationRating();
         nationRating.initializeDefault();
+
+        year = 0;
+        initializeNewYear();
     }
 
-    public void startNewSeason() {
+    private void startNewSeason() {
+        logger.println("Starting new season " + (year + 1));
+        logger.println();
         nationRating.printStartOfSeasonFederationsRanking(logger);
-        initCompetitions();
-        isSeasonFinished = false;
-        initializeEventProcessor();
         eventProcessor.processOnSeasonStartEvents();
+        state = WorldState.SEASON_IN_PROGRESS;
+    }
+
+    private void concludeSeason() {
+        saveToFile(makeFilename(FILE_NAME_RATING_CHANGE, true, true),
+                writer -> getEloRating().print(writer, true));
+
+        logger.println();
+        getNationRating().printTotalPointsReceived(logger);
+
+        logger.println();
+        getNationRating().printPointHistory(logger);
+        logger.println("Сезон завершён");
+        logger.println();
+
+        state = WorldState.SEASON_CONCLUDED;
+    }
+
+    private void advanceYear() {
+        year += 1;
+        getNationRating().advanceYear();
+        initializeNewYear();
+    }
+
+    private void initializeNewYear() {
+        getEloRating().setPreviousYearValues();
+        initCompetitions();
+        initializeEventProcessor();
+        state = WorldState.SEASON_INITIALIZED;
     }
 
     private void initCompetitions() {
@@ -105,7 +135,46 @@ public class World {
         competitionPointValues = unmodifiableMap(pointsByCompetition);
     }
 
+    public WorldEvent getNextEvent() {
+        switch (state) {
+            case SEASON_IN_PROGRESS -> {
+                var nextMatch = seasonCompetition.getNextMatch();
+                if (nextMatch.isPresent()) {
+                    var seasonMatchEvent = new SeasonMatchEvent();
+                    seasonMatchEvent.setMatchEvent(nextMatch.get());
+                    return seasonMatchEvent;
+                } else {
+                    return SeasonConclusion.INSTANCE;
+                }
+            }
+            case SEASON_CONCLUDED -> {
+                return YearProgression.INSTANCE;
+            }
+            case SEASON_INITIALIZED -> {
+                return SeasonStart.INSTANCE;
+            }
+            case null, default -> throw new IllegalStateException("Unknown world state: " + state);
+        }
+    }
+
+    public void progressState() {
+        var nextEvent = getNextEvent();
+        switch (nextEvent) {
+            case SeasonStart _ -> startNewSeason(); // start season
+            case SeasonConclusion _ -> concludeSeason(); // conclude season
+            case YearProgression _ -> advanceYear(); // progress year
+            case MatchEvent _ ->
+                    throw new IllegalStateException("Can't progress state because not all matches were played");
+            case null, default -> throw new IllegalStateException("Unknown world event type: " + nextEvent);
+        }
+    }
+
     public void processMatch(MatchEvent match, MatchScore score) {
+        var nextEvent = getNextEvent();
+        if (!(nextEvent instanceof SeasonMatchEvent seasonMatchEvent) || seasonMatchEvent.getMatchEvent() != match) {
+            throw new IllegalStateException("Next event is expected to be: " + nextEvent);
+        }
+
         if (match.getCompetition() != latestCompetition) {
             logger.println();
             logger.println(match.getCompetition().getFullName(false));
@@ -151,26 +220,6 @@ public class World {
             current = current.getParent();
         }
         return 0;
-    }
-
-    public void finishSeason() {
-        Validate.isTrue(!isSeasonFinished);
-
-        saveToFile(makeFilename(FILE_NAME_RATING_CHANGE, true, true),
-                writer -> getEloRating().print(writer, true));
-
-        year += 1;
-        logger.println();
-        getNationRating().printTotalPointsReceived(logger);
-        getNationRating().advanceYear();
-
-        logger.println();
-        getNationRating().printPointHistory(logger);
-        logger.println("Сезон завершён");
-
-        getEloRating().setPreviousYearValues();
-
-        isSeasonFinished = true;
     }
 
     private String makeFilename(String s, boolean withYear, boolean txtExtension) {

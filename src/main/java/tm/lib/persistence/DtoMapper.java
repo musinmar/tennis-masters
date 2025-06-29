@@ -179,7 +179,7 @@ public class DtoMapper {
         World world = new World();
 
         world.setYear(dto.getYear());
-        world.setSeasonFinished(dto.isSeasonFinished());
+        world.setState(dto.getState());
         world.setKnightRepository(toDomain(dto.getKnightRepository()));
         world.setEloRating(toDomain(dto.getEloRating(), world.getKnightRepository()));
         world.setNationRating(toDomain(dto.getNationRating(), world.getKnightRepository()));
@@ -195,7 +195,7 @@ public class DtoMapper {
         WorldDto dto = new WorldDto();
 
         dto.setYear(world.getYear());
-        dto.setSeasonFinished(world.isSeasonFinished());
+        dto.setState(world.getState());
         dto.setKnightRepository(toDto(world.getKnightRepository()));
         dto.setEloRating(toDto(world.getEloRating()));
         dto.setNationRating(toDto(world.getNationRating()));

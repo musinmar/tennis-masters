@@ -20,12 +20,6 @@ public interface Competition {
 
     Optional<Competition> getChild(String id);
 
-    int getStartingDate();
-
-    void setStartingDate(int date);
-
-    int getLastDate();
-
     void assignParticipants(List<Knight> players);
 
     List<Knight> getAssignedParticipants();

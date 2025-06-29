@@ -124,7 +124,7 @@ public class GroupCompetition extends SimpleCompetition {
     }
 
     @Override
-    public void setStartingDate(int date) {
+    public void setStartDate(int date) {
         List<MatchEvent> matches = getAllMatches();
         int roundSize = getParticipants().size() / 2;
         for (int i = 0; i < matches.size(); i++) {

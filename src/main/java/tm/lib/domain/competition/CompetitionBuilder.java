@@ -1,10 +1,10 @@
 package tm.lib.domain.competition;
 
 import tm.lib.domain.competition.definition.CompetitionDefinition;
+import tm.lib.domain.competition.definition.CompetitionSchedule;
 import tm.lib.domain.competition.definition.GroupStageDefinition;
 import tm.lib.domain.competition.definition.MultiStageCompetitionDefinition;
 import tm.lib.domain.competition.definition.PlayOffStageDefinition;
-import tm.lib.domain.competition.definition.CompetitionSchedule;
 import tm.lib.domain.competition.definition.actions.CompetitionEvent;
 import tm.lib.domain.competition.impl.GroupStage;
 import tm.lib.domain.competition.impl.MultiStageCompetition;
@@ -40,14 +40,19 @@ public class CompetitionBuilder {
                         groupStageDefinition.getName(),
                         groupStageDefinition.getGroupCount(),
                         groupStageDefinition.getPlayersPerGroup());
-                groupStage.setStartingDate(groupStageDefinition.getStartDate());
+                var startDate = groupStageDefinition.getStartDate();
+                groupStage.getGroups().forEach(g -> g.setStartDate(startDate));
                 return groupStage;
             }
             case PlayOffStageDefinition playOffStageDefinition -> {
                 var playOffStage = new PlayOffStage(playOffStageDefinition.getId(),
                         playOffStageDefinition.getName(),
                         playOffStageDefinition.getPlayOffStageConfiguration());
-                playOffStage.setStartingDate(playOffStageDefinition.getStartDate());
+                var startDate = playOffStageDefinition.getStartDate();
+                var playOffRounds = playOffStage.getPlayOffRounds();
+                for (int i = 0; i < playOffRounds.size(); ++i) {
+                    playOffRounds.get(i).setStartDate(startDate + i * 2);
+                }
                 return playOffStage;
             }
             case MultiStageCompetitionDefinition multiStageCompetitionDefinition -> {

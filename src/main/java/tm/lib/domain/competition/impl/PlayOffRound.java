@@ -34,7 +34,7 @@ public class PlayOffRound extends SimpleCompetition {
     }
 
     @Override
-    public void setStartingDate(int date) {
+    public void setStartDate(int date) {
         for (MatchEvent match : getAllMatches()) {
             match.setDate(date);
         }

@@ -16,7 +16,8 @@ public class GroupStage extends MultiStageCompetition {
     private int groupCount;
     private int playersPerGroup;
 
-    public GroupStage() {}
+    public GroupStage() {
+    }
 
     public GroupStage(String id, String name, int groupCount, int playersPerGroup) {
         super(id, name);
@@ -50,13 +51,6 @@ public class GroupStage extends MultiStageCompetition {
         return new GroupStageResult(getStages().stream()
                 .map(stage -> ((GroupCompetition) stage).getResults())
                 .collect(Collectors.toList()));
-    }
-
-    @Override
-    public void setStartingDate(int date) {
-        for (var stage : getStages()) {
-            stage.setStartingDate(date);
-        }
     }
 
     public void setActualParticipantsByGroups(List<List<Knight>> players) {

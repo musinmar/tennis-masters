@@ -59,14 +59,6 @@ public class PlayOffStage extends MultiStageCompetition {
         }
     }
 
-
-    @Override
-    public void setStartingDate(int date) {
-        for (int i = 0; i < getStages().size(); ++i) {
-            getStages().get(i).setStartingDate(date + i * 2);
-        }
-    }
-
     @SuppressWarnings("unchecked")
     public List<PlayOffRound> getPlayOffRounds() {
         return (List<PlayOffRound>) (List<?>) getStages();

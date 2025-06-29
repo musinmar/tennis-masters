@@ -83,29 +83,6 @@ public class MultiStageCompetition extends AbstractCompetition {
     }
 
     @Override
-    public int getStartingDate() {
-        return getStages().get(0).getStartingDate();
-    }
-
-    @Override
-    public void setStartingDate(int date) {
-        Competition previousStage = null;
-        for (var stage : getStages()) {
-            if (previousStage == null) {
-                stage.setStartingDate(date);
-            } else {
-                stage.setStartingDate(previousStage.getLastDate() + 2);
-            }
-            previousStage = stage;
-        }
-    }
-
-    @Override
-    public int getLastDate() {
-        return getLastStage().getLastDate();
-    }
-
-    @Override
     public Knight getWinner() {
         return getLastStage().getWinner();
     }

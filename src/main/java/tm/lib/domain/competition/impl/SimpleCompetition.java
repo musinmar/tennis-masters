@@ -75,18 +75,7 @@ abstract public class SimpleCompetition extends AbstractCompetition {
         ++nextMatchIndex;
     }
 
-    @Override
-    public int getStartingDate() {
-        return getAllMatches().get(0).getDate();
-    }
-
-    @Override
-    public void setStartingDate(int date) {
+    public void setStartDate(int date) {
         getAllMatches().forEach(match -> match.setDate(date));
-    }
-
-    @Override
-    public int getLastDate() {
-        return getAllMatches().get(getAllMatches().size() - 1).getDate();
     }
 }

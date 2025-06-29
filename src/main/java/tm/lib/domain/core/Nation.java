@@ -3,11 +3,11 @@ package tm.lib.domain.core;
 import java.util.Arrays;
 
 public enum Nation {
-    ALMAGEST("Альмагест", "Альмагеста"),
-    BELLEROFON("Беллерофон", "Беллерофона"),
-    GALILEO("Галилео", "Галилео"),
-    KAMELEOPARD("Камелеопард", "Камелеопарда"),
-    OBERON_22("Оберон-22", "Оберона-22");
+    ALMAGEST("Almagest", "Almagest's"),
+    BELLEROPHON("Bellerophon", "Bellerophon's"),
+    GALILEO("Galileo", "Galileo's"),
+    KAMELEOPARD("Kamelopard", "Kamelopard's"),
+    OBERON_22("Oberon-22", "Oberon-22's");
 
     public static final int COUNT = 5;
 

@@ -19,7 +19,7 @@ public class Stadium {
     }
 
     public static Stadium standard() {
-        return new Stadium("Ириф", ALDORUM);
+        return new Stadium("Irif", ALDORUM);
     }
 
     public String getName() {

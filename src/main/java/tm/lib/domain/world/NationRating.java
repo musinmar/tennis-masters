@@ -36,7 +36,7 @@ public class NationRating {
 
     public void initializeDefault() {
         pointHistoryPerNation.put(Nation.ALMAGEST, createDefaultPointHistory(3.5));
-        pointHistoryPerNation.put(Nation.BELLEROFON, createDefaultPointHistory(3));
+        pointHistoryPerNation.put(Nation.BELLEROPHON, createDefaultPointHistory(3));
         pointHistoryPerNation.put(Nation.GALILEO, createDefaultPointHistory(2.5));
         pointHistoryPerNation.put(Nation.KAMELEOPARD, createDefaultPointHistory(4.5));
         pointHistoryPerNation.put(Nation.OBERON_22, createDefaultPointHistory(4));

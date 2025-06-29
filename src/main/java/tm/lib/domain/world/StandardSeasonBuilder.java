@@ -90,7 +90,7 @@ public class StandardSeasonBuilder {
         var nationSeeding = new CompetitionEventDefinition(new OnSeasonStart(),
                 new SeedAllFromNationRule(nation));
         var startDate = NATIONAL_CUPS_START_DATE + nation.ordinal() * NATIONAL_CUPS_DATE_OFFSET;
-        return newGroupStage(nation.name().toUpperCase(), "Cup of " + nation.getNameGenitive(), startDate,
+        return newGroupStage(nation.name().toUpperCase(), "Cup of " + nation.getName(), startDate,
                 1, 6, List.of(nationSeeding, GIVE_TROPHY));
     }
 

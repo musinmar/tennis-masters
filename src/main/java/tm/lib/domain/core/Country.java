@@ -1,10 +1,10 @@
 package tm.lib.domain.core;
 
 public enum Country {
-    ALDORUM("Альдорум"),
-    CONJUCTION("Коньюкция"),
-    TWIN_CITIES("Двугородье"),
-    NORTH_ALLIANCE("Северный Альянс");
+    ALDORUM("Aldorum"),
+    CONJUCTION("Conjunction"),
+    TWIN_CITIES("Twin Cities"),
+    NORTH_ALLIANCE("Northern Alliance");
     private final String text;
 
     Country(String name) {

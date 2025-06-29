@@ -1,7 +1,7 @@
 [ {
   "id" : 0,
-  "name" : "Стив",
-  "surname" : "Ашенбах",
+  "name" : "Steve",
+  "surname" : "Ashenbach",
   "nation" : "ALMAGEST",
   "country" : "TWIN_CITIES",
   "skills" : {
@@ -18,8 +18,8 @@
   }
 }, {
   "id" : 1,
-  "name" : "Джонни",
-  "surname" : "Вульф",
+  "name" : "Johnny",
+  "surname" : "Wolf",
   "nation" : "ALMAGEST",
   "country" : "NORTH_ALLIANCE",
   "skills" : {
@@ -36,8 +36,8 @@
   }
 }, {
   "id" : 2,
-  "name" : "Берт",
-  "surname" : "Баски",
+  "name" : "Bert",
+  "surname" : "Basky",
   "nation" : "ALMAGEST",
   "country" : "NORTH_ALLIANCE",
   "skills" : {
@@ -54,8 +54,8 @@
   }
 }, {
   "id" : 3,
-  "name" : "Ник",
-  "surname" : "Тоффер",
+  "name" : "Nick",
+  "surname" : "Toffer",
   "nation" : "ALMAGEST",
   "country" : "NORTH_ALLIANCE",
   "skills" : {
@@ -72,8 +72,8 @@
   }
 }, {
   "id" : 4,
-  "name" : "Дик",
-  "surname" : "Ренделл",
+  "name" : "Dick",
+  "surname" : "Rendell",
   "nation" : "ALMAGEST",
   "country" : "TWIN_CITIES",
   "skills" : {
@@ -90,8 +90,8 @@
   }
 }, {
   "id" : 5,
-  "name" : "Флер",
-  "surname" : "Рокки",
+  "name" : "Flair",
+  "surname" : "Rocky",
   "nation" : "ALMAGEST",
   "country" : "NORTH_ALLIANCE",
   "skills" : {
@@ -108,9 +108,9 @@
   }
 }, {
   "id" : 6,
-  "name" : "Глен",
-  "surname" : "Зуттер",
-  "nation" : "BELLEROFON",
+  "name" : "Glen",
+  "surname" : "Zutter",
+  "nation" : "BELLEROPHON",
   "country" : "TWIN_CITIES",
   "skills" : {
     "speed" : 50.0,
@@ -126,9 +126,9 @@
   }
 }, {
   "id" : 7,
-  "name" : "Дэн",
-  "surname" : "Шедоу",
-  "nation" : "BELLEROFON",
+  "name" : "Dan",
+  "surname" : "Shadow",
+  "nation" : "BELLEROPHON",
   "country" : "TWIN_CITIES",
   "skills" : {
     "speed" : 40.0,
@@ -144,9 +144,9 @@
   }
 }, {
   "id" : 8,
-  "name" : "Эрли",
-  "surname" : "Чико",
-  "nation" : "BELLEROFON",
+  "name" : "Early",
+  "surname" : "Chico",
+  "nation" : "BELLEROPHON",
   "country" : "ALDORUM",
   "skills" : {
     "speed" : 50.0,
@@ -162,9 +162,9 @@
   }
 }, {
   "id" : 9,
-  "name" : "Вилли",
-  "surname" : "Паркер",
-  "nation" : "BELLEROFON",
+  "name" : "Willie",
+  "surname" : "Parker",
+  "nation" : "BELLEROPHON",
   "country" : "NORTH_ALLIANCE",
   "skills" : {
     "speed" : 50.0,
@@ -180,9 +180,9 @@
   }
 }, {
   "id" : 10,
-  "name" : "Арчи",
-  "surname" : "Сокс",
-  "nation" : "BELLEROFON",
+  "name" : "Archie",
+  "surname" : "Socks",
+  "nation" : "BELLEROPHON",
   "country" : "TWIN_CITIES",
   "skills" : {
     "speed" : 50.0,
@@ -198,9 +198,9 @@
   }
 }, {
   "id" : 11,
-  "name" : "Синди",
-  "surname" : "Мэрик",
-  "nation" : "BELLEROFON",
+  "name" : "Cindy",
+  "surname" : "Merrick",
+  "nation" : "BELLEROPHON",
   "country" : "TWIN_CITIES",
   "skills" : {
     "speed" : 50.0,
@@ -216,8 +216,8 @@
   }
 }, {
   "id" : 12,
-  "name" : "Майкл",
-  "surname" : "Холл",
+  "name" : "Michael",
+  "surname" : "Hall",
   "nation" : "GALILEO",
   "country" : "NORTH_ALLIANCE",
   "skills" : {
@@ -234,8 +234,8 @@
   }
 }, {
   "id" : 13,
-  "name" : "Энтони",
-  "surname" : "Бакс",
+  "name" : "Anthony",
+  "surname" : "Bucks",
   "nation" : "GALILEO",
   "country" : "ALDORUM",
   "skills" : {
@@ -252,8 +252,8 @@
   }
 }, {
   "id" : 14,
-  "name" : "Салли",
-  "surname" : "Хантер",
+  "name" : "Sally",
+  "surname" : "Hunter",
   "nation" : "GALILEO",
   "country" : "NORTH_ALLIANCE",
   "skills" : {
@@ -270,8 +270,8 @@
   }
 }, {
   "id" : 15,
-  "name" : "Фил",
-  "surname" : "Кукки",
+  "name" : "Phil",
+  "surname" : "Cookie",
   "nation" : "GALILEO",
   "country" : "ALDORUM",
   "skills" : {
@@ -288,8 +288,8 @@
   }
 }, {
   "id" : 16,
-  "name" : "Джек",
-  "surname" : "Риччи",
+  "name" : "Jack",
+  "surname" : "Ricci",
   "nation" : "GALILEO",
   "country" : "NORTH_ALLIANCE",
   "skills" : {
@@ -306,8 +306,8 @@
   }
 }, {
   "id" : 17,
-  "name" : "Паола",
-  "surname" : "Фоззи",
+  "name" : "Paola",
+  "surname" : "Fozzy",
   "nation" : "GALILEO",
   "country" : "NORTH_ALLIANCE",
   "skills" : {
@@ -324,8 +324,8 @@
   }
 }, {
   "id" : 18,
-  "name" : "Чен",
-  "surname" : "Флетчер",
+  "name" : "Chen",
+  "surname" : "Fletcher",
   "nation" : "KAMELEOPARD",
   "country" : "ALDORUM",
   "skills" : {
@@ -342,8 +342,8 @@
   }
 }, {
   "id" : 19,
-  "name" : "Таня",
-  "surname" : "Джоко",
+  "name" : "Tanya",
+  "surname" : "Jocko",
   "nation" : "KAMELEOPARD",
   "country" : "ALDORUM",
   "skills" : {
@@ -360,8 +360,8 @@
   }
 }, {
   "id" : 20,
-  "name" : "Боб",
-  "surname" : "Дроу",
+  "name" : "Bob",
+  "surname" : "Drow",
   "nation" : "KAMELEOPARD",
   "country" : "ALDORUM",
   "skills" : {
@@ -378,8 +378,8 @@
   }
 }, {
   "id" : 21,
-  "name" : "Джеф",
-  "surname" : "Ринго",
+  "name" : "Jeff",
+  "surname" : "Ringo",
   "nation" : "KAMELEOPARD",
   "country" : "ALDORUM",
   "skills" : {
@@ -396,8 +396,8 @@
   }
 }, {
   "id" : 22,
-  "name" : "Клод",
-  "surname" : "Гош",
+  "name" : "Claude",
+  "surname" : "Gosh",
   "nation" : "KAMELEOPARD",
   "country" : "CONJUCTION",
   "skills" : {
@@ -414,8 +414,8 @@
   }
 }, {
   "id" : 23,
-  "name" : "Мэри",
-  "surname" : "Куллидж",
+  "name" : "Mary",
+  "surname" : "Coolidge",
   "nation" : "KAMELEOPARD",
   "country" : "ALDORUM",
   "skills" : {
@@ -432,8 +432,8 @@
   }
 }, {
   "id" : 24,
-  "name" : "Лео",
-  "surname" : "Ленг",
+  "name" : "Leo",
+  "surname" : "Lang",
   "nation" : "OBERON_22",
   "country" : "CONJUCTION",
   "skills" : {
@@ -450,8 +450,8 @@
   }
 }, {
   "id" : 25,
-  "name" : "Мэй",
-  "surname" : "Клапс",
+  "name" : "May",
+  "surname" : "Claps",
   "nation" : "OBERON_22",
   "country" : "CONJUCTION",
   "skills" : {
@@ -468,8 +468,8 @@
   }
 }, {
   "id" : 26,
-  "name" : "Пат",
-  "surname" : "Кент",
+  "name" : "Pat",
+  "surname" : "Kent",
   "nation" : "OBERON_22",
   "country" : "CONJUCTION",
   "skills" : {
@@ -486,8 +486,8 @@
   }
 }, {
   "id" : 27,
-  "name" : "Микки",
-  "surname" : "Шуф",
+  "name" : "Mickey",
+  "surname" : "Shoof",
   "nation" : "OBERON_22",
   "country" : "CONJUCTION",
   "skills" : {
@@ -504,8 +504,8 @@
   }
 }, {
   "id" : 28,
-  "name" : "Дино",
-  "surname" : "Ненси",
+  "name" : "Dino",
+  "surname" : "Nancy",
   "nation" : "OBERON_22",
   "country" : "CONJUCTION",
   "skills" : {
@@ -522,8 +522,8 @@
   }
 }, {
   "id" : 29,
-  "name" : "Джо",
-  "surname" : "Гугги",
+  "name" : "Joe",
+  "surname" : "Googie",
   "nation" : "OBERON_22",
   "country" : "CONJUCTION",
   "skills" : {

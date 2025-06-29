@@ -29,14 +29,14 @@ public class EloRatingWidget extends QWidget {
         eloRatingTreeWidget.setHeaderLabels(Arrays.asList("", "Player", "Rating", "Delta"));
         eloRatingTreeWidget.setColumnWidth(0, 25);
         eloRatingTreeWidget.setColumnWidth(1, 100);
-        eloRatingTreeWidget.setColumnWidth(2, 60);
-        eloRatingTreeWidget.setColumnWidth(3, 60);
+        eloRatingTreeWidget.setColumnWidth(2, 50);
+        eloRatingTreeWidget.setColumnWidth(3, 50);
         eloRatingTreeWidget.setIndentation(0);
         eloRatingTreeWidget.setItemDelegate(new CustomItemDelegate());
 
         QVBoxLayout mainLayout = new QVBoxLayout();
         mainLayout.addWidget(eloRatingTreeWidget);
-        mainLayout.setContentsMargins(2, 2, 2, 2);
+        mainLayout.setContentsMargins(2, 2, 4, 2);
         setLayout(mainLayout);
     }
 

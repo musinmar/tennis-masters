@@ -50,13 +50,13 @@ public class PlayOffStage extends MultiStageCompetition {
 
     private String getDefaultRoundName(int playerCount) {
         if (playerCount == 2) {
-            return "Финал";
+            return "Final";
         } else if (playerCount == 4) {
-            return "1/2 Финала";
+            return "Semi-Finals";
         } else if (playerCount == 8) {
-            return "1/4 Финала";
+            return "Quarter-Finals";
         } else {
-            return "Плей-офф";
+            return "Play-off";
         }
     }
 

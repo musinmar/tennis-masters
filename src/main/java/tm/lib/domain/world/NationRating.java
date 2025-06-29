@@ -94,7 +94,7 @@ public class NationRating {
     }
 
     public void printPointHistory(WorldLogger logger) {
-        logger.println("Рейтинг наций");
+        logger.println("Nation Rating");
         logger.println();
         int index = 0;
         for (Nation nation : Nation.values()) {
@@ -125,7 +125,7 @@ public class NationRating {
 
     public void printStartOfSeasonFederationsRanking(WorldLogger logger) {
         var sums = sumPointHistory();
-        logger.println("Рейтинг федераций в начале сезона:");
+        logger.println("Federation rating at the beginning of the season:");
         logger.println();
         for (int i = 0; i < nationRanking.size(); ++i) {
             Nation nation = nationRanking.get(i);
@@ -136,7 +136,7 @@ public class NationRating {
 
     public void printTotalPointsReceived(WorldLogger logger) {
         double sum = nationSeasonPoints.values().stream().mapToDouble(v -> v).sum();
-        logger.println("Сумма всех полученных очков в этом сезоне: %.2f", sum);
+        logger.println("Sum of all points earned this season: %.2f", sum);
         playerSeasonPoints.entrySet().stream()
                 .sorted(comparing(e -> e.getKey().getId()))
                 .forEach(e -> logger.println("%s: %.2f", e.getKey().getFullName(), e.getValue()));

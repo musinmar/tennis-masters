@@ -62,7 +62,7 @@ public class MatchScore {
             builder.append(" / ").append(sets.get(i));
         }
         if (additionalTime != null) {
-            builder.append(" / д.в. ").append(additionalTime);
+            builder.append(" / e.t. ").append(additionalTime);
         }
         builder.append(" (").append(getScoreBySets()).append(")");
         return builder.toString();

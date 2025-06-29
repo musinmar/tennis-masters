@@ -26,7 +26,7 @@ public class GroupStage extends MultiStageCompetition {
         List<Competition> groups = new ArrayList<>();
         for (int i = 0; i < groupCount; ++i) {
             String groupId = String.valueOf((char) ('A' + i));
-            GroupSubStage group = new GroupSubStage(groupId, "Группа " + groupId, playersPerGroup);
+            GroupSubStage group = new GroupSubStage(groupId, "Group " + groupId, playersPerGroup);
             groups.add(group);
         }
         setStages(groups);
@@ -40,7 +40,7 @@ public class GroupStage extends MultiStageCompetition {
         List<Competition> groups = new ArrayList<>();
         for (int i = 0; i < groupCount; ++i) {
             String groupId = String.valueOf((char) ('A' + i));
-            GroupSubStage group = new GroupSubStage(groupId, "Группа " + groupId, playersInGroup);
+            GroupSubStage group = new GroupSubStage(groupId, "Group " + groupId, playersInGroup);
             groups.add(group);
         }
         return groups;

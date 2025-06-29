@@ -39,14 +39,14 @@ public class PlayerDialog extends QDialog {
     }
 
     private void initUi() {
-        QLabel nameLabel = createLabel("Имя");
+        QLabel nameLabel = createLabel("Name");
         nameEdit = createEdit();
-        QLabel surnameLabel = createLabel("Фамилия");
+        QLabel surnameLabel = createLabel("Surname");
         surnameEdit = createEdit();
 
-        QLabel nationLabel = createLabel("Нация");
+        QLabel nationLabel = createLabel("Nation");
         nationEdit = createEdit();
-        QLabel countryLabel = createLabel("Страна");
+        QLabel countryLabel = createLabel("Country");
         countryEdit = createEdit();
 
         QGridLayout mainInfoLayout = new QGridLayout(this);
@@ -60,28 +60,28 @@ public class PlayerDialog extends QDialog {
         mainInfoLayout.addWidget(countryEdit, 1, 3);
 
         QGroupBox mainInfoGroupBox = new QGroupBox(this);
-        mainInfoGroupBox.setTitle("Личные данные");
+        mainInfoGroupBox.setTitle("Personal data");
         mainInfoGroupBox.setLayout(mainInfoLayout);
 
-        QLabel speedLabel = createLabel("Скорость");
+        QLabel speedLabel = createLabel("Speed");
         speedBar = createProgressBar();
-        QLabel accelerationLabel = createLabel("Ускорение");
+        QLabel accelerationLabel = createLabel("Acceleration");
         accelerationBar = createProgressBar();
-        QLabel hitPowerLabel = createLabel("Сила удара");
+        QLabel hitPowerLabel = createLabel("Hit power");
         hitPowerBar = createProgressBar();
-        QLabel shotRangeLabel = createLabel("Дальность удара");
+        QLabel shotRangeLabel = createLabel("Shot range");
         shotRangeBar = createProgressBar();
-        QLabel accuracyLabel = createLabel("Точность");
+        QLabel accuracyLabel = createLabel("Accuracy");
         accuracyBar = createProgressBar();
-        QLabel cunningLabel = createLabel("Хитрость");
+        QLabel cunningLabel = createLabel("Cunning");
         cunningBar = createProgressBar();
-        QLabel intelligenceLabel = createLabel("Интеллект");
+        QLabel intelligenceLabel = createLabel("Intelligence");
         intelligenceBar = createProgressBar();
-        QLabel riskLabel = createLabel("Риск");
+        QLabel riskLabel = createLabel("Risk");
         riskBar = createProgressBar();
-        QLabel enduranceLabel = createLabel("Выносливость");
+        QLabel enduranceLabel = createLabel("Endurance");
         enduranceBar = createProgressBar();
-        QLabel dexterityLabel = createLabel("Ловкость");
+        QLabel dexterityLabel = createLabel("Dexterity");
         dexterityBar = createProgressBar();
 
         QGridLayout skillsLayout = new QGridLayout(this);
@@ -107,19 +107,19 @@ public class PlayerDialog extends QDialog {
         skillsLayout.addWidget(dexterityBar, 4, 3);
 
         QGroupBox skillsGroupBox = new QGroupBox(this);
-        skillsGroupBox.setTitle("Характеристики");
+        skillsGroupBox.setTitle("Characteristics");
         skillsGroupBox.setLayout(skillsLayout);
 
         trophyTreeWidget = new QTreeWidget(this);
         trophyTreeWidget.setColumnCount(2);
-        trophyTreeWidget.setHeaderLabels(List.of("Турнир", "Количество"));
+        trophyTreeWidget.setHeaderLabels(List.of("Tournament", "Quantity"));
         trophyTreeWidget.setColumnWidth(0, 150);
 
         QVBoxLayout trophyLayout = new QVBoxLayout();
         trophyLayout.addWidget(trophyTreeWidget);
 
         QGroupBox trophyGroupBox = new QGroupBox(this);
-        trophyGroupBox.setTitle("Трофеи");
+        trophyGroupBox.setTitle("Trophies");
         trophyGroupBox.setLayout(trophyLayout);
 
         QDialogButtonBox buttonBox = new QDialogButtonBox(this);
@@ -133,7 +133,7 @@ public class PlayerDialog extends QDialog {
         mainLayout.addWidget(buttonBox);
         setLayout(mainLayout);
 
-        setWindowTitle("Игрок");
+        setWindowTitle("Player");
     }
 
     private QLabel createLabel(String text) {

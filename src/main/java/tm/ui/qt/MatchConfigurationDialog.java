@@ -64,8 +64,8 @@ public class MatchConfigurationDialog extends QDialog {
     }
 
     private void setupUi() {
-        homePlayerSelector = createPlayerSelector("Домашний игрок");
-        awayPlayerSelector = createPlayerSelector("Выездной игрок");
+        homePlayerSelector = createPlayerSelector("Home Player");
+        awayPlayerSelector = createPlayerSelector("Away Player");
 
         QHBoxLayout playerSelectorsLayout = new QHBoxLayout();
         playerSelectorsLayout.addWidget(homePlayerSelector.rootGroupBox);
@@ -74,7 +74,7 @@ public class MatchConfigurationDialog extends QDialog {
         QGroupBox simulationGroupBox = createSimulationGroupBox();
 
         QDialogButtonBox buttonBox = new QDialogButtonBox(this);
-        buttonBox.addButton("Закрыть", RejectRole);
+        buttonBox.addButton("Close", RejectRole);
         buttonBox.rejected.connect(this, "onCloseButtonClicked()");
 
         QVBoxLayout mainLayout = new QVBoxLayout(this);
@@ -82,20 +82,20 @@ public class MatchConfigurationDialog extends QDialog {
         mainLayout.addWidget(simulationGroupBox);
         mainLayout.addWidget(buttonBox);
 
-        setWindowTitle("Настроить матч");
+        setWindowTitle("Configure Match");
         resize(600, 300);
     }
 
     private PlayerSelector createPlayerSelector(String title) {
         PlayerSelector playerSelector = new PlayerSelector();
 
-        QLabel playerLabel = new QLabel("Игрок:", this);
+        QLabel playerLabel = new QLabel("Player:", this);
         playerSelector.playerComboBox = new QComboBox(this);
         fillPlayerComboBox(playerSelector.playerComboBox, world);
-        QLabel networkLabel = new QLabel("Сеть:", this);
+        QLabel networkLabel = new QLabel("ANN:", this);
         playerSelector.annPathEdit = new QLineEdit(this);
         playerSelector.selectNetworkButton = new QPushButton(this);
-        playerSelector.selectNetworkButton.setText("Выбрать");
+        playerSelector.selectNetworkButton.setText("Select");
         playerSelector.selectNetworkButton.clicked.connect(this, "onSelectAnnPathButtonClicked()");
 
         playerSelector.rootGroupBox = new QGroupBox();
@@ -113,14 +113,14 @@ public class MatchConfigurationDialog extends QDialog {
     }
 
     private QGroupBox createSimulationGroupBox() {
-        QLabel setCountLabel = new QLabel("Количество сетов:", this);
+        QLabel setCountLabel = new QLabel("Number of sets:", this);
         setCountSpinBox = new QSpinBox(this);
         setCountSpinBox.setMinimum(2);
         setCountSpinBox.setMaximum(4);
         setCountSpinBox.setSingleStep(2);
         setCountSpinBox.setValue(2);
 
-        QLabel simulationCountLabel = new QLabel("Количество симуляций:", this);
+        QLabel simulationCountLabel = new QLabel("Number of simulations:", this);
         simulationCountSpinBox = new QSpinBox(this);
         simulationCountSpinBox.setMinimum(1);
         simulationCountSpinBox.setMaximum(Integer.MAX_VALUE);
@@ -134,10 +134,10 @@ public class MatchConfigurationDialog extends QDialog {
         gridLayout.addWidget(simulationCountLabel, 1, 0);
         gridLayout.addWidget(simulationCountSpinBox, 1, 1);
 
-        QPushButton showSimulationPushButton = new QPushButton("Показать матч", this);
+        QPushButton showSimulationPushButton = new QPushButton("Show Match", this);
         showSimulationPushButton.clicked.connect(this, "onShowSimulationPushButtonClicked()");
 
-        QPushButton fastSimulatePushButton = new QPushButton("Быстрая симуляция", this);
+        QPushButton fastSimulatePushButton = new QPushButton("Fast Simulation", this);
         fastSimulatePushButton.clicked.connect(this, "onFastSimulatePushButtonClicked()");
 
         simulationStatusLabel = new QLabel(this);
@@ -157,7 +157,7 @@ public class MatchConfigurationDialog extends QDialog {
         groupBoxLayout.addWidget(resultTextEdit);
 
         QGroupBox groupBox = new QGroupBox(this);
-        groupBox.setTitle("Симуляция");
+        groupBox.setTitle("Simulation");
         groupBox.setLayout(groupBoxLayout);
 
         return groupBox;
@@ -173,9 +173,9 @@ public class MatchConfigurationDialog extends QDialog {
                 : awayPlayerSelector.annPathEdit;
         QFileDialog.Result<String> selectedFileName = QFileDialog.getOpenFileName(
                 this,
-                "Выберите нейронную сеть",
+                "Select neural network",
                 null,
-                "Файлы ANN (*.ann)"
+                "ANN files (*.ann)"
         );
         if (selectedFileName.result != null) {
             annPathEdit.setText(selectedFileName.result);
@@ -231,9 +231,9 @@ public class MatchConfigurationDialog extends QDialog {
                 .reduce(BasicScore.of(0, 0), BasicScore::summedWith);
 
         resultTextEdit.setHtml(String.format("%s - %s", match.getHomePlayer().getFullName(), match.getAwayPlayer().getFullName()));
-        resultTextEdit.append("Счёт по матчам: " + formatBasicScore(totalScoreByMatches));
-        resultTextEdit.append("Счёт по сетам: " + formatBasicScore(totalScoreBySets));
-        resultTextEdit.append("Счёт по геймам: " + formatBasicScore(totalScoreByGames));
+        resultTextEdit.append("Score by matches: " + formatBasicScore(totalScoreByMatches));
+        resultTextEdit.append("Score by sets: " + formatBasicScore(totalScoreBySets));
+        resultTextEdit.append("Score by games: " + formatBasicScore(totalScoreByGames));
         resultTextEdit.append("");
         scores.forEach(score -> resultTextEdit.append(score.toString()));
         resultTextEdit.moveCursor(QTextCursor.MoveOperation.Start);
@@ -252,7 +252,7 @@ public class MatchConfigurationDialog extends QDialog {
         for (int i = 0; i < count; i++) {
             MatchScore score = SimulationHelper.simulateMatch(match, configureStrategyProvider());
             scores.add(score);
-            simulationStatusLabel.setText("Сыграно матчей: " + (i + 1));
+            simulationStatusLabel.setText("Matches played: " + (i + 1));
             QApplication.processEvents(QEventLoop.ProcessEventsFlag.ExcludeUserInputEvents);
         }
         displayResults(match, scores);

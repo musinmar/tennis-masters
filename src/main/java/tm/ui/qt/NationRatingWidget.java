@@ -43,7 +43,7 @@ public class NationRatingWidget extends QWidget {
         nationRatingTreeWidget.clear();
         nationRatingTreeWidget.setIndentation(0);
         nationRatingTreeWidget.setColumnCount(8);
-        nationRatingTreeWidget.setHeaderLabels(asList("#", "Нация", "Текущий сезон", "0", "-1", "-2", "-3", "-4", "-5", "Сумма"));
+        nationRatingTreeWidget.setHeaderLabels(asList("#", "Nation", "Current Season", "0", "-1", "-2", "-3", "-4", "-5", "Sum"));
         nationRatingTreeWidget.header().setStretchLastSection(false);
         nationRatingTreeWidget.setColumnWidth(0, 20);
         nationRatingTreeWidget.setColumnWidth(1, 100);

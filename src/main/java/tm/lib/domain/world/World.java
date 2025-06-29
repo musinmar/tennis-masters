@@ -100,7 +100,7 @@ public class World {
 
         logger.println();
         getNationRating().printPointHistory(logger);
-        logger.println("Сезон завершён");
+        logger.println("Season completed");
         logger.println();
 
         state = WorldState.SEASON_CONCLUDED;
@@ -193,7 +193,7 @@ public class World {
             if (groupSubStage.doesNextMatchStartNewRound()) {
                 if (groupSubStage.isFinished()) {
                     logger.println();
-                    logger.println("Итоговое положение");
+                    logger.println("Final standings");
                 }
                 logger.println();
                 logger.println(groupSubStage.printGroupResultsToString());

@@ -105,12 +105,12 @@ public class MatchDialog extends QDialog {
         infoPanelLayout.addItem(new QSpacerItem(10, 10, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding));
 
         startButton = new QPushButton(this);
-        startButton.setText("Начать");
+        startButton.setText("Start");
         startButton.clicked.connect(this, "onStartButtonClicked()");
         infoPanelLayout.addWidget(startButton);
 
         QPushButton closeButton = new QPushButton(this);
-        closeButton.setText("Закрыть");
+        closeButton.setText("Close");
         closeButton.clicked.connect(this, "onCloseButtonClicked()");
         infoPanelLayout.addWidget(closeButton);
     }
@@ -139,11 +139,11 @@ public class MatchDialog extends QDialog {
             if (activeTimer == null) {
                 activeTimer = createSimulationTimer();
             }
-            startButton.setText("Пауза");
+            startButton.setText("Pause");
             paused = false;
             activeTimer.start();
         } else {
-            startButton.setText("Продолжить");
+            startButton.setText("Continue");
             paused = true;
             activeTimer.stop();
         }
@@ -181,7 +181,7 @@ public class MatchDialog extends QDialog {
             updateMatchTimeLabel();
         } else {
             activeTimer.stop();
-            String info = String.format("Гейм разыгран, победитель - %s<br>Счёт в игре: %s",
+            String info = String.format("Game played, winner - %s<br>Score in game: %s",
                     matchSimulator.getLastGameWinner().getFullName(), matchSimulator.getCurrentScore());
             updateMatchScoreLabel();
             pitchWidget.showInfoLabel(info);
@@ -196,7 +196,7 @@ public class MatchDialog extends QDialog {
             pitchWidget.showInfoLabel(null);
             activeTimer = createSimulationTimer();
         } else {
-            String info = String.format("Сет разыгран, победитель - %s<br>Счёт в игре: %s",
+            String info = String.format("Set played, winner - %s<br>Score in game: %s",
                     matchSimulator.getLastGameWinner().getFullName(), matchSimulator.getCurrentScore());
             pitchWidget.showInfoLabel(info);
             activeTimer = createNextSetTimer();
@@ -211,7 +211,7 @@ public class MatchDialog extends QDialog {
             activeTimer = createSimulationTimer();
             activeTimer.start();
         } else {
-            String info = String.format("Матч закончен, победитель - %s<br>Итоговый счёт: %s",
+            String info = String.format("Match finished, winner - %s<br>Final score: %s",
                     matchSimulator.getLastGameWinner().getFullName(), matchSimulator.getCurrentScore());
             pitchWidget.showInfoLabel(info);
             finishMatch();

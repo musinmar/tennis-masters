@@ -26,7 +26,7 @@ public class EloRatingWidget extends QWidget {
     private void initUi() {
         eloRatingTreeWidget = new QTreeWidget(this);
         eloRatingTreeWidget.setColumnCount(4);
-        eloRatingTreeWidget.setHeaderLabels(Arrays.asList("", "Игрок", "Рейтинг", "Изменение за год"));
+        eloRatingTreeWidget.setHeaderLabels(Arrays.asList("", "Player", "Rating", "Delta"));
         eloRatingTreeWidget.setColumnWidth(0, 25);
         eloRatingTreeWidget.setColumnWidth(1, 100);
         eloRatingTreeWidget.setColumnWidth(2, 60);

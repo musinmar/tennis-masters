@@ -45,27 +45,27 @@ public class TeachNeuralNetworkDialog extends QDialog {
     }
 
     private void setupUi() {
-        QLabel playerLabel = new QLabel("Игрок:", this);
+        QLabel playerLabel = new QLabel("Player:", this);
         playerComboBox = new QComboBox(this);
         fillPlayerComboBox(playerComboBox, world);
 
-        QLabel iterationCountLabel = new QLabel("Итераций:", this);
+        QLabel iterationCountLabel = new QLabel("Iterations:", this);
         iterationCountSpinBox = new QSpinBox(this);
         iterationCountSpinBox.setMinimum(1);
         iterationCountSpinBox.setMaximum(Integer.MAX_VALUE);
         iterationCountSpinBox.setSingleStep(1000);
         iterationCountSpinBox.setValue(1000);
 
-        QLabel templatePerceptronPathLabel = new QLabel("Базовая сеть:", this);
+        QLabel templatePerceptronPathLabel = new QLabel("Base network:", this);
         templatePerceptronPathEdit = new QLineEdit(this);
-        QPushButton selectTemplatePerceptronPathButton = new QPushButton("Выбрать", this);
+        QPushButton selectTemplatePerceptronPathButton = new QPushButton("Select", this);
         selectTemplatePerceptronPathButton.clicked.connect(this, "onSelectTemplatePerceptronPathButtonClicked()");
 
-        QLabel outputDirectoryLabel = new QLabel("Целевой каталог:", this);
+        QLabel outputDirectoryLabel = new QLabel("Target directory:", this);
         outputDirectoryEdit = new QLineEdit(this);
         outputDirectoryEdit.setText(System.getProperty("user.dir"));
 
-        QPushButton launchButton = new QPushButton("Запустить", this);
+        QPushButton launchButton = new QPushButton("Launch", this);
         launchButton.clicked.connect(this, "onLaunchButtonClicked()");
 
         teachingStatusLabel = new QLabel(this);
@@ -92,18 +92,18 @@ public class TeachNeuralNetworkDialog extends QDialog {
         groupBoxLayout.addSpacerItem(new QSpacerItem(1, 1, Expanding, Expanding));
 
         QGroupBox mainGroupBox = new QGroupBox(this);
-        mainGroupBox.setTitle("Настройки");
+        mainGroupBox.setTitle("Settings");
         mainGroupBox.setLayout(groupBoxLayout);
 
         QDialogButtonBox buttonBox = new QDialogButtonBox(this);
-        buttonBox.addButton("Закрыть", RejectRole);
+        buttonBox.addButton("Close", RejectRole);
         buttonBox.rejected.connect(this, "onCloseButtonClicked()");
 
         QVBoxLayout mainLayout = new QVBoxLayout(this);
         mainLayout.addWidget(mainGroupBox);
         mainLayout.addWidget(buttonBox);
 
-        setWindowTitle("Обучить нейронную сеть");
+        setWindowTitle("Train neural network");
         resize(600, 300);
     }
 
@@ -112,8 +112,8 @@ public class TeachNeuralNetworkDialog extends QDialog {
     }
 
     private void onSelectTemplatePerceptronPathButtonClicked() {
-        QFileDialog.Result<String> selectedFileName = QFileDialog.getOpenFileName(this, "Выберите нейронную сеть", null,
-                "Файлы ANN (*.ann)");
+        QFileDialog.Result<String> selectedFileName = QFileDialog.getOpenFileName(this, "Select neural network", null,
+                "ANN files (*.ann)");
         if (selectedFileName.result != null) {
             templatePerceptronPathEdit.setText(selectedFileName.result);
         }
@@ -149,7 +149,7 @@ public class TeachNeuralNetworkDialog extends QDialog {
 //        NeuralNetworkTeacher teacher = new NeuralNetworkTeacher(knight, iterations, templatePerceptron, !isTemplatePerceptronSpecified());
         NeuralNetworkTeacher teacher = new NeuralNetworkTeacher(knight, iterations, templatePerceptron, false);
         MultiLayerPerceptron perceptron = teacher.teachWithCustomEvolution();
-        teachingStatusLabel.setText("Обучение завершено");
+        teachingStatusLabel.setText("Training completed");
         String outputDirectory = outputDirectoryEdit.text();
         String fileName = createDefaultFileName(outputDirectory, knight, iterations, perceptron);
         perceptron.save(fileName);

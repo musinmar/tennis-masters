@@ -5,6 +5,7 @@ import tm.lib.domain.competition.definition.CompetitionDefinition;
 import tm.lib.domain.competition.definition.CompetitionEventDefinition;
 import tm.lib.domain.competition.definition.GroupStageDefinition;
 import tm.lib.domain.competition.definition.MultiStageCompetitionDefinition;
+import tm.lib.domain.competition.definition.PlayOffRoundDefinition;
 import tm.lib.domain.competition.definition.PlayOffStageDefinition;
 import tm.lib.domain.competition.definition.CompetitionSchedule;
 import tm.lib.domain.competition.definition.actions.Actions.AddAssignedParticipantsFromEloRankings;
@@ -105,12 +106,11 @@ public class StandardSeasonBuilder {
                         4, 3,
                         5, 1,
                         5, 2
-                )));
-        var firstQualifyingStageConfiguration = PlayOffStageConfiguration.builder().playerCount(6).rounds(1).build();
-        var firstQualifyingStage = newPlayOffStage(FIRST_QUALIFYING_ROUND_ID,
+                )));;
+        var firstQualifyingStage = newPlayOffRound(FIRST_QUALIFYING_ROUND_ID,
                 "First qualifying round",
                 CHAMPIONS_LEAGUE_FQS_START_DATE,
-                firstQualifyingStageConfiguration,
+                6,
                 List.of(firstQualifyingStageSeedingEvent));
 
         var secondQualifyingStageSeedingEvent = new CompetitionEventDefinition(
@@ -128,11 +128,10 @@ public class StandardSeasonBuilder {
                         )
                 )
         );
-        var secondQualifyingStageConfiguration = PlayOffStageConfiguration.builder().playerCount(8).rounds(1).build();
-        var secondQualifyingStage = newPlayOffStage(SECOND_QUALIFYING_ROUND_ID,
+        var secondQualifyingStage = newPlayOffRound(SECOND_QUALIFYING_ROUND_ID,
                 "Second qualifying round",
                 CHAMPIONS_LEAGUE_SQS_START_DATE,
-                secondQualifyingStageConfiguration,
+                8,
                 List.of(secondQualifyingStageSeedingEvent));
 
         var groupStageSeedingEvent = new CompetitionEventDefinition(
@@ -180,11 +179,10 @@ public class StandardSeasonBuilder {
                         )
                 )
         );
-        var firstQualifyingStageConfiguration = PlayOffStageConfiguration.builder().playerCount(4).rounds(1).build();
-        var firstQualifyingStage = newPlayOffStage(FIRST_QUALIFYING_ROUND_ID,
+        var firstQualifyingStage = newPlayOffRound(FIRST_QUALIFYING_ROUND_ID,
                 "First qualifying round",
                 FEDERATIONS_CUP_FQS_START_DATE,
-                firstQualifyingStageConfiguration,
+                4,
                 List.of(firstQualifyingStageSeedingEvent));
 
         var secondCLQualifyingRoundPath = buildPath(PARENT, PARENT, CHAMPIONS_LEAGUE_ID, SECOND_QUALIFYING_ROUND_ID);
@@ -203,11 +201,10 @@ public class StandardSeasonBuilder {
                         )
                 )
         );
-        var secondQualifyingStageConfiguration = PlayOffStageConfiguration.builder().playerCount(10).rounds(1).build();
-        var secondQualifyingStage = newPlayOffStage(SECOND_QUALIFYING_ROUND_ID,
+        var secondQualifyingStage = newPlayOffRound(SECOND_QUALIFYING_ROUND_ID,
                 "Second qualifying round",
                 FEDERATIONS_CUP_SQS_START_DATE,
-                secondQualifyingStageConfiguration,
+                10,
                 List.of(secondQualifyingStageSeedingEvent));
 
         var groupStageSeedingEvent = new CompetitionEventDefinition(
@@ -345,6 +342,20 @@ public class StandardSeasonBuilder {
         definition.setStartDate(startDate);
         definition.setGroupCount(groupCount);
         definition.setPlayersPerGroup(playersPerGroup);
+        definition.setEvents(events);
+        return definition;
+    }
+
+    private static PlayOffRoundDefinition newPlayOffRound(String id,
+                                                          String name,
+                                                          int startDate,
+                                                          int participantCount,
+                                                          List<CompetitionEventDefinition> events) {
+        var definition = new PlayOffRoundDefinition();
+        definition.setId(id);
+        definition.setName(name);
+        definition.setStartDate(startDate);
+        definition.setParticipantCount(participantCount);
         definition.setEvents(events);
         return definition;
     }

@@ -162,11 +162,11 @@ public class WorldEventProcessor {
         }
         for (var previousRound : rule.getPreviousRounds()) {
             var previousCompetition = competition.resolveCompetitionPath(previousRound.getPath());
-            if (!(previousCompetition instanceof PlayOffStage playOffStage)) {
+            if (!(previousCompetition instanceof PlayOffRound playOffRound)) {
                 throw new IllegalArgumentException("Can't assign winners or losers from competition type: " +
                         previousCompetition.getClass());
             } else {
-                var results = playOffStage.getLastRoundResults();
+                var results = playOffRound.getResults();
                 var toAdd = previousRound.isWinners() ? results.getWinners() : results.getLosers();
                 participants.addAll(toAdd);
             }
@@ -175,6 +175,9 @@ public class WorldEventProcessor {
         if (competition instanceof PlayOffStage playOffStage) {
             var shuffled = PlayOffUtils.drawPlayersInPairs(participants, true);
             playOffStage.setActualParticipants(shuffled);
+        } else if (competition instanceof PlayOffRound playOffRound) {
+            var shuffled = PlayOffUtils.drawPlayersInPairs(participants, true);
+            playOffRound.setActualParticipants(shuffled);
         } else if (competition instanceof GroupStage groupStage) {
             var seeded = makeSeededGroupsTwoByFour(participants, eloRating);
             groupStage.setActualParticipantsByGroups(seeded);

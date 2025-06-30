@@ -13,16 +13,12 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class GroupStage extends MultiStageCompetition {
-    private int groupCount;
-    private int playersPerGroup;
 
     public GroupStage() {
     }
 
     public GroupStage(String id, String name, int groupCount, int playersPerGroup) {
         super(id, name);
-        this.groupCount = groupCount;
-        this.playersPerGroup = playersPerGroup;
 
         List<Competition> groups = new ArrayList<>();
         for (int i = 0; i < groupCount; ++i) {
@@ -34,7 +30,7 @@ public class GroupStage extends MultiStageCompetition {
     }
 
     public int getParticipantCount() {
-        return groupCount * playersPerGroup;
+        return getGroups().stream().mapToInt(g -> g.getParticipants().size()).sum();
     }
 
     private static List<Competition> buildGroups(int groupCount, int playersInGroup) {

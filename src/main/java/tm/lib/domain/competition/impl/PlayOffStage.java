@@ -14,14 +14,12 @@ import java.util.List;
 @Getter
 @Setter
 public class PlayOffStage extends MultiStageCompetition {
-    private PlayOffStageConfiguration configuration;
 
     public PlayOffStage() {
     }
 
     public PlayOffStage(String id, String name, PlayOffStageConfiguration configuration) {
         super(id, name);
-        this.configuration = configuration;
 
         List<Competition> stages = new ArrayList<>();
         int roundPlayerCount = configuration.getPlayerCount();
@@ -44,7 +42,7 @@ public class PlayOffStage extends MultiStageCompetition {
     }
 
     public int getParticipantCount() {
-        return configuration.getPlayerCount();
+        return getPlayOffRounds().getFirst().getParticipants().size();
     }
 
     private String getDefaultRoundName(int playerCount) {
@@ -69,7 +67,6 @@ public class PlayOffStage extends MultiStageCompetition {
     }
 
     public PlayOffRoundResult getLastRoundResults() {
-        PlayOffRound lastRound = (PlayOffRound) getStages().get(getStages().size() - 1);
-        return lastRound.getResults();
+        return getPlayOffRounds().getLast().getResults();
     }
 }

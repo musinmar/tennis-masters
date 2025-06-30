@@ -19,13 +19,13 @@ import tm.lib.domain.competition.definition.actions.Triggers;
 import tm.lib.domain.competition.definition.actions.Triggers.OnCompetitionEnd;
 import tm.lib.domain.competition.definition.actions.Triggers.OnSeasonStart;
 import tm.lib.domain.competition.impl.AbstractCompetition;
+import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.competition.impl.GroupResult;
 import tm.lib.domain.competition.impl.GroupStage;
-import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.competition.impl.MultiStageCompetition;
+import tm.lib.domain.competition.impl.PlayOffRound;
 import tm.lib.domain.competition.impl.PlayOffStage;
 import tm.lib.domain.competition.impl.PlayOffStageConfiguration;
-import tm.lib.domain.competition.impl.PlayOffRound;
 import tm.lib.domain.competition.impl.SimpleCompetition;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.Knight;
@@ -40,15 +40,15 @@ import tm.lib.persistence.dto.NationRatingDto;
 import tm.lib.persistence.dto.WorldDto;
 import tm.lib.persistence.dto.competition.AbstractCompetitionDto;
 import tm.lib.persistence.dto.competition.CompetitionEventDto;
+import tm.lib.persistence.dto.competition.GroupCompetitionDto;
 import tm.lib.persistence.dto.competition.GroupResultDto;
 import tm.lib.persistence.dto.competition.GroupStageDto;
-import tm.lib.persistence.dto.competition.GroupCompetitionDto;
 import tm.lib.persistence.dto.competition.MatchEventDto;
 import tm.lib.persistence.dto.competition.MultiStageCompetitionDto;
 import tm.lib.persistence.dto.competition.ParticipantDto;
+import tm.lib.persistence.dto.competition.PlayOffRoundDto;
 import tm.lib.persistence.dto.competition.PlayOffStageConfigurationDto;
 import tm.lib.persistence.dto.competition.PlayOffStageDto;
-import tm.lib.persistence.dto.competition.PlayOffRoundDto;
 import tm.lib.persistence.dto.competition.SimpleCompetitionDto;
 import tm.lib.persistence.dto.competition.actions.ActionDto;
 import tm.lib.persistence.dto.competition.actions.AddAssignedParticipantsFromEloRankingsDto;
@@ -279,8 +279,6 @@ public class DtoMapper {
     public static GroupStageDto toDto(GroupStage competition) {
         GroupStageDto dto = new GroupStageDto();
         fillMultiStageCompetitionDto(dto, competition);
-        dto.setGroupCount(competition.getGroupCount());
-        dto.setPlayersPerGroup(competition.getPlayersPerGroup());
         return dto;
     }
 
@@ -306,10 +304,6 @@ public class DtoMapper {
     public static PlayOffStageDto toDto(PlayOffStage competition) {
         PlayOffStageDto dto = new PlayOffStageDto();
         fillMultiStageCompetitionDto(dto, competition);
-        var configDto = new tm.lib.persistence.dto.competition.PlayOffStageConfigurationDto();
-        configDto.setPlayerCount(competition.getParticipantCount());
-        // Note: Rounds count would need to be calculated or exposed
-        dto.setConfiguration(configDto);
         return dto;
     }
 
@@ -494,8 +488,6 @@ public class DtoMapper {
     public static GroupStage toDomain(GroupStageDto dto, KnightRepository knightRepository) {
         GroupStage groupStage = new GroupStage();
         fillMultiStageCompetitionFromDto(groupStage, dto, knightRepository);
-        groupStage.setGroupCount(dto.getGroupCount());
-        groupStage.setPlayersPerGroup(dto.getPlayersPerGroup());
         return groupStage;
     }
 
@@ -514,7 +506,6 @@ public class DtoMapper {
     public static PlayOffStage toDomain(PlayOffStageDto dto, KnightRepository knightRepository) {
         PlayOffStage playOffStage = new PlayOffStage();
         fillMultiStageCompetitionFromDto(playOffStage, dto, knightRepository);
-        playOffStage.setConfiguration(toDomain(dto.getConfiguration()));
         return playOffStage;
     }
 
@@ -542,10 +533,6 @@ public class DtoMapper {
         groupResult.setGamesWon(dto.getGamesWon());
         groupResult.setGamesLost(dto.getGamesLost());
         return groupResult;
-    }
-
-    public static PlayOffStageConfiguration toDomain(PlayOffStageConfigurationDto dto) {
-        return new PlayOffStageConfiguration(dto.getPlayerCount(), dto.getRounds());
     }
 
     public static CompetitionEvent toDomain(CompetitionEventDto dto,

@@ -17,30 +17,12 @@ public class GroupStage extends MultiStageCompetition {
     public GroupStage() {
     }
 
-    public GroupStage(String id, String name, int groupCount, int playersPerGroup) {
+    public GroupStage(String id, String name) {
         super(id, name);
-
-        List<Competition> groups = new ArrayList<>();
-        for (int i = 0; i < groupCount; ++i) {
-            String groupId = String.valueOf((char) ('A' + i));
-            GroupCompetition group = new GroupCompetition(groupId, "Group " + groupId, playersPerGroup);
-            groups.add(group);
-        }
-        setStages(groups);
     }
 
     public int getParticipantCount() {
         return getGroups().stream().mapToInt(g -> g.getParticipants().size()).sum();
-    }
-
-    private static List<Competition> buildGroups(int groupCount, int playersInGroup) {
-        List<Competition> groups = new ArrayList<>();
-        for (int i = 0; i < groupCount; ++i) {
-            String groupId = String.valueOf((char) ('A' + i));
-            GroupCompetition group = new GroupCompetition(groupId, "Group " + groupId, playersInGroup);
-            groups.add(group);
-        }
-        return groups;
     }
 
     public GroupStageResult getResults() {

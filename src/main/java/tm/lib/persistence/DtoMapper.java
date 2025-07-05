@@ -30,6 +30,7 @@ import tm.lib.domain.competition.impl.SimpleCompetition;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
+import tm.lib.domain.core.Title;
 import tm.lib.domain.world.EloRating;
 import tm.lib.domain.world.KnightRepository;
 import tm.lib.domain.world.NationRating;
@@ -83,6 +84,7 @@ public class DtoMapper {
         knight.setNation(dto.getNation());
         knight.setCountry(dto.getCountry());
         knight.setSkills(dto.getSkills());
+        knight.setTitle(dto.getTitle() != null ? dto.getTitle() : Title.NONE);
         knight.setTrophies(dto.getTrophies() != null ? dto.getTrophies() : knight.getTrophies());
         return knight;
     }
@@ -95,12 +97,13 @@ public class DtoMapper {
         dto.setNation(knight.getNation());
         dto.setCountry(knight.getCountry());
         dto.setSkills(knight.getSkills());
+        dto.setTitle(knight.getTitle());
         dto.setTrophies(knight.getTrophies());
         return dto;
     }
 
     public static EloRating toDomain(EloRatingDto eloRatingDto, KnightRepository knightRepository) {
-        EloRating eloRating = new EloRating(knightRepository.getAll());
+        EloRating eloRating = new EloRating();
         eloRating.setRatings(eloRatingDto.getItems().stream()
                 .collect(toMap(item -> knightRepository.getById(item.getPlayerId()), itemDto -> {
                     EloRating.Item rating = new EloRating.Item();

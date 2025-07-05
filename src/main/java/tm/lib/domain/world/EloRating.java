@@ -7,6 +7,7 @@ import tm.lib.domain.core.Knight;
 
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,11 +31,19 @@ public class EloRating {
         private double valuePreviousYear;
     }
 
+    public EloRating() {
+        ratings = new HashMap<>();
+    }
+
     public EloRating(List<Knight> players) {
-        ratings = players.stream().collect(toMap(identity(), _ -> {
-            var r = new Item();
-            r.setValue(AVERAGE_RATING);
-            return r;
+        ratings = players.stream().collect(toMap(identity(), knight -> {
+            var item = new Item();
+            var skills = knight.getSkills();
+            var defaultRating = skills.getSpeed() + skills.getAcceleration() + skills.getHitPower() +
+                    skills.getShotRange() + skills.getAccuracy() + skills.getCunning() + skills.getIntelligence() +
+                    skills.getEndurance() + skills.getDexterity();
+            item.setValue(defaultRating);
+            return item;
         }));
     }
 

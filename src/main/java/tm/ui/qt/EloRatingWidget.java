@@ -1,5 +1,7 @@
 package tm.ui.qt;
 
+import io.qt.NonNull;
+import io.qt.core.QSize;
 import io.qt.core.Qt;
 import io.qt.core.Qt.AlignmentFlag;
 import io.qt.widgets.QTreeWidget;
@@ -14,6 +16,10 @@ import java.util.Arrays;
 import static io.qt.core.Qt.ItemDataRole.DisplayRole;
 
 public class EloRatingWidget extends QWidget {
+    public static final int RANK_COLUMN_WIDTH = 15;
+    public static final int NAME_COLUMN_WIDTH = 130;
+    public static final int RATING_COLUMN_WIDTH = 50;
+    public static final int DELTA_COLUMN_WIDTH = 50;
 
     private EloRating eloRating;
     private QTreeWidget eloRatingTreeWidget;
@@ -27,10 +33,10 @@ public class EloRatingWidget extends QWidget {
         eloRatingTreeWidget = new QTreeWidget(this);
         eloRatingTreeWidget.setColumnCount(4);
         eloRatingTreeWidget.setHeaderLabels(Arrays.asList("", "Player", "Rating", "Delta"));
-        eloRatingTreeWidget.setColumnWidth(0, 25);
-        eloRatingTreeWidget.setColumnWidth(1, 100);
-        eloRatingTreeWidget.setColumnWidth(2, 50);
-        eloRatingTreeWidget.setColumnWidth(3, 50);
+        eloRatingTreeWidget.setColumnWidth(0, RANK_COLUMN_WIDTH);
+        eloRatingTreeWidget.setColumnWidth(1, NAME_COLUMN_WIDTH);
+        eloRatingTreeWidget.setColumnWidth(2, RATING_COLUMN_WIDTH);
+        eloRatingTreeWidget.setColumnWidth(3, DELTA_COLUMN_WIDTH);
         eloRatingTreeWidget.setIndentation(0);
         eloRatingTreeWidget.setItemDelegate(new CustomItemDelegate());
 
@@ -62,4 +68,9 @@ public class EloRatingWidget extends QWidget {
         eloRatingTreeWidget.setSortingEnabled(true);
     }
 
+    @Override
+    public @NonNull QSize sizeHint() {
+        var tableSizeHint = eloRatingTreeWidget.sizeHint();
+        return tableSizeHint.add(new QSize(25, 0));
+    }
 }

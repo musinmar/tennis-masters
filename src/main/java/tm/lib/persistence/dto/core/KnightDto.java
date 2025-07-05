@@ -6,6 +6,7 @@ import tm.lib.domain.core.Country;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Nation;
 import tm.lib.domain.core.SkillSet;
+import tm.lib.domain.core.Title;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class KnightDto {
     private int id;
 
+    private Title title;
     private String name;
     private String surname;
 

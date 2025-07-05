@@ -10,6 +10,7 @@ import java.util.List;
 public class Knight {
     private int id;
 
+    private Title title = Title.NONE;
     private String name;
     private String surname;
 
@@ -40,7 +41,11 @@ public class Knight {
 
 
     public String getFullName() {
-        return getName() + " " + getSurname();
+        if (title == Title.NONE) {
+            return getName() + " " + getSurname();
+        } else {
+            return title.getText() + " " + getName() + " " + getSurname();
+        }
     }
 
     public String getShortName() {

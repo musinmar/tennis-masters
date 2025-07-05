@@ -7,6 +7,7 @@ import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
+import tm.lib.domain.core.Title;
 import tm.lib.domain.world.event.SeasonConclusion;
 import tm.lib.domain.world.event.SeasonMatchEvent;
 import tm.lib.domain.world.event.SeasonStart;
@@ -32,6 +33,9 @@ import static tm.lib.persistence.PersistenceManager.loadDefaultPlayers;
 @Getter
 @Setter
 public class World {
+    public static final int LORD_COUNT = 4;
+    public static final int SIR_COUNT = 6;
+
     private static final String FOLDER = "season";
     //    private static final String FILE_NAME_SEASON_JSON = "season.json";
 //    private static final String FILE_NAME_RATING = "rating";
@@ -75,12 +79,26 @@ public class World {
         knightRepository.setKnights(knights);
 
         eloRating = new EloRating(knightRepository.getAll());
+        assignDefaultTitles();
 
         nationRating = new NationRating();
         nationRating.initializeDefault();
 
         year = 0;
         initializeNewYear();
+    }
+
+    private void assignDefaultTitles() {
+        var rankedPlayers = getEloRating().getPersonsByRating();
+        var i = 0;
+        while (i < LORD_COUNT) {
+            rankedPlayers.get(i).setTitle(Title.LORD);
+            ++i;
+        }
+        while (i < LORD_COUNT + SIR_COUNT) {
+            rankedPlayers.get(i).setTitle(Title.SIR);
+            ++i;
+        }
     }
 
     private void startNewSeason() {

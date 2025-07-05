@@ -20,4 +20,9 @@ public class MultiStageCompetition extends AbstractMultiStageCompetition {
         stages.forEach(s -> s.setParent(this));
         this.stages = unmodifiableList(stages);
     }
+
+    @Override
+    public List<Competition> getChildren() {
+        return stages;
+    }
 }

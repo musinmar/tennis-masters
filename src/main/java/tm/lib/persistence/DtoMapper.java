@@ -334,7 +334,7 @@ public class DtoMapper {
 
     private static void fillMultiStageCompetitionDto(MultiStageCompetitionDto dto, AbstractMultiStageCompetition competition) {
         fillAbstractCompetitionDto(dto, competition);
-        dto.setStages(competition.getStages().stream().map(DtoMapper::toDto).collect(toList()));
+        dto.setStages(competition.getChildren().stream().map(DtoMapper::toDto).collect(toList()));
     }
 
     public static CompetitionEventDto toDto(CompetitionEvent event) {

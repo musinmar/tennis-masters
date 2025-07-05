@@ -22,17 +22,20 @@ public abstract class AbstractMultiStageCompetition extends AbstractCompetition 
         super(id, name);
     }
 
-    public abstract List<Competition> getStages();
+    @Override
+    public boolean hasChildren() {
+        return true;
+    }
 
     @Override
     public Optional<Competition> getChild(String id) {
-        return getStages().stream().filter(s -> s.getId().equals(id)).findAny();
+        return getChildren().stream().filter(s -> s.getId().equals(id)).findAny();
     }
 
     @Override
     public void print(PrintStream stream) {
         super.print(stream);
-        var stages = getStages();
+        var stages = getChildren();
         for (int i = 0; i < stages.size(); ++i) {
             stages.get(i).print(stream);
             if (i != stages.size() - 1) {
@@ -43,14 +46,14 @@ public abstract class AbstractMultiStageCompetition extends AbstractCompetition 
 
     @Override
     public Optional<MatchEvent> getNextMatch() {
-        return getStages().stream().flatMap(c -> c.getNextMatch().stream())
+        return getChildren().stream().flatMap(c -> c.getNextMatch().stream())
                 .min(Comparator.comparingInt(MatchEvent::getDate));
     }
 
     @Override
     public List<MatchEvent> getAllMatches() {
         List<MatchEvent> sortedMatches = new LinkedList<>();
-        for (Competition stage : getStages()) {
+        for (Competition stage : getChildren()) {
             List<MatchEvent> stageMatches = stage.getAllMatches();
             ListIterator<MatchEvent> stageIt = stageMatches.listIterator();
             ListIterator<MatchEvent> it = sortedMatches.listIterator();
@@ -81,12 +84,12 @@ public abstract class AbstractMultiStageCompetition extends AbstractCompetition 
     }
 
     private Competition getLastStage() {
-        return getStages().getLast();
+        return getChildren().getLast();
     }
 
     @Override
     public List<CompetitionEvent> getAllEvents() {
-        var events = getStages().stream().flatMap(stage -> stage.getAllEvents().stream())
+        var events = getChildren().stream().flatMap(stage -> stage.getAllEvents().stream())
                 .collect(Collectors.toList());
         events.addAll(getEvents());
         return events;

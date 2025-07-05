@@ -18,6 +18,10 @@ public interface Competition {
 
     void setParent(Competition parent);
 
+    boolean hasChildren();
+
+    List<Competition> getChildren();
+
     Optional<Competition> getChild(String id);
 
     void assignParticipants(List<Knight> players);

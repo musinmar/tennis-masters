@@ -24,7 +24,6 @@ import io.qt.widgets.QVBoxLayout;
 import io.qt.widgets.QWidget;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.CompetitionPrinter;
-import tm.lib.domain.competition.impl.AbstractMultiStageCompetition;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
@@ -271,11 +270,11 @@ public class GameWorldDialog extends QMainWindow {
     }
 
     private void onSeasonComboBoxIndexChanged() {
-        AbstractMultiStageCompetition selectedSeason = (AbstractMultiStageCompetition) seasonComboBox.itemData(seasonComboBox.currentIndex());
+        Competition selectedSeason = (Competition) seasonComboBox.itemData(seasonComboBox.currentIndex());
         if (selectedSeason != null) {
             tournamentComboBox.clear();
             tournamentComboBox.addItem("All", null);
-            for (Competition competition : selectedSeason.getStages()) {
+            for (Competition competition : selectedSeason.getChildren()) {
                 tournamentComboBox.addItem(competition.getName(), competition);
             }
         } else {
@@ -287,15 +286,14 @@ public class GameWorldDialog extends QMainWindow {
 
     private void onTournamentComboBoxIndexChanged() {
         Competition selectedTournament = (Competition) tournamentComboBox.itemData(tournamentComboBox.currentIndex());
-        if (!(selectedTournament instanceof AbstractMultiStageCompetition)) {
+        if (selectedTournament == null || !selectedTournament.hasChildren()) {
             stageComboBox.clear();
             stageComboBox.setEnabled(false);
             updateLogText();
         } else {
-            AbstractMultiStageCompetition multiStageCompetition = (AbstractMultiStageCompetition) selectedTournament;
             stageComboBox.clear();
             stageComboBox.addItem("All", null);
-            for (Competition competition : multiStageCompetition.getStages()) {
+            for (Competition competition : selectedTournament.getChildren()) {
                 stageComboBox.addItem(competition.getName(), competition);
             }
             stageComboBox.setEnabled(true);
@@ -304,15 +302,14 @@ public class GameWorldDialog extends QMainWindow {
 
     private void onStageComboBoxIndexChanged() {
         Competition selectedStage = (Competition) stageComboBox.itemData(stageComboBox.currentIndex());
-        if (!(selectedStage instanceof AbstractMultiStageCompetition)) {
+        if (selectedStage == null || !selectedStage.hasChildren()) {
             subStageComboBox.clear();
             subStageComboBox.setEnabled(false);
             updateLogText();
         } else {
-            AbstractMultiStageCompetition multiStageCompetition = (AbstractMultiStageCompetition) selectedStage;
             subStageComboBox.clear();
             subStageComboBox.addItem("All", null);
-            for (Competition competition : multiStageCompetition.getStages()) {
+            for (Competition competition : selectedStage.getChildren()) {
                 subStageComboBox.addItem(competition.getName(), competition);
             }
             subStageComboBox.setEnabled(true);
@@ -405,7 +402,7 @@ public class GameWorldDialog extends QMainWindow {
             }
         }
 
-        return (AbstractMultiStageCompetition) seasonComboBox.itemData(seasonComboBox.currentIndex());
+        return (Competition) seasonComboBox.itemData(seasonComboBox.currentIndex());
     }
 
     private void selectCompetition(Competition competition) {

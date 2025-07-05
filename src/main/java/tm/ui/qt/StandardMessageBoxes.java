@@ -21,6 +21,7 @@ public class StandardMessageBoxes {
         public void uncaughtException(Thread t, Throwable e) {
             try {
                 showError(e, null);
+                e.printStackTrace();
             } catch (Exception dialogException) {
                 System.err.println("Failed to show error dialog for uncaught exception:");
                 e.printStackTrace();

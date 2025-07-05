@@ -28,7 +28,7 @@ public class GroupStage extends AbstractMultiStageCompetition {
     }
 
     @Override
-    public List<Competition> getStages() {
+    public List<Competition> getChildren() {
         return new ArrayList<>(getGroups());
     }
 
@@ -57,7 +57,7 @@ public class GroupStage extends AbstractMultiStageCompetition {
 
     @Override
     public Knight getWinner() {
-        if (getStages().size() == 1) {
+        if (getChildren().size() == 1) {
             return super.getWinner();
         } else {
             throw new IllegalStateException("Can not determine single winner of a multi-group group stage");

@@ -31,6 +31,16 @@ abstract public class SimpleCompetition extends AbstractCompetition {
     }
 
     @Override
+    public boolean hasChildren() {
+        return false;
+    }
+
+    @Override
+    public List<Competition> getChildren() {
+        return List.of();
+    }
+
+    @Override
     public Optional<Competition> getChild(String id) {
         return Optional.empty();
     }

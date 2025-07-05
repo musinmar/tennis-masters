@@ -26,7 +26,7 @@ public class PlayOffStage extends AbstractMultiStageCompetition {
     }
 
     @Override
-    public List<Competition> getStages() {
+    public List<Competition> getChildren() {
         return new ArrayList<>(getRounds());
     }
 

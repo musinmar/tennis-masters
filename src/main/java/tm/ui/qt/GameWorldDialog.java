@@ -277,6 +277,7 @@ public class GameWorldDialog extends QMainWindow {
             for (Competition competition : selectedSeason.getChildren()) {
                 tournamentComboBox.addItem(competition.getName(), competition);
             }
+            tournamentComboBox.setEnabled(true);
         } else {
             tournamentComboBox.clear();
             tournamentComboBox.setEnabled(false);

@@ -8,6 +8,7 @@ import tm.lib.domain.competition.definition.actions.Actions.SeedBasedOnNationalR
 import tm.lib.domain.competition.definition.actions.Actions.SeedWorldCupRound;
 import tm.lib.domain.competition.definition.actions.CompetitionEvent;
 import tm.lib.domain.competition.definition.actions.Triggers;
+import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.competition.impl.GroupStage;
 import tm.lib.domain.competition.impl.PlayOffStage;
 import tm.lib.domain.competition.impl.PlayOffRound;
@@ -96,11 +97,11 @@ public class WorldEventProcessor {
         var nationPlayers = knightRepository.getAll().stream()
                 .filter(p -> p.getNation() == rule.getNation())
                 .toList();
-        if (!(competition instanceof GroupStage groupStage)) {
+        if (!(competition instanceof GroupCompetition group)) {
             var message = String.format("Competition %s is not a group stage competition", competition.getName());
             throw new IllegalArgumentException(message);
         } else {
-            groupStage.setActualParticipants(nationPlayers);
+            group.setActualParticipants(nationPlayers);
         }
     }
 
@@ -189,9 +190,9 @@ public class WorldEventProcessor {
 
     private Knight getPlayerByRanks(int nationRank, int playerRank) {
         Nation nation = nationRating.getRankedNation(nationRank - 1);
-        var nationCup = (GroupStage) rootCompetition.getChild(nation.name().toUpperCase())
+        var nationCup = (GroupCompetition) rootCompetition.getChild(nation.name().toUpperCase())
                 .orElseThrow(() -> new IllegalArgumentException("Nation cup not found for: " + nation.name()));
-        return nationCup.getResults().getGroupPosition(0, playerRank - 1);
+        return nationCup.getResults().get(playerRank - 1);
     }
 
     private void process(AddAssignedParticipantsFromEloRankings rule, Competition competition) {

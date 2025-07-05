@@ -2,6 +2,7 @@ package tm.lib.domain.competition;
 
 import tm.lib.domain.competition.definition.CompetitionDefinition;
 import tm.lib.domain.competition.definition.CompetitionSchedule;
+import tm.lib.domain.competition.definition.GroupDefinition;
 import tm.lib.domain.competition.definition.GroupStageDefinition;
 import tm.lib.domain.competition.definition.MultiStageCompetitionDefinition;
 import tm.lib.domain.competition.definition.PlayOffRoundDefinition;
@@ -43,6 +44,15 @@ public class CompetitionBuilder {
 
     private static Competition buildTypedCompetition(CompetitionDefinition definition, int year) {
         return switch (definition) {
+            case GroupDefinition groupDefinition -> {
+                var group = new GroupCompetition(
+                        groupDefinition.getId(),
+                        groupDefinition.getName(),
+                        groupDefinition.getParticipantCount()
+                );
+                group.setStartDate(groupDefinition.getStartDate());
+                yield group;
+            }
             case GroupStageDefinition groupStageDefinition -> buildGroupStage(groupStageDefinition);
             case PlayOffRoundDefinition playOffRoundDefinition -> {
                 var playOffRound = new PlayOffRound(

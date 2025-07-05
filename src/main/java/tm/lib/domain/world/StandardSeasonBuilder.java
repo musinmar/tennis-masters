@@ -3,11 +3,12 @@ package tm.lib.domain.world;
 import com.google.common.collect.ImmutableMap;
 import tm.lib.domain.competition.definition.CompetitionDefinition;
 import tm.lib.domain.competition.definition.CompetitionEventDefinition;
+import tm.lib.domain.competition.definition.CompetitionSchedule;
+import tm.lib.domain.competition.definition.GroupDefinition;
 import tm.lib.domain.competition.definition.GroupStageDefinition;
 import tm.lib.domain.competition.definition.MultiStageCompetitionDefinition;
 import tm.lib.domain.competition.definition.PlayOffRoundDefinition;
 import tm.lib.domain.competition.definition.PlayOffStageDefinition;
-import tm.lib.domain.competition.definition.CompetitionSchedule;
 import tm.lib.domain.competition.definition.actions.Actions.AddAssignedParticipantsFromEloRankings;
 import tm.lib.domain.competition.definition.actions.Actions.GiveTrophy;
 import tm.lib.domain.competition.definition.actions.Actions.SeedAllFromNationRule;
@@ -91,8 +92,8 @@ public class StandardSeasonBuilder {
         var nationSeeding = new CompetitionEventDefinition(new OnSeasonStart(),
                 new SeedAllFromNationRule(nation));
         var startDate = NATIONAL_CUPS_START_DATE + nation.ordinal() * NATIONAL_CUPS_DATE_OFFSET;
-        return newGroupStage(nation.name().toUpperCase(), "Cup of " + nation.getName(), startDate,
-                1, 6, List.of(nationSeeding, GIVE_TROPHY));
+        return newGroup(nation.name().toUpperCase(), "Cup of " + nation.getName(), startDate,
+                6, List.of(nationSeeding, GIVE_TROPHY));
     }
 
     public static CompetitionDefinition buildChampionsLeague() {
@@ -106,7 +107,8 @@ public class StandardSeasonBuilder {
                         4, 3,
                         5, 1,
                         5, 2
-                )));;
+                )));
+        ;
         var firstQualifyingStage = newPlayOffRound(FIRST_QUALIFYING_ROUND_ID,
                 "First qualifying round",
                 CHAMPIONS_LEAGUE_FQS_START_DATE,
@@ -328,6 +330,20 @@ public class StandardSeasonBuilder {
         return newMultiStageCompetition("SC",
                 "Standard tournament",
                 Arrays.asList(groupStage, playOffStage));
+    }
+
+    private static GroupDefinition newGroup(String id,
+                                            String name,
+                                            int startDate,
+                                            int participantCount,
+                                            List<CompetitionEventDefinition> events) {
+        var definition = new GroupDefinition();
+        definition.setId(id);
+        definition.setName(name);
+        definition.setStartDate(startDate);
+        definition.setParticipantCount(participantCount);
+        definition.setEvents(events);
+        return definition;
     }
 
     private static GroupStageDefinition newGroupStage(String id,

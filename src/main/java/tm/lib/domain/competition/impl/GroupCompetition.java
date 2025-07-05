@@ -24,7 +24,8 @@ public class GroupCompetition extends SimpleCompetition {
 
     private List<GroupResult> groupResults;
 
-    public GroupCompetition() {
+    public GroupCompetition(String id, String name) {
+        super(id, name);
     }
 
     public GroupCompetition(String id, String name, int playerCount) {

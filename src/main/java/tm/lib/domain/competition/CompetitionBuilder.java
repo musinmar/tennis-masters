@@ -73,12 +73,12 @@ public class CompetitionBuilder {
         var groups = buildGroups(groupStageDefinition.getGroupCount(),
                 groupStageDefinition.getPlayersPerGroup(),
                 groupStageDefinition.getStartDate());
-        groupStage.setStages(groups);
+        groupStage.setGroups(groups);
         return groupStage;
     }
 
-    private static List<Competition> buildGroups(int groupCount, int playersPerGroup, int startDate) {
-        List<Competition> groups = new ArrayList<>();
+    private static List<GroupCompetition> buildGroups(int groupCount, int playersPerGroup, int startDate) {
+        List<GroupCompetition> groups = new ArrayList<>();
         for (int i = 0; i < groupCount; ++i) {
             String groupId = String.valueOf((char) ('A' + i));
             GroupCompetition group = new GroupCompetition(groupId, "Group " + groupId, playersPerGroup);
@@ -93,12 +93,12 @@ public class CompetitionBuilder {
                 playOffStageDefinition.getName());
         var rounds = buildRounds(playOffStageDefinition.getPlayOffStageConfiguration(),
                 playOffStageDefinition.getStartDate());
-        playOffStage.setStages(rounds);
+        playOffStage.setRounds(rounds);
         return playOffStage;
     }
 
-    private static List<Competition> buildRounds(PlayOffStageConfiguration configuration, int startDate) {
-        List<Competition> stages = new ArrayList<>();
+    private static List<PlayOffRound> buildRounds(PlayOffStageConfiguration configuration, int startDate) {
+        List<PlayOffRound> stages = new ArrayList<>();
         int roundPlayerCount = configuration.getPlayerCount();
         for (int i = 0; i < configuration.getRounds(); i++) {
             String subStageName = getDefaultRoundName(roundPlayerCount);

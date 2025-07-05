@@ -10,7 +10,8 @@ import java.util.List;
 
 public class PlayOffRound extends SimpleCompetition {
 
-    public PlayOffRound() {
+    public PlayOffRound(String id, String name) {
+        super(id, name);
     }
 
     public PlayOffRound(String id, String name, int playerCount) {

@@ -19,13 +19,10 @@ import static java.util.Collections.emptyList;
 @Setter
 abstract public class AbstractCompetition implements Competition {
     private Competition parent;
-    private String id;
-    private String name;
+    private final String id;
+    private final String name;
     private List<CompetitionEvent> events = emptyList();
     private List<Knight> assignedParticipants = new ArrayList<>();
-
-    protected AbstractCompetition() {
-    }
 
     protected AbstractCompetition(String id, String name) {
         this.id = id;

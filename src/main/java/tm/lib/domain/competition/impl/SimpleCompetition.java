@@ -21,7 +21,8 @@ abstract public class SimpleCompetition extends AbstractCompetition {
     private List<MatchEvent> matches;
     private int nextMatchIndex = 0;
 
-    protected SimpleCompetition() {
+    protected SimpleCompetition(String id, String name) {
+        super(id, name);
     }
 
     protected SimpleCompetition(String id, String name, List<Participant> participants) {

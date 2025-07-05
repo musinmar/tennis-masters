@@ -2,35 +2,43 @@ package tm.lib.domain.competition.impl;
 
 import lombok.Getter;
 import lombok.Setter;
+import tm.lib.domain.competition.Competition;
 import tm.lib.domain.core.Knight;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Collections.unmodifiableList;
 
 @Getter
 @Setter
-public class PlayOffStage extends MultiStageCompetition {
+public class PlayOffStage extends AbstractMultiStageCompetition {
 
-    public PlayOffStage() {
-    }
+    private List<PlayOffRound> rounds;
 
     public PlayOffStage(String id, String name) {
         super(id, name);
     }
 
-    public int getParticipantCount() {
-        return getPlayOffRounds().getFirst().getParticipants().size();
+    public void setRounds(List<PlayOffRound> rounds) {
+        rounds.forEach(g -> g.setParent(this));
+        this.rounds = unmodifiableList(rounds);
     }
 
-    @SuppressWarnings("unchecked")
-    public List<PlayOffRound> getPlayOffRounds() {
-        return (List<PlayOffRound>) (List<?>) getStages();
+    @Override
+    public List<Competition> getStages() {
+        return new ArrayList<>(getRounds());
+    }
+
+    public int getParticipantCount() {
+        return getRounds().getFirst().getParticipants().size();
     }
 
     public void setActualParticipants(List<Knight> players) {
-        getPlayOffRounds().get(0).setActualParticipants(players);
+        getRounds().getFirst().setActualParticipants(players);
     }
 
     public PlayOffRoundResult getLastRoundResults() {
-        return getPlayOffRounds().getLast().getResults();
+        return getRounds().getLast().getResults();
     }
 }

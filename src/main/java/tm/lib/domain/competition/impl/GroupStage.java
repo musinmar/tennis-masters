@@ -10,15 +10,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.unmodifiableList;
+
 @Getter
 @Setter
-public class GroupStage extends MultiStageCompetition {
+public class GroupStage extends AbstractMultiStageCompetition {
 
-    public GroupStage() {
-    }
+    private List<GroupCompetition> groups;
 
     public GroupStage(String id, String name) {
         super(id, name);
+    }
+
+    public void setGroups(List<GroupCompetition> groups) {
+        groups.forEach(g -> g.setParent(this));
+        this.groups = unmodifiableList(groups);
+    }
+
+    @Override
+    public List<Competition> getStages() {
+        return new ArrayList<>(getGroups());
     }
 
     public int getParticipantCount() {
@@ -26,8 +37,8 @@ public class GroupStage extends MultiStageCompetition {
     }
 
     public GroupStageResult getResults() {
-        return new GroupStageResult(getStages().stream()
-                .map(stage -> ((GroupCompetition) stage).getResults())
+        return new GroupStageResult(getGroups().stream()
+                .map(GroupCompetition::getResults)
                 .collect(Collectors.toList()));
     }
 
@@ -42,11 +53,6 @@ public class GroupStage extends MultiStageCompetition {
         int groupSize = getGroups().getFirst().getParticipants().size();
         var grouped = ListUtils.partition(players, groupSize);
         setActualParticipantsByGroups(grouped);
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<GroupCompetition> getGroups() {
-        return (List<GroupCompetition>) (List<?>) getStages();
     }
 
     @Override

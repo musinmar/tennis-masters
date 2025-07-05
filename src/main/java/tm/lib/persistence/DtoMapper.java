@@ -19,13 +19,13 @@ import tm.lib.domain.competition.definition.actions.Triggers;
 import tm.lib.domain.competition.definition.actions.Triggers.OnCompetitionEnd;
 import tm.lib.domain.competition.definition.actions.Triggers.OnSeasonStart;
 import tm.lib.domain.competition.impl.AbstractCompetition;
+import tm.lib.domain.competition.impl.AbstractMultiStageCompetition;
 import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.competition.impl.GroupResult;
 import tm.lib.domain.competition.impl.GroupStage;
 import tm.lib.domain.competition.impl.MultiStageCompetition;
 import tm.lib.domain.competition.impl.PlayOffRound;
 import tm.lib.domain.competition.impl.PlayOffStage;
-import tm.lib.domain.competition.impl.PlayOffStageConfiguration;
 import tm.lib.domain.competition.impl.SimpleCompetition;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.Knight;
@@ -47,7 +47,6 @@ import tm.lib.persistence.dto.competition.MatchEventDto;
 import tm.lib.persistence.dto.competition.MultiStageCompetitionDto;
 import tm.lib.persistence.dto.competition.ParticipantDto;
 import tm.lib.persistence.dto.competition.PlayOffRoundDto;
-import tm.lib.persistence.dto.competition.PlayOffStageConfigurationDto;
 import tm.lib.persistence.dto.competition.PlayOffStageDto;
 import tm.lib.persistence.dto.competition.SimpleCompetitionDto;
 import tm.lib.persistence.dto.competition.actions.ActionDto;
@@ -333,7 +332,7 @@ public class DtoMapper {
         dto.setNextMatchIndex(competition.getNextMatchIndex());
     }
 
-    private static void fillMultiStageCompetitionDto(MultiStageCompetitionDto dto, MultiStageCompetition competition) {
+    private static void fillMultiStageCompetitionDto(MultiStageCompetitionDto dto, AbstractMultiStageCompetition competition) {
         fillAbstractCompetitionDto(dto, competition);
         dto.setStages(competition.getStages().stream().map(DtoMapper::toDto).collect(toList()));
     }
@@ -454,18 +453,10 @@ public class DtoMapper {
         };
     }
 
-    public static void fillMultiStageCompetitionFromDto(MultiStageCompetition multiStage,
+    public static void fillMultiStageCompetitionFromDto(AbstractMultiStageCompetition multiStage,
                                                         MultiStageCompetitionDto dto,
                                                         KnightRepository knightRepository) {
         fillAbstractCompetitionFromDto(multiStage, dto, knightRepository);
-
-        List<Competition> stages = dto.getStages().stream()
-                .map(stageDto -> {
-                    var stage = toDomain(stageDto, knightRepository);
-                    stage.setParent(multiStage);
-                    return stage;
-                }).collect(toList());
-        multiStage.setStages(stages);
     }
 
     public static void fillSimpleCompetitionFromDto(SimpleCompetition competition,
@@ -486,13 +477,17 @@ public class DtoMapper {
     }
 
     public static GroupStage toDomain(GroupStageDto dto, KnightRepository knightRepository) {
-        GroupStage groupStage = new GroupStage();
+        GroupStage groupStage = new GroupStage(dto.getId(), dto.getName());;
         fillMultiStageCompetitionFromDto(groupStage, dto, knightRepository);
+        List<GroupCompetition> groups = dto.getStages().stream()
+                .map(stageDto -> (GroupCompetition) toDomain(stageDto, knightRepository))
+                .collect(toList());
+        groupStage.setGroups(groups);
         return groupStage;
     }
 
     public static GroupCompetition toDomain(GroupCompetitionDto dto, KnightRepository knightRepository) {
-        GroupCompetition groupCompetition = new GroupCompetition();
+        GroupCompetition groupCompetition = new GroupCompetition(dto.getId(), dto.getName());
         fillSimpleCompetitionFromDto(groupCompetition, dto, knightRepository);
 
         List<GroupResult> groupResults = dto.getGroupResults().stream()
@@ -504,13 +499,17 @@ public class DtoMapper {
     }
 
     public static PlayOffStage toDomain(PlayOffStageDto dto, KnightRepository knightRepository) {
-        PlayOffStage playOffStage = new PlayOffStage();
+        PlayOffStage playOffStage = new PlayOffStage(dto.getId(), dto.getName());
         fillMultiStageCompetitionFromDto(playOffStage, dto, knightRepository);
+        List<PlayOffRound> rounds = dto.getStages().stream()
+                .map(stageDto -> (PlayOffRound) toDomain(stageDto, knightRepository))
+                .collect(toList());
+        playOffStage.setRounds(rounds);
         return playOffStage;
     }
 
     public static PlayOffRound toDomain(PlayOffRoundDto dto, KnightRepository knightRepository) {
-        PlayOffRound playOffRound = new PlayOffRound();
+        PlayOffRound playOffRound = new PlayOffRound(dto.getId(), dto.getName());
         fillSimpleCompetitionFromDto(playOffRound, dto, knightRepository);
         return playOffRound;
     }
@@ -518,6 +517,10 @@ public class DtoMapper {
     public static MultiStageCompetition toDomain(MultiStageCompetitionDto dto, KnightRepository knightRepository) {
         MultiStageCompetition multiStage = new MultiStageCompetition(dto.getId(), dto.getName());
         fillMultiStageCompetitionFromDto(multiStage, dto, knightRepository);
+        List<Competition> rounds = dto.getStages().stream()
+                .map(stageDto -> toDomain(stageDto, knightRepository))
+                .collect(toList());
+        multiStage.setStages(rounds);
         return multiStage;
     }
 
@@ -545,9 +548,6 @@ public class DtoMapper {
     private static void fillAbstractCompetitionFromDto(AbstractCompetition competition,
                                                        AbstractCompetitionDto dto,
                                                        KnightRepository knightRepository) {
-        competition.setId(dto.getId());
-        competition.setName(dto.getName());
-
         List<CompetitionEvent> events = dto.getEvents().stream()
                 .map(eventDto -> toDomain(eventDto, competition))
                 .collect(toList());

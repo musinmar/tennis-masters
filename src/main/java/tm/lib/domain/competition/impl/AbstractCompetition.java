@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.MatchEvent;
-import tm.lib.domain.competition.definition.actions.CompetitionEvent;
+import tm.lib.domain.competition.CompetitionEvent;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 

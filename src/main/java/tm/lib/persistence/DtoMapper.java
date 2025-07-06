@@ -1,25 +1,24 @@
 package tm.lib.persistence;
 
 import tm.lib.domain.competition.Competition;
+import tm.lib.domain.competition.CompetitionEvent;
 import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.Participant;
 import tm.lib.domain.competition.definition.actions.Action;
-import tm.lib.domain.competition.definition.actions.Actions;
-import tm.lib.domain.competition.definition.actions.Actions.AddAssignedParticipantsFromEloRankings;
-import tm.lib.domain.competition.definition.actions.Actions.AwardTitle;
-import tm.lib.domain.competition.definition.actions.Actions.GiveTrophy;
-import tm.lib.domain.competition.definition.actions.Actions.SeedAllFromNationRule;
-import tm.lib.domain.competition.definition.actions.Actions.SeedBasedOnNationalRankingRule;
-import tm.lib.domain.competition.definition.actions.Actions.SeedGroupStageToPlayOff;
-import tm.lib.domain.competition.definition.actions.Actions.SeedPlayOffToPlayOff;
-import tm.lib.domain.competition.definition.actions.Actions.SeedRandomPlayers;
-import tm.lib.domain.competition.definition.actions.Actions.SeedTitlePlayOffParticipants;
-import tm.lib.domain.competition.definition.actions.Actions.SeedWorldCupRound;
-import tm.lib.domain.competition.definition.actions.CompetitionEvent;
-import tm.lib.domain.competition.definition.actions.Trigger;
-import tm.lib.domain.competition.definition.actions.Triggers;
-import tm.lib.domain.competition.definition.actions.Triggers.OnCompetitionEnd;
-import tm.lib.domain.competition.definition.actions.Triggers.OnSeasonStart;
+import tm.lib.domain.competition.definition.actions.AddAssignedParticipantsFromEloRankings;
+import tm.lib.domain.competition.definition.actions.AwardTitle;
+import tm.lib.domain.competition.definition.actions.GiveTrophy;
+import tm.lib.domain.competition.definition.actions.SeedAllFromNationRule;
+import tm.lib.domain.competition.definition.actions.SeedBasedOnNationalRankingRule;
+import tm.lib.domain.competition.definition.actions.SeedBasedOnNationalRankingRule.SeedNationalRankingParticipant;
+import tm.lib.domain.competition.definition.actions.SeedGroupStageToPlayOff;
+import tm.lib.domain.competition.definition.actions.SeedPlayOffToPlayOff;
+import tm.lib.domain.competition.definition.actions.SeedRandomPlayers;
+import tm.lib.domain.competition.definition.actions.SeedTitlePlayOffParticipants;
+import tm.lib.domain.competition.definition.actions.SeedWorldCupRound;
+import tm.lib.domain.competition.definition.triggers.OnCompetitionEnd;
+import tm.lib.domain.competition.definition.triggers.OnSeasonStart;
+import tm.lib.domain.competition.definition.triggers.Trigger;
 import tm.lib.domain.competition.impl.AbstractCompetition;
 import tm.lib.domain.competition.impl.AbstractMultiStageCompetition;
 import tm.lib.domain.competition.impl.GroupCompetition;
@@ -60,6 +59,8 @@ import tm.lib.persistence.dto.competition.actions.OnCompetitionEndDto;
 import tm.lib.persistence.dto.competition.actions.OnSeasonStartDto;
 import tm.lib.persistence.dto.competition.actions.SeedAllFromNationRuleDto;
 import tm.lib.persistence.dto.competition.actions.SeedBasedOnNationalRankingRuleDto;
+import tm.lib.persistence.dto.competition.actions.SeedBasedOnNationalRankingRuleDto.PreviousRoundDto;
+import tm.lib.persistence.dto.competition.actions.SeedBasedOnNationalRankingRuleDto.SeedNationalRankingParticipantDto;
 import tm.lib.persistence.dto.competition.actions.SeedGroupStageToPlayOffDto;
 import tm.lib.persistence.dto.competition.actions.SeedPlayOffToPlayOffDto;
 import tm.lib.persistence.dto.competition.actions.SeedRandomPlayersDto;
@@ -384,9 +385,9 @@ public class DtoMapper {
     }
 
     public static TriggerDto toDto(Trigger trigger) {
-        if (trigger instanceof Triggers.OnSeasonStart) {
+        if (trigger instanceof OnSeasonStart) {
             return new OnSeasonStartDto();
-        } else if (trigger instanceof Triggers.OnCompetitionEnd onCompetitionEnd) {
+        } else if (trigger instanceof OnCompetitionEnd onCompetitionEnd) {
             OnCompetitionEndDto dto = new OnCompetitionEndDto();
             dto.setCompetitionPath(onCompetitionEnd.getCompetitionPath());
             return dto;
@@ -453,15 +454,15 @@ public class DtoMapper {
         }
     }
 
-    public static SeedBasedOnNationalRankingRuleDto.PreviousRoundDto toDto(Actions.SeedBasedOnNationalRankingRule.PreviousRound previousRound) {
-        SeedBasedOnNationalRankingRuleDto.PreviousRoundDto dto = new SeedBasedOnNationalRankingRuleDto.PreviousRoundDto();
+    public static PreviousRoundDto toDto(SeedBasedOnNationalRankingRule.PreviousRound previousRound) {
+        PreviousRoundDto dto = new PreviousRoundDto();
         dto.setPath(previousRound.getPath());
         dto.setWinners(previousRound.isWinners());
         return dto;
     }
 
-    public static SeedBasedOnNationalRankingRuleDto.SeedNationalRankingParticipantDto toDto(Actions.SeedBasedOnNationalRankingRule.SeedNationalRankingParticipant participant) {
-        SeedBasedOnNationalRankingRuleDto.SeedNationalRankingParticipantDto dto = new SeedBasedOnNationalRankingRuleDto.SeedNationalRankingParticipantDto();
+    public static SeedNationalRankingParticipantDto toDto(SeedNationalRankingParticipant participant) {
+        SeedNationalRankingParticipantDto dto = new SeedNationalRankingParticipantDto();
         dto.setNationRank(participant.getNationRank());
         dto.setPlayerRankInNation(participant.getPlayerRankInNation());
         return dto;
@@ -502,7 +503,8 @@ public class DtoMapper {
     }
 
     public static GroupStage toDomain(GroupStageDto dto, KnightRepository knightRepository) {
-        GroupStage groupStage = new GroupStage(dto.getId(), dto.getName());;
+        GroupStage groupStage = new GroupStage(dto.getId(), dto.getName());
+        ;
         fillMultiStageCompetitionFromDto(groupStage, dto, knightRepository);
         List<GroupCompetition> groups = dto.getStages().stream()
                 .map(stageDto -> (GroupCompetition) toDomain(stageDto, knightRepository))
@@ -606,7 +608,7 @@ public class DtoMapper {
                 List<SeedBasedOnNationalRankingRule.PreviousRound> previousRounds = seedBasedOnNationalRankingDto.getPreviousRounds().stream()
                         .map(DtoMapper::toDomain)
                         .collect(toList());
-                List<SeedBasedOnNationalRankingRule.SeedNationalRankingParticipant> seedParticipants = seedBasedOnNationalRankingDto.getSeedNationalRankingParticipants().stream()
+                List<SeedNationalRankingParticipant> seedParticipants = seedBasedOnNationalRankingDto.getSeedNationalRankingParticipants().stream()
                         .map(DtoMapper::toDomain)
                         .collect(toList());
                 yield new SeedBasedOnNationalRankingRule(previousRounds, seedParticipants);
@@ -623,11 +625,11 @@ public class DtoMapper {
         };
     }
 
-    public static SeedBasedOnNationalRankingRule.PreviousRound toDomain(SeedBasedOnNationalRankingRuleDto.PreviousRoundDto dto) {
+    public static SeedBasedOnNationalRankingRule.PreviousRound toDomain(PreviousRoundDto dto) {
         return new SeedBasedOnNationalRankingRule.PreviousRound(dto.getPath(), dto.isWinners());
     }
 
-    public static SeedBasedOnNationalRankingRule.SeedNationalRankingParticipant toDomain(SeedBasedOnNationalRankingRuleDto.SeedNationalRankingParticipantDto dto) {
-        return new SeedBasedOnNationalRankingRule.SeedNationalRankingParticipant(dto.getNationRank(), dto.getPlayerRankInNation());
+    public static SeedNationalRankingParticipant toDomain(SeedNationalRankingParticipantDto dto) {
+        return new SeedNationalRankingParticipant(dto.getNationRank(), dto.getPlayerRankInNation());
     }
 }

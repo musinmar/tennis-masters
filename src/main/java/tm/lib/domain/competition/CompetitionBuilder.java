@@ -7,9 +7,8 @@ import tm.lib.domain.competition.definition.GroupStageDefinition;
 import tm.lib.domain.competition.definition.MultiStageCompetitionDefinition;
 import tm.lib.domain.competition.definition.PlayOffRoundDefinition;
 import tm.lib.domain.competition.definition.PlayOffStageDefinition;
-import tm.lib.domain.competition.definition.actions.Actions;
-import tm.lib.domain.competition.definition.actions.CompetitionEvent;
-import tm.lib.domain.competition.definition.actions.Triggers;
+import tm.lib.domain.competition.definition.triggers.OnCompetitionEnd;
+import tm.lib.domain.competition.definition.actions.SeedPlayOffToPlayOff;
 import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.competition.impl.GroupStage;
 import tm.lib.domain.competition.impl.MultiStageCompetition;
@@ -118,8 +117,8 @@ public class CompetitionBuilder {
                 var previousStageId = "POS" + i;
                 var seedingEvent = new CompetitionEvent(
                         stage,
-                        new Triggers.OnCompetitionEnd("../" + previousStageId),
-                        new Actions.SeedPlayOffToPlayOff("../" + previousStageId));
+                        new OnCompetitionEnd("../" + previousStageId),
+                        new SeedPlayOffToPlayOff("../" + previousStageId));
                 stage.setEvents(List.of(seedingEvent));
             }
             stage.setStartDate(startDate + i * 2);

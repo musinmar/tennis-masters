@@ -3,7 +3,7 @@ package tm.lib.domain.competition.impl;
 import lombok.Getter;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.MatchEvent;
-import tm.lib.domain.competition.definition.actions.CompetitionEvent;
+import tm.lib.domain.competition.CompetitionEvent;
 import tm.lib.domain.core.Knight;
 
 import java.io.PrintStream;

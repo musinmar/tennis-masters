@@ -1,4 +1,4 @@
 package tm.lib.domain.competition.definition.actions;
 
-public interface Trigger {
+public class GiveTrophy implements Action {
 }

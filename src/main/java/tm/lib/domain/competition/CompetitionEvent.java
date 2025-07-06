@@ -1,9 +1,10 @@
-package tm.lib.domain.competition.definition.actions;
+package tm.lib.domain.competition;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import tm.lib.domain.competition.Competition;
+import tm.lib.domain.competition.definition.actions.Action;
+import tm.lib.domain.competition.definition.triggers.Trigger;
 
 @Getter
 @Setter

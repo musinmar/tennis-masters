@@ -1,6 +1,5 @@
 package tm.lib.domain.competition;
 
-import tm.lib.domain.competition.definition.actions.CompetitionEvent;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 

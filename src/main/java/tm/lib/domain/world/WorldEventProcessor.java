@@ -2,15 +2,19 @@ package tm.lib.domain.world;
 
 import lombok.Getter;
 import tm.lib.domain.competition.Competition;
-import tm.lib.domain.competition.definition.actions.Actions;
-import tm.lib.domain.competition.definition.actions.Actions.AddAssignedParticipantsFromEloRankings;
-import tm.lib.domain.competition.definition.actions.Actions.AwardTitle;
-import tm.lib.domain.competition.definition.actions.Actions.GiveTrophy;
-import tm.lib.domain.competition.definition.actions.Actions.SeedBasedOnNationalRankingRule;
-import tm.lib.domain.competition.definition.actions.Actions.SeedTitlePlayOffParticipants;
-import tm.lib.domain.competition.definition.actions.Actions.SeedWorldCupRound;
-import tm.lib.domain.competition.definition.actions.CompetitionEvent;
-import tm.lib.domain.competition.definition.actions.Triggers;
+import tm.lib.domain.competition.definition.actions.AddAssignedParticipantsFromEloRankings;
+import tm.lib.domain.competition.definition.actions.AwardTitle;
+import tm.lib.domain.competition.CompetitionEvent;
+import tm.lib.domain.competition.definition.actions.GiveTrophy;
+import tm.lib.domain.competition.definition.triggers.OnCompetitionEnd;
+import tm.lib.domain.competition.definition.triggers.OnSeasonStart;
+import tm.lib.domain.competition.definition.actions.SeedAllFromNationRule;
+import tm.lib.domain.competition.definition.actions.SeedBasedOnNationalRankingRule;
+import tm.lib.domain.competition.definition.actions.SeedGroupStageToPlayOff;
+import tm.lib.domain.competition.definition.actions.SeedPlayOffToPlayOff;
+import tm.lib.domain.competition.definition.actions.SeedRandomPlayers;
+import tm.lib.domain.competition.definition.actions.SeedTitlePlayOffParticipants;
+import tm.lib.domain.competition.definition.actions.SeedWorldCupRound;
 import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.competition.impl.GroupStage;
 import tm.lib.domain.competition.impl.PlayOffRound;
@@ -41,12 +45,12 @@ public class WorldEventProcessor {
 
         var allEvents = world.getSeasonCompetition().getAllEvents();
         this.onSeasonStartEvents = allEvents.stream()
-                .filter(t -> t.getTrigger() instanceof Triggers.OnSeasonStart)
+                .filter(t -> t.getTrigger() instanceof OnSeasonStart)
                 .toList();
         this.onCompetitionEndEvents = allEvents.stream()
-                .filter(t -> t.getTrigger() instanceof Triggers.OnCompetitionEnd)
+                .filter(t -> t.getTrigger() instanceof OnCompetitionEnd)
                 .collect(groupingBy((CompetitionEvent t) -> {
-                    var competitionEnd = (Triggers.OnCompetitionEnd) t.getTrigger();
+                    var competitionEnd = (OnCompetitionEnd) t.getTrigger();
                     var path = competitionEnd.getCompetitionPath();
                     return t.getCompetition().resolveCompetitionPath(path);
                 }, toList()));
@@ -93,11 +97,11 @@ public class WorldEventProcessor {
     private void processEvent(CompetitionEvent event) {
         final var competition = event.getCompetition();
         switch (event.getAction()) {
-            case Actions.SeedAllFromNationRule rule -> processAllFromNationSeedingRule(competition, rule);
-            case Actions.SeedRandomPlayers _ -> processRandomSelectionTrigger(competition);
-            case Actions.SeedGroupStageToPlayOff seedGroupStageToPlayOff ->
+            case SeedAllFromNationRule rule -> processAllFromNationSeedingRule(competition, rule);
+            case SeedRandomPlayers _ -> processRandomSelectionTrigger(competition);
+            case SeedGroupStageToPlayOff seedGroupStageToPlayOff ->
                     processGroupStageToPlayOffTrigger(competition, seedGroupStageToPlayOff);
-            case Actions.SeedPlayOffToPlayOff seedPlayOffToPlayOff ->
+            case SeedPlayOffToPlayOff seedPlayOffToPlayOff ->
                     processPlayOffToPlayOffTrigger(competition, seedPlayOffToPlayOff);
             case SeedBasedOnNationalRankingRule rule -> process(rule, competition);
             case AddAssignedParticipantsFromEloRankings rule -> process(rule, competition);
@@ -110,7 +114,7 @@ public class WorldEventProcessor {
         }
     }
 
-    private void processAllFromNationSeedingRule(Competition competition, Actions.SeedAllFromNationRule rule) {
+    private void processAllFromNationSeedingRule(Competition competition, SeedAllFromNationRule rule) {
         var nationPlayers = getKnightRepository().getAll().stream()
                 .filter(p -> p.getNation() == rule.getNation())
                 .toList();
@@ -122,7 +126,7 @@ public class WorldEventProcessor {
         }
     }
 
-    private void processPlayOffToPlayOffTrigger(Competition competition, Actions.SeedPlayOffToPlayOff seedPlayOffToPlayOff) {
+    private void processPlayOffToPlayOffTrigger(Competition competition, SeedPlayOffToPlayOff seedPlayOffToPlayOff) {
         var source = competition.resolveCompetitionPath(seedPlayOffToPlayOff.getPlayOffRoundPath());
         if (!(source instanceof PlayOffRound sourceStage)) {
             var message = String.format("Path %s is not pointing to a play-off sub stage",
@@ -136,7 +140,7 @@ public class WorldEventProcessor {
         }
     }
 
-    private void processGroupStageToPlayOffTrigger(Competition competition, Actions.SeedGroupStageToPlayOff seedGroupStageToPlayOff) {
+    private void processGroupStageToPlayOffTrigger(Competition competition, SeedGroupStageToPlayOff seedGroupStageToPlayOff) {
         var source = competition.resolveCompetitionPath(seedGroupStageToPlayOff.getGroupStagePath());
         if (!(source instanceof GroupStage groupStage)) {
             var message = String.format("Path %s is not pointing to a group stage",

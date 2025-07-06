@@ -60,7 +60,7 @@ public class EloRating {
         }
     }
 
-    public List<Knight> getPersonsByRating() {
+    public List<Knight> getKnightsByRating() {
         return ratings.keySet().stream()
                 .sorted(comparingDouble(this::getRating).reversed())
                 .collect(toList());

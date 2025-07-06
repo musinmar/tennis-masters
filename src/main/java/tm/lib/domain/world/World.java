@@ -89,7 +89,7 @@ public class World {
     }
 
     private void assignDefaultTitles() {
-        var rankedPlayers = getEloRating().getPersonsByRating();
+        var rankedPlayers = getEloRating().getKnightsByRating();
         var i = 0;
         while (i < LORD_COUNT) {
             rankedPlayers.get(i).setTitle(Title.LORD);
@@ -143,7 +143,7 @@ public class World {
     }
 
     public void initializeEventProcessor() {
-        eventProcessor = new WorldEventProcessor(year, knightRepository, nationRating, eloRating, seasonCompetition);
+        eventProcessor = new WorldEventProcessor(this);
     }
 
     public void initCompetitionPointValues(Map<String, Integer> pointsByPath) {
@@ -201,11 +201,11 @@ public class World {
         latestCompetition = match.getCompetition();
 
         match.getCompetition().processMatchResult(match, score);
+        logger.println(match.toString());
+
         eventProcessor.processOnCompetitionEndEvents(match.getCompetition());
         getEloRating().updateRatings(match.getHomePlayer().getPlayerOrFail(), match.getAwayPlayer().getPlayerOrFail(), score.getScoreBySets());
         updateNationRating(match, score);
-
-        logger.println(match.toString());
 
         if (match.getCompetition() instanceof GroupCompetition groupCompetition) {
             if (groupCompetition.doesNextMatchStartNewRound()) {

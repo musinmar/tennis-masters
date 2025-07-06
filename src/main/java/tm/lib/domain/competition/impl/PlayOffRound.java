@@ -69,4 +69,13 @@ public class PlayOffRound extends SimpleCompetition {
             throw new IllegalStateException("Can't determine single winner of multi-pair play-off stage");
         }
     }
+
+    public Knight getLoser() {
+        List<Knight> losers = getResults().getLosers();
+        if (losers.size() == 1) {
+            return losers.getFirst();
+        } else {
+            throw new IllegalStateException("Can't determine single loser of multi-pair play-off stage");
+        }
+    }
 }

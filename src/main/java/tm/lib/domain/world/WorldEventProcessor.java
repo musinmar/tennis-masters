@@ -1,51 +1,45 @@
 package tm.lib.domain.world;
 
+import lombok.Getter;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.definition.actions.Actions;
 import tm.lib.domain.competition.definition.actions.Actions.AddAssignedParticipantsFromEloRankings;
+import tm.lib.domain.competition.definition.actions.Actions.AwardTitle;
 import tm.lib.domain.competition.definition.actions.Actions.GiveTrophy;
 import tm.lib.domain.competition.definition.actions.Actions.SeedBasedOnNationalRankingRule;
+import tm.lib.domain.competition.definition.actions.Actions.SeedTitlePlayOffParticipants;
 import tm.lib.domain.competition.definition.actions.Actions.SeedWorldCupRound;
 import tm.lib.domain.competition.definition.actions.CompetitionEvent;
 import tm.lib.domain.competition.definition.actions.Triggers;
 import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.competition.impl.GroupStage;
-import tm.lib.domain.competition.impl.PlayOffStage;
 import tm.lib.domain.competition.impl.PlayOffRound;
+import tm.lib.domain.competition.impl.PlayOffStage;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Nation;
+import tm.lib.domain.core.Title;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.shuffle;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static tm.lib.domain.world.GroupStageUtils.makeSeededGroupsTwoByFour;
 
+@Getter
 public class WorldEventProcessor {
 
-    private final int year;
-    private final KnightRepository knightRepository;
-    private final NationRating nationRating;
-    private final EloRating eloRating;
-    private final Competition rootCompetition;
+    private final World world;
     private final Map<Competition, List<CompetitionEvent>> onCompetitionEndEvents;
     private final List<CompetitionEvent> onSeasonStartEvents;
 
-    public WorldEventProcessor(int year,
-                               KnightRepository knightRepository,
-                               NationRating nationRating,
-                               EloRating eloRating,
-                               Competition rootCompetition) {
-        this.year = year;
-        this.knightRepository = knightRepository;
-        this.nationRating = nationRating;
-        this.eloRating = eloRating;
-        this.rootCompetition = rootCompetition;
+    public WorldEventProcessor(World world) {
+        this.world = world;
 
-        var allEvents = rootCompetition.getAllEvents();
+        var allEvents = world.getSeasonCompetition().getAllEvents();
         this.onSeasonStartEvents = allEvents.stream()
                 .filter(t -> t.getTrigger() instanceof Triggers.OnSeasonStart)
                 .toList();
@@ -56,6 +50,26 @@ public class WorldEventProcessor {
                     var path = competitionEnd.getCompetitionPath();
                     return t.getCompetition().resolveCompetitionPath(path);
                 }, toList()));
+    }
+
+    private KnightRepository getKnightRepository() {
+        return world.getKnightRepository();
+    }
+
+    private EloRating getEloRating() {
+        return world.getEloRating();
+    }
+
+    private NationRating getNationRating() {
+        return world.getNationRating();
+    }
+
+    private Competition getRootCompetition() {
+        return world.getSeasonCompetition();
+    }
+
+    private WorldLogger getWorldLogger() {
+        return world.getLogger();
     }
 
     void processOnSeasonStartEvents() {
@@ -77,24 +91,27 @@ public class WorldEventProcessor {
     }
 
     private void processEvent(CompetitionEvent event) {
+        final var competition = event.getCompetition();
         switch (event.getAction()) {
-            case Actions.SeedAllFromNationRule rule -> processAllFromNationSeedingRule(event.getCompetition(), rule);
-            case Actions.SeedRandomPlayers _ -> processRandomSelectionTrigger(event.getCompetition());
+            case Actions.SeedAllFromNationRule rule -> processAllFromNationSeedingRule(competition, rule);
+            case Actions.SeedRandomPlayers _ -> processRandomSelectionTrigger(competition);
             case Actions.SeedGroupStageToPlayOff seedGroupStageToPlayOff ->
-                    processGroupStageToPlayOffTrigger(event.getCompetition(), seedGroupStageToPlayOff);
+                    processGroupStageToPlayOffTrigger(competition, seedGroupStageToPlayOff);
             case Actions.SeedPlayOffToPlayOff seedPlayOffToPlayOff ->
-                    processPlayOffToPlayOffTrigger(event.getCompetition(), seedPlayOffToPlayOff);
-            case SeedBasedOnNationalRankingRule rule -> process(rule, event.getCompetition());
-            case AddAssignedParticipantsFromEloRankings rule -> process(rule, event.getCompetition());
-            case SeedWorldCupRound rule -> process(rule, event.getCompetition());
-            case GiveTrophy action -> processGiveTrophy(event.getCompetition());
-            default -> throw new IllegalArgumentException("Unknown event: " +
-                    event.getAction());
+                    processPlayOffToPlayOffTrigger(competition, seedPlayOffToPlayOff);
+            case SeedBasedOnNationalRankingRule rule -> process(rule, competition);
+            case AddAssignedParticipantsFromEloRankings rule -> process(rule, competition);
+            case SeedWorldCupRound rule -> process(rule, competition);
+            case GiveTrophy action -> processGiveTrophy(competition);
+            case SeedTitlePlayOffParticipants seedTitlePlayOffParticipants ->
+                    process(competition, seedTitlePlayOffParticipants);
+            case AwardTitle awardTitle -> process(competition, awardTitle);
+            default -> throw new IllegalArgumentException("Unknown event: " + event.getAction());
         }
     }
 
     private void processAllFromNationSeedingRule(Competition competition, Actions.SeedAllFromNationRule rule) {
-        var nationPlayers = knightRepository.getAll().stream()
+        var nationPlayers = getKnightRepository().getAll().stream()
                 .filter(p -> p.getNation() == rule.getNation())
                 .toList();
         if (!(competition instanceof GroupCompetition group)) {
@@ -135,7 +152,7 @@ public class WorldEventProcessor {
     }
 
     private void processRandomSelectionTrigger(Competition competition) {
-        var playerPool = new ArrayList<>(this.knightRepository.getAll());
+        var playerPool = new ArrayList<>(getKnightRepository().getAll());
         shuffle(playerPool);
         switch (competition) {
             case GroupStage groupStage -> {
@@ -180,7 +197,7 @@ public class WorldEventProcessor {
             var shuffled = PlayOffUtils.drawPlayersInPairs(participants, true);
             playOffRound.setActualParticipants(shuffled);
         } else if (competition instanceof GroupStage groupStage) {
-            var seeded = makeSeededGroupsTwoByFour(participants, eloRating);
+            var seeded = makeSeededGroupsTwoByFour(participants, getEloRating());
             groupStage.setActualParticipantsByGroups(seeded);
         } else {
             var message = "Can't assign participants based on rankings for competition type " + competition.getClass();
@@ -189,14 +206,14 @@ public class WorldEventProcessor {
     }
 
     private Knight getPlayerByRanks(int nationRank, int playerRank) {
-        Nation nation = nationRating.getRankedNation(nationRank - 1);
-        var nationCup = (GroupCompetition) rootCompetition.getChild(nation.name().toUpperCase())
+        Nation nation = getNationRating().getRankedNation(nationRank - 1);
+        var nationCup = (GroupCompetition) getRootCompetition().getChild(nation.name().toUpperCase())
                 .orElseThrow(() -> new IllegalArgumentException("Nation cup not found for: " + nation.name()));
         return nationCup.getResults().get(playerRank - 1);
     }
 
     private void process(AddAssignedParticipantsFromEloRankings rule, Competition competition) {
-        var playersByRating = eloRating.getPersonsByRating();
+        var playersByRating = getEloRating().getKnightsByRating();
         competition.assignParticipants(playersByRating.subList(rule.getFromEloRank(), rule.getToEloRank()));
     }
 
@@ -226,6 +243,68 @@ public class WorldEventProcessor {
     }
 
     private void processGiveTrophy(Competition competition) {
-        competition.getWinner().addTrophy(year, competition.getName());
+        competition.getWinner().addTrophy(world.getYear(), competition.getName());
+    }
+
+    private void process(Competition competition, SeedTitlePlayOffParticipants rule) {
+        if (!(competition instanceof PlayOffRound playOffRound)) {
+            throw new IllegalArgumentException("Can't seed title play-off for competition type: "
+                    + competition.getClass());
+        } else {
+            var participants = switch (rule.getContendedTitle()) {
+                case SIR -> selectTitlePlayOffParticipants(Title.SIR, Title.NONE, World.SIR_COUNT);
+                case LORD -> selectTitlePlayOffParticipants(Title.LORD, Title.SIR, World.LORD_COUNT);
+                case null, default -> throw new IllegalArgumentException("Can't create title play-off for title: "
+                        + rule.getContendedTitle());
+            };
+            playOffRound.setActualParticipants(participants);
+        }
+    }
+
+    private List<Knight> selectTitlePlayOffParticipants(Title contestedTitle,
+                                                        Title contenderTitle,
+                                                        int allowedHolderCount) {
+        long holderCount = getKnightRepository().getAll().stream()
+                .filter(p -> p.getTitle() == contestedTitle)
+                .count();
+
+        var playersByRating = getEloRating().getKnightsByRating();
+        if (holderCount >= allowedHolderCount) {
+            var holder = playersByRating.reversed().stream()
+                    .filter(p -> p.getTitle() == contestedTitle)
+                    .findFirst().orElseThrow(RuntimeException::new);
+
+            var contender = playersByRating.stream()
+                    .filter(p -> p.getTitle() == contenderTitle)
+                    .findFirst().orElseThrow(RuntimeException::new);
+
+            return asList(holder, contender);
+        } else {
+            return playersByRating.stream()
+                    .filter(p -> p.getTitle() == contenderTitle)
+                    .limit(2)
+                    .collect(toList());
+        }
+    }
+
+    private void process(Competition competition, AwardTitle action) {
+        if (!(competition instanceof PlayOffRound playOffRound)) {
+            throw new IllegalArgumentException("Can't award title based on competition type: "
+                    + competition.getClass());
+        } else {
+            var winner = playOffRound.getWinner();
+            var loser = playOffRound.getLoser();
+            var logger = getWorldLogger();
+            logger.println();
+            if (winner.getTitle() != action.getTitle()) {
+                loser.setTitle(winner.getTitle());
+                winner.setTitle(action.getTitle());
+                logger.println("Knight %s has gained the %s title!", winner.getSimplifiedName(),
+                        action.getTitle().getText());
+            } else {
+                logger.println("Knight %s has defended the %s title!", winner.getSimplifiedName(),
+                        action.getTitle().getText());
+            }
+        }
     }
 }

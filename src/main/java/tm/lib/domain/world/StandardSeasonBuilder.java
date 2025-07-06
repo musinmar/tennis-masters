@@ -10,17 +10,20 @@ import tm.lib.domain.competition.definition.MultiStageCompetitionDefinition;
 import tm.lib.domain.competition.definition.PlayOffRoundDefinition;
 import tm.lib.domain.competition.definition.PlayOffStageDefinition;
 import tm.lib.domain.competition.definition.actions.Actions.AddAssignedParticipantsFromEloRankings;
+import tm.lib.domain.competition.definition.actions.Actions.AwardTitle;
 import tm.lib.domain.competition.definition.actions.Actions.GiveTrophy;
 import tm.lib.domain.competition.definition.actions.Actions.SeedAllFromNationRule;
 import tm.lib.domain.competition.definition.actions.Actions.SeedBasedOnNationalRankingRule;
 import tm.lib.domain.competition.definition.actions.Actions.SeedBasedOnNationalRankingRule.PreviousRound;
 import tm.lib.domain.competition.definition.actions.Actions.SeedGroupStageToPlayOff;
 import tm.lib.domain.competition.definition.actions.Actions.SeedRandomPlayers;
+import tm.lib.domain.competition.definition.actions.Actions.SeedTitlePlayOffParticipants;
 import tm.lib.domain.competition.definition.actions.Actions.SeedWorldCupRound;
 import tm.lib.domain.competition.definition.actions.Triggers.OnCompetitionEnd;
 import tm.lib.domain.competition.definition.actions.Triggers.OnSeasonStart;
 import tm.lib.domain.competition.impl.PlayOffStageConfiguration;
 import tm.lib.domain.core.Nation;
+import tm.lib.domain.core.Title;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +47,9 @@ public class StandardSeasonBuilder {
     public static final String WORLD_CUP_FIRST_QUALIFYING_ROUND_GROUP_STAGE_ID = "FQRG";
     public static final String WORLD_CUP_FIRST_QUALIFYING_ROUND_PLAY_OFF_ID = "FQRPO";
     public static final String WORLD_CUP_ID = "WC";
+    public static final String TITLE_PLAY_OFFS_ID = "TPO";
+    public static final String SIR_TITLE_PLAY_OFF_ID = "STPO";
+    public static final String LORD_TITLE_PLAY_OFF_ID = "LTPO";
 
     public static final int NATIONAL_CUPS_START_DATE = 0;
     public static final int NATIONAL_CUPS_DATE_OFFSET = 6;
@@ -60,6 +66,8 @@ public class StandardSeasonBuilder {
     public static final int WORLD_CUP_SQR_START_DATE = 54;
     public static final int WORLD_CUP_GROUP_STAGE_START_DATE = 58;
     public static final int WORLD_CUP_PLAY_OFF_START_DATE = 62;
+    public static final int SIR_TITLE_PLAY_OFF_START_DATE = 69;
+    public static final int LORD_TITLE_PLAY_OFF_START_DATE = 70;
 
     private static final CompetitionEventDefinition GIVE_TROPHY = new CompetitionEventDefinition(
             new OnCompetitionEnd(SELF),
@@ -72,6 +80,7 @@ public class StandardSeasonBuilder {
         competitions.add(buildFederationsCup());
         competitions.add(buildChampionsLeague());
         competitions.add(buildWorldCup());
+        competitions.add(buildTitlePlayOffs());
         return newMultiStageCompetition("SEASON", "Season " + (year + 1), competitions);
     }
 
@@ -312,6 +321,32 @@ public class StandardSeasonBuilder {
         schedule.setStartingFromYear(2);
         worldCup.setSchedule(schedule);
         return worldCup;
+    }
+
+    private static CompetitionDefinition buildTitlePlayOffs() {
+        var sirPlayOffEvents = List.of(
+                new CompetitionEventDefinition(
+                        new OnCompetitionEnd(buildPath(PARENT, PARENT, CHAMPIONS_LEAGUE_ID)),
+                        new SeedTitlePlayOffParticipants(Title.SIR)),
+                new CompetitionEventDefinition(
+                        new OnCompetitionEnd(buildPath(SELF)),
+                        new AwardTitle(Title.SIR))
+        );
+        var sirPlayOff = newPlayOffRound(SIR_TITLE_PLAY_OFF_ID, "Sir Title Play-off",
+                SIR_TITLE_PLAY_OFF_START_DATE, 2, sirPlayOffEvents);
+
+        var lordPlayOffEvents = List.of(
+                new CompetitionEventDefinition(
+                        new OnCompetitionEnd(buildPath(PARENT, PARENT, CHAMPIONS_LEAGUE_ID)),
+                        new SeedTitlePlayOffParticipants(Title.LORD)),
+                new CompetitionEventDefinition(
+                        new OnCompetitionEnd(buildPath(SELF)),
+                        new AwardTitle(Title.LORD))
+        );
+        var lordPlayOff = newPlayOffRound(LORD_TITLE_PLAY_OFF_ID, "Lord Title Play-off",
+                LORD_TITLE_PLAY_OFF_START_DATE, 2, lordPlayOffEvents);
+
+        return newMultiStageCompetition(TITLE_PLAY_OFFS_ID, "Title play-offs", List.of(sirPlayOff, lordPlayOff));
     }
 
     public static CompetitionDefinition buildStandardCompetition() {

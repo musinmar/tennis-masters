@@ -3,6 +3,7 @@ package tm.lib.domain.competition.definition.actions;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import tm.lib.domain.core.Nation;
+import tm.lib.domain.core.Title;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,4 +79,15 @@ public class Actions {
     public static class GiveTrophy implements Action {
     }
 
+    @Getter
+    @AllArgsConstructor
+    public static class SeedTitlePlayOffParticipants implements Action {
+        private Title contendedTitle;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class AwardTitle implements Action {
+        private Title title;
+    }
 }

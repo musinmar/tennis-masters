@@ -54,7 +54,7 @@ public class EloRatingWidget extends QWidget {
     public void repopulateEloRatingList() {
         eloRatingTreeWidget.clear();
         int i = 1;
-        for (Knight knight : eloRating.getPersonsByRating()) {
+        for (Knight knight : eloRating.getKnightsByRating()) {
             QTreeWidgetItem item = new QTreeWidgetItem();
             item.setData(0, DisplayRole, i++);
             item.setText(1, knight.getFullName());

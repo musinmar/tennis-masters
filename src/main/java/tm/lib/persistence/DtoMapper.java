@@ -6,12 +6,14 @@ import tm.lib.domain.competition.Participant;
 import tm.lib.domain.competition.definition.actions.Action;
 import tm.lib.domain.competition.definition.actions.Actions;
 import tm.lib.domain.competition.definition.actions.Actions.AddAssignedParticipantsFromEloRankings;
+import tm.lib.domain.competition.definition.actions.Actions.AwardTitle;
 import tm.lib.domain.competition.definition.actions.Actions.GiveTrophy;
 import tm.lib.domain.competition.definition.actions.Actions.SeedAllFromNationRule;
 import tm.lib.domain.competition.definition.actions.Actions.SeedBasedOnNationalRankingRule;
 import tm.lib.domain.competition.definition.actions.Actions.SeedGroupStageToPlayOff;
 import tm.lib.domain.competition.definition.actions.Actions.SeedPlayOffToPlayOff;
 import tm.lib.domain.competition.definition.actions.Actions.SeedRandomPlayers;
+import tm.lib.domain.competition.definition.actions.Actions.SeedTitlePlayOffParticipants;
 import tm.lib.domain.competition.definition.actions.Actions.SeedWorldCupRound;
 import tm.lib.domain.competition.definition.actions.CompetitionEvent;
 import tm.lib.domain.competition.definition.actions.Trigger;
@@ -52,6 +54,7 @@ import tm.lib.persistence.dto.competition.PlayOffStageDto;
 import tm.lib.persistence.dto.competition.SimpleCompetitionDto;
 import tm.lib.persistence.dto.competition.actions.ActionDto;
 import tm.lib.persistence.dto.competition.actions.AddAssignedParticipantsFromEloRankingsDto;
+import tm.lib.persistence.dto.competition.actions.AwardTitleDto;
 import tm.lib.persistence.dto.competition.actions.GiveTrophyDto;
 import tm.lib.persistence.dto.competition.actions.OnCompetitionEndDto;
 import tm.lib.persistence.dto.competition.actions.OnSeasonStartDto;
@@ -60,6 +63,7 @@ import tm.lib.persistence.dto.competition.actions.SeedBasedOnNationalRankingRule
 import tm.lib.persistence.dto.competition.actions.SeedGroupStageToPlayOffDto;
 import tm.lib.persistence.dto.competition.actions.SeedPlayOffToPlayOffDto;
 import tm.lib.persistence.dto.competition.actions.SeedRandomPlayersDto;
+import tm.lib.persistence.dto.competition.actions.SeedTitlePlayOffParticipantsDto;
 import tm.lib.persistence.dto.competition.actions.SeedWorldCupRoundDto;
 import tm.lib.persistence.dto.competition.actions.TriggerDto;
 import tm.lib.persistence.dto.core.BasicScoreDto;
@@ -392,42 +396,60 @@ public class DtoMapper {
     }
 
     public static ActionDto toDto(Action action) {
-        if (action instanceof Actions.SeedRandomPlayers) {
-            return new SeedRandomPlayersDto();
-        } else if (action instanceof Actions.SeedGroupStageToPlayOff seedGroupStageToPlayOff) {
-            SeedGroupStageToPlayOffDto dto = new SeedGroupStageToPlayOffDto();
-            dto.setGroupStagePath(seedGroupStageToPlayOff.getGroupStagePath());
-            return dto;
-        } else if (action instanceof Actions.SeedPlayOffToPlayOff seedPlayOffToPlayOff) {
-            SeedPlayOffToPlayOffDto dto = new SeedPlayOffToPlayOffDto();
-            dto.setPlayOffRoundPath(seedPlayOffToPlayOff.getPlayOffRoundPath());
-            return dto;
-        } else if (action instanceof Actions.SeedAllFromNationRule seedAllFromNationRule) {
-            SeedAllFromNationRuleDto dto = new SeedAllFromNationRuleDto();
-            dto.setNation(seedAllFromNationRule.getNation());
-            return dto;
-        } else if (action instanceof Actions.SeedBasedOnNationalRankingRule seedBasedOnNationalRankingRule) {
-            SeedBasedOnNationalRankingRuleDto dto = new SeedBasedOnNationalRankingRuleDto();
-            dto.setPreviousRounds(seedBasedOnNationalRankingRule.getPreviousRounds().stream()
-                    .map(DtoMapper::toDto)
-                    .collect(toList()));
-            dto.setSeedNationalRankingParticipants(seedBasedOnNationalRankingRule.getSeedNationalRankingParticipants().stream()
-                    .map(DtoMapper::toDto)
-                    .collect(toList()));
-            return dto;
-        } else if (action instanceof Actions.AddAssignedParticipantsFromEloRankings addAssignedParticipantsFromEloRankings) {
-            AddAssignedParticipantsFromEloRankingsDto dto = new AddAssignedParticipantsFromEloRankingsDto();
-            dto.setFromEloRank(addAssignedParticipantsFromEloRankings.getFromEloRank());
-            dto.setToEloRank(addAssignedParticipantsFromEloRankings.getToEloRank());
-            return dto;
-        } else if (action instanceof Actions.SeedWorldCupRound seedWorldCupRound) {
-            SeedWorldCupRoundDto dto = new SeedWorldCupRoundDto();
-            dto.setPreviousRoundPath(seedWorldCupRound.getPreviousRoundPath().orElse(null));
-            return dto;
-        } else if (action instanceof Actions.GiveTrophy) {
-            return new GiveTrophyDto();
-        } else {
-            throw new IllegalArgumentException("Unknown action type: " + action.getClass().getName());
+        switch (action) {
+            case SeedRandomPlayers seedRandomPlayers -> {
+                return new SeedRandomPlayersDto();
+            }
+            case SeedGroupStageToPlayOff seedGroupStageToPlayOff -> {
+                SeedGroupStageToPlayOffDto dto = new SeedGroupStageToPlayOffDto();
+                dto.setGroupStagePath(seedGroupStageToPlayOff.getGroupStagePath());
+                return dto;
+            }
+            case SeedPlayOffToPlayOff seedPlayOffToPlayOff -> {
+                SeedPlayOffToPlayOffDto dto = new SeedPlayOffToPlayOffDto();
+                dto.setPlayOffRoundPath(seedPlayOffToPlayOff.getPlayOffRoundPath());
+                return dto;
+            }
+            case SeedAllFromNationRule seedAllFromNationRule -> {
+                SeedAllFromNationRuleDto dto = new SeedAllFromNationRuleDto();
+                dto.setNation(seedAllFromNationRule.getNation());
+                return dto;
+            }
+            case SeedBasedOnNationalRankingRule seedBasedOnNationalRankingRule -> {
+                SeedBasedOnNationalRankingRuleDto dto = new SeedBasedOnNationalRankingRuleDto();
+                dto.setPreviousRounds(seedBasedOnNationalRankingRule.getPreviousRounds().stream()
+                        .map(DtoMapper::toDto)
+                        .collect(toList()));
+                dto.setSeedNationalRankingParticipants(seedBasedOnNationalRankingRule.getSeedNationalRankingParticipants().stream()
+                        .map(DtoMapper::toDto)
+                        .collect(toList()));
+                return dto;
+            }
+            case AddAssignedParticipantsFromEloRankings addAssignedParticipantsFromEloRankings -> {
+                AddAssignedParticipantsFromEloRankingsDto dto = new AddAssignedParticipantsFromEloRankingsDto();
+                dto.setFromEloRank(addAssignedParticipantsFromEloRankings.getFromEloRank());
+                dto.setToEloRank(addAssignedParticipantsFromEloRankings.getToEloRank());
+                return dto;
+            }
+            case SeedWorldCupRound seedWorldCupRound -> {
+                SeedWorldCupRoundDto dto = new SeedWorldCupRoundDto();
+                dto.setPreviousRoundPath(seedWorldCupRound.getPreviousRoundPath().orElse(null));
+                return dto;
+            }
+            case GiveTrophy giveTrophy -> {
+                return new GiveTrophyDto();
+            }
+            case SeedTitlePlayOffParticipants seedTitlePlayOffParticipants -> {
+                var dto = new SeedTitlePlayOffParticipantsDto();
+                dto.setContendedTitle(seedTitlePlayOffParticipants.getContendedTitle());
+                return dto;
+            }
+            case AwardTitle awardTitle -> {
+                var dto = new AwardTitleDto();
+                dto.setTitle(awardTitle.getTitle());
+                return dto;
+            }
+            default -> throw new IllegalArgumentException("Unknown action type: " + action.getClass().getName());
         }
     }
 
@@ -594,6 +616,9 @@ public class DtoMapper {
             case SeedWorldCupRoundDto seedWorldCupDto ->
                     new SeedWorldCupRound(Optional.ofNullable(seedWorldCupDto.getPreviousRoundPath()));
             case GiveTrophyDto ignored -> new GiveTrophy();
+            case SeedTitlePlayOffParticipantsDto seedTitlePlayOffParticipantsDto ->
+                    new SeedTitlePlayOffParticipants(seedTitlePlayOffParticipantsDto.getContendedTitle());
+            case AwardTitleDto awardTitleDto -> new AwardTitle(awardTitleDto.getTitle());
             default -> throw new IllegalArgumentException("Unknown action DTO type: " + dto.getClass().getName());
         };
     }

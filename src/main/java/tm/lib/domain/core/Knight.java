@@ -39,6 +39,9 @@ public class Knight {
         skills = new SkillSet();
     }
 
+    public String getSimplifiedName() {
+        return getName() + " " + getSurname();
+    }
 
     public String getFullName() {
         if (title == Title.NONE) {

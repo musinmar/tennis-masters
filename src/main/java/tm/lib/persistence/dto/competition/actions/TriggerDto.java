@@ -12,7 +12,8 @@ import lombok.Setter;
 )
 @JsonSubTypes({
     @JsonSubTypes.Type(value = OnSeasonStartDto.class, name = OnSeasonStartDto.TYPE),
-    @JsonSubTypes.Type(value = OnCompetitionEndDto.class, name = OnCompetitionEndDto.TYPE)
+    @JsonSubTypes.Type(value = OnCompetitionEndDto.class, name = OnCompetitionEndDto.TYPE),
+    @JsonSubTypes.Type(value = OnAllOfCompetitionsEndDto.class, name = OnAllOfCompetitionsEndDto.TYPE),
 })
 @Getter
 @Setter

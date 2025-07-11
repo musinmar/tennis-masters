@@ -2,12 +2,10 @@ package tm.lib.domain.world;
 
 import lombok.Getter;
 import tm.lib.domain.competition.Competition;
+import tm.lib.domain.competition.CompetitionEvent;
 import tm.lib.domain.competition.definition.actions.AddAssignedParticipantsFromEloRankings;
 import tm.lib.domain.competition.definition.actions.AwardTitle;
-import tm.lib.domain.competition.CompetitionEvent;
 import tm.lib.domain.competition.definition.actions.GiveTrophy;
-import tm.lib.domain.competition.definition.triggers.OnCompetitionEnd;
-import tm.lib.domain.competition.definition.triggers.OnSeasonStart;
 import tm.lib.domain.competition.definition.actions.SeedAllFromNationRule;
 import tm.lib.domain.competition.definition.actions.SeedBasedOnNationalRankingRule;
 import tm.lib.domain.competition.definition.actions.SeedGroupStageToPlayOff;
@@ -15,9 +13,11 @@ import tm.lib.domain.competition.definition.actions.SeedPlayOffToPlayOff;
 import tm.lib.domain.competition.definition.actions.SeedRandomPlayers;
 import tm.lib.domain.competition.definition.actions.SeedTitlePlayOffParticipants;
 import tm.lib.domain.competition.definition.actions.SeedWorldCupRound;
+import tm.lib.domain.competition.definition.triggers.OnCompetitionEnd;
+import tm.lib.domain.competition.definition.triggers.OnSeasonStart;
 import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.competition.impl.GroupStage;
-import tm.lib.domain.competition.impl.PlayOffRound;
+import tm.lib.domain.competition.impl.PlayOffCompetition;
 import tm.lib.domain.competition.impl.PlayOffStage;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Nation;
@@ -128,11 +128,11 @@ public class WorldEventProcessor {
 
     private void processPlayOffToPlayOffTrigger(Competition competition, SeedPlayOffToPlayOff seedPlayOffToPlayOff) {
         var source = competition.resolveCompetitionPath(seedPlayOffToPlayOff.getPlayOffRoundPath());
-        if (!(source instanceof PlayOffRound sourceStage)) {
+        if (!(source instanceof PlayOffCompetition sourceStage)) {
             var message = String.format("Path %s is not pointing to a play-off sub stage",
                     seedPlayOffToPlayOff.getPlayOffRoundPath());
             throw new IllegalArgumentException(message);
-        } else if (!(competition instanceof PlayOffRound targetStage)) {
+        } else if (!(competition instanceof PlayOffCompetition targetStage)) {
             var message = String.format("Competition %s is not a play-off stage", competition.getId());
             throw new IllegalArgumentException(message);
         } else {
@@ -184,7 +184,7 @@ public class WorldEventProcessor {
         }
         for (var previousRound : rule.getPreviousRounds()) {
             var previousCompetition = competition.resolveCompetitionPath(previousRound.getPath());
-            if (!(previousCompetition instanceof PlayOffRound playOffRound)) {
+            if (!(previousCompetition instanceof PlayOffCompetition playOffRound)) {
                 throw new IllegalArgumentException("Can't assign winners or losers from competition type: " +
                         previousCompetition.getClass());
             } else {
@@ -197,7 +197,7 @@ public class WorldEventProcessor {
         if (competition instanceof PlayOffStage playOffStage) {
             var shuffled = PlayOffUtils.drawPlayersInPairs(participants, true);
             playOffStage.setActualParticipants(shuffled);
-        } else if (competition instanceof PlayOffRound playOffRound) {
+        } else if (competition instanceof PlayOffCompetition playOffRound) {
             var shuffled = PlayOffUtils.drawPlayersInPairs(participants, true);
             playOffRound.setActualParticipants(shuffled);
         } else if (competition instanceof GroupStage groupStage) {
@@ -251,7 +251,7 @@ public class WorldEventProcessor {
     }
 
     private void process(Competition competition, SeedTitlePlayOffParticipants rule) {
-        if (!(competition instanceof PlayOffRound playOffRound)) {
+        if (!(competition instanceof PlayOffCompetition playOffRound)) {
             throw new IllegalArgumentException("Can't seed title play-off for competition type: "
                     + competition.getClass());
         } else {
@@ -292,7 +292,7 @@ public class WorldEventProcessor {
     }
 
     private void process(Competition competition, AwardTitle action) {
-        if (!(competition instanceof PlayOffRound playOffRound)) {
+        if (!(competition instanceof PlayOffCompetition playOffRound)) {
             throw new IllegalArgumentException("Can't award title based on competition type: "
                     + competition.getClass());
         } else {

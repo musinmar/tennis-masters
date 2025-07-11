@@ -339,6 +339,7 @@ public class GameWorldDialog extends QMainWindow {
                 if (reply == Yes) {
                     world.progressState();
                     updateWidgetsOnNewSeason();
+                    PersistenceManager.saveWorld(world);
                 } else {
                     return;
                 }
@@ -354,8 +355,6 @@ public class GameWorldDialog extends QMainWindow {
 
         updatePreviousEventLabel(event);
         updateWidgetsOnWorldEvent();
-
-        PersistenceManager.saveWorld(world);
     }
 
     private void updateWidgetsOnNewSeason() {

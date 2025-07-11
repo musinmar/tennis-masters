@@ -8,7 +8,7 @@ import tm.lib.domain.core.Knight;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayOffRound extends SimpleCompetition {
+public class PlayOffRound extends SimpleCompetition implements PlayOffCompetition {
 
     public PlayOffRound(String id, String name) {
         super(id, name);
@@ -58,24 +58,5 @@ public class PlayOffRound extends SimpleCompetition {
             }
         }
         return new PlayOffRoundResult(winners, losers);
-    }
-
-    @Override
-    public Knight getWinner() {
-        List<Knight> winners = getResults().getWinners();
-        if (winners.size() == 1) {
-            return winners.getFirst();
-        } else {
-            throw new IllegalStateException("Can't determine single winner of multi-pair play-off stage");
-        }
-    }
-
-    public Knight getLoser() {
-        List<Knight> losers = getResults().getLosers();
-        if (losers.size() == 1) {
-            return losers.getFirst();
-        } else {
-            throw new IllegalStateException("Can't determine single loser of multi-pair play-off stage");
-        }
     }
 }

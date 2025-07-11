@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static java.util.Collections.unmodifiableMap;
-import static tm.lib.domain.competition.CompetitionBuilder.buildCompetition;
+import static tm.lib.domain.competition.CompetitionFactory.createCompetition;
 import static tm.lib.domain.world.StandardSeasonBuilder.buildCompetitionPoints;
 import static tm.lib.domain.world.StandardSeasonBuilder.buildSeasonCompetitionDefinition;
 import static tm.lib.domain.world.WorldLogger.NoopLogger;
@@ -138,7 +138,7 @@ public class World {
     }
 
     private void initCompetitions() {
-        seasonCompetition = buildCompetition(buildSeasonCompetitionDefinition(year), year);
+        seasonCompetition = createCompetition(buildSeasonCompetitionDefinition(year), year);
         initCompetitionPointValues(buildCompetitionPoints());
     }
 

@@ -14,4 +14,22 @@ public class PlayOffRoundResult {
         this.winners = winners;
         this.losers = losers;
     }
+
+    public Knight getWinner() {
+        List<Knight> winners = getWinners();
+        if (winners.size() == 1) {
+            return winners.getFirst();
+        } else {
+            throw new IllegalStateException("Can't determine single winner of multi-pair play-off stage");
+        }
+    }
+
+    public Knight getLoser() {
+        List<Knight> losers = getLosers();
+        if (losers.size() == 1) {
+            return losers.getFirst();
+        } else {
+            throw new IllegalStateException("Can't determine single loser of multi-pair play-off stage");
+        }
+    }
 }

@@ -27,6 +27,7 @@ import tm.lib.domain.competition.impl.GroupStage;
 import tm.lib.domain.competition.impl.MultiStageCompetition;
 import tm.lib.domain.competition.impl.PlayOffRound;
 import tm.lib.domain.competition.impl.PlayOffStage;
+import tm.lib.domain.competition.impl.SeriesPlayOffRound;
 import tm.lib.domain.competition.impl.SimpleCompetition;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.Knight;
@@ -50,6 +51,7 @@ import tm.lib.persistence.dto.competition.MultiStageCompetitionDto;
 import tm.lib.persistence.dto.competition.ParticipantDto;
 import tm.lib.persistence.dto.competition.PlayOffRoundDto;
 import tm.lib.persistence.dto.competition.PlayOffStageDto;
+import tm.lib.persistence.dto.competition.SeriesPlayOffRoundDto;
 import tm.lib.persistence.dto.competition.SimpleCompetitionDto;
 import tm.lib.persistence.dto.competition.actions.ActionDto;
 import tm.lib.persistence.dto.competition.actions.AddAssignedParticipantsFromEloRankingsDto;
@@ -267,6 +269,7 @@ public class DtoMapper {
             case GroupStage groupStage -> toDto(groupStage);
             case GroupCompetition groupCompetition -> toDto(groupCompetition);
             case PlayOffStage playOffStage -> toDto(playOffStage);
+            case SeriesPlayOffRound seriesPlayOffRound -> toDto(seriesPlayOffRound);
             case PlayOffRound playOffRound -> toDto(playOffRound);
             case MultiStageCompetition multiStageCompetition -> toDto(multiStageCompetition);
             default ->
@@ -317,6 +320,13 @@ public class DtoMapper {
     public static PlayOffRoundDto toDto(PlayOffRound competition) {
         PlayOffRoundDto dto = new PlayOffRoundDto();
         fillSimpleCompetitionDto(dto, competition);
+        return dto;
+    }
+
+    public static SeriesPlayOffRoundDto toDto(SeriesPlayOffRound competition) {
+        SeriesPlayOffRoundDto dto = new SeriesPlayOffRoundDto();
+        fillSimpleCompetitionDto(dto, competition);
+        dto.setWinCount(competition.getWinCount());
         return dto;
     }
 
@@ -473,6 +483,7 @@ public class DtoMapper {
             case GroupStageDto groupStageDto -> toDomain(groupStageDto, knightRepository);
             case GroupCompetitionDto groupCompetitionDto -> toDomain(groupCompetitionDto, knightRepository);
             case PlayOffStageDto playOffStageDto -> toDomain(playOffStageDto, knightRepository);
+            case SeriesPlayOffRoundDto seriesPlayOffRoundDto -> toDomain(seriesPlayOffRoundDto, knightRepository);
             case PlayOffRoundDto playOffRoundDto -> toDomain(playOffRoundDto, knightRepository);
             case MultiStageCompetitionDto multiStageDto -> toDomain(multiStageDto, knightRepository);
             default -> throw new IllegalArgumentException("Unknown competition DTO type: " + dto.getClass().getName());
@@ -539,6 +550,13 @@ public class DtoMapper {
         PlayOffRound playOffRound = new PlayOffRound(dto.getId(), dto.getName());
         fillSimpleCompetitionFromDto(playOffRound, dto, knightRepository);
         return playOffRound;
+    }
+
+    public static SeriesPlayOffRound toDomain(SeriesPlayOffRoundDto dto, KnightRepository knightRepository) {
+        SeriesPlayOffRound seriesPlayOffRound = new SeriesPlayOffRound(dto.getId(), dto.getName());
+        fillSimpleCompetitionFromDto(seriesPlayOffRound, dto, knightRepository);
+        seriesPlayOffRound.setWinCount(dto.getWinCount());
+        return seriesPlayOffRound;
     }
 
     public static MultiStageCompetition toDomain(MultiStageCompetitionDto dto, KnightRepository knightRepository) {

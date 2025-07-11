@@ -17,7 +17,8 @@ import java.util.List;
         @JsonSubTypes.Type(value = GroupStageDto.class, name = GroupStageDto.TYPE),
         @JsonSubTypes.Type(value = GroupCompetitionDto.class, name = GroupCompetitionDto.TYPE),
         @JsonSubTypes.Type(value = PlayOffStageDto.class, name = PlayOffStageDto.TYPE),
-        @JsonSubTypes.Type(value = PlayOffRoundDto.class, name = PlayOffRoundDto.TYPE)
+        @JsonSubTypes.Type(value = PlayOffRoundDto.class, name = PlayOffRoundDto.TYPE),
+        @JsonSubTypes.Type(value = SeriesPlayOffRoundDto.class, name = SeriesPlayOffRoundDto.TYPE)
 })
 @Getter
 @Setter

@@ -13,8 +13,10 @@ import tm.lib.domain.competition.definition.actions.SeedPlayOffToPlayOff;
 import tm.lib.domain.competition.definition.actions.SeedRandomPlayers;
 import tm.lib.domain.competition.definition.actions.SeedTitlePlayOffParticipants;
 import tm.lib.domain.competition.definition.actions.SeedWorldCupRound;
+import tm.lib.domain.competition.definition.triggers.OnAllOfCompetitionsEnd;
 import tm.lib.domain.competition.definition.triggers.OnCompetitionEnd;
 import tm.lib.domain.competition.definition.triggers.OnSeasonStart;
+import tm.lib.domain.competition.exception.UnresolvableCompetitionPathException;
 import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.competition.impl.GroupStage;
 import tm.lib.domain.competition.impl.PlayOffCompetition;
@@ -26,6 +28,7 @@ import tm.lib.domain.core.Title;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.shuffle;
@@ -39,6 +42,7 @@ public class WorldEventProcessor {
     private final World world;
     private final Map<Competition, List<CompetitionEvent>> onCompetitionEndEvents;
     private final List<CompetitionEvent> onSeasonStartEvents;
+    private final List<CompetitionEvent> onAllOfCompetitionsEndEvents;
 
     public WorldEventProcessor(World world) {
         this.world = world;
@@ -54,6 +58,9 @@ public class WorldEventProcessor {
                     var path = competitionEnd.getCompetitionPath();
                     return t.getCompetition().resolveCompetitionPath(path);
                 }, toList()));
+        this.onAllOfCompetitionsEndEvents = allEvents.stream()
+                .filter(t -> t.getTrigger() instanceof OnAllOfCompetitionsEnd)
+                .toList();
     }
 
     private KnightRepository getKnightRepository() {
@@ -92,6 +99,27 @@ public class WorldEventProcessor {
             }
             cur = cur.getParent();
         }
+
+        processOnAllOfCompetitionsEndEvents();
+    }
+
+    void processOnAllOfCompetitionsEndEvents() {
+        onAllOfCompetitionsEndEvents.stream()
+                .filter(this::areAllCompetitionsFinished)
+                .forEach(this::processEvent);
+    }
+
+    private boolean areAllCompetitionsFinished(CompetitionEvent event) {
+        var trigger = (OnAllOfCompetitionsEnd) event.getTrigger();
+        return trigger.getCompetitionPaths().stream()
+                .flatMap(path -> {
+                    try {
+                        return Stream.of(event.getCompetition().resolveCompetitionPath(path));
+                    } catch (UnresolvableCompetitionPathException e) {
+                        return Stream.empty();
+                    }
+                })
+                .allMatch(Competition::isFinished);
     }
 
     private void processEvent(CompetitionEvent event) {

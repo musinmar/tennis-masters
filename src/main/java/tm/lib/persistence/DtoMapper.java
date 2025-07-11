@@ -16,6 +16,7 @@ import tm.lib.domain.competition.definition.actions.SeedPlayOffToPlayOff;
 import tm.lib.domain.competition.definition.actions.SeedRandomPlayers;
 import tm.lib.domain.competition.definition.actions.SeedTitlePlayOffParticipants;
 import tm.lib.domain.competition.definition.actions.SeedWorldCupRound;
+import tm.lib.domain.competition.definition.triggers.OnAllOfCompetitionsEnd;
 import tm.lib.domain.competition.definition.triggers.OnCompetitionEnd;
 import tm.lib.domain.competition.definition.triggers.OnSeasonStart;
 import tm.lib.domain.competition.definition.triggers.Trigger;
@@ -57,6 +58,7 @@ import tm.lib.persistence.dto.competition.actions.ActionDto;
 import tm.lib.persistence.dto.competition.actions.AddAssignedParticipantsFromEloRankingsDto;
 import tm.lib.persistence.dto.competition.actions.AwardTitleDto;
 import tm.lib.persistence.dto.competition.actions.GiveTrophyDto;
+import tm.lib.persistence.dto.competition.actions.OnAllOfCompetitionsEndDto;
 import tm.lib.persistence.dto.competition.actions.OnCompetitionEndDto;
 import tm.lib.persistence.dto.competition.actions.OnSeasonStartDto;
 import tm.lib.persistence.dto.competition.actions.SeedAllFromNationRuleDto;
@@ -401,6 +403,10 @@ public class DtoMapper {
             OnCompetitionEndDto dto = new OnCompetitionEndDto();
             dto.setCompetitionPath(onCompetitionEnd.getCompetitionPath());
             return dto;
+        } else if (trigger instanceof OnAllOfCompetitionsEnd onAllOfCompetitionsEnd) {
+            OnAllOfCompetitionsEndDto dto = new OnAllOfCompetitionsEndDto();
+            dto.setCompetitionPaths(onAllOfCompetitionsEnd.getCompetitionPaths());
+            return dto;
         } else {
             throw new IllegalArgumentException("Unknown trigger type: " + trigger.getClass().getName());
         }
@@ -609,6 +615,8 @@ public class DtoMapper {
             case OnSeasonStartDto ignored -> new OnSeasonStart();
             case OnCompetitionEndDto onCompetitionEndDto ->
                     new OnCompetitionEnd(onCompetitionEndDto.getCompetitionPath());
+            case OnAllOfCompetitionsEndDto onAllOfCompetitionsEndDto ->
+                    new OnAllOfCompetitionsEnd(onAllOfCompetitionsEndDto.getCompetitionPaths());
             default -> throw new IllegalArgumentException("Unknown trigger DTO type: " + dto.getClass().getName());
         };
     }

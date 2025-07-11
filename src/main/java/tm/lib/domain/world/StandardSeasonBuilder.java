@@ -20,6 +20,7 @@ import tm.lib.domain.competition.definition.actions.SeedGroupStageToPlayOff;
 import tm.lib.domain.competition.definition.actions.SeedRandomPlayers;
 import tm.lib.domain.competition.definition.actions.SeedTitlePlayOffParticipants;
 import tm.lib.domain.competition.definition.actions.SeedWorldCupRound;
+import tm.lib.domain.competition.definition.triggers.OnAllOfCompetitionsEnd;
 import tm.lib.domain.competition.definition.triggers.OnCompetitionEnd;
 import tm.lib.domain.competition.definition.triggers.OnSeasonStart;
 import tm.lib.domain.competition.impl.PlayOffStageConfiguration;
@@ -325,9 +326,13 @@ public class StandardSeasonBuilder {
     }
 
     private static CompetitionDefinition buildTitlePlayOffs() {
+        var trigger = new OnAllOfCompetitionsEnd(List.of(
+                buildPath(PARENT, PARENT, CHAMPIONS_LEAGUE_ID),
+                buildPath(PARENT, PARENT, WORLD_CUP_ID)
+        ));
         var sirPlayOffEvents = List.of(
                 new CompetitionEventDefinition(
-                        new OnCompetitionEnd(buildPath(PARENT, PARENT, CHAMPIONS_LEAGUE_ID)),
+                        trigger,
                         new SeedTitlePlayOffParticipants(Title.SIR)),
                 new CompetitionEventDefinition(
                         new OnCompetitionEnd(buildPath(SELF)),
@@ -338,7 +343,7 @@ public class StandardSeasonBuilder {
 
         var lordPlayOffEvents = List.of(
                 new CompetitionEventDefinition(
-                        new OnCompetitionEnd(buildPath(PARENT, PARENT, CHAMPIONS_LEAGUE_ID)),
+                        trigger,
                         new SeedTitlePlayOffParticipants(Title.LORD)),
                 new CompetitionEventDefinition(
                         new OnCompetitionEnd(buildPath(SELF)),

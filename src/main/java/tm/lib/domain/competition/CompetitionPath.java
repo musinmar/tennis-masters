@@ -1,6 +1,7 @@
 package tm.lib.domain.competition;
 
 import org.apache.commons.lang3.StringUtils;
+import tm.lib.domain.competition.exception.UnresolvableCompetitionPathException;
 
 import java.util.ArrayList;
 
@@ -18,12 +19,12 @@ public class CompetitionPath {
             } else if (PARENT.equals(el)) {
                 cur = cur.getParent();
                 if (cur == null) {
-                    throw new IllegalArgumentException("Cannot navigate to parent - already at root competition");
+                    throw new UnresolvableCompetitionPathException("Cannot navigate to parent - already at root competition");
                 }
             } else {
                 final var curId = cur.getId();
                 cur = cur.getChild(el).orElseThrow(() ->
-                        new IllegalArgumentException("Competition " + curId + " does not have child " + el));
+                        new UnresolvableCompetitionPathException("Competition " + curId + " does not have child " + el));
             }
         }
         return cur;

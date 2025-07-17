@@ -30,7 +30,7 @@ public class CompetitionPath {
         return cur;
     }
 
-    public static String buildPathTo(Competition from, Competition to) {
+    public static String createPathTo(Competition from, Competition to) {
         if (from == null) {
             throw new IllegalArgumentException("Can't build path from null");
         }
@@ -45,10 +45,10 @@ public class CompetitionPath {
         if (to == null) {
             throw new IllegalArgumentException(to.getId() + " is not direct or indirect child of " + from.getId());
         }
-        return buildPath(buffer.reversed().toArray(new String[0]));
+        return createPath(buffer.reversed().toArray(new String[0]));
     }
 
-    public static String buildPath(String... sections) {
+    public static String createPath(String... sections) {
         return StringUtils.join(sections, PATH_SEPARATOR);
     }
 }

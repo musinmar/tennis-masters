@@ -3,6 +3,7 @@ package tm.lib.domain.world;
 import lombok.Getter;
 import lombok.Setter;
 import tm.lib.domain.competition.Competition;
+import tm.lib.domain.competition.CompetitionFactory;
 import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.core.Knight;
@@ -24,9 +25,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static java.util.Collections.unmodifiableMap;
-import static tm.lib.domain.competition.CompetitionFactory.createCompetition;
-import static tm.lib.domain.world.StandardSeasonBuilder.buildCompetitionPoints;
-import static tm.lib.domain.world.StandardSeasonBuilder.buildSeasonCompetitionDefinition;
 import static tm.lib.domain.world.WorldLogger.NoopLogger;
 import static tm.lib.persistence.PersistenceManager.loadDefaultPlayers;
 
@@ -138,8 +136,9 @@ public class World {
     }
 
     private void initCompetitions() {
-        seasonCompetition = createCompetition(buildSeasonCompetitionDefinition(year), year);
-        initCompetitionPointValues(buildCompetitionPoints());
+        var seasonDefinition = StandardSeasonDefinitionFactory.createSeasonDefinition(year);
+        seasonCompetition = CompetitionFactory.createCompetition(seasonDefinition.rootCompetitionDefinition(), year);
+        initCompetitionPointValues(seasonDefinition.competitionPoints());
     }
 
     public void initializeEventProcessor() {

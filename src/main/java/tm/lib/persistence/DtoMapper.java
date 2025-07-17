@@ -81,7 +81,7 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static tm.lib.domain.competition.CompetitionPath.buildPathTo;
+import static tm.lib.domain.competition.CompetitionPath.createPathTo;
 
 public class DtoMapper {
 
@@ -215,7 +215,7 @@ public class DtoMapper {
         dto.setSeasonCompetition(toDto(seasonCompetition));
         Map<String, Integer> competitionPointValues = world.getCompetitionPointValues().entrySet().stream()
                 .collect(toMap(
-                        entry -> buildPathTo(seasonCompetition, entry.getKey()),
+                        entry -> createPathTo(seasonCompetition, entry.getKey()),
                         Map.Entry::getValue
                 ));
         dto.setCompetitionPointValues(competitionPointValues);

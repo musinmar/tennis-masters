@@ -8,4 +8,5 @@ import lombok.Getter;
 public class AddAssignedParticipantsFromEloRankings implements Action {
     private int fromEloRank;
     private int toEloRank;
+    private String targetPath;
 }

@@ -10,4 +10,5 @@ public class SeedAllFromNationRuleDto extends ActionDto {
     public static final String TYPE = "seedAllFromNationRule";
     
     private Nation nation;
+    private String targetPath;
 }

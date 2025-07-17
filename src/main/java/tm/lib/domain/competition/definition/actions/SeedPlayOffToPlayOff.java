@@ -7,4 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SeedPlayOffToPlayOff implements Action {
     private String playOffRoundPath;
+    private String targetPath;
 }

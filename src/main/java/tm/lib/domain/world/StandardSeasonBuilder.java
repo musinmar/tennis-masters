@@ -34,8 +34,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
-import static tm.lib.domain.competition.CompetitionPath.PARENT;
-import static tm.lib.domain.competition.CompetitionPath.SELF;
 import static tm.lib.domain.competition.CompetitionPath.buildPath;
 import static tm.lib.domain.competition.definition.actions.SeedBasedOnNationalRankingRule.buildParticipants;
 
@@ -71,10 +69,12 @@ public class StandardSeasonBuilder {
     public static final int SIR_TITLE_PLAY_OFF_START_DATE = 69;
     public static final int LORD_TITLE_PLAY_OFF_START_DATE = 74;
 
-    private static final CompetitionEventDefinition GIVE_TROPHY = new CompetitionEventDefinition(
-            new OnCompetitionEnd(SELF),
-            new GiveTrophy()
-    );
+    private static CompetitionEventDefinition createGiveTrophyEvent(String competitionPath) {
+        return new CompetitionEventDefinition(
+                new OnCompetitionEnd(competitionPath),
+                new GiveTrophy(competitionPath)
+        );
+    }
 
     public static CompetitionDefinition buildSeasonCompetitionDefinition(int year) {
         var nationalCups = Arrays.stream(Nation.values()).map(StandardSeasonBuilder::buildNationalCup).toList();
@@ -100,15 +100,16 @@ public class StandardSeasonBuilder {
     }
 
     public static CompetitionDefinition buildNationalCup(Nation nation) {
+        var competitionId = nation.name().toUpperCase();
         var nationSeeding = new CompetitionEventDefinition(new OnSeasonStart(),
-                new SeedAllFromNationRule(nation));
+                new SeedAllFromNationRule(nation, competitionId));
         var startDate = NATIONAL_CUPS_START_DATE + nation.ordinal() * NATIONAL_CUPS_DATE_OFFSET;
-        return newGroup(nation.name().toUpperCase(), "Cup of " + nation.getName(), startDate,
-                6, List.of(nationSeeding, GIVE_TROPHY));
+        return newGroup(competitionId, "Cup of " + nation.getName(), startDate,
+                6, List.of(nationSeeding, createGiveTrophyEvent(competitionId)));
     }
 
     public static CompetitionDefinition buildChampionsLeague() {
-        var lastNationalCupPath = buildPath(PARENT, PARENT, Nation.values()[Nation.values().length - 1].name());
+        var lastNationalCupPath = buildPath(Nation.values()[Nation.values().length - 1].name());
         var firstQualifyingStageSeedingEvent = new CompetitionEventDefinition(
                 new OnCompetitionEnd(lastNationalCupPath),
                 new SeedBasedOnNationalRankingRule(emptyList(), buildParticipants(
@@ -118,7 +119,7 @@ public class StandardSeasonBuilder {
                         4, 3,
                         5, 1,
                         5, 2
-                )));
+                ), buildPath(CHAMPIONS_LEAGUE_ID, FIRST_QUALIFYING_ROUND_ID)));
         ;
         var firstQualifyingStage = newPlayOffRound(FIRST_QUALIFYING_ROUND_ID,
                 "First qualifying round",
@@ -127,10 +128,10 @@ public class StandardSeasonBuilder {
                 List.of(firstQualifyingStageSeedingEvent));
 
         var secondQualifyingStageSeedingEvent = new CompetitionEventDefinition(
-                new OnCompetitionEnd(buildPath(PARENT, FIRST_QUALIFYING_ROUND_ID)),
+                new OnCompetitionEnd(buildPath(CHAMPIONS_LEAGUE_ID, FIRST_QUALIFYING_ROUND_ID)),
                 new SeedBasedOnNationalRankingRule(
                         List.of(
-                                new PreviousRound(buildPath(PARENT, FIRST_QUALIFYING_ROUND_ID), true)
+                                new PreviousRound(buildPath(CHAMPIONS_LEAGUE_ID, FIRST_QUALIFYING_ROUND_ID), true)
                         ),
                         buildParticipants(
                                 1, 3,
@@ -138,7 +139,8 @@ public class StandardSeasonBuilder {
                                 2, 3,
                                 3, 2,
                                 4, 1
-                        )
+                        ),
+                        buildPath(CHAMPIONS_LEAGUE_ID, SECOND_QUALIFYING_ROUND_ID)
                 )
         );
         var secondQualifyingStage = newPlayOffRound(SECOND_QUALIFYING_ROUND_ID,
@@ -148,17 +150,18 @@ public class StandardSeasonBuilder {
                 List.of(secondQualifyingStageSeedingEvent));
 
         var groupStageSeedingEvent = new CompetitionEventDefinition(
-                new OnCompetitionEnd(buildPath(PARENT, SECOND_QUALIFYING_ROUND_ID)),
+                new OnCompetitionEnd(buildPath(CHAMPIONS_LEAGUE_ID, SECOND_QUALIFYING_ROUND_ID)),
                 new SeedBasedOnNationalRankingRule(
                         List.of(
-                                new PreviousRound(buildPath(PARENT, SECOND_QUALIFYING_ROUND_ID), true)
+                                new PreviousRound(buildPath(CHAMPIONS_LEAGUE_ID, SECOND_QUALIFYING_ROUND_ID), true)
                         ),
                         buildParticipants(
                                 1, 1,
                                 1, 2,
                                 2, 1,
                                 3, 1
-                        )
+                        ),
+                        buildPath(CHAMPIONS_LEAGUE_ID, GROUP_STAGE_ID)
                 )
         );
         var groupStage = newGroupStage(GROUP_STAGE_ID, "Group round",
@@ -166,8 +169,8 @@ public class StandardSeasonBuilder {
                 List.of(groupStageSeedingEvent));
 
         var playOffSeedingEvent = new CompetitionEventDefinition(
-                new OnCompetitionEnd(buildPath(PARENT, GROUP_STAGE_ID)),
-                new SeedGroupStageToPlayOff(buildPath(PARENT, GROUP_STAGE_ID)));
+                new OnCompetitionEnd(buildPath(CHAMPIONS_LEAGUE_ID, GROUP_STAGE_ID)),
+                new SeedGroupStageToPlayOff(buildPath(CHAMPIONS_LEAGUE_ID, GROUP_STAGE_ID), buildPath(CHAMPIONS_LEAGUE_ID, PLAY_OFF_ID)));
         var playOffStageConfiguration = PlayOffStageConfiguration.builder().playerCount(4).build();
         var playOffStage = newPlayOffStage(PLAY_OFF_ID, "Play-off",
                 CHAMPIONS_LEAGUE_PLAY_OFF_START_DATE,
@@ -177,19 +180,20 @@ public class StandardSeasonBuilder {
         var stages = List.of(firstQualifyingStage, secondQualifyingStage, groupStage, playOffStage);
 
         var championsLeague = newMultiStageCompetition(CHAMPIONS_LEAGUE_ID, "Champions League", stages);
-        championsLeague.setEvents(List.of(GIVE_TROPHY));
+        championsLeague.setEvents(List.of(createGiveTrophyEvent(CHAMPIONS_LEAGUE_ID)));
         return championsLeague;
     }
 
     public static CompetitionDefinition buildFederationsCup() {
-        var firstCLQualifyingRoundPath = buildPath(PARENT, PARENT, CHAMPIONS_LEAGUE_ID, FIRST_QUALIFYING_ROUND_ID);
+        var firstCLQualifyingRoundPath = buildPath(CHAMPIONS_LEAGUE_ID, FIRST_QUALIFYING_ROUND_ID);
         var firstQualifyingStageSeedingEvent = new CompetitionEventDefinition(
                 new OnCompetitionEnd(firstCLQualifyingRoundPath),
                 new SeedBasedOnNationalRankingRule(
                         List.of(new PreviousRound(firstCLQualifyingRoundPath, false)),
                         buildParticipants(
                                 1, 5
-                        )
+                        ),
+                        buildPath(FEDERATIONS_CUP_ID, FIRST_QUALIFYING_ROUND_ID)
                 )
         );
         var firstQualifyingStage = newPlayOffRound(FIRST_QUALIFYING_ROUND_ID,
@@ -198,20 +202,21 @@ public class StandardSeasonBuilder {
                 4,
                 List.of(firstQualifyingStageSeedingEvent));
 
-        var secondCLQualifyingRoundPath = buildPath(PARENT, PARENT, CHAMPIONS_LEAGUE_ID, SECOND_QUALIFYING_ROUND_ID);
+        var secondCLQualifyingRoundPath = buildPath(CHAMPIONS_LEAGUE_ID, SECOND_QUALIFYING_ROUND_ID);
         var secondQualifyingStageSeedingEvent = new CompetitionEventDefinition(
                 new OnCompetitionEnd(secondCLQualifyingRoundPath),
                 new SeedBasedOnNationalRankingRule(
                         List.of(
                                 new PreviousRound(secondCLQualifyingRoundPath, false),
-                                new PreviousRound(buildPath(PARENT, FIRST_QUALIFYING_ROUND_ID), true)
+                                new PreviousRound(buildPath(FEDERATIONS_CUP_ID, FIRST_QUALIFYING_ROUND_ID), true)
                         ),
                         buildParticipants(
                                 2, 5,
                                 3, 5,
                                 4, 4,
                                 5, 4
-                        )
+                        ),
+                        buildPath(FEDERATIONS_CUP_ID, SECOND_QUALIFYING_ROUND_ID)
                 )
         );
         var secondQualifyingStage = newPlayOffRound(SECOND_QUALIFYING_ROUND_ID,
@@ -221,16 +226,17 @@ public class StandardSeasonBuilder {
                 List.of(secondQualifyingStageSeedingEvent));
 
         var groupStageSeedingEvent = new CompetitionEventDefinition(
-                new OnCompetitionEnd(buildPath(PARENT, SECOND_QUALIFYING_ROUND_ID)),
+                new OnCompetitionEnd(buildPath(FEDERATIONS_CUP_ID, SECOND_QUALIFYING_ROUND_ID)),
                 new SeedBasedOnNationalRankingRule(
                         List.of(
-                                new PreviousRound(buildPath(PARENT, SECOND_QUALIFYING_ROUND_ID), true)
+                                new PreviousRound(buildPath(FEDERATIONS_CUP_ID, SECOND_QUALIFYING_ROUND_ID), true)
                         ),
                         buildParticipants(
                                 2, 4,
                                 3, 4,
                                 5, 3
-                        )
+                        ),
+                        buildPath(FEDERATIONS_CUP_ID, GROUP_STAGE_ID)
                 )
         );
         var groupStage = newGroupStage(GROUP_STAGE_ID, "Group round",
@@ -238,8 +244,8 @@ public class StandardSeasonBuilder {
                 List.of(groupStageSeedingEvent));
 
         var playOffSeedingEvent = new CompetitionEventDefinition(
-                new OnCompetitionEnd(buildPath(PARENT, GROUP_STAGE_ID)),
-                new SeedGroupStageToPlayOff(buildPath(PARENT, GROUP_STAGE_ID)));
+                new OnCompetitionEnd(buildPath(FEDERATIONS_CUP_ID, GROUP_STAGE_ID)),
+                new SeedGroupStageToPlayOff(buildPath(FEDERATIONS_CUP_ID, GROUP_STAGE_ID), buildPath(FEDERATIONS_CUP_ID, PLAY_OFF_ID)));
         var playOffStageConfiguration = PlayOffStageConfiguration.builder().playerCount(4).build();
         var playOffStage = newPlayOffStage(PLAY_OFF_ID, "Play-off",
                 FEDERATIONS_CUP_PLAY_OFF_START_DATE,
@@ -249,28 +255,28 @@ public class StandardSeasonBuilder {
         var stages = List.of(firstQualifyingStage, secondQualifyingStage, groupStage, playOffStage);
 
         var federationsCup = newMultiStageCompetition(FEDERATIONS_CUP_ID, "Federation Cup", stages);
-        federationsCup.setEvents(List.of(GIVE_TROPHY));
+        federationsCup.setEvents(List.of(createGiveTrophyEvent(FEDERATIONS_CUP_ID)));
         return federationsCup;
     }
 
     public static CompetitionDefinition buildWorldCup() {
-        var championsLeagueTrigger = new OnCompetitionEnd(buildPath(PARENT, PARENT, CHAMPIONS_LEAGUE_ID));
+        var championsLeagueTrigger = new OnCompetitionEnd(buildPath(CHAMPIONS_LEAGUE_ID));
         var firstQualifyingStageEloEvent = new CompetitionEventDefinition(
                 championsLeagueTrigger,
-                new AddAssignedParticipantsFromEloRankings(22, 30)
+                new AddAssignedParticipantsFromEloRankings(22, 30, buildPath(WORLD_CUP_ID, WORLD_CUP_FIRST_QUALIFYING_ROUND_GROUP_STAGE_ID))
         );
         var firstQualifyingStageEvent = new CompetitionEventDefinition(
                 championsLeagueTrigger,
-                new SeedWorldCupRound(Optional.empty())
+                new SeedWorldCupRound(Optional.empty(), buildPath(WORLD_CUP_ID, WORLD_CUP_FIRST_QUALIFYING_ROUND_GROUP_STAGE_ID))
         );
         var firstQualifyingStageGroupRound = newGroupStage(WORLD_CUP_FIRST_QUALIFYING_ROUND_GROUP_STAGE_ID,
                 "First qualifying round", WORLD_CUP_FQR_GROUP_STAGE_START_DATE, 2, 4,
                 List.of(firstQualifyingStageEloEvent, firstQualifyingStageEvent));
 
-        var fqrPath = buildPath(PARENT, WORLD_CUP_FIRST_QUALIFYING_ROUND_GROUP_STAGE_ID);
+        var fqrPath = buildPath(WORLD_CUP_ID, WORLD_CUP_FIRST_QUALIFYING_ROUND_GROUP_STAGE_ID);
         var firstQualifyingStagePlayOffSeedingEvent = new CompetitionEventDefinition(
                 championsLeagueTrigger,
-                new SeedGroupStageToPlayOff(fqrPath));
+                new SeedGroupStageToPlayOff(fqrPath, buildPath(WORLD_CUP_ID, WORLD_CUP_FIRST_QUALIFYING_ROUND_PLAY_OFF_ID)));
         var firstQualifyingRoundPlayOffStage = newPlayOffStage(WORLD_CUP_FIRST_QUALIFYING_ROUND_PLAY_OFF_ID,
                 "First qualifying round play-off",
                 WORLD_CUP_FQR_PLAY_OFF_STAGE_START_DATE,
@@ -279,32 +285,32 @@ public class StandardSeasonBuilder {
 
         var secondQualifyingStageEloEvent = new CompetitionEventDefinition(
                 championsLeagueTrigger,
-                new AddAssignedParticipantsFromEloRankings(8, 22)
+                new AddAssignedParticipantsFromEloRankings(8, 22, buildPath(WORLD_CUP_ID, SECOND_QUALIFYING_ROUND_ID))
         );
         var secondQualifyingStageEvent = new CompetitionEventDefinition(
-                new OnCompetitionEnd(buildPath(PARENT, WORLD_CUP_FIRST_QUALIFYING_ROUND_PLAY_OFF_ID)),
-                new SeedWorldCupRound(Optional.of(buildPath(PARENT, WORLD_CUP_FIRST_QUALIFYING_ROUND_PLAY_OFF_ID)))
+                new OnCompetitionEnd(buildPath(WORLD_CUP_ID, WORLD_CUP_FIRST_QUALIFYING_ROUND_PLAY_OFF_ID)),
+                new SeedWorldCupRound(Optional.of(buildPath(WORLD_CUP_ID, WORLD_CUP_FIRST_QUALIFYING_ROUND_PLAY_OFF_ID)), buildPath(WORLD_CUP_ID, SECOND_QUALIFYING_ROUND_ID))
         );
         var secondQualifyingStageGroupRound = newGroupStage(SECOND_QUALIFYING_ROUND_ID,
                 "Second qualifying round", WORLD_CUP_SQR_START_DATE, 4, 4,
                 List.of(secondQualifyingStageEloEvent, secondQualifyingStageEvent));
 
         var groupStageEloEvent = new CompetitionEventDefinition(
-                new OnCompetitionEnd(buildPath(PARENT, SECOND_QUALIFYING_ROUND_ID)),
-                new AddAssignedParticipantsFromEloRankings(0, 8)
+                new OnCompetitionEnd(buildPath(WORLD_CUP_ID, SECOND_QUALIFYING_ROUND_ID)),
+                new AddAssignedParticipantsFromEloRankings(0, 8, buildPath(WORLD_CUP_ID, GROUP_STAGE_ID))
         );
         var groupStageEvent = new CompetitionEventDefinition(
-                new OnCompetitionEnd(buildPath(PARENT, SECOND_QUALIFYING_ROUND_ID)),
-                new SeedWorldCupRound(Optional.of(buildPath(PARENT, SECOND_QUALIFYING_ROUND_ID)))
+                new OnCompetitionEnd(buildPath(WORLD_CUP_ID, SECOND_QUALIFYING_ROUND_ID)),
+                new SeedWorldCupRound(Optional.of(buildPath(WORLD_CUP_ID, SECOND_QUALIFYING_ROUND_ID)), buildPath(WORLD_CUP_ID, GROUP_STAGE_ID))
         );
         var groupStage = newGroupStage(GROUP_STAGE_ID,
                 "Group round", WORLD_CUP_GROUP_STAGE_START_DATE, 4, 4,
                 List.of(groupStageEloEvent, groupStageEvent));
 
-        var groupStagePath = buildPath(PARENT, GROUP_STAGE_ID);
+        var groupStagePath = buildPath(WORLD_CUP_ID, GROUP_STAGE_ID);
         var playOffSeedingEvent = new CompetitionEventDefinition(
                 new OnCompetitionEnd(groupStagePath),
-                new SeedGroupStageToPlayOff(groupStagePath));
+                new SeedGroupStageToPlayOff(groupStagePath, buildPath(WORLD_CUP_ID, PLAY_OFF_ID)));
         var playOffStage = newPlayOffStage(PLAY_OFF_ID,
                 "Play-off",
                 WORLD_CUP_PLAY_OFF_START_DATE,
@@ -317,7 +323,7 @@ public class StandardSeasonBuilder {
                 groupStage,
                 playOffStage);
         var worldCup = newMultiStageCompetition(WORLD_CUP_ID, "World Cup", stages);
-        worldCup.setEvents(List.of(GIVE_TROPHY));
+        worldCup.setEvents(List.of(createGiveTrophyEvent(WORLD_CUP_ID)));
         var schedule = new CompetitionSchedule();
         schedule.setPeriodInYears(4);
         schedule.setStartingFromYear(2);
@@ -327,16 +333,16 @@ public class StandardSeasonBuilder {
 
     private static CompetitionDefinition buildTitlePlayOffs() {
         var trigger = new OnAllOfCompetitionsEnd(List.of(
-                buildPath(PARENT, PARENT, CHAMPIONS_LEAGUE_ID),
-                buildPath(PARENT, PARENT, WORLD_CUP_ID)
+                buildPath(CHAMPIONS_LEAGUE_ID),
+                buildPath(WORLD_CUP_ID)
         ));
         var sirPlayOffEvents = List.of(
                 new CompetitionEventDefinition(
                         trigger,
-                        new SeedTitlePlayOffParticipants(Title.SIR)),
+                        new SeedTitlePlayOffParticipants(Title.SIR, buildPath(TITLE_PLAY_OFFS_ID, SIR_TITLE_PLAY_OFF_ID))),
                 new CompetitionEventDefinition(
-                        new OnCompetitionEnd(buildPath(SELF)),
-                        new AwardTitle(Title.SIR))
+                        new OnCompetitionEnd(buildPath(TITLE_PLAY_OFFS_ID, SIR_TITLE_PLAY_OFF_ID)),
+                        new AwardTitle(Title.SIR, buildPath(TITLE_PLAY_OFFS_ID, SIR_TITLE_PLAY_OFF_ID)))
         );
         var sirPlayOff = newSeriesPlayOffRound(SIR_TITLE_PLAY_OFF_ID, "Sir Title Play-off",
                 SIR_TITLE_PLAY_OFF_START_DATE, 3, sirPlayOffEvents);
@@ -344,10 +350,10 @@ public class StandardSeasonBuilder {
         var lordPlayOffEvents = List.of(
                 new CompetitionEventDefinition(
                         trigger,
-                        new SeedTitlePlayOffParticipants(Title.LORD)),
+                        new SeedTitlePlayOffParticipants(Title.LORD, buildPath(TITLE_PLAY_OFFS_ID, LORD_TITLE_PLAY_OFF_ID))),
                 new CompetitionEventDefinition(
-                        new OnCompetitionEnd(buildPath(SELF)),
-                        new AwardTitle(Title.LORD))
+                        new OnCompetitionEnd(buildPath(TITLE_PLAY_OFFS_ID, LORD_TITLE_PLAY_OFF_ID)),
+                        new AwardTitle(Title.LORD, buildPath(TITLE_PLAY_OFFS_ID, LORD_TITLE_PLAY_OFF_ID)))
         );
         var lordPlayOff = newSeriesPlayOffRound(LORD_TITLE_PLAY_OFF_ID, "Lord Title Play-off",
                 LORD_TITLE_PLAY_OFF_START_DATE, 3, lordPlayOffEvents);
@@ -358,11 +364,11 @@ public class StandardSeasonBuilder {
     public static CompetitionDefinition buildStandardCompetition() {
         var groupStage = newGroupStage(GROUP_STAGE_ID, "Group stage",
                 0, 4, 4,
-                List.of(new CompetitionEventDefinition(new OnSeasonStart(), new SeedRandomPlayers())));
-        var groupStagePath = buildPath(PARENT, GROUP_STAGE_ID);
+                List.of(new CompetitionEventDefinition(new OnSeasonStart(), new SeedRandomPlayers(buildPath("SC", GROUP_STAGE_ID)))));
+        var groupStagePath = buildPath("SC", GROUP_STAGE_ID);
         var playOffSeedingEvent = new CompetitionEventDefinition(
                 new OnCompetitionEnd(groupStagePath),
-                new SeedGroupStageToPlayOff(groupStagePath));
+                new SeedGroupStageToPlayOff(groupStagePath, buildPath("SC", PLAY_OFF_ID)));
         var playOffStage = newPlayOffStage(PLAY_OFF_ID,
                 "Play-off",
                 10,

@@ -415,21 +415,26 @@ public class DtoMapper {
     public static ActionDto toDto(Action action) {
         switch (action) {
             case SeedRandomPlayers seedRandomPlayers -> {
-                return new SeedRandomPlayersDto();
+                SeedRandomPlayersDto dto = new SeedRandomPlayersDto();
+                dto.setTargetPath(seedRandomPlayers.getTargetPath());
+                return dto;
             }
             case SeedGroupStageToPlayOff seedGroupStageToPlayOff -> {
                 SeedGroupStageToPlayOffDto dto = new SeedGroupStageToPlayOffDto();
                 dto.setGroupStagePath(seedGroupStageToPlayOff.getGroupStagePath());
+                dto.setTargetPath(seedGroupStageToPlayOff.getTargetPath());
                 return dto;
             }
             case SeedPlayOffToPlayOff seedPlayOffToPlayOff -> {
                 SeedPlayOffToPlayOffDto dto = new SeedPlayOffToPlayOffDto();
                 dto.setPlayOffRoundPath(seedPlayOffToPlayOff.getPlayOffRoundPath());
+                dto.setTargetPath(seedPlayOffToPlayOff.getTargetPath());
                 return dto;
             }
             case SeedAllFromNationRule seedAllFromNationRule -> {
                 SeedAllFromNationRuleDto dto = new SeedAllFromNationRuleDto();
                 dto.setNation(seedAllFromNationRule.getNation());
+                dto.setTargetPath(seedAllFromNationRule.getTargetPath());
                 return dto;
             }
             case SeedBasedOnNationalRankingRule seedBasedOnNationalRankingRule -> {
@@ -440,30 +445,37 @@ public class DtoMapper {
                 dto.setSeedNationalRankingParticipants(seedBasedOnNationalRankingRule.getSeedNationalRankingParticipants().stream()
                         .map(DtoMapper::toDto)
                         .collect(toList()));
+                dto.setTargetPath(seedBasedOnNationalRankingRule.getTargetPath());
                 return dto;
             }
             case AddAssignedParticipantsFromEloRankings addAssignedParticipantsFromEloRankings -> {
                 AddAssignedParticipantsFromEloRankingsDto dto = new AddAssignedParticipantsFromEloRankingsDto();
                 dto.setFromEloRank(addAssignedParticipantsFromEloRankings.getFromEloRank());
                 dto.setToEloRank(addAssignedParticipantsFromEloRankings.getToEloRank());
+                dto.setTargetPath(addAssignedParticipantsFromEloRankings.getTargetPath());
                 return dto;
             }
             case SeedWorldCupRound seedWorldCupRound -> {
                 SeedWorldCupRoundDto dto = new SeedWorldCupRoundDto();
                 dto.setPreviousRoundPath(seedWorldCupRound.getPreviousRoundPath().orElse(null));
+                dto.setTargetPath(seedWorldCupRound.getTargetPath());
                 return dto;
             }
             case GiveTrophy giveTrophy -> {
-                return new GiveTrophyDto();
+                GiveTrophyDto dto = new GiveTrophyDto();
+                dto.setTargetPath(giveTrophy.getTargetPath());
+                return dto;
             }
             case SeedTitlePlayOffParticipants seedTitlePlayOffParticipants -> {
                 var dto = new SeedTitlePlayOffParticipantsDto();
                 dto.setContendedTitle(seedTitlePlayOffParticipants.getContendedTitle());
+                dto.setTargetPath(seedTitlePlayOffParticipants.getTargetPath());
                 return dto;
             }
             case AwardTitle awardTitle -> {
                 var dto = new AwardTitleDto();
                 dto.setTitle(awardTitle.getTitle());
+                dto.setTargetPath(awardTitle.getTargetPath());
                 return dto;
             }
             default -> throw new IllegalArgumentException("Unknown action type: " + action.getClass().getName());
@@ -593,7 +605,7 @@ public class DtoMapper {
                                             Competition competition) {
         Trigger trigger = toDomain(dto.getTrigger());
         Action action = toDomain(dto.getAction());
-        return new CompetitionEvent(competition, trigger, action);
+        return new CompetitionEvent(trigger, action);
     }
 
     private static void fillAbstractCompetitionFromDto(AbstractCompetition competition,
@@ -623,13 +635,13 @@ public class DtoMapper {
 
     public static Action toDomain(ActionDto dto) {
         return switch (dto) {
-            case SeedRandomPlayersDto ignored -> new SeedRandomPlayers();
+            case SeedRandomPlayersDto seedRandomPlayersDto -> new SeedRandomPlayers(seedRandomPlayersDto.getTargetPath());
             case SeedGroupStageToPlayOffDto seedGroupStageDto ->
-                    new SeedGroupStageToPlayOff(seedGroupStageDto.getGroupStagePath());
+                    new SeedGroupStageToPlayOff(seedGroupStageDto.getGroupStagePath(), seedGroupStageDto.getTargetPath());
             case SeedPlayOffToPlayOffDto seedPlayOffDto ->
-                    new SeedPlayOffToPlayOff(seedPlayOffDto.getPlayOffRoundPath());
+                    new SeedPlayOffToPlayOff(seedPlayOffDto.getPlayOffRoundPath(), seedPlayOffDto.getTargetPath());
             case SeedAllFromNationRuleDto seedAllFromNationDto ->
-                    new SeedAllFromNationRule(seedAllFromNationDto.getNation());
+                    new SeedAllFromNationRule(seedAllFromNationDto.getNation(), seedAllFromNationDto.getTargetPath());
             case SeedBasedOnNationalRankingRuleDto seedBasedOnNationalRankingDto -> {
                 List<SeedBasedOnNationalRankingRule.PreviousRound> previousRounds = seedBasedOnNationalRankingDto.getPreviousRounds().stream()
                         .map(DtoMapper::toDomain)
@@ -637,16 +649,16 @@ public class DtoMapper {
                 List<SeedNationalRankingParticipant> seedParticipants = seedBasedOnNationalRankingDto.getSeedNationalRankingParticipants().stream()
                         .map(DtoMapper::toDomain)
                         .collect(toList());
-                yield new SeedBasedOnNationalRankingRule(previousRounds, seedParticipants);
+                yield new SeedBasedOnNationalRankingRule(previousRounds, seedParticipants, seedBasedOnNationalRankingDto.getTargetPath());
             }
             case AddAssignedParticipantsFromEloRankingsDto addAssignedDto ->
-                    new AddAssignedParticipantsFromEloRankings(addAssignedDto.getFromEloRank(), addAssignedDto.getToEloRank());
+                    new AddAssignedParticipantsFromEloRankings(addAssignedDto.getFromEloRank(), addAssignedDto.getToEloRank(), addAssignedDto.getTargetPath());
             case SeedWorldCupRoundDto seedWorldCupDto ->
-                    new SeedWorldCupRound(Optional.ofNullable(seedWorldCupDto.getPreviousRoundPath()));
-            case GiveTrophyDto ignored -> new GiveTrophy();
+                    new SeedWorldCupRound(Optional.ofNullable(seedWorldCupDto.getPreviousRoundPath()), seedWorldCupDto.getTargetPath());
+            case GiveTrophyDto giveTrophyDto -> new GiveTrophy(giveTrophyDto.getTargetPath());
             case SeedTitlePlayOffParticipantsDto seedTitlePlayOffParticipantsDto ->
-                    new SeedTitlePlayOffParticipants(seedTitlePlayOffParticipantsDto.getContendedTitle());
-            case AwardTitleDto awardTitleDto -> new AwardTitle(awardTitleDto.getTitle());
+                    new SeedTitlePlayOffParticipants(seedTitlePlayOffParticipantsDto.getContendedTitle(), seedTitlePlayOffParticipantsDto.getTargetPath());
+            case AwardTitleDto awardTitleDto -> new AwardTitle(awardTitleDto.getTitle(), awardTitleDto.getTargetPath());
             default -> throw new IllegalArgumentException("Unknown action DTO type: " + dto.getClass().getName());
         };
     }

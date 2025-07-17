@@ -10,4 +10,5 @@ public class AwardTitleDto extends ActionDto {
     public static final String TYPE = "awardTitle";
 
     private Title title;
+    private String targetPath;
 }

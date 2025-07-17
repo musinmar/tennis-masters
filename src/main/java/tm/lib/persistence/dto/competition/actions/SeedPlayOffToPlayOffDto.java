@@ -9,4 +9,5 @@ public class SeedPlayOffToPlayOffDto extends ActionDto {
     public static final String TYPE = "seedPlayOffToPlayOff";
     
     private String playOffRoundPath;
+    private String targetPath;
 }

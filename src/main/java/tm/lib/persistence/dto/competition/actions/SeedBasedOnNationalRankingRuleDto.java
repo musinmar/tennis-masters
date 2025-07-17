@@ -12,6 +12,7 @@ public class SeedBasedOnNationalRankingRuleDto extends ActionDto {
     
     private List<PreviousRoundDto> previousRounds;
     private List<SeedNationalRankingParticipantDto> seedNationalRankingParticipants;
+    private String targetPath;
 
     @Getter
     @Setter

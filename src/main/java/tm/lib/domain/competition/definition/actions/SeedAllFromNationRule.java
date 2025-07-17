@@ -8,4 +8,5 @@ import tm.lib.domain.core.Nation;
 @AllArgsConstructor
 public class SeedAllFromNationRule implements Action {
     private Nation nation;
+    private String targetPath;
 }

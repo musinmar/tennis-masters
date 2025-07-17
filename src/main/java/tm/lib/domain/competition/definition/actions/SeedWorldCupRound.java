@@ -9,4 +9,5 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SeedWorldCupRound implements Action {
     private Optional<String> previousRoundPath;
+    private String targetPath;
 }

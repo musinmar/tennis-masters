@@ -33,4 +33,5 @@ public class SeedBasedOnNationalRankingRule implements Action {
 
     private List<PreviousRound> previousRounds;
     private List<SeedNationalRankingParticipant> seedNationalRankingParticipants;
+    private String targetPath;
 }

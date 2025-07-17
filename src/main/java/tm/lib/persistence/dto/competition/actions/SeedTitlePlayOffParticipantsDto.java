@@ -10,4 +10,5 @@ public class SeedTitlePlayOffParticipantsDto extends ActionDto {
     public static final String TYPE = "seedTitlePlayOffParticipants";
 
     private Title contendedTitle;
+    private String targetPath;
 }

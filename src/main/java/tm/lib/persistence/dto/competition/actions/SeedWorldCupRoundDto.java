@@ -9,4 +9,5 @@ public class SeedWorldCupRoundDto extends ActionDto {
     public static final String TYPE = "seedWorldCupRound";
     
     private String previousRoundPath;
+    private String targetPath;
 }

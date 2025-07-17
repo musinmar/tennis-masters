@@ -56,7 +56,7 @@ public class WorldEventProcessor {
                 .collect(groupingBy((CompetitionEvent t) -> {
                     var competitionEnd = (OnCompetitionEnd) t.getTrigger();
                     var path = competitionEnd.getCompetitionPath();
-                    return t.getCompetition().resolveCompetitionPath(path);
+                    return world.getSeasonCompetition().resolveCompetitionPath(path);
                 }, toList()));
         this.onAllOfCompetitionsEndEvents = allEvents.stream()
                 .filter(t -> t.getTrigger() instanceof OnAllOfCompetitionsEnd)
@@ -114,7 +114,7 @@ public class WorldEventProcessor {
         return trigger.getCompetitionPaths().stream()
                 .flatMap(path -> {
                     try {
-                        return Stream.of(event.getCompetition().resolveCompetitionPath(path));
+                        return Stream.of(world.getSeasonCompetition().resolveCompetitionPath(path));
                     } catch (UnresolvableCompetitionPathException e) {
                         return Stream.empty();
                     }
@@ -123,21 +123,47 @@ public class WorldEventProcessor {
     }
 
     private void processEvent(CompetitionEvent event) {
-        final var competition = event.getCompetition();
         switch (event.getAction()) {
-            case SeedAllFromNationRule rule -> processAllFromNationSeedingRule(competition, rule);
-            case SeedRandomPlayers _ -> processRandomSelectionTrigger(competition);
-            case SeedGroupStageToPlayOff seedGroupStageToPlayOff ->
-                    processGroupStageToPlayOffTrigger(competition, seedGroupStageToPlayOff);
-            case SeedPlayOffToPlayOff seedPlayOffToPlayOff ->
-                    processPlayOffToPlayOffTrigger(competition, seedPlayOffToPlayOff);
-            case SeedBasedOnNationalRankingRule rule -> process(rule, competition);
-            case AddAssignedParticipantsFromEloRankings rule -> process(rule, competition);
-            case SeedWorldCupRound rule -> process(rule, competition);
-            case GiveTrophy action -> processGiveTrophy(competition);
-            case SeedTitlePlayOffParticipants seedTitlePlayOffParticipants ->
-                    process(competition, seedTitlePlayOffParticipants);
-            case AwardTitle awardTitle -> process(competition, awardTitle);
+            case SeedAllFromNationRule rule -> {
+                var target = getRootCompetition().resolveCompetitionPath(rule.getTargetPath());
+                processAllFromNationSeedingRule(target, rule);
+            }
+            case SeedRandomPlayers rule -> {
+                var target = getRootCompetition().resolveCompetitionPath(rule.getTargetPath());
+                processRandomSelectionTrigger(target);
+            }
+            case SeedGroupStageToPlayOff seedGroupStageToPlayOff -> {
+                var target = getRootCompetition().resolveCompetitionPath(seedGroupStageToPlayOff.getTargetPath());
+                processGroupStageToPlayOffTrigger(target, seedGroupStageToPlayOff);
+            }
+            case SeedPlayOffToPlayOff seedPlayOffToPlayOff -> {
+                var target = getRootCompetition().resolveCompetitionPath(seedPlayOffToPlayOff.getTargetPath());
+                processPlayOffToPlayOffTrigger(target, seedPlayOffToPlayOff);
+            }
+            case SeedBasedOnNationalRankingRule rule -> {
+                var target = getRootCompetition().resolveCompetitionPath(rule.getTargetPath());
+                process(rule, target);
+            }
+            case AddAssignedParticipantsFromEloRankings rule -> {
+                var target = getRootCompetition().resolveCompetitionPath(rule.getTargetPath());
+                process(rule, target);
+            }
+            case SeedWorldCupRound rule -> {
+                var target = getRootCompetition().resolveCompetitionPath(rule.getTargetPath());
+                process(rule, target);
+            }
+            case GiveTrophy action -> {
+                var target = getRootCompetition().resolveCompetitionPath(action.getTargetPath());
+                processGiveTrophy(target);
+            }
+            case SeedTitlePlayOffParticipants seedTitlePlayOffParticipants -> {
+                var target = getRootCompetition().resolveCompetitionPath(seedTitlePlayOffParticipants.getTargetPath());
+                process(target, seedTitlePlayOffParticipants);
+            }
+            case AwardTitle awardTitle -> {
+                var target = getRootCompetition().resolveCompetitionPath(awardTitle.getTargetPath());
+                process(target, awardTitle);
+            }
             default -> throw new IllegalArgumentException("Unknown event: " + event.getAction());
         }
     }
@@ -155,7 +181,7 @@ public class WorldEventProcessor {
     }
 
     private void processPlayOffToPlayOffTrigger(Competition competition, SeedPlayOffToPlayOff seedPlayOffToPlayOff) {
-        var source = competition.resolveCompetitionPath(seedPlayOffToPlayOff.getPlayOffRoundPath());
+        var source = getRootCompetition().resolveCompetitionPath(seedPlayOffToPlayOff.getPlayOffRoundPath());
         if (!(source instanceof PlayOffCompetition sourceStage)) {
             var message = String.format("Path %s is not pointing to a play-off sub stage",
                     seedPlayOffToPlayOff.getPlayOffRoundPath());
@@ -169,7 +195,7 @@ public class WorldEventProcessor {
     }
 
     private void processGroupStageToPlayOffTrigger(Competition competition, SeedGroupStageToPlayOff seedGroupStageToPlayOff) {
-        var source = competition.resolveCompetitionPath(seedGroupStageToPlayOff.getGroupStagePath());
+        var source = getRootCompetition().resolveCompetitionPath(seedGroupStageToPlayOff.getGroupStagePath());
         if (!(source instanceof GroupStage groupStage)) {
             var message = String.format("Path %s is not pointing to a group stage",
                     seedGroupStageToPlayOff.getGroupStagePath());
@@ -211,7 +237,7 @@ public class WorldEventProcessor {
             );
         }
         for (var previousRound : rule.getPreviousRounds()) {
-            var previousCompetition = competition.resolveCompetitionPath(previousRound.getPath());
+            var previousCompetition = getRootCompetition().resolveCompetitionPath(previousRound.getPath());
             if (!(previousCompetition instanceof PlayOffCompetition playOffRound)) {
                 throw new IllegalArgumentException("Can't assign winners or losers from competition type: " +
                         previousCompetition.getClass());
@@ -256,7 +282,7 @@ public class WorldEventProcessor {
                     + competition.getClass());
         } else {
             rule.getPreviousRoundPath().ifPresent(path -> {
-                var previousRound = competition.resolveCompetitionPath(path);
+                var previousRound = getRootCompetition().resolveCompetitionPath(path);
                 if (previousRound instanceof PlayOffStage previousPlayOffStage) {
                     participants.addAll(previousPlayOffStage.getLastRoundResults().getWinners());
                 } else if (previousRound instanceof GroupStage previousGroupStage) {

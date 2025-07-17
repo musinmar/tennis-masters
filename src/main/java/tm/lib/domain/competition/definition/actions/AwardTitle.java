@@ -8,4 +8,5 @@ import tm.lib.domain.core.Title;
 @AllArgsConstructor
 public class AwardTitle implements Action {
     private Title title;
+    private String targetPath;
 }

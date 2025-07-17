@@ -10,4 +10,5 @@ public class AddAssignedParticipantsFromEloRankingsDto extends ActionDto {
     
     private int fromEloRank;
     private int toEloRank;
+    private String targetPath;
 }

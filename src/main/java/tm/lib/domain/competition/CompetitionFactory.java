@@ -29,7 +29,7 @@ public class CompetitionFactory {
             var competition = createTypedCompetition(definition, year);
             var events = definition.getEvents().stream()
                     .map(event ->
-                            new CompetitionEvent(competition, event.getTrigger(), event.getAction())
+                            new CompetitionEvent(event.getTrigger(), event.getAction())
                     ).toList();
             competition.setEvents(events);
             return competition;

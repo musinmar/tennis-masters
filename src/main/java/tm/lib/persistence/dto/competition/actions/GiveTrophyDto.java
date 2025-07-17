@@ -8,4 +8,5 @@ import lombok.Setter;
 public class GiveTrophyDto extends ActionDto {
     public static final String TYPE = "giveTrophy";
     
+    private String targetPath;
 }

@@ -9,4 +9,5 @@ public class SeedGroupStageToPlayOffDto extends ActionDto {
     public static final String TYPE = "seedGroupStageToPlayOff";
     
     private String groupStagePath;
+    private String targetPath;
 }

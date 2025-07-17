@@ -10,7 +10,6 @@ import tm.lib.domain.competition.definition.triggers.Trigger;
 @Setter
 @AllArgsConstructor
 public class CompetitionEvent {
-    private Competition competition;
     private Trigger trigger;
     private Action action;
 }

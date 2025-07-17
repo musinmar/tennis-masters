@@ -8,4 +8,5 @@ import tm.lib.domain.core.Title;
 @AllArgsConstructor
 public class SeedTitlePlayOffParticipants implements Action {
     private Title contendedTitle;
+    private String targetPath;
 }

@@ -41,4 +41,16 @@ public class PlayOffStage extends AbstractMultiStageCompetition {
     public PlayOffRoundResult getLastRoundResults() {
         return getRounds().getLast().getResults();
     }
+
+    @Override
+    public void processChildCompetitionFinished(Competition child) {
+        for (int i = 0; i < rounds.size() - 1; ++i) {
+            var round = rounds.get(i);
+            if (round == child) {
+                var nextRound = rounds.get(i + 1);
+                nextRound.setActualParticipants(round.getResults().getWinners());
+                break;
+            }
+        }
+    }
 }

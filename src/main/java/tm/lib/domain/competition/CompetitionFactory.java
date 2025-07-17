@@ -8,8 +8,6 @@ import tm.lib.domain.competition.definition.MultiStageCompetitionDefinition;
 import tm.lib.domain.competition.definition.PlayOffRoundDefinition;
 import tm.lib.domain.competition.definition.PlayOffStageDefinition;
 import tm.lib.domain.competition.definition.SeriesPlayOffRoundDefinition;
-import tm.lib.domain.competition.definition.triggers.OnCompetitionEnd;
-import tm.lib.domain.competition.definition.actions.SeedPlayOffToPlayOff;
 import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.competition.impl.GroupStage;
 import tm.lib.domain.competition.impl.MultiStageCompetition;
@@ -122,14 +120,6 @@ public class CompetitionFactory {
             String subStageName = getDefaultRoundName(roundPlayerCount);
             var stageId = "POS" + (i + 1);
             PlayOffRound stage = new PlayOffRound(stageId, subStageName, roundPlayerCount);
-            if (i > 0) {
-                var previousStageId = "POS" + i;
-                var seedingEvent = new CompetitionEvent(
-                        stage,
-                        new OnCompetitionEnd("../" + previousStageId),
-                        new SeedPlayOffToPlayOff("../" + previousStageId));
-                stage.setEvents(List.of(seedingEvent));
-            }
             stage.setStartDate(startDate + i * 2);
             stages.add(stage);
             roundPlayerCount /= 2;

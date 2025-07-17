@@ -1,8 +1,4 @@
-Dynamic competitions
-Saving game state at any moment
-
-Titles
-Series play-offs
+Restructure world and season - decouple competitions from events (actions)
 
 Persistent game state with full game history
 

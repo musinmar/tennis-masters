@@ -31,7 +31,13 @@ public interface Competition {
 
     List<MatchEvent> getAllMatches();
 
+    default boolean isFinished() {
+        return getNextMatch().isEmpty();
+    }
+
     void processMatchResult(MatchEvent match, MatchScore score);
+
+    void processChildCompetitionFinished(Competition child);
 
     void setEvents(List<CompetitionEvent> events);
 
@@ -40,10 +46,6 @@ public interface Competition {
     Knight getWinner();
 
     void print(PrintStream stream);
-
-    default boolean isFinished() {
-        return getNextMatch().isEmpty();
-    }
 
     default String getFullName(boolean includeRoot) {
         String name = "";

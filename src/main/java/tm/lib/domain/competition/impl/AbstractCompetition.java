@@ -48,6 +48,20 @@ abstract public class AbstractCompetition implements Competition {
         assert match.getCompetition() == this && getNextMatch().equals(Optional.of(match));
         match.setResult(score);
         afterMatchResultAssigned(match, score);
+        triggerOnFinishedChainIfNecessary();
+    }
+
+    private void triggerOnFinishedChainIfNecessary() {
+        Competition current = this;
+        while (current.isFinished() && current.getParent() != null) {
+            current.getParent().processChildCompetitionFinished(current);
+            current = current.getParent();
+        }
+    }
+
+    @Override
+    public void processChildCompetitionFinished(Competition child) {
+        // Do nothing by default
     }
 
     protected void afterMatchResultAssigned(MatchEvent match, MatchScore score) {

@@ -1,6 +1,8 @@
 package tm.lib.engine;
 
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.Validate;
+import tm.lib.engine.strategies.ManualStrategy;
 import tm.lib.engine.strategies.StandardStrategy;
 
 import java.util.Map;
@@ -9,6 +11,8 @@ public class StrategyProvider {
     private final Map<Side, Strategy> strategies;
 
     public StrategyProvider(Strategy homePlayerStrategy, Strategy awayPlayerStrategy) {
+        Validate.isTrue(!(homePlayerStrategy instanceof ManualStrategy && awayPlayerStrategy instanceof ManualStrategy),
+                "Can't manually control both home and away player");
         strategies = ImmutableMap.of(
                 Side.HOME, homePlayerStrategy,
                 Side.AWAY, awayPlayerStrategy);

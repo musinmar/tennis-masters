@@ -29,6 +29,7 @@ import tm.lib.domain.world.World;
 import tm.lib.engine.Side;
 import tm.lib.engine.Strategy;
 import tm.lib.engine.StrategyProvider;
+import tm.lib.engine.strategies.ManualStrategy;
 import tm.lib.engine.strategies.NeuralNetworkStrategy;
 import tm.lib.engine.strategies.StandardStrategy;
 import tm.ui.qt.simulation.SimulationHelper;
@@ -38,13 +39,13 @@ import java.util.List;
 
 import static io.qt.widgets.QDialogButtonBox.ButtonRole.RejectRole;
 import static io.qt.widgets.QSizePolicy.Policy.Expanding;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static tm.ui.qt.simulation.WidgetsHelper.fillPlayerComboBox;
 
 public class MatchConfigurationDialog extends QDialog {
 
     public static final String HARD_CODED_STRATEGY_NAME = "Hard-coded";
     public static final String ANN_STRATEGY_NAME = "ANN";
+    public static final String MANUAL_STRATEGY_NAME = "Manual";
 
     private final World world;
     private PlayerSelector homePlayerSelector;
@@ -102,6 +103,7 @@ public class MatchConfigurationDialog extends QDialog {
         playerSelector.strategyComboBox = new QComboBox(this);
         playerSelector.strategyComboBox.addItem(HARD_CODED_STRATEGY_NAME);
         playerSelector.strategyComboBox.addItem(ANN_STRATEGY_NAME);
+        playerSelector.strategyComboBox.addItem(MANUAL_STRATEGY_NAME);
 
         playerSelector.annLabel = new QLabel("ANN:", this);
         playerSelector.annPathEdit = new QLineEdit(this);
@@ -223,8 +225,10 @@ public class MatchConfigurationDialog extends QDialog {
             String annPath = selector.annPathEdit.text();
             NeuralNetwork<?> perceptron = MultiLayerPerceptron.createFromFile(annPath);
             return new NeuralNetworkStrategy(perceptron);
-        } else {
+        } else if (selectedStrategy.equals(HARD_CODED_STRATEGY_NAME)) {
             return new StandardStrategy();
+        } else {
+            return new ManualStrategy();
         }
     }
 

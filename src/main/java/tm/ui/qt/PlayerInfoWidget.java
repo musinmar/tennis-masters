@@ -24,7 +24,7 @@ public class PlayerInfoWidget extends QFrame {
     private void setupUi() {
         setFrameShape(Shape.Panel);
         setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum);
-        setMaximumWidth(300);
+        setMaximumWidth(400);
 
         QLayout layout = new QHBoxLayout();
         setLayout(layout);

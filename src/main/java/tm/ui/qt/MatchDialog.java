@@ -1,8 +1,10 @@
 package tm.ui.qt;
 
+import io.qt.Nullable;
 import io.qt.core.QTimer;
 import io.qt.core.Qt;
 import io.qt.gui.QFont;
+import io.qt.gui.QKeyEvent;
 import io.qt.widgets.QDialog;
 import io.qt.widgets.QFrame;
 import io.qt.widgets.QGridLayout;
@@ -14,15 +16,21 @@ import io.qt.widgets.QSizePolicy;
 import io.qt.widgets.QSpacerItem;
 import io.qt.widgets.QVBoxLayout;
 import io.qt.widgets.QWidget;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.engine.MatchEngine;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.Side;
 import tm.lib.engine.StrategyProvider;
+import tm.lib.engine.VectorUtils;
+import tm.lib.engine.strategies.ManualStrategy;
 
 import java.time.Duration;
 
+@Slf4j
 public class MatchDialog extends QDialog {
 
     private static final double ANIMATION_SPEED_FACTOR = 1;
@@ -43,10 +51,50 @@ public class MatchDialog extends QDialog {
     private PlayerInfoWidget homePlayerInfoWidget;
     private PlayerInfoWidget awayPlayerInfoWidget;
 
+    private ManualControls manualControls;
+
+    @RequiredArgsConstructor
+    private class ManualControls {
+
+        private final ManualStrategy strategy;
+        private final Side side;
+
+        private boolean leftPressed = false;
+        private boolean rightPressed = false;
+        private boolean upPressed = false;
+        private boolean downPressed = false;
+
+        private void applyManualControls() {
+            var rawPosition = matchSimulator.getPitch().getPlayer(side).getPosition();
+            var position = side == Side.AWAY ? VectorUtils.mirror(rawPosition) : rawPosition;
+            Vector2D verticalMovement = Vector2D.ZERO;
+            if (upPressed && !downPressed) {
+                verticalMovement = new Vector2D(0, -200);
+            } else if (downPressed && !upPressed) {
+                verticalMovement = new Vector2D(0, 200);
+            }
+            verticalMovement = side == Side.HOME ? VectorUtils.mirror(verticalMovement) : verticalMovement;
+            position = position.add(verticalMovement);
+            if (rightPressed && !leftPressed) {
+                position = position.add(new Vector2D(200, 0));
+            } else if (leftPressed && !rightPressed) {
+                position = position.add(new Vector2D(-200, 0));
+            }
+            strategy.setMoveToPosition(position);
+        }
+    }
+
     public MatchDialog(Match match, StrategyProvider strategyProvider, QWidget parent) {
         super(parent);
         this.match = match;
         matchSimulator = new MatchSimulator(match, strategyProvider);
+        if (strategyProvider.getStrategy(Side.HOME) instanceof ManualStrategy homeManualStrategy) {
+            manualControls = new ManualControls(homeManualStrategy, Side.HOME);
+        } else if (strategyProvider.getStrategy(Side.AWAY) instanceof ManualStrategy awayManualStrategy) {
+            manualControls = new ManualControls(awayManualStrategy, Side.AWAY);
+        } else {
+            manualControls = null;
+        }
         setupUi();
     }
 
@@ -115,6 +163,38 @@ public class MatchDialog extends QDialog {
         infoPanelLayout.addWidget(closeButton);
     }
 
+    @Override
+    protected void keyPressEvent(@Nullable QKeyEvent event) {
+        if (manualControls != null) {
+            setKeyPressed(event.key(), true);
+            event.accept();
+        } else {
+            super.keyPressEvent(event);
+        }
+    }
+
+    @Override
+    protected void keyReleaseEvent(@Nullable QKeyEvent event) {
+        if (manualControls != null) {
+            setKeyPressed(event.key(), false);
+            event.accept();
+        } else {
+            super.keyReleaseEvent(event);
+        }
+    }
+
+    private void setKeyPressed(int key, boolean pressed) {
+        if (key == Qt.Key.Key_W.value()) {
+            manualControls.upPressed = pressed;
+        } else if (key == Qt.Key.Key_S.value()) {
+            manualControls.downPressed = pressed;
+        } else if (key == Qt.Key.Key_D.value()) {
+            manualControls.rightPressed = pressed;
+        } else if (key == Qt.Key.Key_A.value()) {
+            manualControls.leftPressed = pressed;
+        }
+    }
+
     public MatchScore getFinalScore() {
         return finalScore;
     }
@@ -152,7 +232,7 @@ public class MatchDialog extends QDialog {
     private QTimer createSimulationTimer() {
         QTimer timer = new QTimer(this);
         timer.setInterval((int) (MatchEngine.TIME_STEP * 1000 / ANIMATION_SPEED_FACTOR));
-        timer.timeout.connect(this, "advanceSimulation()");
+        timer.timeout.connect(this::advanceSimulation);
         return timer;
     }
 
@@ -160,7 +240,7 @@ public class MatchDialog extends QDialog {
         QTimer timer = new QTimer(this);
         timer.setInterval(INFO_LABEL_DURATION_MS);
         timer.setSingleShot(true);
-        timer.timeout.connect(this, "startNextGame()");
+        timer.timeout.connect(this::startNextGame);
         return timer;
     }
 
@@ -168,11 +248,14 @@ public class MatchDialog extends QDialog {
         QTimer timer = new QTimer(this);
         timer.setInterval(INFO_LABEL_DURATION_MS);
         timer.setSingleShot(true);
-        timer.timeout.connect(this, "startNextSet()");
+        timer.timeout.connect(this::startNextSet);
         return timer;
     }
 
     private void advanceSimulation() {
+        if (manualControls != null) {
+            manualControls.applyManualControls();
+        }
         currentState = matchSimulator.proceed();
         if (currentState == MatchSimulator.State.PLAYING) {
             pitchWidget.update();

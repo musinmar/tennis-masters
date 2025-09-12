@@ -1,21 +1,18 @@
 package tm.lib.engine.strategies;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import tm.lib.engine.Ball;
 import tm.lib.engine.Decision;
-import tm.lib.engine.MatchEngine;
 import tm.lib.engine.Pitch;
 import tm.lib.engine.Player;
-import tm.lib.engine.Strategy;
 import tm.lib.engine.VectorUtils;
 
 import static tm.lib.engine.Side.HOME;
 
-public class NeuralNetworkStrategy implements Strategy {
+public class NeuralNetworkStrategy extends AbstractStrategy {
 
     private final NeuralNetwork<?> neuralNetwork;
 
@@ -60,55 +57,7 @@ public class NeuralNetworkStrategy implements Strategy {
         return createMoveToDecision(pitch, player);
     }
 
-    private boolean isPlayerZoneTargeted(Pitch pitch, Player player) {
-        return pitch.isInsideZone(player.getSide(), pitch.getBall().getVisibleTarget());
-    }
-
-    private boolean isBallStillInSaveRange(Pitch pitch, Player player) {
-        Ball ball = pitch.getBall();
-        Vector2D nextBallPosition = getNextBallPosition(ball);
-        return pitch.canPlayerSaveBall(player, ball.getPosition()) && !pitch.canPlayerSaveBall(player, nextBallPosition);
-    }
-
-    private Vector2D getNextBallPosition(Ball ball) {
-        Vector2D d = ball.getVisibleTarget().subtract(ball.getPosition());
-        double distToVisibleTarget = d.getNorm();
-        double distToRealTarget = ball.getRealTarget().distance(ball.getPosition());
-        double step = MatchEngine.getScaledTimeStep() * ball.getSpeed();
-        double modifiedStep = step * distToVisibleTarget / distToRealTarget;
-        if (distToVisibleTarget > modifiedStep) {
-            d = d.scalarMultiply(1 / distToVisibleTarget).scalarMultiply(modifiedStep);
-        }
-        return ball.getPosition().add(d);
-    }
-
-    private Decision createHitBallDecision(Pitch pitch, Player player) {
-        double netZoneLength = pitch.calculateNetBlockedZoneLength(player);
-        double riskMargin = pitch.getStatsCalculator().getActualRiskMargin(player);
-        while (true) {
-            Vector2D target = VectorUtils.generateRandomVector(riskMargin, Pitch.WIDTH - riskMargin,
-                    netZoneLength + riskMargin, Pitch.HALF_HEIGHT - riskMargin);
-            if (player.getSide() == HOME) {
-                target = VectorUtils.mirror(target);
-            }
-
-            if (isTargetSmartEnough(pitch, player, target)) {
-                Decision decision = new Decision();
-                decision.setHitBall(true);
-                decision.setBallTargetPosition(target);
-                return decision;
-            }
-        }
-    }
-
-    private boolean isTargetSmartEnough(Pitch pitch, Player player, Vector2D target) {
-        Player opposite = pitch.getOppositePlayer(player);
-        double distance = target.distance(opposite.getPosition());
-        double acceptableDistance = pitch.getStatsCalculator().getActualSkillRange(player);
-        return distance >= acceptableDistance;
-    }
-
-//    private Decision createDecision(Pitch pitch) {
+    //    private Decision createDecision(Pitch pitch) {
 //        Player player = pitch.getPlayer(HOME);
 //        Player oppositePlayer = pitch.getPlayer(AWAY);
 //        double[] perceptronInput = {
@@ -132,13 +81,13 @@ public class NeuralNetworkStrategy implements Strategy {
 //            Vector2D target2 = denormalize(perceptronOutput[4], perceptronOutput[5]);
 //            Vector2D target = RandomUtils.nextInt(0, 2) == 0 ? target1 : target2;
 //            decision.setBallTargetPosition(target);
-////        decision.setBallTargetPosition(denormalize(perceptronOutput[2], perceptronOutput[3]));
-////        System.out.println("Inputs: " + Arrays.toString(perceptronInput));
-////        System.out.println("Target to move: " + decision.getMoveToPosition());
-////        System.out.println("Target to strike: " + decision.getBallTargetPosition());
+
+    /// /        decision.setBallTargetPosition(denormalize(perceptronOutput[2], perceptronOutput[3]));
+    /// /        System.out.println("Inputs: " + Arrays.toString(perceptronInput));
+    /// /        System.out.println("Target to move: " + decision.getMoveToPosition());
+    /// /        System.out.println("Target to strike: " + decision.getBallTargetPosition());
 //        return decision;
 //    }
-
     private Decision createMoveToDecision(Pitch pitch, Player player) {
 //        Vector2D target;
 //        if (mayBallHitPlayerZone(pitch, player)) {

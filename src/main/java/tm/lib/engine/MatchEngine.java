@@ -1,10 +1,9 @@
 package tm.lib.engine;
 
-import java.util.Random;
-import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.math3.util.Precision;
 import tm.lib.domain.core.Match;
+
+import java.util.Random;
 
 import static tm.lib.engine.Side.HOME;
 
@@ -12,13 +11,13 @@ public class MatchEngine {
 
     public static final double TIME_STEP = 0.02;
     private static final double TIME_SCALE = 0.75;
-    
+
     /**
      * Percentage of momentum a ball will keep after hitting net
      */
     private static final double NET_PONG_FACTOR = 0.5;
     private static final double AIR_FRICTION_COEFFECIENT = 0.0015;
-    
+
     private static final double ENERGY_LOSS_PER_DISTANCE = 2 / Pitch.WIDTH;
     private static final double ENERGY_LOSS_PER_HIT = 0.3;
     private static final double ENERGY_LOSS_PER_SAVE = 0.6;
@@ -67,7 +66,7 @@ public class MatchEngine {
     public static double getScaledTimeStep() {
         return TIME_STEP * TIME_SCALE;
     }
-    
+
     private void decreasePlayerEnergy(Player player, double value) {
         double energyDecreaseModifier = getStatsCalculator().getEnergyDecreaseModifier(player);
         value = value * energyDecreaseModifier;
@@ -95,13 +94,13 @@ public class MatchEngine {
         }
         return target;
     }
-    
+
     private Vector2D calculateRandomDeviation(double range) {
         double phi = RANDOM.nextDouble() * 2 * Math.PI;
         double r = RANDOM.nextDouble() * range;
         return VectorUtils.rotate(new Vector2D(r, 0), phi);
     }
-    
+
     private Vector2D applyShotAccuracyModification(Player player, Vector2D target) {
         double targetRange = getStatsCalculator().getActualTargetRange(player);
         Vector2D deviation = calculateRandomDeviation(targetRange);
@@ -128,7 +127,7 @@ public class MatchEngine {
         if (!isTargetHighEnough(player, ball.getRealTarget())) {
             ball.setFlyingAboveNet(false);
         }
-        
+
         lastHittedPlayer = player;
         decreasePlayerEnergy(player, ENERGY_LOSS_PER_HIT);
     }
@@ -222,7 +221,7 @@ public class MatchEngine {
         ball.setRealTarget(newTarget);
         ball.setVisibleTarget(newTarget);
     }
-    
+
     private Vector2D getNextBallPosition(Ball ball) {
         Vector2D d = ball.getVisibleTarget().subtract(ball.getPosition());
         double distToVisibleTarget = d.getNorm();
@@ -234,20 +233,20 @@ public class MatchEngine {
         }
         return ball.getPosition().add(d);
     }
-    
+
     private void moveBall(Ball ball) {
         double distToRealTarget = ball.getRealTarget().distance(ball.getPosition());
         double step = getScaledTimeStep() * ball.getSpeed();
         decreaseBallSpeed(ball);
         Vector2D nextBallPosition = getNextBallPosition(ball);
-        
+
         if (!ball.isFlyingAboveNet()) {
             if (Math.signum(ball.getPosition().getY()) * Math.signum(nextBallPosition.getY()) <= 0) {
                 ballHitsNet(ball);
                 return;
             }
         }
-        
+
         ball.setPosition(nextBallPosition);
 
         int steps = (int) (distToRealTarget / step);

@@ -1,5 +1,6 @@
 package tm.ui.qt;
 
+import io.qt.Nullable;
 import io.qt.core.QPoint;
 import io.qt.core.QPointF;
 import io.qt.core.QRectF;
@@ -7,6 +8,7 @@ import io.qt.core.QSize;
 import io.qt.core.QSizeF;
 import io.qt.core.Qt;
 import io.qt.gui.QColor;
+import io.qt.gui.QMouseEvent;
 import io.qt.gui.QPaintEvent;
 import io.qt.gui.QPainter;
 import io.qt.gui.QPen;
@@ -15,12 +17,14 @@ import io.qt.widgets.QFrame;
 import io.qt.widgets.QLabel;
 import io.qt.widgets.QSizePolicy;
 import io.qt.widgets.QWidget;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import tm.lib.engine.Ball;
 import tm.lib.engine.Pitch;
 import tm.lib.engine.Player;
 import tm.lib.engine.Side;
 
+@Slf4j
 public class PitchWidget extends QFrame {
 
     private static final int HORIZONTAL_MARGIN = 5;
@@ -36,6 +40,8 @@ public class PitchWidget extends QFrame {
 
     private final Pitch pitch;
     private QRectF pitchRect = new QRectF();
+
+    public final Signal1<QPointF> clicked = new Signal1<>();
 
     public PitchWidget(Pitch pitch, QWidget parent) {
         super(parent);
@@ -170,5 +176,16 @@ public class PitchWidget extends QFrame {
             updateInfoLabelPosition();
             infoLabel.setVisible(true);
         }
+    }
+
+    @Override
+    protected void mousePressEvent(@Nullable QMouseEvent event) {
+        var factor = Pitch.WIDTH / pitchRect.width();
+        QPointF transformed = event.position()
+                .minus(pitchRect.topLeft())
+                .multiply(factor)
+                .minus(new QPointF(0, Pitch.HALF_HEIGHT));
+        clicked.emit(transformed);
+        super.mousePressEvent(event);
     }
 }

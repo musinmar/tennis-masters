@@ -2,7 +2,6 @@ package tm.lib.engine.strategies;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import tm.lib.engine.Decision;
 import tm.lib.engine.Pitch;
@@ -12,10 +11,10 @@ import static tm.lib.engine.Side.HOME;
 
 @Getter
 @Setter
-@Slf4j
 public class ManualStrategy extends AbstractStrategy {
 
     private Vector2D moveToPosition = Vector2D.ZERO;
+    private Vector2D target = Vector2D.ZERO;
 
     @Override
     public Decision makeDecision(Pitch pitch) {
@@ -35,12 +34,17 @@ public class ManualStrategy extends AbstractStrategy {
 
     private Decision createMoveDecision() {
         var decision = new Decision();
-        log.info("Move to: " + moveToPosition);
         decision.setMoveToPosition(moveToPosition);
         decision.setBallTargetPosition(Vector2D.ZERO);
         decision.setHitBall(false);
         return decision;
     }
 
-
+    @Override
+    protected Decision createHitBallDecision(Pitch pitch, Player player) {
+        Decision decision = new Decision();
+        decision.setHitBall(true);
+        decision.setBallTargetPosition(target);
+        return decision;
+    }
 }

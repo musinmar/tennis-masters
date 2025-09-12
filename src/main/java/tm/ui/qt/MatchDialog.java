@@ -1,6 +1,7 @@
 package tm.ui.qt;
 
 import io.qt.Nullable;
+import io.qt.core.QPointF;
 import io.qt.core.QTimer;
 import io.qt.core.Qt;
 import io.qt.gui.QFont;
@@ -63,6 +64,7 @@ public class MatchDialog extends QDialog {
         private boolean rightPressed = false;
         private boolean upPressed = false;
         private boolean downPressed = false;
+        private Vector2D clickedPosition = Vector2D.ZERO;
 
         private void applyManualControls() {
             var rawPosition = matchSimulator.getPitch().getPlayer(side).getPosition();
@@ -81,6 +83,9 @@ public class MatchDialog extends QDialog {
                 position = position.add(new Vector2D(-200, 0));
             }
             strategy.setMoveToPosition(position);
+
+            var target = side == Side.HOME ? VectorUtils.mirror(clickedPosition) : clickedPosition;
+            strategy.setTarget(target);
         }
     }
 
@@ -115,6 +120,7 @@ public class MatchDialog extends QDialog {
         pitchPanelLayout.addWidget(homePlayerInfoWidget, 0, 0, Qt.AlignmentFlag.AlignHCenter);
 
         pitchWidget = new PitchWidget(matchSimulator.getPitch(), this);
+        pitchWidget.clicked.connect(this::onPitchClicked);
         pitchPanelLayout.addWidget(pitchWidget, 1, 0);
 
         awayPlayerInfoWidget = new PlayerInfoWidget(matchSimulator.getPitch().getPlayer(Side.AWAY), this);
@@ -192,6 +198,12 @@ public class MatchDialog extends QDialog {
             manualControls.rightPressed = pressed;
         } else if (key == Qt.Key.Key_A.value()) {
             manualControls.leftPressed = pressed;
+        }
+    }
+
+    private void onPitchClicked(QPointF position) {
+        if (manualControls != null) {
+            manualControls.clickedPosition = new Vector2D(position.x(), position.y());
         }
     }
 

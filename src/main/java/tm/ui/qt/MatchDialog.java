@@ -106,12 +106,12 @@ public class MatchDialog extends QDialog {
 
         startButton = new QPushButton(this);
         startButton.setText("Start");
-        startButton.clicked.connect(this, "onStartButtonClicked()");
+        startButton.clicked.connect(this::onStartButtonClicked);
         infoPanelLayout.addWidget(startButton);
 
         QPushButton closeButton = new QPushButton(this);
         closeButton.setText("Close");
-        closeButton.clicked.connect(this, "onCloseButtonClicked()");
+        closeButton.clicked.connect(this::onCloseButtonClicked);
         infoPanelLayout.addWidget(closeButton);
     }
 

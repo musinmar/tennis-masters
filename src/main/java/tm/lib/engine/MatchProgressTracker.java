@@ -1,11 +1,14 @@
 package tm.lib.engine;
 
+import tm.lib.domain.core.BasicScore;
+import tm.lib.domain.core.MatchScore;
+
 import java.util.ArrayList;
 import java.util.List;
-import tm.lib.domain.core.MatchScore;
-import tm.lib.domain.core.BasicScore;
 
 public class MatchProgressTracker {
+
+    public static final int MAX_POINTS_IN_SET = MatchScore.BASE_SET_LENGTH / 2 + 1;
 
     private final int setCount;
     private boolean isPlayoff;
@@ -48,7 +51,11 @@ public class MatchProgressTracker {
 
     public Side getServingSide() {
         if (!isAdditionalTime) {
-            return currentSet % 2 == 0 ? Side.HOME : Side.AWAY;
+            var currentScore = getCurrentSetScore();
+            int set = (currentScore.v1 == MAX_POINTS_IN_SET || currentScore.v2 == MAX_POINTS_IN_SET)
+                    ? currentSet + 1
+                    : currentSet;
+            return set % 2 == 0 ? Side.HOME : Side.AWAY;
         } else {
             BasicScore currentSetScore = getCurrentSetScore();
             int gameIndex = currentSetScore.v1 + currentSetScore.v2;
@@ -87,7 +94,6 @@ public class MatchProgressTracker {
     public boolean isSetFinished() {
         BasicScore currentSetScore = getCurrentSetScore();
         if (!isPlayoff || !isAdditionalTime) {
-            final int MAX_POINTS_IN_SET = MatchScore.BASE_SET_LENGTH / 2 + 1;
             return currentSetScore.v1 == MAX_POINTS_IN_SET || currentSetScore.v2 == MAX_POINTS_IN_SET;
         } else {
             final int MAX_POINTS_IN_ADDITIONAL_TIME_SET = MatchScore.ADDITIONAL_SET_LENGTH / 2;

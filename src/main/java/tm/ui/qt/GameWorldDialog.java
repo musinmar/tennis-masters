@@ -34,7 +34,7 @@ import tm.lib.domain.world.event.SeasonMatchEvent;
 import tm.lib.domain.world.event.SeasonStart;
 import tm.lib.domain.world.event.WorldEvent;
 import tm.lib.domain.world.event.YearProgression;
-import tm.lib.engine.StrategyProvider;
+import tm.lib.engine.StrategyHolder;
 import tm.lib.persistence.PersistenceManager;
 import tm.ui.qt.simulation.SimulationHelper;
 
@@ -329,7 +329,7 @@ public class GameWorldDialog extends QMainWindow {
         runWithSimulationRunner(SimulationHelper::simulateMatch);
     }
 
-    private void runWithSimulationRunner(BiFunction<Match, StrategyProvider, MatchScore> simulationRunner) {
+    private void runWithSimulationRunner(BiFunction<Match, StrategyHolder, MatchScore> simulationRunner) {
         var event = world.getNextEvent();
         switch (event) {
             case SeasonStart _, SeasonConclusion _ -> world.progressState();
@@ -346,7 +346,7 @@ public class GameWorldDialog extends QMainWindow {
             }
             case SeasonMatchEvent seasonMatchEvent -> {
                 var match = seasonMatchEvent.getMatchEvent();
-                MatchScore score = simulationRunner.apply(match.createMatchSpec(), StrategyProvider.standard());
+                MatchScore score = simulationRunner.apply(match.createMatchSpec(), StrategyHolder.standard());
                 selectCompetition(match.getCompetition());
                 world.processMatch(match, score);
             }

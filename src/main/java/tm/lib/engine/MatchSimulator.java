@@ -20,7 +20,7 @@ public class MatchSimulator {
     private long matchTime;
     private long gameStartTime;
     private Side lastGameResult;
-    private List<PointResult> pointResults = new ArrayList<>();
+    private final List<PointResult> pointResults = new ArrayList<>();
 
     public enum State {
         PLAYING,
@@ -47,9 +47,9 @@ public class MatchSimulator {
         }
     }
 
-    public MatchSimulator(Match match, StrategyProvider strategyProvider) {
+    public MatchSimulator(Match match, StrategyHolder strategyHolder) {
         this.match = match;
-        matchEngine = new MatchEngine(match, strategyProvider);
+        matchEngine = new MatchEngine(match, strategyHolder);
         matchProgressTracker = new MatchProgressTracker(match.getSets(), match.isPlayOff());
         matchProgressTracker.startNewSet();
     }
@@ -85,7 +85,7 @@ public class MatchSimulator {
         }
 
         matchEngine.next();
-        matchTime += (long) (MatchEngine.TIME_STEP * 1000);
+        matchTime += MatchEngine.TIME_STEP_MILLIS;
         if (matchEngine.getWinningSide() == null) {
             return State.PLAYING;
         } else {
@@ -101,7 +101,7 @@ public class MatchSimulator {
         matchEngine.performEndOfGameActions();
 
         if (!matchProgressTracker.isSetFinished()) {
-            matchEngine.reset(matchProgressTracker.getServingSide());
+            matchEngine.reset(matchProgressTracker.getNextServingSide());
             return State.GAME_ENDED;
         } else {
             return performEndOfSetActions();
@@ -111,7 +111,7 @@ public class MatchSimulator {
     private State performEndOfSetActions() {
         matchEngine.performEndOfSetActions();
         if (!matchProgressTracker.isMatchFinished()) {
-            matchEngine.reset(matchProgressTracker.getServingSide());
+            matchEngine.reset(matchProgressTracker.getNextServingSide());
             return State.SET_ENDED;
         } else {
             return State.MATCH_ENDED;

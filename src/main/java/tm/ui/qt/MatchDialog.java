@@ -25,7 +25,7 @@ import tm.lib.domain.core.MatchScore;
 import tm.lib.engine.MatchEngine;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.Side;
-import tm.lib.engine.StrategyProvider;
+import tm.lib.engine.StrategyHolder;
 import tm.lib.engine.VectorUtils;
 import tm.lib.engine.strategies.ManualStrategy;
 
@@ -89,13 +89,13 @@ public class MatchDialog extends QDialog {
         }
     }
 
-    public MatchDialog(Match match, StrategyProvider strategyProvider, QWidget parent) {
+    public MatchDialog(Match match, StrategyHolder strategyHolder, QWidget parent) {
         super(parent);
         this.match = match;
-        matchSimulator = new MatchSimulator(match, strategyProvider);
-        if (strategyProvider.getStrategy(Side.HOME) instanceof ManualStrategy homeManualStrategy) {
+        matchSimulator = new MatchSimulator(match, strategyHolder);
+        if (strategyHolder.getStrategy(Side.HOME) instanceof ManualStrategy homeManualStrategy) {
             manualControls = new ManualControls(homeManualStrategy, Side.HOME);
-        } else if (strategyProvider.getStrategy(Side.AWAY) instanceof ManualStrategy awayManualStrategy) {
+        } else if (strategyHolder.getStrategy(Side.AWAY) instanceof ManualStrategy awayManualStrategy) {
             manualControls = new ManualControls(awayManualStrategy, Side.AWAY);
         } else {
             manualControls = null;

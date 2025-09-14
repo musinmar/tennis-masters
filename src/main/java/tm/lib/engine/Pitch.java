@@ -67,18 +67,19 @@ public class Pitch {
                 venue);
     }
 
-    public void setInitialPositions(Side startingSide) {
+    public void reset(Side servingSide) {
         Vector2D startingPosition = new Vector2D(WIDTH / 2, HALF_HEIGHT / 3 * 2);
         Vector2D startingDirection = new Vector2D(0, -1);
 
         homePlayer.resetState(startingPosition, startingDirection);
         awayPlayer.resetState(VectorUtils.mirror(startingPosition), VectorUtils.mirror(startingDirection));
 
-        Vector2D startingPlayerPosition = getPlayer(startingSide).getPosition();
-        Vector2D startingPlayerDirection = getPlayer(startingSide).getDirection();
-        ball.setPosition(startingPlayerPosition.add(10, startingPlayerDirection));
-        ball.setRealTarget(startingPlayerPosition.add(50, startingPlayerDirection));
-        ball.setVisibleTarget(startingPlayerPosition.add(70, startingPlayerDirection));
+        var servingPlayer = getPlayer(servingSide);
+        Vector2D servingPlayerPosition = servingPlayer.getPosition();
+        Vector2D servingPlayerDirection = servingPlayer.getDirection();
+        ball.setPosition(servingPlayerPosition.add(10, servingPlayerDirection));
+        ball.setRealTarget(servingPlayerPosition.add(50, servingPlayerDirection));
+        ball.setVisibleTarget(servingPlayerPosition.add(70, servingPlayerDirection));
         ball.setFlyingAboveNet(true);
     }
 

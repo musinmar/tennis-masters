@@ -15,26 +15,26 @@ public class MatchProgressTrackerTest {
         assertFalse(tracker.isMatchFinished());
 
         tracker.startNewSet();
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(0, 0));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.AWAY);
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(0, 1));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(2, 1));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.AWAY);
         tracker.addPoint(Side.AWAY);
         tracker.addPoint(Side.AWAY);
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(2, 4));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.AWAY);
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(2, 5));
         assertTrue(tracker.isSetFinished());
 
@@ -42,21 +42,21 @@ public class MatchProgressTrackerTest {
         assertFalse(tracker.isMatchFinished());
 
         tracker.startNewSet();
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         tracker.addPoint(Side.HOME);
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.AWAY);
-        tracker.addPoint(Side.AWAY);
-        tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.AWAY);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.AWAY);
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        tracker.addPoint(Side.HOME);
+        tracker.addPoint(Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(4, 4));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.HOME);
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(5, 4));
         assertTrue(tracker.isSetFinished());
 
@@ -69,7 +69,7 @@ public class MatchProgressTrackerTest {
         MatchProgressTracker tracker = new MatchProgressTracker(4, false);
 
         tracker.startNewSet();
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
@@ -81,7 +81,7 @@ public class MatchProgressTrackerTest {
         assertFalse(tracker.isMatchFinished());
 
         tracker.startNewSet();
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
@@ -93,7 +93,7 @@ public class MatchProgressTrackerTest {
         assertFalse(tracker.isMatchFinished());
 
         tracker.startNewSet();
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
@@ -165,9 +165,9 @@ public class MatchProgressTrackerTest {
         MatchProgressTracker tracker = new MatchProgressTracker(2, true);
 
         tracker.startNewSet();
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         tracker.addPoint(Side.HOME);
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
@@ -178,9 +178,9 @@ public class MatchProgressTrackerTest {
         assertFalse(tracker.isMatchFinished());
 
         tracker.startNewSet();
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         tracker.addPoint(Side.HOME);
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
@@ -196,9 +196,9 @@ public class MatchProgressTrackerTest {
         MatchProgressTracker tracker = new MatchProgressTracker(2, true);
 
         tracker.startNewSet();
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         tracker.addPoint(Side.HOME);
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
@@ -209,9 +209,9 @@ public class MatchProgressTrackerTest {
         assertFalse(tracker.isMatchFinished());
 
         tracker.startNewSet();
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         tracker.addPoint(Side.AWAY);
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         tracker.addPoint(Side.AWAY);
         tracker.addPoint(Side.AWAY);
         tracker.addPoint(Side.AWAY);
@@ -222,17 +222,17 @@ public class MatchProgressTrackerTest {
         assertFalse(tracker.isMatchFinished());
 
         tracker.startNewSet();
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         tracker.addPoint(Side.AWAY);
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(0, 1));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.AWAY);
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(0, 2));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.HOME);
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(1, 2));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.HOME);
@@ -273,31 +273,31 @@ public class MatchProgressTrackerTest {
         tracker.addPoint(Side.AWAY);
         tracker.addPoint(Side.HOME);
         tracker.addPoint(Side.HOME);
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(3, 3));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.HOME);
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(4, 3));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.AWAY);
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(4, 4));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.HOME);
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(5, 4));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.AWAY);
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(5, 5));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.AWAY);
-        assertEquals(tracker.getServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(5, 6));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.AWAY);
-        assertEquals(tracker.getServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(5, 7));
         assertTrue(tracker.isSetFinished());
         assertEquals(tracker.getScoreBySets(), BasicScore.of(1, 2));

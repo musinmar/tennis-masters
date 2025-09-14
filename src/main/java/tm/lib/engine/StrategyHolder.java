@@ -7,22 +7,23 @@ import tm.lib.engine.strategies.StandardStrategy;
 
 import java.util.Map;
 
-public class StrategyProvider {
+public class StrategyHolder {
     private final Map<Side, Strategy> strategies;
 
-    public StrategyProvider(Strategy homePlayerStrategy, Strategy awayPlayerStrategy) {
+    public StrategyHolder(Strategy homePlayerStrategy, Strategy awayPlayerStrategy) {
         Validate.isTrue(!(homePlayerStrategy instanceof ManualStrategy && awayPlayerStrategy instanceof ManualStrategy),
                 "Can't manually control both home and away player");
         strategies = ImmutableMap.of(
                 Side.HOME, homePlayerStrategy,
-                Side.AWAY, awayPlayerStrategy);
+                Side.AWAY, awayPlayerStrategy
+        );
     }
 
     public Strategy getStrategy(Side side) {
         return strategies.get(side);
     }
 
-    public static StrategyProvider standard() {
-        return new StrategyProvider(new StandardStrategy(), new StandardStrategy());
+    public static StrategyHolder standard() {
+        return new StrategyHolder(new StandardStrategy(), new StandardStrategy());
     }
 }

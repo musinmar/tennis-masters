@@ -14,7 +14,7 @@ import tm.lib.domain.core.Match;
 import tm.lib.domain.core.Stadium;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.Side;
-import tm.lib.engine.StrategyProvider;
+import tm.lib.engine.StrategyHolder;
 import tm.lib.engine.strategies.NeuralNetworkStrategy;
 import tm.lib.engine.strategies.StandardStrategy;
 
@@ -148,7 +148,7 @@ public class NeuralNetworkTeacher {
     }
 
     private MultiLayerPerceptron selectBetterPerceptron(MultiLayerPerceptron a, MultiLayerPerceptron b, int matchCount) {
-        StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(a), new NeuralNetworkStrategy(b));
+        StrategyHolder strategyHolder = new StrategyHolder(new NeuralNetworkStrategy(a), new NeuralNetworkStrategy(b));
         Match match = new Match();
         match.setHomePlayer(knight);
         match.setAwayPlayer(knight);
@@ -161,7 +161,7 @@ public class NeuralNetworkTeacher {
         long winningTime = 0;
         long losingTime = 0;
         for (int i = 0; i < matchCount; i++) {
-            MatchSimulator matchSimulator = simulateMatch(match, strategyProvider);
+            MatchSimulator matchSimulator = simulateMatch(match, strategyHolder);
             List<MatchSimulator.PointResult> pointResults = matchSimulator.getPointResults();
             for (MatchSimulator.PointResult result : pointResults) {
                 if (result.getWinningSide() == Side.HOME) {
@@ -248,7 +248,7 @@ public class NeuralNetworkTeacher {
     }
 
     private Double eval(MultiLayerPerceptron perceptron) {
-        StrategyProvider strategyProvider = new StrategyProvider(new NeuralNetworkStrategy(perceptron), new StandardStrategy());
+        StrategyHolder strategyHolder = new StrategyHolder(new NeuralNetworkStrategy(perceptron), new StandardStrategy());
         Match match = new Match();
         match.setHomePlayer(knight);
         match.setAwayPlayer(knight);
@@ -261,7 +261,7 @@ public class NeuralNetworkTeacher {
         long winningTime = 0;
         long losingTime = 0;
         for (int i = 0; i < 10; i++) {
-            MatchSimulator matchSimulator = simulateMatch(match, strategyProvider);
+            MatchSimulator matchSimulator = simulateMatch(match, strategyHolder);
             List<MatchSimulator.PointResult> pointResults = matchSimulator.getPointResults();
             for (MatchSimulator.PointResult result : pointResults) {
                 if (result.getWinningSide() == Side.HOME) {
@@ -281,8 +281,8 @@ public class NeuralNetworkTeacher {
         return pointsFactor - winningTimeFactor + losingTimeFactor;
     }
 
-    private MatchSimulator simulateMatch(Match match, StrategyProvider strategyProvider) {
-        MatchSimulator matchSimulator = new MatchSimulator(match, strategyProvider);
+    private MatchSimulator simulateMatch(Match match, StrategyHolder strategyHolder) {
+        MatchSimulator matchSimulator = new MatchSimulator(match, strategyHolder);
         MatchSimulator.State state;
         do {
             state = matchSimulator.proceed();

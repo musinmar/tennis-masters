@@ -4,12 +4,12 @@ import io.qt.widgets.QWidget;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
 import tm.lib.engine.MatchSimulator;
-import tm.lib.engine.StrategyProvider;
+import tm.lib.engine.StrategyHolder;
 import tm.ui.qt.MatchDialog;
 
 public class SimulationHelper {
-    public static MatchScore simulateMatch(Match match, StrategyProvider strategyProvider) {
-        MatchSimulator matchSimulator = new MatchSimulator(match, strategyProvider);
+    public static MatchScore simulateMatch(Match match, StrategyHolder strategyHolder) {
+        MatchSimulator matchSimulator = new MatchSimulator(match, strategyHolder);
         MatchSimulator.State state;
         do {
             state = matchSimulator.proceed();
@@ -17,8 +17,8 @@ public class SimulationHelper {
         return matchSimulator.getCurrentScore();
     }
 
-    public static MatchScore showMatch(Match match, StrategyProvider strategyProvider, QWidget parent) {
-        MatchDialog matchDialog = new MatchDialog(match, strategyProvider, parent);
+    public static MatchScore showMatch(Match match, StrategyHolder strategyHolder, QWidget parent) {
+        MatchDialog matchDialog = new MatchDialog(match, strategyHolder, parent);
         matchDialog.exec();
         return matchDialog.getFinalScore();
     }

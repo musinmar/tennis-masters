@@ -11,7 +11,7 @@ public class MatchProgressTracker {
     public static final int MAX_POINTS_IN_SET = MatchScore.BASE_SET_LENGTH / 2 + 1;
 
     private final int setCount;
-    private boolean isPlayoff;
+    private final boolean isPlayoff;
 
     private final List<BasicScore> setScores = new ArrayList<>();
     private BasicScore additionalTimeScore;
@@ -49,7 +49,7 @@ public class MatchProgressTracker {
         }
     }
 
-    public Side getServingSide() {
+    public Side getNextServingSide() {
         if (!isAdditionalTime) {
             var currentScore = getCurrentSetScore();
             int set = (currentScore.v1 == MAX_POINTS_IN_SET || currentScore.v2 == MAX_POINTS_IN_SET)

@@ -1,5 +1,7 @@
 package tm.lib.engine;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import tm.lib.domain.core.Match;
 
@@ -7,16 +9,19 @@ import java.util.Random;
 
 import static tm.lib.engine.Side.HOME;
 
+@Getter
+@Setter
 public class MatchEngine {
 
-    public static final double TIME_STEP = 0.02;
+    public static final long TIME_STEP_MILLIS = 20;
+    public static final double TIME_STEP = TIME_STEP_MILLIS / 1000.0;
     private static final double TIME_SCALE = 0.75;
 
     /**
      * Percentage of momentum a ball will keep after hitting net
      */
     private static final double NET_PONG_FACTOR = 0.5;
-    private static final double AIR_FRICTION_COEFFECIENT = 0.0015;
+    private static final double AIR_FRICTION_COEFFICIENT = 0.0015;
 
     private static final double ENERGY_LOSS_PER_DISTANCE = 2 / Pitch.WIDTH;
     private static final double ENERGY_LOSS_PER_HIT = 0.3;
@@ -28,39 +33,31 @@ public class MatchEngine {
 
     private final Pitch pitch;
     private final StatsCalculator statsCalculator;
-    private final StrategyProvider strategyProvider;
+    private final StrategyHolder strategyHolder;
     private Side winningSide;
-    private Player lastHittedPlayer;
+    private Player lastTouchedBall;
 
-    public MatchEngine(Match match, StrategyProvider strategyProvider) {
-        this.strategyProvider = strategyProvider;
+    public MatchEngine(Match match, StrategyHolder strategyHolder) {
+        this.strategyHolder = strategyHolder;
         pitch = new Pitch(match.getHomePlayer(), match.getAwayPlayer(), match.getVenue());
-        pitch.setInitialPositions(HOME);
+        pitch.reset(HOME);
         statsCalculator = new StatsCalculator(match.getVenue());
-        lastHittedPlayer = null;
+        lastTouchedBall = null;
     }
 
-    public void reset(Side startingSide) {
-        getPitch().setInitialPositions(startingSide);
+    public void reset(Side servingSide) {
+        getPitch().reset(servingSide);
         winningSide = null;
+        lastTouchedBall = null;
     }
 
     public void next() {
+        if (winningSide != null) {
+            throw new IllegalStateException("Can't continue already finished game");
+        }
         performPlayerAction(getPitch().getPlayer(HOME));
         performPlayerAction(getPitch().getPlayer(Side.AWAY));
         performBallAction(getPitch().getBall());
-    }
-
-    public Pitch getPitch() {
-        return pitch;
-    }
-
-    public Side getWinningSide() {
-        return winningSide;
-    }
-
-    private StatsCalculator getStatsCalculator() {
-        return statsCalculator;
     }
 
     public static double getScaledTimeStep() {
@@ -128,7 +125,7 @@ public class MatchEngine {
             ball.setFlyingAboveNet(false);
         }
 
-        lastHittedPlayer = player;
+        lastTouchedBall = player;
         decreasePlayerEnergy(player, ENERGY_LOSS_PER_HIT);
     }
 
@@ -203,7 +200,7 @@ public class MatchEngine {
     }
 
     private Decision getPlayerDecision(Player player) {
-        Strategy strategy = strategyProvider.getStrategy(player.getSide());
+        Strategy strategy = strategyHolder.getStrategy(player.getSide());
         if (player.getSide() == HOME) {
             return strategy.makeDecision(getPitch());
         } else {
@@ -260,13 +257,13 @@ public class MatchEngine {
 
     private void decreaseBallSpeed(Ball ball) {
         double speed = ball.getSpeed();
-        double frictionForce = speed * speed * AIR_FRICTION_COEFFECIENT * getScaledTimeStep();
+        double frictionForce = speed * speed * AIR_FRICTION_COEFFICIENT * getScaledTimeStep();
         ball.setSpeed(speed - frictionForce);
     }
 
     private void endGame(Side sideHitted) {
         if (sideHitted == null) {
-            winningSide = lastHittedPlayer.getSide().getOpposite();
+            winningSide = lastTouchedBall.getSide().getOpposite();
         } else {
             winningSide = sideHitted.getOpposite();
         }

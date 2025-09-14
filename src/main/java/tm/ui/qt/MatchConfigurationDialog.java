@@ -28,7 +28,7 @@ import tm.lib.domain.core.Stadium;
 import tm.lib.domain.world.World;
 import tm.lib.engine.Side;
 import tm.lib.engine.Strategy;
-import tm.lib.engine.StrategyProvider;
+import tm.lib.engine.StrategyHolder;
 import tm.lib.engine.strategies.ManualStrategy;
 import tm.lib.engine.strategies.NeuralNetworkStrategy;
 import tm.lib.engine.strategies.StandardStrategy;
@@ -232,8 +232,8 @@ public class MatchConfigurationDialog extends QDialog {
         }
     }
 
-    private StrategyProvider configureStrategyProvider() {
-        return new StrategyProvider(
+    private StrategyHolder configureStrategyProvider() {
+        return new StrategyHolder(
                 createStrategy(homePlayerSelector),
                 createStrategy(awayPlayerSelector));
     }

@@ -243,7 +243,7 @@ public class MatchDialog extends QDialog {
 
     private QTimer createSimulationTimer() {
         QTimer timer = new QTimer(this);
-        timer.setInterval((int) (MatchEngine.TIME_STEP * 1000 / ANIMATION_SPEED_FACTOR));
+        timer.setInterval((int) (MatchEngine.TIME_STEP_MILLIS / ANIMATION_SPEED_FACTOR));
         timer.timeout.connect(this::advanceSimulation);
         return timer;
     }

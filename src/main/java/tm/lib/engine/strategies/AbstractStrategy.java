@@ -16,11 +16,11 @@ public abstract class AbstractStrategy implements Strategy {
         return pitch.isInsideZone(player.getSide(), pitch.getBall().getVisibleTarget());
     }
 
-    protected Vector2D getNextBallPosition(Ball ball) {
+    protected Vector2D getNextBallPosition(Ball ball, double timeStep) {
         Vector2D d = ball.getVisibleTarget().subtract(ball.getPosition());
         double distToVisibleTarget = d.getNorm();
         double distToRealTarget = ball.getRealTarget().distance(ball.getPosition());
-        double step = MatchEngine.getScaledTimeStep() * ball.getSpeed();
+        double step = timeStep * ball.getSpeed();
         double modifiedStep = step * distToVisibleTarget / distToRealTarget;
         if (distToVisibleTarget > modifiedStep) {
             d = d.scalarMultiply(1 / distToVisibleTarget).scalarMultiply(modifiedStep);
@@ -28,9 +28,9 @@ public abstract class AbstractStrategy implements Strategy {
         return ball.getPosition().add(d);
     }
 
-    protected boolean isBallStillInSaveRange(Pitch pitch, Player player) {
+    protected boolean isBallStillInSaveRange(Pitch pitch, Player player, double timeStep) {
         Ball ball = pitch.getBall();
-        Vector2D nextBallPosition = getNextBallPosition(ball);
+        Vector2D nextBallPosition = getNextBallPosition(ball, timeStep);
         return pitch.canPlayerSaveBall(player, ball.getPosition()) && !pitch.canPlayerSaveBall(player, nextBallPosition);
     }
 

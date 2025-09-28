@@ -17,12 +17,12 @@ public class ManualStrategy extends AbstractStrategy {
     private Vector2D target = Vector2D.ZERO;
 
     @Override
-    public Decision makeDecision(Pitch pitch) {
+    public Decision makeDecision(Pitch pitch, double timeStep) {
         Player player = pitch.getPlayer(HOME);
         if (isPlayerZoneTargeted(pitch, player)) {
             if (pitch.canPlayerHitBall(player)) {
                 return createHitBallDecision(pitch, player);
-            } else if (pitch.getBall().hasHittedGround() || isBallStillInSaveRange(pitch, player)) {
+            } else if (pitch.getBall().hasHittedGround() || isBallStillInSaveRange(pitch, player, timeStep)) {
                 if (pitch.canPlayerSaveBall(player, pitch.getBall().getPosition())) {
                     return createHitBallDecision(pitch, player);
                 }

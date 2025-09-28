@@ -13,9 +13,10 @@ import static tm.lib.engine.Side.HOME;
 @Setter
 public class MatchEngine {
 
-    public static final long TIME_STEP_MILLIS = 20;
-    public static final double TIME_STEP = TIME_STEP_MILLIS / 1000.0;
-    private static final double TIME_SCALE = 0.75;
+    public static final int TIME_STEP_MILLIS = 20;
+    private static final double TIME_STEP = TIME_STEP_MILLIS / 1000.0;
+    private static final double TIME_SCALE = 1;
+    private static final double SCALED_TIME_STEP = TIME_STEP * TIME_SCALE;
 
     /**
      * Percentage of momentum a ball will keep after hitting net
@@ -61,8 +62,8 @@ public class MatchEngine {
         performBallAction(getPitch().getBall());
     }
 
-    public static double getScaledTimeStep() {
-        return TIME_STEP * TIME_SCALE;
+    private static double getScaledTimeStep() {
+        return SCALED_TIME_STEP;
     }
 
     private void decreasePlayerEnergy(Player player, double value) {
@@ -203,10 +204,10 @@ public class MatchEngine {
     private Decision getPlayerDecision(Player player) {
         Strategy strategy = strategyHolder.getStrategy(player.getSide());
         if (player.getSide() == HOME) {
-            return strategy.makeDecision(getPitch());
+            return strategy.makeDecision(getPitch(), getScaledTimeStep());
         } else {
             Pitch mirroredPitch = getPitch().createMirrored();
-            Decision decision = strategy.makeDecision(mirroredPitch);
+            Decision decision = strategy.makeDecision(mirroredPitch, getScaledTimeStep());
             return decision.createMirrored();
         }
     }

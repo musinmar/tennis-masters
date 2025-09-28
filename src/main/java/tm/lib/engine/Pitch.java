@@ -1,5 +1,7 @@
 package tm.lib.engine;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.math3.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.geometry.partitioning.Region;
@@ -7,11 +9,17 @@ import org.apache.commons.math3.util.Precision;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Stadium;
 
+/**
+ * Represents complete game state
+ */
+@Getter
+@Setter
 public class Pitch {
 
     private final Player homePlayer;
     private final Player awayPlayer;
     private final Ball ball;
+    private Player lastTouchedBall;
     private final Stadium venue;
     private final StatsCalculator statsCalculator;
 
@@ -35,6 +43,7 @@ public class Pitch {
         this.homePlayer = homePlayer;
         this.awayPlayer = awayPlayer;
         this.ball = ball;
+        this.lastTouchedBall = null;
         this.venue = venue;
         statsCalculator = new StatsCalculator(venue);
     }
@@ -45,18 +54,6 @@ public class Pitch {
 
     public Player getOppositePlayer(Player player) {
         return player == homePlayer ? awayPlayer : homePlayer;
-    }
-
-    public Ball getBall() {
-        return ball;
-    }
-
-    public Stadium getVenue() {
-        return venue;
-    }
-
-    public StatsCalculator getStatsCalculator() {
-        return statsCalculator;
     }
 
     public Pitch createMirrored() {
@@ -81,6 +78,8 @@ public class Pitch {
         ball.setRealTarget(servingPlayerPosition.add(50, servingPlayerDirection));
         ball.setVisibleTarget(servingPlayerPosition.add(70, servingPlayerDirection));
         ball.setFlyingAboveNet(true);
+
+        lastTouchedBall = null;
     }
 
     public Side getBallSide(Ball b) {

@@ -35,24 +35,25 @@ public class MatchEngine {
     private final StatsCalculator statsCalculator;
     private final StrategyHolder strategyHolder;
     private Side winningSide;
-    private Player lastTouchedBall;
 
     public MatchEngine(Match match, StrategyHolder strategyHolder) {
         this.strategyHolder = strategyHolder;
         pitch = new Pitch(match.getHomePlayer(), match.getAwayPlayer(), match.getVenue());
         pitch.reset(HOME);
         statsCalculator = new StatsCalculator(match.getVenue());
-        lastTouchedBall = null;
+    }
+
+    public boolean isFinished() {
+        return winningSide != null;
     }
 
     public void reset(Side servingSide) {
         getPitch().reset(servingSide);
         winningSide = null;
-        lastTouchedBall = null;
     }
 
     public void next() {
-        if (winningSide != null) {
+        if (isFinished()) {
             throw new IllegalStateException("Can't continue already finished game");
         }
         performPlayerAction(getPitch().getPlayer(HOME));
@@ -125,7 +126,7 @@ public class MatchEngine {
             ball.setFlyingAboveNet(false);
         }
 
-        lastTouchedBall = player;
+        pitch.setLastTouchedBall(player);
         decreasePlayerEnergy(player, ENERGY_LOSS_PER_HIT);
     }
 
@@ -261,11 +262,11 @@ public class MatchEngine {
         ball.setSpeed(speed - frictionForce);
     }
 
-    private void endGame(Side sideHitted) {
-        if (sideHitted == null) {
-            winningSide = lastTouchedBall.getSide().getOpposite();
+    private void endGame(Side sideHit) {
+        if (sideHit == null) {
+            winningSide = pitch.getLastTouchedBall().getSide().getOpposite();
         } else {
-            winningSide = sideHitted.getOpposite();
+            winningSide = sideHit.getOpposite();
         }
     }
 

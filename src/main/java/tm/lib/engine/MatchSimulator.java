@@ -86,7 +86,7 @@ public class MatchSimulator {
 
         matchEngine.next();
         matchTime += MatchEngine.TIME_STEP_MILLIS;
-        if (matchEngine.getWinningSide() == null) {
+        if (matchEngine.isFinished()) {
             return State.PLAYING;
         } else {
             return performEndOfGameActions();

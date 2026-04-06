@@ -6,7 +6,7 @@ build
 .project
 build.xml
 manifest.mf
-/target/
+**/target/
 nbactions.xml
 /.idea
 *.iml

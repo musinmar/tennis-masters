@@ -34,7 +34,7 @@ public class MatchProgressTrackerTest {
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(2, 4));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.AWAY);
-        assertEquals(tracker.getNextServingSide(), Side.HOME);
+        assertEquals(tracker.getNextServingSide(), Side.AWAY);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(2, 5));
         assertTrue(tracker.isSetFinished());
 
@@ -56,7 +56,7 @@ public class MatchProgressTrackerTest {
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(4, 4));
         assertFalse(tracker.isSetFinished());
         tracker.addPoint(Side.HOME);
-        assertEquals(tracker.getNextServingSide(), Side.AWAY);
+        assertEquals(tracker.getNextServingSide(), Side.HOME);
         assertEquals(tracker.getCurrentSetScore(), BasicScore.of(5, 4));
         assertTrue(tracker.isSetFinished());
 

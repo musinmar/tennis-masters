@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.clocktower</groupId>
-    <artifactId>tennis-masters</artifactId>
+    <artifactId>tennis-masters-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,6 +20,11 @@
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
     </repositories>
+
+    <modules>
+        <module>tennis-masters-lib</module>
+        <module>tennis-masters-ui-qt</module>
+    </modules>
 
     <build>
         <plugins>
@@ -41,84 +46,97 @@
         </plugins>
     </build>
 
-    <dependencies>
-        <!-- Provided -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
-        </dependency>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Provided -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
 
-        <!-- Libraries -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>33.2.1-jre</version>
-        </dependency>
-        <dependency>
-            <groupId>io.qtjambi</groupId>
-            <artifactId>qtjambi</artifactId>
-            <version>6.7.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.qtjambi</groupId>
-            <artifactId>qtjambi-native-windows-x64</artifactId>
-            <version>6.7.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.neuroph</groupId>
-            <artifactId>neuroph-core</artifactId>
-            <version>2.98</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jenetics</groupId>
-            <artifactId>jenetics</artifactId>
-            <version>3.7.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.19.1</version>
-        </dependency>
+            <!-- Libraries -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j2-impl</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.16.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>3.6.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>4.5.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>33.2.1-jre</version>
+            </dependency>
+            <dependency>
+                <groupId>io.qtjambi</groupId>
+                <artifactId>qtjambi</artifactId>
+                <version>6.7.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.qtjambi</groupId>
+                <artifactId>qtjambi-native-windows-x64</artifactId>
+                <version>6.7.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.neuroph</groupId>
+                <artifactId>neuroph-core</artifactId>
+                <version>2.98</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jenetics</groupId>
+                <artifactId>jenetics</artifactId>
+                <version>3.7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.19.1</version>
+            </dependency>
 
-        <!-- Tests -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.10.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>5.20.0</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+            <!-- Tests -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>5.10.3</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>5.20.0</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.clocktower</groupId>
+                <artifactId>tennis-masters-lib</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

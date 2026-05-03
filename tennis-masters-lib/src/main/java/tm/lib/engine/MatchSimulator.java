@@ -80,41 +80,35 @@ public class MatchSimulator {
     }
 
     public State proceed() {
-        if (matchProgressTracker.isSetFinished()) {
-            matchProgressTracker.startNewSet();
-        }
-
-        matchEngine.next();
         matchTime += MatchEngine.TIME_STEP_MILLIS;
         if (!matchEngine.isFinished()) {
+            matchEngine.next();
+            if (!matchEngine.isFinished()) {
+                return State.PLAYING;
+            } else {
+                lastGameResult = matchEngine.getWinningSide();
+                matchProgressTracker.addPoint(lastGameResult);
+                pointResults.add(new PointResult(lastGameResult, matchTime - gameStartTime));
+                if (!matchProgressTracker.isSetFinished()) {
+                    return State.GAME_ENDED;
+                } else if (!matchProgressTracker.isMatchFinished()) {
+                    return State.SET_ENDED;
+                } else {
+                    return State.MATCH_ENDED;
+                }
+            }
+        } else {
+            gameStartTime = matchTime;
+            if (!matchProgressTracker.isSetFinished()) {
+                matchEngine.performEndOfGameActions();
+            } else if (!matchProgressTracker.isMatchFinished()) {
+                matchProgressTracker.startNewSet();
+                matchEngine.performEndOfSetActions();
+            } else {
+                throw new IllegalStateException("Can't proceed in a finished match");
+            }
+            matchEngine.reset(matchProgressTracker.getNextServingSide());
             return State.PLAYING;
-        } else {
-            return performEndOfGameActions();
-        }
-    }
-
-    private State performEndOfGameActions() {
-        lastGameResult = matchEngine.getWinningSide();
-        matchProgressTracker.addPoint(lastGameResult);
-        pointResults.add(new PointResult(lastGameResult, matchTime - gameStartTime));
-        gameStartTime = matchTime;
-        matchEngine.performEndOfGameActions();
-
-        if (!matchProgressTracker.isSetFinished()) {
-            matchEngine.reset(matchProgressTracker.getNextServingSide());
-            return State.GAME_ENDED;
-        } else {
-            return performEndOfSetActions();
-        }
-    }
-
-    private State performEndOfSetActions() {
-        matchEngine.performEndOfSetActions();
-        if (!matchProgressTracker.isMatchFinished()) {
-            matchEngine.reset(matchProgressTracker.getNextServingSide());
-            return State.SET_ENDED;
-        } else {
-            return State.MATCH_ENDED;
         }
     }
 }

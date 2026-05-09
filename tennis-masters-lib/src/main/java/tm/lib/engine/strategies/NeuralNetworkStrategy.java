@@ -4,7 +4,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.nnet.MultiLayerPerceptron;
-import tm.lib.engine.Ball;
+import tm.lib.engine.BallState;
 import tm.lib.engine.Decision;
 import tm.lib.engine.Pitch;
 import tm.lib.engine.Player;
@@ -47,7 +47,7 @@ public class NeuralNetworkStrategy extends AbstractStrategy {
         if (isPlayerZoneTargeted(pitch, player)) {
             if (pitch.canPlayerHitBall(player)) {
                 return createHitBallDecision(pitch, player);
-            } else if (pitch.getBall().hasHittedGround() || isBallStillInSaveRange(pitch, player, timeStep)) {
+            } else if (pitch.getBall().hasTouchedGround() || isBallStillInSaveRange(pitch, player, timeStep)) {
                 if (pitch.canPlayerSaveBall(player, pitch.getBall().getPosition())) {
                     return createHitBallDecision(pitch, player);
                 }
@@ -96,8 +96,8 @@ public class NeuralNetworkStrategy extends AbstractStrategy {
 //            target = calculatePlayerOptimalPosition(pitch, player);
 //        }
         double[] perceptronInput = {
-                player.getPosition().getX(),
-                player.getPosition().getY(),
+                player.getState().getPosition().getX(),
+                player.getState().getPosition().getY(),
                 pitch.getBall().getPosition().getX(),
                 pitch.getBall().getPosition().getY(),
                 pitch.getBall().getVisibleTarget().getX(),
@@ -128,9 +128,9 @@ public class NeuralNetworkStrategy extends AbstractStrategy {
     }
 
     Vector2D calculateOptimalBallInterceptPosition(Pitch pitch, Player player) {
-        Ball ball = pitch.getBall();
+        BallState ball = pitch.getBall();
         Line line = new Line(ball.getPosition(), ball.getVisibleTarget(), VectorUtils.DEFAULT_TOLERANCE);
-        Vector2D projection = (Vector2D) line.project(player.getPosition());
+        Vector2D projection = (Vector2D) line.project(player.getState().getPosition());
         Vector2D target = ball.getPosition().distance(projection) < ball.getPosition().distance(ball.getVisibleTarget()) ?
                 projection : ball.getVisibleTarget();
         target = pitch.getClosestPointInZone(player.getSide(), target);

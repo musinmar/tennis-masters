@@ -19,7 +19,7 @@ import io.qt.widgets.QSizePolicy;
 import io.qt.widgets.QWidget;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import tm.lib.engine.Ball;
+import tm.lib.engine.BallState;
 import tm.lib.engine.Pitch;
 import tm.lib.engine.Player;
 import tm.lib.engine.Side;
@@ -132,7 +132,7 @@ public class PitchWidget extends QFrame {
     private void drawPlayer(QPainter painter, Side side) {
         Player player = pitch.getPlayer(side);
 
-        if (!player.isLying()) {
+        if (!player.getState().isLying()) {
             painter.setPen(new QPen(new QColor(Qt.GlobalColor.darkBlue), 2));
             painter.setBrush(new QColor(Qt.GlobalColor.blue));
         } else {
@@ -141,11 +141,11 @@ public class PitchWidget extends QFrame {
         }
 
         final double PLAYER_SIZE = 7.5;
-        painter.drawEllipse(map(player.getPosition()), PLAYER_SIZE, PLAYER_SIZE);
+        painter.drawEllipse(map(player.getState().getPosition()), PLAYER_SIZE, PLAYER_SIZE);
     }
 
     private void drawBall(QPainter painter) {
-        Ball ball = pitch.getBall();
+        BallState ball = pitch.getBall();
         final double BALL_SIZE = 2;
 
         painter.setPen(new QPen(new QColor(Qt.GlobalColor.black), 2));

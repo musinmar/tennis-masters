@@ -21,7 +21,7 @@ public class StatsCalculator {
     }
 
     private double applyEnergyModifier(Player p, double value, double modifier) {
-        value *= (1 - modifier) * p.getEnergy() / 100 + modifier;
+        value *= (1 - modifier) * p.getState().getEnergy() / 100 + modifier;
         return value;
     }
 
@@ -30,7 +30,7 @@ public class StatsCalculator {
     }
 
     static double applyInvertedEnergyModifier(Player p, double value, double modifier) {
-        return value * getInvertedScaleModifier(p.getEnergy(), modifier);
+        return value * getInvertedScaleModifier(p.getState().getEnergy(), modifier);
     }
 
     public double getVenueSpeedModifier() {
@@ -106,7 +106,7 @@ public class StatsCalculator {
 
     public double getTotalLyingTime(Player p) {
         double lyingTime = map(100 - p.getKnight().getSkills().getDexterity(), MIN_LYING_TIME, MAX_LYING_TIME);
-        return lyingTime * getInvertedScaleModifier(p.getEnergy(), LYING_TIME_ENERGY_MODIFIER);
+        return lyingTime * getInvertedScaleModifier(p.getState().getEnergy(), LYING_TIME_ENERGY_MODIFIER);
     }
 
     public double getEnergyDecreaseModifier(Player p) {

@@ -7,6 +7,7 @@ import tm.lib.domain.core.Match;
 
 import java.util.Random;
 
+import static tm.lib.engine.Side.AWAY;
 import static tm.lib.engine.Side.HOME;
 
 @Getter
@@ -32,16 +33,17 @@ public class MatchEngine {
 
     private static final Random RANDOM = new Random(System.currentTimeMillis());
 
-    private final Pitch pitch;
     private final StatsCalculator statsCalculator;
+    private final Pitch pitch;
     private final StrategyHolder strategyHolder;
     private Side winningSide;
 
     public MatchEngine(Match match, StrategyHolder strategyHolder) {
-        this.strategyHolder = strategyHolder;
-        pitch = new Pitch(match.getHomePlayer(), match.getAwayPlayer(), match.getVenue());
-        pitch.reset(HOME);
         statsCalculator = new StatsCalculator(match.getVenue());
+        pitch = new Pitch(match.getHomePlayer(), match.getAwayPlayer(), statsCalculator);
+        this.strategyHolder = strategyHolder;
+
+        pitch.reset(HOME);
     }
 
     public boolean isFinished() {
@@ -58,7 +60,7 @@ public class MatchEngine {
             throw new IllegalStateException("Can't continue already finished game");
         }
         performPlayerAction(getPitch().getPlayer(HOME));
-        performPlayerAction(getPitch().getPlayer(Side.AWAY));
+        performPlayerAction(getPitch().getPlayer(AWAY));
         performBallAction(getPitch().getBall());
     }
 
@@ -69,7 +71,7 @@ public class MatchEngine {
     private void decreasePlayerEnergy(Player player, double value) {
         double energyDecreaseModifier = getStatsCalculator().getEnergyDecreaseModifier(player);
         value = value * energyDecreaseModifier;
-        player.changeEnergy(-value);
+        player.getState().changeEnergy(-value);
     }
 
     private boolean isTargetHighEnough(Player player, Vector2D target) {
@@ -82,14 +84,14 @@ public class MatchEngine {
     }
 
     private Vector2D applyShotDistanceModification(Player player, Vector2D target) {
-        double distance = target.distance(player.getPosition());
+        double distance = target.distance(player.getState().getPosition());
         double optimalShotDistance = getStatsCalculator().getActualShotRange(player);
         if (distance > optimalShotDistance) {
             double excess = distance - optimalShotDistance;
             double r = Math.pow(RANDOM.nextDouble(), 2);
-            Vector2D d = target.subtract(player.getPosition());
+            Vector2D d = target.subtract(player.getState().getPosition());
             d = d.scalarMultiply((optimalShotDistance + excess * r) / (optimalShotDistance + excess));
-            target = d.add(player.getPosition());
+            target = d.add(player.getState().getPosition());
         }
         return target;
     }
@@ -112,7 +114,7 @@ public class MatchEngine {
         return target.add(deviation);
     }
 
-    private void applyBallTarget(Player player, Ball ball, Vector2D target) {
+    private void applyBallTarget(Player player, BallState ball, Vector2D target) {
         target = applyShotDistanceModification(player, target);
         target = applyShotAccuracyModification(player, target);
         ball.setRealTarget(target);
@@ -121,13 +123,13 @@ public class MatchEngine {
         ball.setFlyingAboveNet(true);
     }
 
-    private void hitBall(Player player, Ball ball, Vector2D ballTarget) {
+    private void hitBall(Player player, BallState ball, Vector2D ballTarget) {
         applyBallTarget(player, ball, ballTarget);
         if (!isTargetHighEnough(player, ball.getRealTarget())) {
             ball.setFlyingAboveNet(false);
         }
 
-        pitch.setLastTouchedBall(player);
+        pitch.setLastTouchedBall(player.getSide());
         decreasePlayerEnergy(player, ENERGY_LOSS_PER_HIT);
     }
 
@@ -141,8 +143,9 @@ public class MatchEngine {
         double step = speed * getScaledTimeStep();
         double ac_step = acc * getScaledTimeStep();
 
-        Vector2D v = player.getDirection().scalarMultiply(player.getSpeed() * getScaledTimeStep());
-        Vector2D d = target.subtract(player.getPosition());
+        var playerState = player.getState();
+        Vector2D v = playerState.getDirection().scalarMultiply(playerState.getSpeed() * getScaledTimeStep());
+        Vector2D d = target.subtract(playerState.getPosition());
         double dd = d.getNorm();
 
         if (dd > step) {//PLAYER_SPEED) {
@@ -156,32 +159,33 @@ public class MatchEngine {
         }
 
         v = v.add(dv);
-        player.setSpeed(v.getNorm() / getScaledTimeStep());
-        if (player.getSpeed() != 0) {
-            player.setDirection(v.scalarMultiply(1 / (player.getSpeed() * getScaledTimeStep())));
+        playerState.setSpeed(v.getNorm() / getScaledTimeStep());
+        if (playerState.getSpeed() != 0) {
+            playerState.setDirection(v.scalarMultiply(1 / (playerState.getSpeed() * getScaledTimeStep())));
         }
 
-        Vector2D move = player.getDirection().scalarMultiply(player.getSpeed() * getScaledTimeStep());
-        player.setPosition(player.getPosition().add(move));
+        Vector2D move = playerState.getDirection().scalarMultiply(playerState.getSpeed() * getScaledTimeStep());
+        playerState.setPosition(playerState.getPosition().add(move));
         decreasePlayerEnergy(player, move.getNorm() / getStatsCalculator().getVenueSpeedModifier() * ENERGY_LOSS_PER_DISTANCE);
     }
 
     private void performLyingAction(Player player) {
-        player.addLyingTime(getScaledTimeStep());
-        if (player.getLyingTime() >= getStatsCalculator().getTotalLyingTime(player)) {
-            player.setLying(false);
+        var playerState = player.getState();
+        playerState.addLyingTime(getScaledTimeStep());
+        if (playerState.getLyingTime() >= getStatsCalculator().getTotalLyingTime(player)) {
+            playerState.setLying(false);
         }
     }
 
-    private void doSave(Player player, Ball ball, Vector2D ballTarget) {
-        player.lieDown();
+    private void doSave(Player player, BallState ball, Vector2D ballTarget) {
+        player.getState().lieDown();
         hitBall(player, ball, ballTarget);
         decreasePlayerEnergy(player, ENERGY_LOSS_PER_SAVE);
     }
 
     private void performPlayerAction(Player player) {
-        Ball ball = getPitch().getBall();
-        if (player.isLying()) {
+        BallState ball = getPitch().getBall();
+        if (player.getState().isLying()) {
             performLyingAction(player);
             return;
         }
@@ -212,7 +216,7 @@ public class MatchEngine {
         }
     }
 
-    private void ballHitsNet(Ball ball) {
+    private void ballHitsNet(BallState ball) {
         Vector2D d = ball.getRealTarget().subtract(ball.getPosition());
         d = VectorUtils.mirror(d);
         d = d.scalarMultiply(NET_PONG_FACTOR);
@@ -221,7 +225,7 @@ public class MatchEngine {
         ball.setVisibleTarget(newTarget);
     }
 
-    private Vector2D getNextBallPosition(Ball ball) {
+    private Vector2D getNextBallPosition(BallState ball) {
         Vector2D d = ball.getVisibleTarget().subtract(ball.getPosition());
         double distToVisibleTarget = d.getNorm();
         double distToRealTarget = ball.getRealTarget().distance(ball.getPosition());
@@ -233,7 +237,7 @@ public class MatchEngine {
         return ball.getPosition().add(d);
     }
 
-    private void moveBall(Ball ball) {
+    private void moveBall(BallState ball) {
         double distToRealTarget = ball.getRealTarget().distance(ball.getPosition());
         double step = getScaledTimeStep() * ball.getSpeed();
         decreaseBallSpeed(ball);
@@ -257,7 +261,7 @@ public class MatchEngine {
         }
     }
 
-    private void decreaseBallSpeed(Ball ball) {
+    private void decreaseBallSpeed(BallState ball) {
         double speed = ball.getSpeed();
         double frictionForce = speed * speed * AIR_FRICTION_COEFFICIENT * getScaledTimeStep();
         ball.setSpeed(speed - frictionForce);
@@ -265,14 +269,14 @@ public class MatchEngine {
 
     private void endGame(Side sideHit) {
         if (sideHit == null) {
-            winningSide = pitch.getLastTouchedBall().getSide().getOpposite();
+            winningSide = pitch.getLastTouchedBall().getOpposite();
         } else {
             winningSide = sideHit.getOpposite();
         }
     }
 
-    private void performBallAction(Ball ball) {
-        if (ball.hasHittedGround()) {
+    private void performBallAction(BallState ball) {
+        if (ball.hasTouchedGround()) {
             endGame(getPitch().getBallSide(ball));
         } else {
             moveBall(ball);
@@ -280,12 +284,12 @@ public class MatchEngine {
     }
 
     public void performEndOfGameActions() {
-        getPitch().getPlayer(HOME).changeEnergy(ENERGY_REGAIN_PER_GAME);
-        getPitch().getPlayer(Side.AWAY).changeEnergy(ENERGY_REGAIN_PER_GAME);
+        getPitch().getPlayer(HOME).getState().changeEnergy(ENERGY_REGAIN_PER_GAME);
+        getPitch().getPlayer(AWAY).getState().changeEnergy(ENERGY_REGAIN_PER_GAME);
     }
 
     public void performEndOfSetActions() {
-        getPitch().getPlayer(HOME).changeEnergy(ENERGY_REGAIN_PER_SET);
-        getPitch().getPlayer(Side.AWAY).changeEnergy(ENERGY_REGAIN_PER_SET);
+        getPitch().getPlayer(HOME).getState().changeEnergy(ENERGY_REGAIN_PER_SET);
+        getPitch().getPlayer(AWAY).getState().changeEnergy(ENERGY_REGAIN_PER_SET);
     }
 }

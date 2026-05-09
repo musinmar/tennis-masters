@@ -1,9 +1,8 @@
 package tm.lib.engine.strategies;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import tm.lib.engine.Ball;
+import tm.lib.engine.BallState;
 import tm.lib.engine.Decision;
-import tm.lib.engine.MatchEngine;
 import tm.lib.engine.Pitch;
 import tm.lib.engine.Player;
 import tm.lib.engine.Strategy;
@@ -16,7 +15,7 @@ public abstract class AbstractStrategy implements Strategy {
         return pitch.isInsideZone(player.getSide(), pitch.getBall().getVisibleTarget());
     }
 
-    protected Vector2D getNextBallPosition(Ball ball, double timeStep) {
+    protected Vector2D getNextBallPosition(BallState ball, double timeStep) {
         Vector2D d = ball.getVisibleTarget().subtract(ball.getPosition());
         double distToVisibleTarget = d.getNorm();
         double distToRealTarget = ball.getRealTarget().distance(ball.getPosition());
@@ -29,14 +28,14 @@ public abstract class AbstractStrategy implements Strategy {
     }
 
     protected boolean isBallStillInSaveRange(Pitch pitch, Player player, double timeStep) {
-        Ball ball = pitch.getBall();
+        BallState ball = pitch.getBall();
         Vector2D nextBallPosition = getNextBallPosition(ball, timeStep);
         return pitch.canPlayerSaveBall(player, ball.getPosition()) && !pitch.canPlayerSaveBall(player, nextBallPosition);
     }
 
     protected boolean isTargetSmartEnough(Pitch pitch, Player player, Vector2D target) {
         Player opposite = pitch.getOppositePlayer(player);
-        double distance = target.distance(opposite.getPosition());
+        double distance = target.distance(opposite.getState().getPosition());
         double acceptableDistance = pitch.getStatsCalculator().getActualSkillRange(player);
         return distance >= acceptableDistance;
     }

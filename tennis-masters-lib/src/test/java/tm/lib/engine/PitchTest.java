@@ -119,26 +119,26 @@ public class PitchTest {
         Pitch pitch = new Pitch(null, null, null);
         Knight knight = mock(Knight.class);
         Player player = new Player(knight, Side.HOME);
-        Ball ball = pitch.getBall();
+        BallState ball = pitch.getBall();
         Vector2D ballPosition = new Vector2D(10, 20);
         ball.setPosition(ballPosition);
 
-        player.setPosition(ballPosition);
+        player.getState().setPosition(ballPosition);
         assertTrue(pitch.canPlayerHitBall(player));
 
-        player.setPosition(ballPosition.add(new Vector2D(0, MatchEngineConstants.PLAYER_HAND_LENGTH / 2)));
+        player.getState().setPosition(ballPosition.add(new Vector2D(0, MatchEngineConstants.PLAYER_HAND_LENGTH / 2)));
         assertTrue(pitch.canPlayerHitBall(player));
 
-        player.setPosition(ballPosition.add(new Vector2D(0, MatchEngineConstants.PLAYER_HAND_LENGTH)));
+        player.getState().setPosition(ballPosition.add(new Vector2D(0, MatchEngineConstants.PLAYER_HAND_LENGTH)));
         assertTrue(pitch.canPlayerHitBall(player));
 
-        player.setPosition(ballPosition.add(new Vector2D(0, MatchEngineConstants.PLAYER_HAND_LENGTH + 1)));
+        player.getState().setPosition(ballPosition.add(new Vector2D(0, MatchEngineConstants.PLAYER_HAND_LENGTH + 1)));
         assertFalse(pitch.canPlayerHitBall(player));
 
-        player.setPosition(ballPosition.add(new Vector2D(MatchEngineConstants.PLAYER_HAND_LENGTH, 0)));
+        player.getState().setPosition(ballPosition.add(new Vector2D(MatchEngineConstants.PLAYER_HAND_LENGTH, 0)));
         assertTrue(pitch.canPlayerHitBall(player));
 
-        player.setPosition(ballPosition.add(new Vector2D(MatchEngineConstants.PLAYER_HAND_LENGTH + 1, 0)));
+        player.getState().setPosition(ballPosition.add(new Vector2D(MatchEngineConstants.PLAYER_HAND_LENGTH + 1, 0)));
         assertFalse(pitch.canPlayerHitBall(player));
     }
 }

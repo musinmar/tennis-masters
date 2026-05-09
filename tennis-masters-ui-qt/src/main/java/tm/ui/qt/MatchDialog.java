@@ -67,7 +67,7 @@ public class MatchDialog extends QDialog {
         private Vector2D clickedPosition = Vector2D.ZERO;
 
         private void applyManualControls() {
-            var rawPosition = matchSimulator.getPitch().getPlayer(side).getPosition();
+            var rawPosition = matchSimulator.getPitch().getPlayer(side).getState().getPosition();
             var position = side == Side.AWAY ? VectorUtils.mirror(rawPosition) : rawPosition;
             Vector2D verticalMovement = Vector2D.ZERO;
             if (upPressed && !downPressed) {

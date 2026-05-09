@@ -46,7 +46,9 @@ public class StandardStrategyTest {
     public void testCalculateOptimalBallInterceptPosition() {
         Player player = mock(Player.class);
         when(player.getSide()).thenReturn(Side.HOME);
-        Ball ball = new Ball();
+        PlayerState playerState = mock(PlayerState.class);
+        when(player.getState()).thenReturn(playerState);
+        BallState ball = new BallState();
         ball.setPosition(new Vector2D(50, 100));
         ball.setVisibleTarget(new Vector2D(100, 150));
         Pitch pitch = mock(Pitch.class);
@@ -54,10 +56,10 @@ public class StandardStrategyTest {
         when(pitch.getClosestPointInZone(any(), any())).thenCallRealMethod();
         when(pitch.isInsideZone(any(), any())).thenCallRealMethod();
 
-        when(player.getPosition()).thenReturn(new Vector2D(100, 100));
+        when(playerState.getPosition()).thenReturn(new Vector2D(100, 100));
         assertTrue(VectorUtils.equalsWithTolerance(new Vector2D(75, 125), strategy.calculateOptimalBallInterceptPosition(pitch, player)));
 
-        when(player.getPosition()).thenReturn(new Vector2D(300, 200));
+        when(playerState.getPosition()).thenReturn(new Vector2D(300, 200));
         assertTrue(VectorUtils.equalsWithTolerance(new Vector2D(100, 150), strategy.calculateOptimalBallInterceptPosition(pitch, player)));
     }
 

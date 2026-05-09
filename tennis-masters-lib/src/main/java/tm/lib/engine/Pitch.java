@@ -7,7 +7,6 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.geometry.partitioning.Region;
 import org.apache.commons.math3.util.Precision;
 import tm.lib.domain.core.Knight;
-import tm.lib.domain.core.Stadium;
 
 /**
  * Represents complete game state
@@ -18,9 +17,8 @@ public class Pitch {
 
     private final Player homePlayer;
     private final Player awayPlayer;
-    private final Ball ball;
-    private Player lastTouchedBall;
-    private final Stadium venue;
+    private final BallState ball;
+    private Side lastTouchedBall;
     private final StatsCalculator statsCalculator;
 
     // Pitch is a rectangle with coordinates in range (0, WIDTH), (-HEIGHT / 2, HEIGHT / 2)
@@ -31,21 +29,20 @@ public class Pitch {
     static private final PolygonsSet HOME_ZONE = new PolygonsSet(0, WIDTH, 0, HALF_HEIGHT, VectorUtils.DEFAULT_TOLERANCE);
     static private final PolygonsSet AWAY_ZONE = new PolygonsSet(0, WIDTH, -HALF_HEIGHT, 0, VectorUtils.DEFAULT_TOLERANCE);
 
-    public Pitch(Knight homePlayer, Knight awayPlayer, Stadium venue) {
+    public Pitch(Knight homePlayer, Knight awayPlayer, StatsCalculator statsCalculator) {
         this(
                 new Player(homePlayer, Side.HOME),
                 new Player(awayPlayer, Side.AWAY),
-                new Ball(),
-                venue);
+                statsCalculator,
+                new BallState());
     }
 
-    private Pitch(Player homePlayer, Player awayPlayer, Ball ball, Stadium venue) {
+    private Pitch(Player homePlayer, Player awayPlayer, StatsCalculator statsCalculator, BallState ball) {
         this.homePlayer = homePlayer;
         this.awayPlayer = awayPlayer;
         this.ball = ball;
         this.lastTouchedBall = null;
-        this.venue = venue;
-        statsCalculator = new StatsCalculator(venue);
+        this.statsCalculator = statsCalculator;
     }
 
     public Player getPlayer(Side side) {
@@ -60,20 +57,20 @@ public class Pitch {
         return new Pitch(
                 awayPlayer.createMirrored(),
                 homePlayer.createMirrored(),
-                ball.createMirrored(),
-                venue);
+                statsCalculator,
+                ball.createMirrored());
     }
 
     public void reset(Side servingSide) {
         Vector2D startingPosition = new Vector2D(WIDTH / 2, HALF_HEIGHT / 3 * 2);
         Vector2D startingDirection = new Vector2D(0, -1);
 
-        homePlayer.resetState(startingPosition, startingDirection);
-        awayPlayer.resetState(VectorUtils.mirror(startingPosition), VectorUtils.mirror(startingDirection));
+        homePlayer.getState().reset(startingPosition, startingDirection);
+        awayPlayer.getState().reset(VectorUtils.mirror(startingPosition), VectorUtils.mirror(startingDirection));
 
         var servingPlayer = getPlayer(servingSide);
-        Vector2D servingPlayerPosition = servingPlayer.getPosition();
-        Vector2D servingPlayerDirection = servingPlayer.getDirection();
+        Vector2D servingPlayerPosition = servingPlayer.getState().getPosition();
+        Vector2D servingPlayerDirection = servingPlayer.getState().getDirection();
         ball.setPosition(servingPlayerPosition.add(10, servingPlayerDirection));
         ball.setRealTarget(servingPlayerPosition.add(50, servingPlayerDirection));
         ball.setVisibleTarget(servingPlayerPosition.add(70, servingPlayerDirection));
@@ -82,7 +79,7 @@ public class Pitch {
         lastTouchedBall = null;
     }
 
-    public Side getBallSide(Ball b) {
+    public Side getBallSide(BallState b) {
         Vector2D position = b.getPosition();
         if (position.getX() >= 0 && position.getX() <= Pitch.WIDTH
                 && position.getY() >= -Pitch.HALF_HEIGHT && position.getY() <= Pitch.HALF_HEIGHT) {
@@ -121,16 +118,16 @@ public class Pitch {
     }
 
     public double calculateNetBlockedZoneLength(Player player) {
-        return calculateNetBlockedZoneLength(player.getPosition());
+        return calculateNetBlockedZoneLength(player.getState().getPosition());
     }
 
     public boolean canPlayerHitBall(Player player) {
-        double distanceToBall = player.getPosition().distance(ball.getPosition());
+        double distanceToBall = player.getState().getPosition().distance(ball.getPosition());
         return Precision.compareTo(distanceToBall, MatchEngineConstants.PLAYER_HAND_LENGTH, VectorUtils.DEFAULT_TOLERANCE) <= 0;
     }
 
     public boolean canPlayerSaveBall(Player player, Vector2D position) {
-        double distanceToBall = player.getPosition().distance(position);
+        double distanceToBall = player.getState().getPosition().distance(position);
         double saveRange = MatchEngineConstants.PLAYER_HAND_LENGTH + getStatsCalculator().getActualSaveAddDistance(player);
         return Precision.compareTo(distanceToBall, saveRange, VectorUtils.DEFAULT_TOLERANCE) <= 0;
     }

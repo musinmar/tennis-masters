@@ -42,6 +42,6 @@ public class PlayerInfoWidget extends QFrame {
     }
 
     public void updateEnergy() {
-        energyBar.setValue((int) player.getEnergy());
+        energyBar.setValue((int) player.getState().getEnergy());
     }
 }

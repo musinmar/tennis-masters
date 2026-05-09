@@ -61,7 +61,7 @@ public class MatchEngine {
         }
         performPlayerAction(getPitch().getPlayer(HOME));
         performPlayerAction(getPitch().getPlayer(AWAY));
-        performBallAction(getPitch().getBall());
+        performBallAction();
     }
 
     private static double getScaledTimeStep() {
@@ -275,8 +275,9 @@ public class MatchEngine {
         }
     }
 
-    private void performBallAction(BallState ball) {
-        if (ball.hasTouchedGround()) {
+    private void performBallAction() {
+        var ball = getPitch().getBall();
+        if (getPitch().hasBallTouchedGround()) {
             endGame(getPitch().getBallSide(ball));
         } else {
             moveBall(ball);

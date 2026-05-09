@@ -11,6 +11,9 @@ import tm.lib.engine.VectorUtils;
 import static tm.lib.engine.Side.HOME;
 
 public abstract class AbstractStrategy implements Strategy {
+
+    public static final int MAX_BALL_DECISION_ATTEMPTS = 3;
+
     protected boolean isPlayerZoneTargeted(Pitch pitch, Player player) {
         return pitch.isInsideZone(player.getSide(), pitch.getBall().getVisibleTarget());
     }
@@ -43,6 +46,7 @@ public abstract class AbstractStrategy implements Strategy {
     protected Decision createHitBallDecision(Pitch pitch, Player player) {
         double netZoneLength = pitch.calculateNetBlockedZoneLength(player);
         double riskMargin = pitch.getStatsCalculator().getActualRiskMargin(player);
+        int attempt = 0;
         while (true) {
             Vector2D target = VectorUtils.generateRandomVector(riskMargin, Pitch.WIDTH - riskMargin,
                     netZoneLength + riskMargin, Pitch.HALF_HEIGHT - riskMargin);
@@ -50,12 +54,13 @@ public abstract class AbstractStrategy implements Strategy {
                 target = VectorUtils.mirror(target);
             }
 
-            if (isTargetSmartEnough(pitch, player, target)) {
+            if (isTargetSmartEnough(pitch, player, target) || attempt == MAX_BALL_DECISION_ATTEMPTS) {
                 Decision decision = new Decision();
                 decision.setHitBall(true);
                 decision.setBallTargetPosition(target);
                 return decision;
             }
+            ++attempt;
         }
     }
 }

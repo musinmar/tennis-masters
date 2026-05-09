@@ -18,7 +18,7 @@ public class StandardStrategy extends AbstractStrategy {
         if (isPlayerZoneTargeted(pitch, player)) {
             if (pitch.canPlayerHitBall(player)) {
                 return createHitBallDecision(pitch, player);
-            } else if (pitch.getBall().hasTouchedGround() || isBallStillInSaveRange(pitch, player, timeStep)) {
+            } else if (pitch.hasBallTouchedGround() || isBallStillInSaveRange(pitch, player, timeStep)) {
                 if (pitch.canPlayerSaveBall(player, pitch.getBall().getPosition())) {
                     return createHitBallDecision(pitch, player);
                 }

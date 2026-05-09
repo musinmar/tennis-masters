@@ -16,10 +16,6 @@ public class BallState {
     private double speed = 0;
     private boolean flyingAboveNet = true;
 
-    public boolean hasTouchedGround() {
-        return VectorUtils.equalsWithTolerance(getRealTarget(), getPosition(), 0.001);
-    }
-
     public BallState createMirrored() {
         BallState mirroredBall = new BallState();
         mirroredBall.position = mirror(position);

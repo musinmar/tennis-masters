@@ -93,6 +93,10 @@ public class Pitch {
         }
     }
 
+    public boolean hasBallTouchedGround() {
+        return VectorUtils.equalsWithTolerance(ball.getRealTarget(), ball.getPosition(), 0.001);
+    }
+
     public boolean isInsideZone(Side side, Vector2D position) {
         PolygonsSet zone = side == Side.HOME ? Pitch.HOME_ZONE : Pitch.AWAY_ZONE;
         Region.Location location = zone.checkPoint(position);

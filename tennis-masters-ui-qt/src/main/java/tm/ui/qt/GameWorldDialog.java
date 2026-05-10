@@ -24,6 +24,7 @@ import io.qt.widgets.QVBoxLayout;
 import io.qt.widgets.QWidget;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.CompetitionPrinter;
+import tm.lib.domain.competition.MatchResult;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
@@ -329,7 +330,7 @@ public class GameWorldDialog extends QMainWindow {
         runWithSimulationRunner(SimulationHelper::simulateMatch);
     }
 
-    private void runWithSimulationRunner(BiFunction<Match, StrategyHolder, MatchScore> simulationRunner) {
+    private void runWithSimulationRunner(BiFunction<Match, StrategyHolder, MatchResult> simulationRunner) {
         var event = world.getNextEvent();
         switch (event) {
             case SeasonStart _, SeasonConclusion _ -> world.progressState();
@@ -346,9 +347,9 @@ public class GameWorldDialog extends QMainWindow {
             }
             case SeasonMatchEvent seasonMatchEvent -> {
                 var match = seasonMatchEvent.getMatchEvent();
-                MatchScore score = simulationRunner.apply(match.createMatchSpec(), StrategyHolder.standard());
+                MatchResult result = simulationRunner.apply(match.createMatchSpec(), StrategyHolder.standard());
                 selectCompetition(match.getCompetition());
-                world.processMatch(match, score);
+                world.processMatch(match, result);
             }
             case null, default -> throw new IllegalArgumentException("Unknown world event: " + event);
         }

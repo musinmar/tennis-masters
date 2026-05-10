@@ -3,6 +3,7 @@ package tm.lib.persistence;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.CompetitionEvent;
 import tm.lib.domain.competition.MatchEvent;
+import tm.lib.domain.competition.MatchResult;
 import tm.lib.domain.competition.Participant;
 import tm.lib.domain.competition.definition.actions.Action;
 import tm.lib.domain.competition.definition.actions.AddAssignedParticipantsFromEloRankings;
@@ -245,7 +246,7 @@ public class DtoMapper {
         dto.setAwayPlayerParticipantId(matchEvent.getAwayPlayer().getId());
         dto.setSets(matchEvent.getSets());
         dto.setPlayOff(matchEvent.isPlayOff());
-        dto.setResult(matchEvent.getResult() != null ? toDto(matchEvent.getResult()) : null);
+        dto.setResult(matchEvent.getResult() != null ? toDto(matchEvent.getResult().getScore()) : null);
         return dto;
     }
 
@@ -375,14 +376,14 @@ public class DtoMapper {
         return dto;
     }
 
-    public static MatchScore toDomain(MatchScoreDto dto) {
+    public static MatchResult toDomain(MatchScoreDto dto) {
         List<BasicScore> sets = dto.getSets().stream()
                 .map(DtoMapper::toDomain)
                 .collect(toList());
         BasicScore additionalTime = dto.getAdditionalTime() != null
                 ? toDomain(dto.getAdditionalTime())
                 : null;
-        return new MatchScore(sets, additionalTime);
+        return new MatchResult(new MatchScore(sets, additionalTime), null);
     }
 
     public static MatchScoreDto toDto(MatchScore matchScore) {

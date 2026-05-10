@@ -20,6 +20,7 @@ import io.qt.widgets.QVBoxLayout;
 import io.qt.widgets.QWidget;
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.nnet.MultiLayerPerceptron;
+import tm.lib.domain.competition.MatchResult;
 import tm.lib.domain.core.BasicScore;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
@@ -271,8 +272,8 @@ public class MatchConfigurationDialog extends QDialog {
 
     private void onShowSimulationPushButtonClicked() {
         Match match = configureMatch();
-        MatchScore score = SimulationHelper.showMatch(match, configureStrategyProvider(), this);
-        displayResult(match, score);
+        MatchResult result = SimulationHelper.showMatch(match, configureStrategyProvider(), this);
+        displayResult(match, result.getScore());
     }
 
     private void onFastSimulatePushButtonClicked() {
@@ -280,8 +281,8 @@ public class MatchConfigurationDialog extends QDialog {
         Match match = configureMatch();
         List<MatchScore> scores = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            MatchScore score = SimulationHelper.simulateMatch(match, configureStrategyProvider());
-            scores.add(score);
+            MatchResult result = SimulationHelper.simulateMatch(match, configureStrategyProvider());
+            scores.add(result.getScore());
             simulationStatusLabel.setText("Matches played: " + (i + 1));
             QApplication.processEvents(QEventLoop.ProcessEventsFlag.ExcludeUserInputEvents);
         }

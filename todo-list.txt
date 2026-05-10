@@ -1,4 +1,8 @@
-Restructure world and season - decouple competitions from events (actions)
+For version 1.0
+
+* Game recording and replay
+* Random skill adjustments at the end of season
+* Proper event logging
 
 Persistent game state with full game history
 

@@ -146,9 +146,9 @@ public class GroupCompetition extends SimpleCompetition {
 
     private void applyMatchResult(MatchEvent match) {
         GroupResult groupResult1 = findGroupResult(match.getHomePlayer());
-        groupResult1.applyMatchResult(match.getResult());
+        groupResult1.applyMatchResult(match.getResult().getScore());
         GroupResult groupResult2 = findGroupResult(match.getAwayPlayer());
-        groupResult2.applyMatchResult(match.getResult().reversed());
+        groupResult2.applyMatchResult(match.getResult().getScore().reversed());
     }
 
     private Comparator<GroupResult> buildGroupResultComparator() {

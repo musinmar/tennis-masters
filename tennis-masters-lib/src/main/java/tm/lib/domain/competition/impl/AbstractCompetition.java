@@ -5,6 +5,7 @@ import lombok.Setter;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.MatchEvent;
 import tm.lib.domain.competition.CompetitionEvent;
+import tm.lib.domain.competition.MatchResult;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
 
@@ -44,10 +45,10 @@ abstract public class AbstractCompetition implements Competition {
     }
 
     @Override
-    public void processMatchResult(MatchEvent match, MatchScore score) {
+    public void processMatchResult(MatchEvent match, MatchResult result) {
         assert match.getCompetition() == this && getNextMatch().equals(Optional.of(match));
-        match.setResult(score);
-        afterMatchResultAssigned(match, score);
+        match.setResult(result);
+        afterMatchResultAssigned(match, result.getScore());
         triggerOnFinishedChainIfNecessary();
     }
 

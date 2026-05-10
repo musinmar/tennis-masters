@@ -35,7 +35,7 @@ public interface Competition {
         return getNextMatch().isEmpty();
     }
 
-    void processMatchResult(MatchEvent match, MatchScore score);
+    void processMatchResult(MatchEvent match, MatchResult result);
 
     void processChildCompetitionFinished(Competition child);
 

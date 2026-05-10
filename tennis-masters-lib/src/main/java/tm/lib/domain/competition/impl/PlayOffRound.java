@@ -47,7 +47,7 @@ public class PlayOffRound extends SimpleCompetition implements PlayOffCompetitio
         for (int i = 0; i < getAllMatches().size(); i++) {
             MatchEvent m = getAllMatches().get(i);
             if (m.getResult() != null) {
-                BasicScore s = m.getResult().getScoreBySets();
+                BasicScore s = m.getResult().getScore().getScoreBySets();
                 if (s.v1 > s.v2) {
                     winners.add(m.getHomePlayer().getPlayerOrFail());
                     losers.add(m.getAwayPlayer().getPlayerOrFail());

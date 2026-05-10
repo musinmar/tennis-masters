@@ -20,8 +20,8 @@ import io.qt.widgets.QWidget;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import tm.lib.domain.competition.MatchResult;
 import tm.lib.domain.core.Match;
-import tm.lib.domain.core.MatchScore;
 import tm.lib.engine.MatchEngine;
 import tm.lib.engine.MatchSimulator;
 import tm.lib.engine.Side;
@@ -41,7 +41,7 @@ public class MatchDialog extends QDialog {
     private final MatchSimulator matchSimulator;
 
     private boolean paused = true;
-    private MatchScore finalScore;
+    private MatchResult matchResult;
 
     private QTimer activeTimer;
     private QPushButton startButton;
@@ -207,12 +207,12 @@ public class MatchDialog extends QDialog {
         }
     }
 
-    public MatchScore getFinalScore() {
-        return finalScore;
+    public MatchResult getMatchResult() {
+        return matchResult;
     }
 
     private void onCloseButtonClicked() {
-        if (finalScore == null) {
+        if (matchResult == null) {
             if (activeTimer != null) {
                 activeTimer.stop();
             }
@@ -325,6 +325,6 @@ public class MatchDialog extends QDialog {
 
     private void finishMatch() {
         startButton.setDisabled(true);
-        finalScore = matchSimulator.getCurrentScore();
+        matchResult = matchSimulator.getMatchResult();
     }
 }

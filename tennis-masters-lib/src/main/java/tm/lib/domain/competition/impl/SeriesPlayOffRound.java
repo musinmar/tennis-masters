@@ -66,7 +66,7 @@ public class SeriesPlayOffRound extends SimpleCompetition implements PlayOffComp
         int r2 = 0;
         for (var m : getAllMatches()) {
             if (m.getResult() != null) {
-                if (m.getResult().isFirstPlayerWinner()) {
+                if (m.getResult().getScore().isFirstPlayerWinner()) {
                     ++r1;
                 } else {
                     ++r2;

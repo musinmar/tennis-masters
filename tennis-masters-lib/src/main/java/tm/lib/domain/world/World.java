@@ -5,6 +5,7 @@ import lombok.Setter;
 import tm.lib.domain.competition.Competition;
 import tm.lib.domain.competition.CompetitionFactory;
 import tm.lib.domain.competition.MatchEvent;
+import tm.lib.domain.competition.MatchResult;
 import tm.lib.domain.competition.impl.GroupCompetition;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.MatchScore;
@@ -186,7 +187,7 @@ public class World {
         }
     }
 
-    public void processMatch(MatchEvent match, MatchScore score) {
+    public void processMatch(MatchEvent match, MatchResult result) {
         var nextEvent = getNextEvent();
         if (!(nextEvent instanceof SeasonMatchEvent seasonMatchEvent) || seasonMatchEvent.getMatchEvent() != match) {
             throw new IllegalStateException("Next event is expected to be: " + nextEvent);
@@ -199,12 +200,15 @@ public class World {
         }
         latestCompetition = match.getCompetition();
 
-        match.getCompetition().processMatchResult(match, score);
+        match.getCompetition().processMatchResult(match, result);
         logger.println(match.toString());
 
         eventProcessor.processOnCompetitionEndEvents(match.getCompetition());
-        getEloRating().updateRatings(match.getHomePlayer().getPlayerOrFail(), match.getAwayPlayer().getPlayerOrFail(), score.getScoreBySets());
-        updateNationRating(match, score);
+        getEloRating().updateRatings(
+                match.getHomePlayer().getPlayerOrFail(),
+                match.getAwayPlayer().getPlayerOrFail(),
+                result.getScore().getScoreBySets());
+        updateNationRating(match, result.getScore());
 
         if (match.getCompetition() instanceof GroupCompetition groupCompetition) {
             if (groupCompetition.doesNextMatchStartNewRound()) {

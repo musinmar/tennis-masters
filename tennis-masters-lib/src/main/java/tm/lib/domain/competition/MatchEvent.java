@@ -1,11 +1,12 @@
 package tm.lib.domain.competition;
 
 import lombok.Getter;
+import lombok.Setter;
 import tm.lib.domain.core.Match;
-import tm.lib.domain.core.MatchScore;
 import tm.lib.domain.core.Stadium;
 
 @Getter
+@Setter
 public class MatchEvent {
     private static final boolean PRINT_DATE = true;
 
@@ -16,7 +17,7 @@ public class MatchEvent {
     private int sets;
     private boolean playOff;
     private final Stadium venue = Stadium.standard();
-    private MatchScore result;
+    private MatchResult result;
 
     public MatchEvent(Competition parent, Participant p1, Participant p2, int sets, boolean isPlayoff) {
         this(parent, p1, p2);
@@ -33,21 +34,13 @@ public class MatchEvent {
         result = null;
     }
 
-    public void setDate(int date) {
-        this.date = date;
-    }
-
     @Override
     public String toString() {
-        String resultString = getResult() == null ? "" : " " + getResult().toString();
+        String resultString = getResult() == null ? "" : " " + getResult();
         String firstPlayerName = getHomePlayer() == null ? "TBD" : getHomePlayer().getFullNameOrId();
         String secondPlayerName = getAwayPlayer() == null ? "TBD" : getAwayPlayer().getFullNameOrId();
         String date = PRINT_DATE ? "(" + getDate() + ") " : "";
         return date + firstPlayerName + " - " + secondPlayerName + resultString;
-    }
-
-    public void setResult(MatchScore result) {
-        this.result = result;
     }
 
     public Match createMatchSpec() {

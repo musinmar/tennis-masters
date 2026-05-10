@@ -8,6 +8,8 @@ package tm.lib.engine;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.Validate;
+import tm.lib.domain.competition.MatchResult;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
@@ -113,5 +115,10 @@ public class MatchSimulator {
                 pitch.getBall().copy(),
                 pitch.getLastTouchedBall());
         matchReplay.getStates().add(state);
+    }
+
+    public MatchResult getMatchResult() {
+        Validate.isTrue(matchProgressTracker.isMatchFinished());
+        return new MatchResult(getCurrentScore(), getMatchReplay());
     }
 }

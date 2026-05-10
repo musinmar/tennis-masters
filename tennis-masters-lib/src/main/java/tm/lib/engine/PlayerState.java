@@ -54,4 +54,15 @@ public class PlayerState {
         mirroredState.setEnergy(energy);
         return mirroredState;
     }
+
+    public PlayerState copy() {
+        PlayerState copy = new PlayerState();
+        copy.setPosition(position);
+        copy.setDirection(direction);
+        copy.setSpeed(speed);
+        copy.setLying(lying);
+        copy.setLyingTime(lyingTime);
+        copy.setEnergy(energy);
+        return copy;
+    }
 }

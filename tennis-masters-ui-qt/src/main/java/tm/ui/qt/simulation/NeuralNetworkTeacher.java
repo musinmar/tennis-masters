@@ -283,10 +283,10 @@ public class NeuralNetworkTeacher {
 
     private MatchSimulator simulateMatch(Match match, StrategyHolder strategyHolder) {
         MatchSimulator matchSimulator = new MatchSimulator(match, strategyHolder);
-        MatchSimulator.State state;
+        MatchSimulator.Status status;
         do {
-            state = matchSimulator.proceed();
-        } while (state != MatchSimulator.State.MATCH_ENDED);
+            status = matchSimulator.proceed();
+        } while (status != MatchSimulator.Status.MATCH_ENDED);
         return matchSimulator;
     }
 }

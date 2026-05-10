@@ -25,4 +25,14 @@ public class BallState {
         mirroredBall.flyingAboveNet = flyingAboveNet;
         return mirroredBall;
     }
+
+    public BallState copy() {
+        BallState copy = new BallState();
+        copy.position = position;
+        copy.realTarget = realTarget;
+        copy.visibleTarget = visibleTarget;
+        copy.speed = speed;
+        copy.flyingAboveNet = flyingAboveNet;
+        return copy;
+    }
 }

@@ -5,6 +5,9 @@
  */
 package tm.lib.engine;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import tm.lib.domain.core.Knight;
 import tm.lib.domain.core.Match;
 import tm.lib.domain.core.MatchScore;
@@ -12,39 +15,32 @@ import tm.lib.domain.core.MatchScore;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public class MatchSimulator {
 
     private final Match match;
     private final MatchEngine matchEngine;
     private final MatchProgressTracker matchProgressTracker;
+    private final MatchReplay matchReplay;
     private long matchTime;
     private long gameStartTime;
     private Side lastGameResult;
     private final List<PointResult> pointResults = new ArrayList<>();
 
-    public enum State {
+    public enum Status {
         PLAYING,
         GAME_ENDED,
         SET_ENDED,
         MATCH_ENDED
     }
 
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
     public static class PointResult {
         private final Side winningSide;
         private final long time;
-
-        public PointResult(Side winningSide, long time) {
-            this.winningSide = winningSide;
-            this.time = time;
-        }
-
-        public Side getWinningSide() {
-            return winningSide;
-        }
-
-        public long getTime() {
-            return time;
-        }
     }
 
     public MatchSimulator(Match match, StrategyHolder strategyHolder) {
@@ -52,18 +48,12 @@ public class MatchSimulator {
         matchEngine = new MatchEngine(match, strategyHolder);
         matchProgressTracker = new MatchProgressTracker(match.getSets(), match.isPlayOff());
         matchProgressTracker.startNewSet();
-    }
-
-    public long getMatchTime() {
-        return matchTime;
+        matchReplay = new MatchReplay(match.getHomePlayer(), match.getAwayPlayer());
+        recordGameState();
     }
 
     public MatchScore getCurrentScore() {
         return matchProgressTracker.buildScore();
-    }
-
-    public List<PointResult> getPointResults() {
-        return pointResults;
     }
 
     public Side getLastGameResult() {
@@ -79,22 +69,23 @@ public class MatchSimulator {
         return matchEngine.getPitch();
     }
 
-    public State proceed() {
+    public Status proceed() {
         matchTime += MatchEngine.TIME_STEP_MILLIS;
         if (!matchEngine.isFinished()) {
             matchEngine.next();
+            recordGameState();
             if (!matchEngine.isFinished()) {
-                return State.PLAYING;
+                return Status.PLAYING;
             } else {
                 lastGameResult = matchEngine.getWinningSide();
                 matchProgressTracker.addPoint(lastGameResult);
                 pointResults.add(new PointResult(lastGameResult, matchTime - gameStartTime));
                 if (!matchProgressTracker.isSetFinished()) {
-                    return State.GAME_ENDED;
+                    return Status.GAME_ENDED;
                 } else if (!matchProgressTracker.isMatchFinished()) {
-                    return State.SET_ENDED;
+                    return Status.SET_ENDED;
                 } else {
-                    return State.MATCH_ENDED;
+                    return Status.MATCH_ENDED;
                 }
             }
         } else {
@@ -108,7 +99,19 @@ public class MatchSimulator {
                 throw new IllegalStateException("Can't proceed in a finished match");
             }
             matchEngine.reset(matchProgressTracker.getNextServingSide());
-            return State.PLAYING;
+            recordGameState();
+            return Status.PLAYING;
         }
+    }
+
+    private void recordGameState() {
+        var pitch = getPitch();
+        var state = new GameState(
+                matchTime,
+                pitch.getHomePlayer().getState().copy(),
+                pitch.getAwayPlayer().getState().copy(),
+                pitch.getBall().copy(),
+                pitch.getLastTouchedBall());
+        matchReplay.getStates().add(state);
     }
 }

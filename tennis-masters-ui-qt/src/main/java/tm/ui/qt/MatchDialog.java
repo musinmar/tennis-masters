@@ -47,7 +47,7 @@ public class MatchDialog extends QDialog {
     private QPushButton startButton;
     private PitchWidget pitchWidget;
     private QLabel matchTimeLabel;
-    private MatchSimulator.State currentState;
+    private MatchSimulator.Status currentStatus;
     private QLabel matchScoreLabel;
     private PlayerInfoWidget homePlayerInfoWidget;
     private PlayerInfoWidget awayPlayerInfoWidget;
@@ -216,10 +216,10 @@ public class MatchDialog extends QDialog {
             if (activeTimer != null) {
                 activeTimer.stop();
             }
-            MatchSimulator.State state;
+            MatchSimulator.Status status;
             do {
-                state = matchSimulator.proceed();
-            } while (state != MatchSimulator.State.MATCH_ENDED);
+                status = matchSimulator.proceed();
+            } while (status != MatchSimulator.Status.MATCH_ENDED);
             finishMatch();
         }
 
@@ -268,8 +268,8 @@ public class MatchDialog extends QDialog {
         if (manualControls != null) {
             manualControls.applyManualControls();
         }
-        currentState = matchSimulator.proceed();
-        if (currentState == MatchSimulator.State.PLAYING) {
+        currentStatus = matchSimulator.proceed();
+        if (currentStatus == MatchSimulator.Status.PLAYING) {
             pitchWidget.update();
             homePlayerInfoWidget.updateEnergy();
             awayPlayerInfoWidget.updateEnergy();
@@ -287,7 +287,7 @@ public class MatchDialog extends QDialog {
 
     private void startNextGame() {
         activeTimer.stop();
-        if (currentState == MatchSimulator.State.GAME_ENDED) {
+        if (currentStatus == MatchSimulator.Status.GAME_ENDED) {
             pitchWidget.showInfoLabel(null);
             activeTimer = createSimulationTimer();
         } else {
@@ -301,7 +301,7 @@ public class MatchDialog extends QDialog {
 
     private void startNextSet() {
         activeTimer.stop();
-        if (currentState == MatchSimulator.State.SET_ENDED) {
+        if (currentStatus == MatchSimulator.Status.SET_ENDED) {
             pitchWidget.showInfoLabel(null);
             activeTimer = createSimulationTimer();
             activeTimer.start();

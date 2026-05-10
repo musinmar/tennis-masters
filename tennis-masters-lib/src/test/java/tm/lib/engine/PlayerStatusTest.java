@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PlayerStateTest {
+public class PlayerStatusTest {
 
     private static final double EPSILON = 1e-8;
 
